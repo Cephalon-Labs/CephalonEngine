@@ -27,7 +27,8 @@ internal static class DirectStreamingModuleResilienceEndpointRouteBuilderExtensi
             transportKind,
             options,
             stateRegistry.GetCircuitBreaker(transportId),
-            stateRegistry.GetBulkhead(transportId)));
+            stateRegistry.GetBulkhead(transportId),
+            stateRegistry.GetTimeout(transportId)));
 
         return builder;
     }

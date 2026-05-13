@@ -32,7 +32,7 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 - reporter-, edge-, coordination-, remediation-, and governance-aware CDC drill-downs under the existing `/engine/cdc-captures/runtime/*` and `/engine/cdc-capture-runtimes/*` route families when the shared external CDC operator-story catalog is active
 - `/engine/cdc-capture-runtimes/{executionRuntimeId}/reports` when the opt-in external CDC runtime report sink is active
 - `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
-- companion gRPC, JSON-RPC, SSE, and WebSocket direct-module resilience runtime truth through `/engine/technology-surfaces` when the selected adapter enforces `Engine:Resilience` timeout, circuit-breaker, or bulkhead policy for direct module endpoints
+- companion gRPC, JSON-RPC, SSE, and WebSocket direct-module resilience runtime truth through `/engine/technology-surfaces` when the selected adapter enforces `Engine:Resilience` timeout, circuit-breaker, or bulkhead policy for direct module endpoints, including cumulative timeout-occurrence, circuit-open transition, and circuit-open rejection counters with last-occurrence timestamps on the SSE and WebSocket adapters
 - `/engine/rest-endpoint-candidates` when the module-owned REST candidate catalog is active
 - `/engine/rest-endpoint-publication-groups` when grouped module-owned REST publication visibility and authoring-policy state are active
 - `/engine/rest-endpoint-authoring-policies` when behavior-level REST authoring-policy runtime answers are active
@@ -418,8 +418,9 @@ same adapter-owned timeout, circuit-breaker, and bulkhead posture through JSON-R
 `-32029` envelopes. Direct SSE and WebSocket modules now use the shared streaming endpoint filter:
 SSE rejections are emitted as `event: error` payloads, WebSocket rejections are emitted as text error
 frames, and `/engine/technology-surfaces` publishes `sse-direct-module-resilience` plus
-`websocket-direct-module-resilience` with policy source, live circuit state, bulkhead counters, and
-`wolverineRequired=false` / `consumerCodeRequired=false`. The behavior-pipeline
+`websocket-direct-module-resilience` with policy source, live circuit state, bulkhead counters,
+cumulative `timeoutOccurredCount` / `circuitOpenedCount` / `circuitRejectedWhileOpenCount` outcome
+counters with last-occurrence timestamps, and `wolverineRequired=false` / `consumerCodeRequired=false`. The behavior-pipeline
 follow-through now adds a shared behavior-dispatch middleware in `Cephalon.Behaviors` so retry,
 timeout, circuit-breaker, bulkhead, and rate-limiting enforcement apply consistently across transports, resolves narrower
 `Engine:Resilience:BehaviorExecution:Overrides` entries with
