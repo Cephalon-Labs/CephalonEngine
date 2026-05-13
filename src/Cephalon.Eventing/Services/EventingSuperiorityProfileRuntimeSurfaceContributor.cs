@@ -852,6 +852,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.RetryScheduled, StringComparison.OrdinalIgnoreCase) &&
         EventDispatchDurableRetryQueueMetadata.IsDurableRetryQueueProven(state.Metadata);
 
+    private static bool IsBrokerDeadLetterReplayProof(EventDispatchRuntimeState state) =>
+        string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Failed, StringComparison.OrdinalIgnoreCase) &&
+        EventDispatchBrokerDeadLetterReplayMetadata.IsBrokerDeadLetterReplayProven(state.Metadata);
+
     private static bool IsProviderIdempotencyProof(EventSubscriptionRuntimeState state) =>
         string.Equals(state.LastOutcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
         EventSubscriptionProviderIdempotencyMetadata.IsProviderIdempotencyProven(state.Metadata);
@@ -1895,14 +1899,15 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
 
         using var scope = scopeFactory.CreateScope();
         var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
-        var brokerDeadLetterState = dispatchRuntimeCatalog?.States
+        var brokerDeadLetterStates = dispatchRuntimeCatalog?.States
             .Where(static state =>
                 state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnership, out var value) &&
                 string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase))
-            .OrderByDescending(static state =>
-                string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Failed, StringComparison.OrdinalIgnoreCase) &&
-                EventDispatchBrokerDeadLetterReplayMetadata.IsBrokerDeadLetterReplayProven(state.Metadata))
-            .FirstOrDefault();
+            .ToArray() ?? [];
+        var brokerDeadLetterReplayProvenCount = brokerDeadLetterStates.Count(IsBrokerDeadLetterReplayProof);
+        var brokerDeadLetterState = SelectBestDispatchProof(
+            brokerDeadLetterStates,
+            IsBrokerDeadLetterReplayProof);
 
         if (brokerDeadLetterState is not null)
         {
@@ -1971,7 +1976,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 status,
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"dispatchStoreDeadLetterIntent={dispatchStoreDeadLetterIntent}; dispatchRuntime={dispatchRuntime}; brokerDeadLetterReplayOwnership={brokerDeadLetterReplayOwnership}; brokerDeadLetterReplayOwnershipSource={brokerDeadLetterReplayOwnershipSource}; brokerDeadLetterQueueOwnership={brokerDeadLetterQueueOwnership}; brokerDeadLetterQueueId={brokerDeadLetterQueueId}; brokerReplay={brokerReplay}; brokerReplayActionCatalog={brokerReplayActionCatalog}; brokerReplayActionCatalogId={brokerReplayActionCatalogId}; brokerReplayCursor={brokerReplayCursor}; brokerReplayCursorId={brokerReplayCursorId}; brokerPurgeQuarantine={brokerPurgeQuarantine}; brokerPurgeQuarantineId={brokerPurgeQuarantineId}; brokerDeadLetterReplayProofId={brokerDeadLetterReplayProofId}; deadLetterOutcome={deadLetterOutcome}; outboxId={brokerDeadLetterState.OutboxId}; lastOutcome={brokerDeadLetterState.LastOutcome ?? "unknown"}; providerOwnedBrokerPath=reported; wolverineRequired=false"),
+                    $"dispatchStoreDeadLetterIntent={dispatchStoreDeadLetterIntent}; dispatchRuntime={dispatchRuntime}; brokerDeadLetterReplayProofSelection=latest-proven-dispatch-state; brokerDeadLetterReplayStateCount={brokerDeadLetterStates.Length.ToString(CultureInfo.InvariantCulture)}; brokerDeadLetterReplayProvenCount={brokerDeadLetterReplayProvenCount.ToString(CultureInfo.InvariantCulture)}; brokerDeadLetterReplayOwnership={brokerDeadLetterReplayOwnership}; brokerDeadLetterReplayOwnershipSource={brokerDeadLetterReplayOwnershipSource}; brokerDeadLetterQueueOwnership={brokerDeadLetterQueueOwnership}; brokerDeadLetterQueueId={brokerDeadLetterQueueId}; brokerReplay={brokerReplay}; brokerReplayActionCatalog={brokerReplayActionCatalog}; brokerReplayActionCatalogId={brokerReplayActionCatalogId}; brokerReplayCursor={brokerReplayCursor}; brokerReplayCursorId={brokerReplayCursorId}; brokerPurgeQuarantine={brokerPurgeQuarantine}; brokerPurgeQuarantineId={brokerPurgeQuarantineId}; brokerDeadLetterReplayProofId={brokerDeadLetterReplayProofId}; deadLetterOutcome={deadLetterOutcome}; outboxId={brokerDeadLetterState.OutboxId}; lastOutcome={brokerDeadLetterState.LastOutcome ?? "unknown"}; lastObservedAtUtc={FormatObservedAt(brokerDeadLetterState.LastObservedAtUtc)}; providerOwnedBrokerPath=reported; wolverineRequired=false"),
                 nextGap);
         }
 
@@ -1979,7 +1984,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "not-claimed",
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"dispatchStoreDeadLetterIntent={dispatchStoreDeadLetterIntent}; dispatchRuntime={dispatchRuntime}; brokerDeadLetterReplayOwnership=not-claimed; brokerDeadLetterQueueOwnership=not-claimed; brokerDeadLetterQueueId=not-reported; brokerReplay=not-claimed; brokerReplayActionCatalog=not-claimed; brokerReplayActionCatalogId=not-reported; brokerReplayCursor=not-claimed; brokerReplayCursorId=not-reported; brokerPurgeQuarantine=not-claimed; brokerPurgeQuarantineId=not-reported; brokerDeadLetterReplayProofId=not-reported; providerOwnedBrokerPath=not-present; wolverineRequired=false"),
+                $"dispatchStoreDeadLetterIntent={dispatchStoreDeadLetterIntent}; dispatchRuntime={dispatchRuntime}; brokerDeadLetterReplayProofSelection=latest-proven-dispatch-state; brokerDeadLetterReplayStateCount={brokerDeadLetterStates.Length.ToString(CultureInfo.InvariantCulture)}; brokerDeadLetterReplayProvenCount={brokerDeadLetterReplayProvenCount.ToString(CultureInfo.InvariantCulture)}; brokerDeadLetterReplayOwnership=not-claimed; brokerDeadLetterQueueOwnership=not-claimed; brokerDeadLetterQueueId=not-reported; brokerReplay=not-claimed; brokerReplayActionCatalog=not-claimed; brokerReplayActionCatalogId=not-reported; brokerReplayCursor=not-claimed; brokerReplayCursorId=not-reported; brokerPurgeQuarantine=not-claimed; brokerPurgeQuarantineId=not-reported; brokerDeadLetterReplayProofId=not-reported; providerOwnedBrokerPath=not-present; wolverineRequired=false"),
             "Add provider-owned broker dead-letter queue, replay action catalog, replay cursor, purge/quarantine, and provider proof metadata before claiming broker replay ownership.");
     }
 

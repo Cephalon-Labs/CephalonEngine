@@ -3542,6 +3542,110 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingSelectsLatestProvenBrokerDeadLetterReplayEvidenceAcrossOutboxesWithoutWolverine()
+    {
+        var olderBrokerDeadLetterReplayReport = EventDispatchBrokerDeadLetterReplayMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "alpha-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Failed,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 16, 0, 0, TimeSpan.Zero),
+                messageId: "evt-alpha-dlq-001",
+                attempt: 2,
+                error: "provider broker dead-lettered the message"),
+            source: "alpha-broker-dlq-runtime",
+            brokerDeadLetterQueueId: "alpha-broker-dlq",
+            brokerReplayActionCatalogId: "alpha-broker-replay-actions",
+            brokerReplayCursorId: "alpha-broker-replay-cursor",
+            brokerPurgeQuarantineId: "alpha-broker-purge-quarantine",
+            providerProofId: "alpha-broker-dlq-replay-proof");
+        var newerBrokerDeadLetterReplayReport = EventDispatchBrokerDeadLetterReplayMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "beta-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Failed,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 16, 30, 0, TimeSpan.Zero),
+                messageId: "evt-beta-dlq-001",
+                attempt: 2,
+                error: "provider broker dead-lettered the message"),
+            source: "beta-broker-dlq-runtime",
+            brokerDeadLetterQueueId: "beta-broker-dlq",
+            brokerReplayActionCatalogId: "beta-broker-replay-actions",
+            brokerReplayCursorId: "beta-broker-replay-cursor",
+            brokerPurgeQuarantineId: "beta-broker-purge-quarantine",
+            providerProofId: "beta-broker-dlq-replay-proof");
+        var newerPartialBrokerDeadLetterReplayReport = new EventDispatchExecutionReport(
+            outboxId: "gamma-outbox",
+            channelId: "contracts",
+            outcome: EventDispatchExecutionOutcomes.Failed,
+            observedAtUtc: new DateTimeOffset(2026, 05, 13, 16, 45, 0, TimeSpan.Zero),
+            messageId: "evt-gamma-dlq-001",
+            attempt: 2,
+            error: "provider broker dead-lettered the message",
+            metadata: new Dictionary<string, string>
+            {
+                [EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnership] = "provider-reported",
+                [EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnershipSource] = "gamma-broker-dlq-runtime",
+                [EventDispatchRuntimeMetadataKeys.BrokerDeadLetterQueueOwnership] = "reported",
+                [EventDispatchRuntimeMetadataKeys.BrokerDeadLetterQueueId] = "gamma-broker-dlq"
+            });
+        var services = new ServiceCollection();
+        services.AddSingleton<IOutbox>(new EventingProofSelectionOutbox("alpha-outbox"));
+        services.AddSingleton<IEventDispatchRuntimeCatalog>(new TestEventDispatchRuntimeCatalog(
+            CreateDispatchRuntimeState(olderBrokerDeadLetterReplayReport),
+            CreateDispatchRuntimeState(newerBrokerDeadLetterReplayReport),
+            CreateDispatchRuntimeState(newerPartialBrokerDeadLetterReplayReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new MultiOutboxEventingTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Broker dead-letter replay proof events."));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["broker-dead-letter-replay-ownership"].Metadata["status"]);
+        Assert.Contains("brokerDeadLetterReplayProofSelection=latest-proven-dispatch-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerDeadLetterReplayStateCount=3", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerDeadLetterReplayProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerDeadLetterReplayOwnershipSource=beta-broker-dlq-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerDeadLetterQueueOwnership=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerDeadLetterQueueId=beta-broker-dlq", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerReplay=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerReplayActionCatalog=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerReplayActionCatalogId=beta-broker-replay-actions", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerReplayCursor=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerReplayCursorId=beta-broker-replay-cursor", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerPurgeQuarantine=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerPurgeQuarantineId=beta-broker-purge-quarantine", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerDeadLetterReplayProofId=beta-broker-dlq-replay-proof", evidence, StringComparison.Ordinal);
+        Assert.Contains("outboxId=beta-outbox", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=failed", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastObservedAtUtc=2026-05-13T16:30:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("brokerDeadLetterReplayProofId=alpha-broker-dlq-replay-proof", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("brokerDeadLetterReplayOwnershipSource=gamma-broker-dlq-runtime", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AddEventingProjectsContractCatalogProfileEvidenceWithoutWolverine()
     {
         var services = new ServiceCollection();
