@@ -13,6 +13,7 @@
 4. [Framework Design Principles](#4-framework-design-principles)
 5. [Messaging and Communication Patterns](#5-messaging-and-communication-patterns)
 6. [Resilience and Observability](#6-resilience-and-observability)
+7. [AI and Agent Architecture Patterns](#7-ai-and-agent-architecture-patterns)
 
 ---
 
@@ -1189,6 +1190,186 @@ public IActionResult SecretFeature() => View();
 
 ---
 
+## 7. AI and Agent Architecture Patterns
+
+The patterns in sections 1-6 carry the engine across the deployment-topology, composition, messaging, and resilience axes. The patterns in this section are different: they describe how *agent-shaped* applications are structured when an LLM is part of the request / response path. The engine is not an AI framework, but `Cephalon.Agentics` already models tool-execution, run-state, idempotency, retry, approval, and audit as first-class engine concerns -- which means the engine has a real stake in how the patterns below compose with the rest of its policy / observability / resilience surface.
+
+This section captures the patterns that have stabilized in the 2024-2026 wave so framework authors can decide which seams to expose, which to defer to companion packs (`Microsoft.Extensions.AI`, Microsoft Agent Framework, Semantic Kernel -- see [`dotnet-ecosystem-reference.md`](dotnet-ecosystem-reference.md) sections 14-15), and which to leave entirely to consumer code.
+
+### 7.1 Retrieval-Augmented Generation (RAG)
+
+**Core Idea:** Augment the LLM's input with passages retrieved from an external knowledge store so the model can answer over private / current / authoritative data without retraining. The canonical pipeline is: query → embed → vector search → top-k passages → assemble prompt → generate.
+
+**Variants:**
+
+| Variant | Description | When to use |
+|---------|-------------|-------------|
+| **Naive RAG** | Single retrieval pass before generation | Q&A over a static document corpus |
+| **Hybrid Search RAG** | Combine semantic (vector) and lexical (BM25 / keyword) results | When exact-term matches matter (codebase search, legal text) |
+| **Re-ranking RAG** | Retrieve top-N broadly, then re-rank with a cross-encoder | High-precision answer extraction over noisy corpora |
+| **Multi-hop RAG** | Iterate retrieval based on intermediate reasoning steps | Complex questions that span multiple documents |
+| **Agentic RAG** | An agent loop decides *when* and *what* to retrieve, instead of retrieving on every query | Open-ended assistants where retrieval is sometimes unnecessary |
+| **GraphRAG** | Build a knowledge graph offline; traverse graph paths in addition to vector retrieval | Entity-rich domains where relationships matter as much as text |
+
+**Applying to CephalonEngine:** `Cephalon.Retrieval` already owns the lexical indexing / query / freshness baseline (ENG-233) and exposes `IKnowledgeDocumentProvider`, `IKnowledgeIndexer`, `IKnowledgeQueryEngine`, and the `knowledge-collections` runtime surface. The natural roadmap shape is:
+
+1. keep lexical retrieval as the in-process default (already shipped); embeddings, vector stores, hybrid scoring, and re-ranking arrive as additive companion packs (`Cephalon.Retrieval.Qdrant`, `Cephalon.Retrieval.AzureAISearch`, etc.) instead of bloating the core
+2. RAG prompt assembly should sit *above* the retrieval contract -- `Cephalon.Agentics` or a `Cephalon.Agentics.Rag` companion owns "build a system prompt from retrieved passages", `Cephalon.Retrieval` only owns "give me top-k for this query"
+3. expose retrieval freshness, query fingerprints, and re-ranking scores through the existing `/engine/knowledge-indexes` surface so operators can answer "is the RAG corpus stale?" from runtime introspection rather than scraping logs
+
+### 7.2 Tool / Function Calling
+
+**Core Idea:** The LLM is given a typed list of available functions (name, description, JSON-schema parameters) and can emit a structured "call this function with these arguments" request as part of its response. The host executes the function and feeds the result back into the conversation. This turns the LLM from a text generator into a controllable orchestrator.
+
+**Pattern shape:**
+
+```
+1. Host registers tools (typed functions) with the chat client
+2. User message + tool catalog → LLM
+3. LLM returns either a final answer OR a tool-call request
+4. Host executes the tool, captures result + metadata
+5. Result fed back into the conversation
+6. LLM returns a final answer or requests another tool call
+7. Loop until final answer or hard limit hit
+```
+
+**Key concerns for framework authors:**
+
+- **typed tool contracts** -- the engine should expose tools through strongly-typed C# methods or descriptors; JSON-schema can be source-generated from method signatures (`Microsoft.Extensions.AI` already does this through `AIFunctionFactory.Create(...)`)
+- **execution policy** -- which tools are auto-invoked vs. require explicit approval (read-only vs. write-path), and which tools are gated by idempotency / retry / authorization rules. This is exactly what `Cephalon.Agentics` `IAgentToolExecutionPolicy` and approval-required / terminal-failure posture already model
+- **observability** -- every tool call should produce a run-state record, a timing measurement, a cost / token-count entry, and an audit event with the executed arguments and the redacted-or-not result; this composes naturally with the existing `agent-tools` runtime surface
+- **safety / sandboxing** -- some tools (file system, shell, network egress) need explicit sandboxing or capability tokens; the engine should treat capability scopes as a first-class descriptor on the tool, not an implicit assumption
+
+**Applying to CephalonEngine:** `Cephalon.Agentics` already owns `IAgentToolDispatcher`, `IAgentToolExecutor`, `IAgentToolExecutionPolicy`, `IAgentToolRunCatalog`, and `/engine/agent-tools` / `/engine/agent-tool-runs` -- which is exactly the "host executes the tool, captures result + metadata, makes it operator-introspectable" half of this pattern. The "LLM emits a tool-call request" half is owned by the AI client (`Microsoft.Extensions.AI.IChatClient` with `UseFunctionInvocation()` middleware). The seam is clean: AI client decides which tool to call, `Cephalon.Agentics` decides whether and how that tool gets executed.
+
+### 7.3 Multi-Agent Orchestration
+
+**Core Idea:** Decompose a task across multiple specialized agents, each with its own prompt / persona / tool set, and orchestrate their collaboration. Multi-agent systems are not always better than single agents -- they add coordination cost -- but they shine when the task naturally decomposes (research + draft + critique + revise) or when specialization is required (planning vs. execution vs. evaluation).
+
+**Common topologies:**
+
+| Topology | Shape | When to use |
+|----------|-------|-------------|
+| **Sequential** | A → B → C, each agent receives the previous output | Pipeline workflows (extract → transform → validate) |
+| **Group chat / Round-robin** | All agents see the full transcript; a coordinator picks the next speaker | Brainstorming, debate, collaborative drafting |
+| **Supervisor / Worker** | A supervisor agent decides which worker to delegate to | Open-ended task routing |
+| **Handoff** | Agent A passes the conversation to Agent B (with full context) when out of scope | Specialist routing (general → billing → technical) |
+| **Hierarchical** | Tree of supervisors over workers over sub-workers | Complex multi-domain problems |
+| **Concurrent / Parallel** | Agents work in parallel on independent sub-tasks; a coordinator merges | Embarrassingly parallel sub-problems (per-document analysis) |
+
+**Key concerns for framework authors:**
+
+- **state isolation vs. shared context** -- decide deliberately whether agents share a conversation thread or carry private state; both have trade-offs
+- **termination** -- multi-agent loops can run indefinitely; explicit step / token / cost budgets are essential
+- **observability** -- each agent-to-agent message is a span; trace correlation across the full multi-agent run matters as much as it does in microservice traces
+- **failure attribution** -- when a multi-agent run produces a wrong answer, the postmortem question is "which agent made the bad call?"; structured run-state recording answers that
+
+**Applying to CephalonEngine:** The natural framework shape is *not* to invent a multi-agent orchestrator in `Cephalon.Agentics` core -- that's exactly Microsoft Agent Framework's role. Instead, `Cephalon.Agentics` should own (a) the bounded, replay-safe execution wrapper around each agent run; (b) cross-agent run-state correlation so traces and audit events stitch together; (c) operator-introspectable "which agent did what when" reports through `/engine/agent-tool-runs` and any future `/engine/agent-conversations` surface. The orchestration topology itself stays with the AI framework companion.
+
+### 7.4 ReAct (Reason + Act) Loop
+
+**Core Idea:** Interleave the LLM's reasoning ("I should look up X") with concrete actions ("call tool Y with args Z"). Originally formalized by Yao et al. (2022); now the default agent-loop shape for most production agents.
+
+**Loop:**
+
+```
+Thought: I need to find recent error rates for service S
+Action: call get_metrics(service="S", metric="error_rate", window="1h")
+Observation: { "service": "S", "error_rate": 0.04, ... }
+Thought: That's above the 1% threshold. I should check related deploys
+Action: call get_recent_deploys(service="S", since="2h ago")
+Observation: [ { "deploy_id": "d-1234", "time": "..." } ]
+Thought: Deploy d-1234 lined up with the spike. Let me summarize
+Action: respond("Service S has elevated error rates (4%) since deploy d-1234.")
+```
+
+**Framework concerns:** identical to section 7.2 plus:
+
+- **structured Thought / Action / Observation logging** -- the engine should capture each step of the loop as a typed event, not free-form text, so the loop is replayable and auditable
+- **step budget** -- hard cap on iterations (and on accumulated token / cost / wall-time budget) so a confused agent can't loop forever
+
+**Applying to CephalonEngine:** `Cephalon.Agentics` `AgentToolExecutionRequest` / `AgentToolExecutionContext` / `AgentToolExecutionResult` already provide the typed record per action. A future `IAgentLoopBudget` descriptor and `agent-loop-budgets` runtime surface would make step / token / wall-time / cost budgets first-class engine concerns -- consistent with how `Engine:Resilience` already models retry / timeout / circuit-breaker / bulkhead.
+
+### 7.5 Memory Patterns
+
+**Core Idea:** LLMs are stateless between calls. Useful agent behavior requires deliberate state management.
+
+**Layers:**
+
+| Memory layer | What it stores | Storage substrate | Typical lifetime |
+|--------------|----------------|-------------------|------------------|
+| **Working / Short-term** | Current conversation messages | In-memory list, bounded by token budget | Current request / session |
+| **Episodic / Conversation history** | Past conversation transcripts | Database (Postgres / Cosmos / Mongo) | Per-user, retained for weeks / months |
+| **Semantic / Long-term factual** | Distilled facts about user, world, domain | Vector store (Qdrant / Pinecone / Azure AI Search) + structured store | Persistent, queried via embedding |
+| **Procedural / Skill** | "How to do X" -- stored prompts, prompt-fragments, learned tool-call patterns | Prompt library / config store | Versioned alongside code |
+| **Scratchpad / Reasoning trace** | Intermediate Thought-Action-Observation tuples for a single agent run | In-memory or short-lived store | Per agent run |
+
+**Framework concerns:**
+
+- **boundary discipline** -- each memory layer has a different write contract, different retention policy, and different privacy / governance posture; the engine should model these as separate runtime surfaces, not collapse them into a single "agent memory" blob
+- **tenant isolation** -- semantic memory written by one tenant must never leak into another tenant's prompt context; this composes naturally with `Cephalon.MultiTenancy.Governance` membership / domain-ownership / governance-action contracts
+- **forgetting** -- right-to-be-forgotten / GDPR-style erasure must reach into vector embeddings and structured memory; tombstoning needs to be a first-class operation, not an afterthought
+
+**Applying to CephalonEngine:** Working memory and scratchpad memory belong to the AI framework companion (MAF / SK). Episodic memory aligns with `Cephalon.Audit` history surfaces. Semantic memory aligns with `Cephalon.Retrieval` (and any future vector-store companion). Procedural memory aligns with module-owned prompt descriptors and `IAgentToolDescriptor`. Keeping these split prevents an "agent memory" abstraction from accidentally cutting across tenant / audit / retrieval boundaries.
+
+### 7.6 Prompt Engineering Patterns
+
+**Core Idea:** Prompts are structured artifacts, not free-form text. Treat them like code: version them, test them, evaluate them.
+
+**Patterns that have stabilized:**
+
+| Pattern | What it does |
+|---------|--------------|
+| **System / Developer / User role split** | Strong separation between trusted instructions (system), tool-call rules (developer), and user input |
+| **Few-shot prompting** | Provide N example input → output pairs in the prompt to teach a pattern by demonstration |
+| **Chain-of-Thought (CoT)** | Ask the model to reason step-by-step before producing the final answer; significantly improves accuracy on multi-step problems |
+| **Self-consistency** | Sample multiple CoT reasoning paths and majority-vote the final answers |
+| **Structured output** | Constrain the response to a JSON schema (or function-call structure) so it parses reliably |
+| **Constitutional prompting** | Encode safety / policy rules in the system prompt; the model self-critiques against those rules |
+| **Prompt chaining** | Compose multiple smaller prompts instead of one large prompt; easier to debug, swap, and evaluate |
+| **Role / persona conditioning** | "You are a senior database reviewer" frames the response register; useful but easily abused, treat with caution |
+
+**Framework concerns:**
+
+- **prompt as code** -- version prompts in the repository (or in a typed `IPromptDescriptor` catalog), not in untracked config; diff them like code
+- **prompt eval** -- shipping a prompt change without an evaluation set is the LLM equivalent of shipping a refactor without tests; first-class eval harnesses matter
+- **prompt injection defense** -- treat user input that enters the prompt as untrusted; separate trust zones explicitly; never let user-supplied text override system instructions
+- **structured-output validation** -- when relying on JSON-schema outputs, the host must validate the parsed structure and treat malformed output as a recoverable error, not a crash
+
+**Applying to CephalonEngine:** Prompts are *application* concerns rather than core-engine concerns, but `Cephalon.Agentics` can usefully expose `IPromptDescriptor` / `IPromptCatalog` runtime surfaces so module-contributed prompts become introspectable (which prompt versions are in use, which tenants resolve to which prompt, which prompts are gated behind feature flags). This composes with the existing module-contributor pattern (module declares a prompt, engine projects it through the runtime catalog) and with `Cephalon.MultiTenancy` per-tenant overrides.
+
+### 7.7 LLM Resilience Patterns
+
+**Core Idea:** LLM endpoints fail in characteristic ways -- rate limits, model overload, malformed structured output, content-policy refusals, partial streaming responses, latency spikes. These need explicit, layered handling on top of the generic resilience baseline.
+
+**Patterns:**
+
+| Pattern | What it does |
+|---------|--------------|
+| **Model fallback** | Primary model fails / rate-limits → drop to a cheaper or different-provider model |
+| **Provider fallback** | Whole-provider outage → switch to a different provider with the same model class |
+| **Response caching** | Cache by deterministic prompt-hash so repeated identical queries don't re-bill |
+| **Semantic caching** | Cache by *embedding similarity* so paraphrased queries hit the cache |
+| **Retry-on-malformed-structured-output** | Structured-output failed to parse → re-ask with explicit "your previous response was invalid JSON" prompt |
+| **Streaming + partial-result handling** | If the stream is cut off, return what was produced and mark the result as incomplete |
+| **Cost / token budget circuit breaker** | When a tenant / user / run exceeds a budget, return a "budget exceeded" answer instead of charging |
+| **Content moderation gates** | Pre-filter inputs and post-filter outputs through a moderation classifier |
+| **Hallucination detection / grounded-answer scoring** | Score every answer against retrieved passages or known-good facts before returning |
+
+**Framework concerns:**
+
+- **classification matters** -- "rate-limited", "policy-refused", "structured-output-malformed", and "model-overloaded" all need different retry / fallback / user-visible behavior; the LLM exception classifier is its own concept, distinct from the generic transient-fault classifier
+- **cost is an SLA dimension** -- LLM resilience must include cost / token budgets alongside time / concurrency budgets; the budget signals what's worth retrying
+- **observability composition** -- every retry, every fallback, every cache hit, every moderation-gate veto belongs in the same trace / metrics / audit surface as the rest of the agent run
+
+**Applying to CephalonEngine:** The classic resilience baseline (`Cephalon.Resilience`, retry / timeout / circuit-breaker / bulkhead) is the right substrate. LLM-specific concerns layer on top:
+
+1. an `LlmExceptionClassifier` companion to the existing `IBehaviorResilienceExceptionClassifier` so rate-limits, policy refusals, and malformed-output failures get distinct retry / fallback handling
+2. a `Cephalon.Agentics.Llm` (or similar) companion that wires model fallback, semantic caching, and cost budgets into the existing resilience pipeline
+3. cost / token budgets modeled as additive runtime metadata on the existing `/engine/agent-tool-runs` surface so the same operator dashboard tells the cost / latency / fault story
+
+---
+
 ## Summary: How It All Fits Together in CephalonEngine
 
 ```
@@ -1235,5 +1416,6 @@ public IActionResult SecretFeature() => View();
 - **Communication:** Event-Driven Architecture (domain events + integration events)
 - **Resilience:** Outbox + Inbox + DLQ + Competing Consumers
 - **Observability:** OpenTelemetry (logs + metrics + traces + health checks)
+- **AI / Agent:** RAG + Tool Calling + ReAct loop + Multi-Agent Orchestration over a host-agnostic `IChatClient` (`Cephalon.Agentics` owns run-state, idempotency, approval, audit; AI framework companion owns the agent loop)
 
-Every pattern reinforces the others. The modular monolith gives you deployment simplicity. Clean architecture gives you testability. The plugin model gives you extensibility. CQRS gives you scalability. The event-driven approach gives you loose coupling. And OpenTelemetry gives you visibility into all of it.
+Every pattern reinforces the others. The modular monolith gives you deployment simplicity. Clean architecture gives you testability. The plugin model gives you extensibility. CQRS gives you scalability. The event-driven approach gives you loose coupling. OpenTelemetry gives you visibility into all of it. And the AI / agent patterns plug into the same observability and resilience substrate so an agent-loop run is operator-introspectable on the same surface as a REST request or an event-dispatch handoff.
