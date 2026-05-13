@@ -255,20 +255,21 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.20.0"
+        $json.'$schemaVersion' | Should -Be "1.21.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
         $json.DeploymentModeClaimsReport | Should -Be (Get-RepoRelativePath -Path $claimsReportPath -RepoRoot $script:repoRoot)
         $json.AdoptionSmokeManifest | Should -Be "scripts/adoption-smoke-support.json"
         $json.ProviderIntegrationManifest | Should -Be "scripts/provider-integration-support.json"
+        $json.EventingOperationalSuperiorityManifest | Should -Be "scripts/eventing-operational-superiority-support.json"
         $json.SrePostureManifest | Should -Be "scripts/sre-posture-support.json"
         $json.SupplyChainManifest | Should -Be "scripts/supply-chain-release-support.json"
         $json.TestCoverageRoadmap | Should -Be "docs/test-coverage-roadmap.md"
         $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
-        $json.EvidenceSources.Count | Should -Be 13
-        $json.EvidenceSourceReferences.Count | Should -Be 28
+        $json.EvidenceSources.Count | Should -Be 14
+        $json.EvidenceSourceReferences.Count | Should -Be 32
         $json.PlatformGates.Count | Should -Be 12
         $json.QualityDimensions.Count | Should -Be 12
         $json.PackageFamilies.Count | Should -Be 9
@@ -309,6 +310,13 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.ProviderIntegrationExternalServiceGateCount | Should -Be 14
         $json.Summary.ProviderIntegrationDefaultSkippedCount | Should -Be 14
         $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 99
+        $json.Summary.EventingOperationalSuperiorityRequiredDimensionCount | Should -Be 6
+        $json.Summary.EventingOperationalSuperiorityCoveredDimensionCount | Should -Be 6
+        $json.Summary.EventingOperationalSuperiorityPartialDimensionCount | Should -Be 0
+        $json.Summary.EventingOperationalSuperiorityMissingDimensionCount | Should -Be 0
+        $json.Summary.EventingOperationalSuperiorityCoveragePercent | Should -Be 100
+        $json.Summary.EventingOperationalSuperiorityPromotionAllowed | Should -BeTrue
+        $json.Summary.EventingOperationalSuperiorityWolverineRequired | Should -BeFalse
         $json.Summary.SreSliCount | Should -Be 11
         $json.Summary.SreTargetDeclaredCount | Should -Be 11
         $json.Summary.SrePendingStableBaselineCount | Should -Be 1
@@ -334,11 +342,11 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.TestCoverageQuarantineEntryCount | Should -Be 2
         $json.Summary.TestCoverageOpenQuarantineEntryCount | Should -Be 0
         $json.Summary.PublicApiPackageCount | Should -Be 104
-        $json.Summary.PublicApiPendingPackageCount | Should -Be 0
-        $json.Summary.PublicApiAdditiveEntryCount | Should -Be 0
+        $json.Summary.PublicApiPendingPackageCount | Should -Be 3
+        $json.Summary.PublicApiAdditiveEntryCount | Should -Be 637
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
-        $json.Summary.EvidenceSourceCount | Should -Be 13
-        $json.Summary.EvidenceSourceReferenceCount | Should -Be 28
+        $json.Summary.EvidenceSourceCount | Should -Be 14
+        $json.Summary.EvidenceSourceReferenceCount | Should -Be 32
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
         $json.Summary.PlatformStatusCounts.partial | Should -Be 8
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
@@ -353,6 +361,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/deployment-mode-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/adoption-smoke-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/provider-integration-support.json"
+        $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/eventing-operational-superiority-support.json"
+        $json.EvidenceSourceReferences.Reference | Should -Contain "docs/components/eventing.md"
+        $json.EvidenceSourceReferences.Reference | Should -Contain "docs/project-memory.md"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/observability-dependency-health-providers.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/sre-posture-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/sre-stable-baselines.json"
@@ -509,6 +520,47 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_SMTP_API_URI"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_CDC_POSTGRES_CONNECTION_STRING"
 
+        $json.EventingOperationalSuperiorityEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
+        $json.EventingOperationalSuperiorityEvidence.Status | Should -Be "claimed"
+        $json.EventingOperationalSuperiorityEvidence.Technology | Should -Be "event-driven-integration"
+        $json.EventingOperationalSuperiorityEvidence.SurfaceId | Should -Be "eventing-superiority-profile"
+        $json.EventingOperationalSuperiorityEvidence.ProfileEntryId | Should -Be "operational-superiority-coverage"
+        $json.EventingOperationalSuperiorityEvidence.SourceDocuments | Should -Contain "docs/components/eventing.md"
+        $json.EventingOperationalSuperiorityEvidence.ValidationProjects | Should -Contain "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj"
+        $json.EventingOperationalSuperiorityEvidence.ValidationProjects | Should -Contain "benchmarks/Cephalon.Benchmarks/Cephalon.Benchmarks.csproj"
+        $json.EventingOperationalSuperiorityEvidence.ValidationFiles | Should -Contain "tests/Cephalon.Tests.Composition/Composition/EntityFrameworkDataPackTests.cs"
+        $json.EventingOperationalSuperiorityEvidence.ComparisonBaseline | Should -Contain "MassTransit"
+        $json.EventingOperationalSuperiorityEvidence.ComparisonBaseline | Should -Contain "NServiceBus"
+        $json.EventingOperationalSuperiorityEvidence.ComparisonBaseline | Should -Contain "Wolverine"
+        $json.EventingOperationalSuperiorityEvidence.ComparisonBaseline | Should -Contain "MediatR"
+        $json.EventingOperationalSuperiorityEvidence.ProviderNeutral | Should -BeTrue
+        $json.EventingOperationalSuperiorityEvidence.WolverineRequired | Should -BeFalse
+        $json.EventingOperationalSuperiorityEvidence.HotPathBindingMode | Should -Be "code-first-publish-subscribe"
+        $json.EventingOperationalSuperiorityEvidence.ConfigurationRole | Should -Be "environment-policy-and-provider-selection"
+        $json.EventingOperationalSuperiorityEvidence.PromotionGate | Should -Be "allowed"
+        $json.EventingOperationalSuperiorityEvidence.PromotionAllowed | Should -BeTrue
+        $json.EventingOperationalSuperiorityEvidence.PromotionPolicy | Should -Be "all-operational-superiority-dimensions-claimed"
+        $json.EventingOperationalSuperiorityEvidence.PromotionEvidenceContract | Should -Be "cephalon-eventing-operational-superiority-promotion-v1"
+        $json.EventingOperationalSuperiorityEvidence.PromotionEvidenceContractVersion | Should -Be "1.0.0"
+        $json.EventingOperationalSuperiorityEvidence.PromotionTarget | Should -Be "eventing-operational-superiority"
+        $json.EventingOperationalSuperiorityEvidence.PromotionRequiredStatus | Should -Be "claimed"
+        $json.EventingOperationalSuperiorityEvidence.PromotionDecisionCode | Should -Be "all-required-dimensions-claimed"
+        $json.EventingOperationalSuperiorityEvidence.RequiredDimensionCount | Should -Be 6
+        $json.EventingOperationalSuperiorityEvidence.CoveredDimensionCount | Should -Be 6
+        $json.EventingOperationalSuperiorityEvidence.PartialDimensionCount | Should -Be 0
+        $json.EventingOperationalSuperiorityEvidence.MissingDimensionCount | Should -Be 0
+        $json.EventingOperationalSuperiorityEvidence.BlockingDimensionCount | Should -Be 0
+        $json.EventingOperationalSuperiorityEvidence.CoveragePercent | Should -Be 100
+        $json.EventingOperationalSuperiorityEvidence.OperationalSuperiorityComplete | Should -BeTrue
+        $json.EventingOperationalSuperiorityEvidence.RequiredDimensions.Id | Should -Contain "provider-operated-runtime-proof-coverage"
+        $json.EventingOperationalSuperiorityEvidence.RequiredDimensions.Id | Should -Contain "choreography-handoff-ownership"
+        $json.EventingOperationalSuperiorityEvidence.RequiredDimensions.Id | Should -Contain "durable-remediation-command-audit"
+        $json.EventingOperationalSuperiorityEvidence.RequiredDimensions.Id | Should -Contain "durable-command-journal-replay-cursor"
+        $json.EventingOperationalSuperiorityEvidence.RequiredDimensions.Id | Should -Contain "observability-compliance-and-auditability"
+        $json.EventingOperationalSuperiorityEvidence.RequiredDimensions.Id | Should -Contain "testability-and-benchmark-evidence"
+        $json.EventingOperationalSuperiorityEvidence.ValidatedReferences.Reference | Should -Contain "scripts/eventing-operational-superiority-support.json"
+        $json.EventingOperationalSuperiorityEvidence.ValidatedReferences.Reference | Should -Contain "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
+
         $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.10.0"
         $json.SrePostureEvidence.Status | Should -Be "partial-stable-baseline-published"
         $json.SrePostureEvidence.ReleaseValidationSummaryMode | Should -Be "release-validation-console-and-scorecard-artifact"
@@ -517,7 +569,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SrePostureEvidence.StableBaselineManifestSchemaVersion | Should -Be "1.8.0"
         $json.SrePostureEvidence.StableBaselineManifestStatus | Should -Be "partial-stable-baseline-published"
         $json.SrePostureEvidence.GuardrailCatalog | Should -Be "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
-        $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 31
+        $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 40
         $json.SrePostureEvidence.SliCount | Should -Be 11
         $json.SrePostureEvidence.TargetDeclaredCount | Should -Be 11
         $json.SrePostureEvidence.PendingStableBaselineCount | Should -Be 1
@@ -631,7 +683,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $aspNetCoreColdStartBaseline.Measurements.GuardrailMaxAllocatedBytes | Should -Be 30000000
         $requestAllocationBaseline.Measurements.AllocatedBytes | Should -Contain 27914.24
 
-        $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.2.0"
+        $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.3.0"
         $json.SupplyChainEvidence.Status | Should -Be "workflow-ready-external-policy-pending"
         $json.SupplyChainEvidence.ReleaseWorkflow | Should -Be ".github/workflows/publish-release.yml"
         $json.SupplyChainEvidence.SourceDocuments | Should -Contain "docs/package-publishing.md"
@@ -665,9 +717,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json.PublicApiCompatibilityEvidence.DeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.PublicApiCompatibilityEvidence.PackageCount | Should -Be 104
-        $json.PublicApiCompatibilityEvidence.PendingPackageCount | Should -Be 0
-        $json.PublicApiCompatibilityEvidence.HeaderOnlyPackageCount | Should -Be 104
-        $json.PublicApiCompatibilityEvidence.AdditiveEntryCount | Should -Be 0
+        $json.PublicApiCompatibilityEvidence.PendingPackageCount | Should -Be 3
+        $json.PublicApiCompatibilityEvidence.HeaderOnlyPackageCount | Should -Be 101
+        $json.PublicApiCompatibilityEvidence.AdditiveEntryCount | Should -Be 637
         $json.PublicApiCompatibilityEvidence.RemovalEntryCount | Should -Be 0
         $json.PublicApiCompatibilityEvidence.HasRemovalEntries | Should -BeFalse
         $json.PublicApiCompatibilityEvidence.PackageDeltas.Count | Should -Be 104
@@ -675,9 +727,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $abstractionsDelta.Project | Should -Be "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj"
         $abstractionsDelta.Unshipped | Should -Be "src/Cephalon.Abstractions/PublicAPI.Unshipped.txt"
         $abstractionsDelta.Shipped | Should -Be "src/Cephalon.Abstractions/PublicAPI.Shipped.txt"
-        $abstractionsDelta.AdditiveEntryCount | Should -Be 0
+        $abstractionsDelta.AdditiveEntryCount | Should -Be 116
         $abstractionsDelta.RemovalEntryCount | Should -Be 0
-        $abstractionsDelta.HasPendingChanges | Should -BeFalse
+        $abstractionsDelta.HasPendingChanges | Should -BeTrue
 
         $corePackage = $json.PackageGAReadiness | Where-Object { $_.Package -eq "Cephalon.Abstractions" }
         $corePackage.Family | Should -Be "Core runtime"
@@ -725,9 +777,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "External-policy preflight checks: 3"
         $markdown | Should -Match "external-policy-pending"
         $markdown | Should -Match "Public API Compatibility Evidence"
-        $markdown | Should -Match "Public API packages with pending changes: 0"
-        $markdown | Should -Match "Public API additive entries: 0"
-        $markdown | Should -Match "Header-only packages: 104"
+        $markdown | Should -Match "Public API packages with pending changes: 3"
+        $markdown | Should -Match "Public API additive entries: 637"
+        $markdown | Should -Match "Header-only packages: 101"
         $markdown | Should -Match "Cephalon.Abstractions"
         $markdown | Should -Match "Adoption Smoke Evidence"
         $markdown | Should -Match "out-of-tree-generated-app-package-stage"
@@ -1560,6 +1612,9 @@ jobs:
         $releaseValidation | Should -Match "ProviderIntegrationEvidence\.DependencyHealthProviderManifest"
         $releaseValidation | Should -Match "Provider integration evidence"
         $releaseValidation | Should -Match "dependency-health providers"
+        $releaseValidation | Should -Match "EventingOperationalSuperiorityEvidence"
+        $releaseValidation | Should -Match "Eventing operational-superiority evidence"
+        $releaseValidation | Should -Match "Wolverine required"
         $releaseValidation | Should -Match "TestCoverageEvidence"
         $releaseValidation | Should -Match "Test coverage evidence"
         $releaseValidation | Should -Match "OpenQuarantineEntryCount"

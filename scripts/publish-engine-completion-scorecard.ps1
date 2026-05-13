@@ -5,6 +5,7 @@ param(
     [string]$DeploymentModeClaimsReportPath = "artifacts/deployment-mode-claims-release/claim-validation-report.json",
     [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
     [string]$ProviderIntegrationManifestPath = "scripts/provider-integration-support.json",
+    [string]$EventingOperationalSuperiorityManifestPath = "scripts/eventing-operational-superiority-support.json",
     [string]$SrePostureManifestPath = "scripts/sre-posture-support.json",
     [string]$SupplyChainManifestPath = "scripts/supply-chain-release-support.json",
     [string]$TestCoverageRoadmapPath = "docs/test-coverage-roadmap.md",
@@ -16,7 +17,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.20.0"
+$Script:SchemaVersion = "1.21.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -625,6 +626,64 @@ function ConvertTo-RequiredBoolean {
     }
 
     throw "Adoption smoke assertion '$Name' must be a boolean value."
+}
+
+function ConvertTo-RequiredManifestBoolean {
+    param(
+        $Value,
+        [Parameter(Mandatory = $true)]
+        [string]$Name
+    )
+
+    if ($Value -is [bool]) {
+        return $Value
+    }
+
+    $parsed = $false
+    if ([bool]::TryParse([string]$Value, [ref]$parsed)) {
+        return $parsed
+    }
+
+    throw "$Name must be a boolean value."
+}
+
+function Resolve-SupportManifestPath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$DeclaredPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot,
+        [Parameter(Mandatory = $true)]
+        [string]$Context,
+        [Parameter(Mandatory = $true)]
+        [string]$OwnerName,
+        [string]$PathType = "Any"
+    )
+
+    if ([string]::IsNullOrWhiteSpace($DeclaredPath)) {
+        throw "$OwnerName contains an empty path in $Context."
+    }
+
+    $resolvedPath = Resolve-FullPath -Path $DeclaredPath -BasePath $ResolvedRepoRoot
+    $exists = if ($PathType -eq "File") {
+        Test-Path -LiteralPath $resolvedPath -PathType Leaf
+    }
+    elseif ($PathType -eq "Directory") {
+        Test-Path -LiteralPath $resolvedPath -PathType Container
+    }
+    else {
+        Test-Path -LiteralPath $resolvedPath
+    }
+
+    if (-not $exists) {
+        throw "$OwnerName path '$DeclaredPath' in $Context was not found at '$resolvedPath'."
+    }
+
+    return [pscustomobject]([ordered]@{
+        Reference  = Get-RepoRelativePath -Path $resolvedPath -RepoRoot $ResolvedRepoRoot
+        DeclaredAs = $DeclaredPath
+        Kind       = Get-SourceReferenceKind -Reference $DeclaredPath
+    })
 }
 
 function Resolve-ProviderIntegrationManifestPath {
@@ -2187,6 +2246,308 @@ function Convert-ProviderIntegrationEvidence {
     })
 }
 
+function Convert-EventingOperationalSuperiorityEvidence {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedManifestPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot
+    )
+
+    $ownerName = "Eventing operational-superiority support manifest"
+    if (-not (Test-Path -LiteralPath $ResolvedManifestPath -PathType Leaf)) {
+        throw "$ownerName '$ResolvedManifestPath' was not found."
+    }
+
+    $manifestReference = [pscustomobject]([ordered]@{
+        Reference  = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
+        DeclaredAs = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
+        Kind       = "script"
+    })
+    $manifest = Get-Content -LiteralPath $ResolvedManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 32
+    $schemaVersion = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName '$schemaVersion' -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($schemaVersion)) {
+        throw "$ownerName is missing '`$schemaVersion'."
+    }
+
+    $status = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "status" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($status)) {
+        throw "$ownerName is missing status."
+    }
+
+    $allowedStatuses = @("claimed", "partial", "not-claimed")
+    if ($allowedStatuses -notcontains $status) {
+        throw "$ownerName has unsupported status '$status'."
+    }
+
+    $sourceDocumentReferences = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "sourceDocs" -DefaultValue @() |
+            ForEach-Object {
+                Resolve-SupportManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "sourceDocs" -OwnerName $ownerName -PathType "File"
+            }
+    )
+    if ($sourceDocumentReferences.Count -eq 0) {
+        throw "$ownerName must declare at least one source document."
+    }
+
+    $validationProjectReferences = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "validationProjects" -DefaultValue @() |
+            ForEach-Object {
+                Resolve-SupportManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "validationProjects" -OwnerName $ownerName -PathType "File"
+            }
+    )
+    if ($validationProjectReferences.Count -eq 0) {
+        throw "$ownerName must declare at least one validation project."
+    }
+
+    $validationFileReferences = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "validationFiles" -DefaultValue @() |
+            ForEach-Object {
+                Resolve-SupportManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "validationFiles" -OwnerName $ownerName -PathType "File"
+            }
+    )
+    if ($validationFileReferences.Count -eq 0) {
+        throw "$ownerName must declare at least one validation file."
+    }
+
+    $technology = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "technology" -DefaultValue "")
+    $surfaceId = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "surfaceId" -DefaultValue "")
+    $profileEntryId = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "profileEntryId" -DefaultValue "")
+    $hotPathBindingMode = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "hotPathBindingMode" -DefaultValue "")
+    $configurationRole = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "configurationRole" -DefaultValue "")
+    foreach ($field in @(
+        [pscustomobject]@{ Name = "technology"; Value = $technology },
+        [pscustomobject]@{ Name = "surfaceId"; Value = $surfaceId },
+        [pscustomobject]@{ Name = "profileEntryId"; Value = $profileEntryId },
+        [pscustomobject]@{ Name = "hotPathBindingMode"; Value = $hotPathBindingMode },
+        [pscustomobject]@{ Name = "configurationRole"; Value = $configurationRole }
+    )) {
+        if ([string]::IsNullOrWhiteSpace($field.Value)) {
+            throw "$ownerName is missing $($field.Name)."
+        }
+    }
+
+    if ($technology -ne "event-driven-integration") {
+        throw "$ownerName technology must be 'event-driven-integration'."
+    }
+
+    if ($surfaceId -ne "eventing-superiority-profile") {
+        throw "$ownerName surfaceId must be 'eventing-superiority-profile'."
+    }
+
+    if ($profileEntryId -ne "operational-superiority-coverage") {
+        throw "$ownerName profileEntryId must be 'operational-superiority-coverage'."
+    }
+
+    if ($hotPathBindingMode -ne "code-first-publish-subscribe") {
+        throw "$ownerName hotPathBindingMode must be 'code-first-publish-subscribe'."
+    }
+
+    $providerNeutral = ConvertTo-RequiredManifestBoolean -Value (Get-ManifestPropertyValue -Object $manifest -PropertyName "providerNeutral" -DefaultValue $null) -Name "$ownerName providerNeutral"
+    if (-not $providerNeutral) {
+        throw "$ownerName must remain provider-neutral."
+    }
+
+    $wolverineRequired = ConvertTo-RequiredManifestBoolean -Value (Get-ManifestPropertyValue -Object $manifest -PropertyName "wolverineRequired" -DefaultValue $null) -Name "$ownerName wolverineRequired"
+    if ($wolverineRequired) {
+        throw "$ownerName must keep Wolverine optional by declaring wolverineRequired=false."
+    }
+
+    $comparisonBaseline = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "comparisonBaseline" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+    foreach ($requiredBaseline in @("MassTransit", "NServiceBus", "Wolverine", "MediatR")) {
+        if ($comparisonBaseline -notcontains $requiredBaseline) {
+            throw "$ownerName comparisonBaseline must include '$requiredBaseline'."
+        }
+    }
+
+    $promotionGate = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "promotionGate" -DefaultValue "")
+    $promotionPolicy = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "promotionPolicy" -DefaultValue "")
+    $promotionEvidenceContract = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "promotionEvidenceContract" -DefaultValue "")
+    $promotionEvidenceContractVersion = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "promotionEvidenceContractVersion" -DefaultValue "")
+    $promotionTarget = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "promotionTarget" -DefaultValue "")
+    $promotionRequiredStatus = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "promotionRequiredStatus" -DefaultValue "")
+    $promotionDecisionCode = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "promotionDecisionCode" -DefaultValue "")
+    foreach ($field in @(
+        [pscustomobject]@{ Name = "promotionGate"; Value = $promotionGate },
+        [pscustomobject]@{ Name = "promotionPolicy"; Value = $promotionPolicy },
+        [pscustomobject]@{ Name = "promotionEvidenceContract"; Value = $promotionEvidenceContract },
+        [pscustomobject]@{ Name = "promotionEvidenceContractVersion"; Value = $promotionEvidenceContractVersion },
+        [pscustomobject]@{ Name = "promotionTarget"; Value = $promotionTarget },
+        [pscustomobject]@{ Name = "promotionRequiredStatus"; Value = $promotionRequiredStatus },
+        [pscustomobject]@{ Name = "promotionDecisionCode"; Value = $promotionDecisionCode }
+    )) {
+        if ([string]::IsNullOrWhiteSpace($field.Value)) {
+            throw "$ownerName is missing $($field.Name)."
+        }
+    }
+
+    if ($promotionEvidenceContract -ne "cephalon-eventing-operational-superiority-promotion-v1") {
+        throw "$ownerName promotionEvidenceContract must be 'cephalon-eventing-operational-superiority-promotion-v1'."
+    }
+
+    if ($promotionTarget -ne "eventing-operational-superiority") {
+        throw "$ownerName promotionTarget must be 'eventing-operational-superiority'."
+    }
+
+    if ($promotionRequiredStatus -ne "claimed") {
+        throw "$ownerName promotionRequiredStatus must be 'claimed'."
+    }
+
+    $dimensionRows = [System.Collections.Generic.List[object]]::new()
+    foreach ($row in @(Get-ManifestPropertyValue -Object $manifest -PropertyName "requiredDimensions" -DefaultValue @())) {
+        $id = [string](Get-ManifestPropertyValue -Object $row -PropertyName "id" -DefaultValue "")
+        $dimensionStatus = [string](Get-ManifestPropertyValue -Object $row -PropertyName "status" -DefaultValue "")
+        $requiredStatus = [string](Get-ManifestPropertyValue -Object $row -PropertyName "requiredStatus" -DefaultValue "")
+        $nextRequirement = [string](Get-ManifestPropertyValue -Object $row -PropertyName "nextRequirement" -DefaultValue "")
+
+        foreach ($field in @(
+            [pscustomobject]@{ Name = "id"; Value = $id },
+            [pscustomobject]@{ Name = "status"; Value = $dimensionStatus },
+            [pscustomobject]@{ Name = "requiredStatus"; Value = $requiredStatus },
+            [pscustomobject]@{ Name = "nextRequirement"; Value = $nextRequirement }
+        )) {
+            if ([string]::IsNullOrWhiteSpace($field.Value)) {
+                throw "$ownerName requiredDimensions row must include $($field.Name)."
+            }
+        }
+
+        if ($allowedStatuses -notcontains $dimensionStatus) {
+            throw "$ownerName dimension '$id' has unsupported status '$dimensionStatus'."
+        }
+
+        if ($requiredStatus -ne "claimed") {
+            throw "$ownerName dimension '$id' must require status 'claimed'."
+        }
+
+        $dimensionSourceReferences = @(
+            Get-ManifestPropertyValue -Object $row -PropertyName "sourceDocs" -DefaultValue @() |
+                ForEach-Object {
+                    Resolve-SupportManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "requiredDimensions '$id' sourceDocs" -OwnerName $ownerName -PathType "File"
+                }
+        )
+        if ($dimensionSourceReferences.Count -eq 0) {
+            throw "$ownerName dimension '$id' must declare at least one source document."
+        }
+
+        $dimensionValidationFileReferences = @(
+            Get-ManifestPropertyValue -Object $row -PropertyName "validationFiles" -DefaultValue @() |
+                ForEach-Object {
+                    Resolve-SupportManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "requiredDimensions '$id' validationFiles" -OwnerName $ownerName -PathType "File"
+                }
+        )
+        if ($dimensionValidationFileReferences.Count -eq 0) {
+            throw "$ownerName dimension '$id' must declare at least one validation file."
+        }
+
+        $runtimeEvidenceTokens = @(
+            Get-ManifestPropertyValue -Object $row -PropertyName "runtimeEvidenceTokens" -DefaultValue @() |
+                ForEach-Object { [string]$_ } |
+                Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        )
+        if ($runtimeEvidenceTokens.Count -eq 0) {
+            throw "$ownerName dimension '$id' must declare at least one runtimeEvidenceToken."
+        }
+
+        $dimensionRows.Add([pscustomobject]([ordered]@{
+            Id                    = $id
+            Status                = $dimensionStatus
+            RequiredStatus        = $requiredStatus
+            NextRequirement       = $nextRequirement
+            SourceDocuments       = @($dimensionSourceReferences | ForEach-Object { $_.Reference })
+            ValidationFiles       = @($dimensionValidationFileReferences | ForEach-Object { $_.Reference })
+            RuntimeEvidenceTokens = $runtimeEvidenceTokens
+            ValidatedReferences   = @(
+                $dimensionSourceReferences
+                $dimensionValidationFileReferences
+            ) | Sort-Object Reference -Unique
+        }))
+    }
+
+    if ($dimensionRows.Count -eq 0) {
+        throw "$ownerName must declare at least one required dimension."
+    }
+
+    $coveredRows = @($dimensionRows | Where-Object { $_.Status -eq $_.RequiredStatus })
+    $partialRows = @($dimensionRows | Where-Object { $_.Status -eq "partial" })
+    $missingRows = @($dimensionRows | Where-Object { $_.Status -eq "not-claimed" })
+    $blockingRows = @($dimensionRows | Where-Object { $_.Status -ne $_.RequiredStatus })
+    $coveragePercent = [int][math]::Floor(($coveredRows.Count / [double]$dimensionRows.Count) * 100)
+    $computedPromotionAllowed = (
+        $status -eq "claimed" -and
+        $promotionGate -eq "allowed" -and
+        $promotionPolicy -eq "all-operational-superiority-dimensions-claimed" -and
+        $promotionDecisionCode -eq "all-required-dimensions-claimed" -and
+        $coveredRows.Count -eq $dimensionRows.Count -and
+        -not $wolverineRequired -and
+        $providerNeutral
+    )
+
+    $declaredPromotionAllowed = ConvertTo-RequiredManifestBoolean -Value (Get-ManifestPropertyValue -Object $manifest -PropertyName "promotionAllowed" -DefaultValue $null) -Name "$ownerName promotionAllowed"
+    if ($declaredPromotionAllowed -ne $computedPromotionAllowed) {
+        throw "$ownerName promotionAllowed '$declaredPromotionAllowed' does not match computed value '$computedPromotionAllowed'."
+    }
+
+    return [pscustomobject]([ordered]@{
+        Manifest                         = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
+        ManifestSchemaVersion            = $schemaVersion
+        Status                           = $status
+        Summary                          = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "summary" -DefaultValue "")
+        Technology                       = $technology
+        SurfaceId                        = $surfaceId
+        ProfileEntryId                   = $profileEntryId
+        SourceDocuments                  = @($sourceDocumentReferences | ForEach-Object { $_.Reference })
+        ValidationProjects               = @($validationProjectReferences | ForEach-Object { $_.Reference })
+        ValidationFiles                  = @($validationFileReferences | ForEach-Object { $_.Reference })
+        ComparisonBaseline               = $comparisonBaseline
+        ComparisonBaselineCount          = $comparisonBaseline.Count
+        ProviderNeutral                  = $providerNeutral
+        WolverineRequired                = $wolverineRequired
+        HotPathBindingMode               = $hotPathBindingMode
+        ConfigurationRole                = $configurationRole
+        PromotionGate                    = $promotionGate
+        PromotionAllowed                 = $declaredPromotionAllowed
+        PromotionPolicy                  = $promotionPolicy
+        PromotionEvidenceContract        = $promotionEvidenceContract
+        PromotionEvidenceContractVersion = $promotionEvidenceContractVersion
+        PromotionTarget                  = $promotionTarget
+        PromotionRequiredStatus          = $promotionRequiredStatus
+        PromotionDecisionCode            = $promotionDecisionCode
+        RequiredDimensionCount           = $dimensionRows.Count
+        CoveredDimensionCount            = $coveredRows.Count
+        PartialDimensionCount            = $partialRows.Count
+        MissingDimensionCount            = $missingRows.Count
+        BlockingDimensionCount           = $blockingRows.Count
+        CoveragePercent                  = $coveragePercent
+        OperationalSuperiorityComplete   = $blockingRows.Count -eq 0
+        RequiredDimensions               = $dimensionRows.ToArray()
+        BlockingDimensions               = @($blockingRows | ForEach-Object {
+            [pscustomobject]([ordered]@{
+                Id              = $_.Id
+                Status          = $_.Status
+                RequiredStatus  = $_.RequiredStatus
+                NextRequirement = $_.NextRequirement
+            })
+        })
+        NextRequirements                 = @($blockingRows | Where-Object { $_.NextRequirement -ne "none" } | ForEach-Object {
+            [pscustomobject]([ordered]@{
+                Id              = $_.Id
+                NextRequirement = $_.NextRequirement
+            })
+        })
+        ValidatedReferences              = @(
+            $manifestReference
+            $sourceDocumentReferences
+            $validationProjectReferences
+            $validationFileReferences
+            $dimensionRows | ForEach-Object { $_.ValidatedReferences }
+        ) | Sort-Object Reference -Unique
+    })
+}
+
 function Convert-SrePostureEvidence {
     param(
         [Parameter(Mandatory = $true)]
@@ -3229,6 +3590,8 @@ function New-EngineCompletionScorecardReport {
         [Parameter(Mandatory = $true)]
         [string]$ResolvedProviderIntegrationManifestPath,
         [Parameter(Mandatory = $true)]
+        [string]$ResolvedEventingOperationalSuperiorityManifestPath,
+        [Parameter(Mandatory = $true)]
         [string]$ResolvedSrePostureManifestPath,
         [Parameter(Mandatory = $true)]
         [string]$ResolvedSupplyChainManifestPath,
@@ -3256,6 +3619,7 @@ function New-EngineCompletionScorecardReport {
     $deploymentModeEvidence = Convert-DeploymentModeEvidence -ResolvedManifestPath $ResolvedDeploymentModeManifestPath -ResolvedClaimsReportPath $ResolvedDeploymentModeClaimsReportPath -ResolvedRepoRoot $ResolvedRepoRoot
     $adoptionSmokeEvidence = Convert-AdoptionSmokeEvidence -ResolvedManifestPath $ResolvedAdoptionSmokeManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $providerIntegrationEvidence = Convert-ProviderIntegrationEvidence -ResolvedManifestPath $ResolvedProviderIntegrationManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
+    $eventingOperationalSuperiorityEvidence = Convert-EventingOperationalSuperiorityEvidence -ResolvedManifestPath $ResolvedEventingOperationalSuperiorityManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $srePostureEvidence = Convert-SrePostureEvidence -ResolvedManifestPath $ResolvedSrePostureManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $supplyChainEvidence = Convert-SupplyChainEvidence -ResolvedManifestPath $ResolvedSupplyChainManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $testCoverageEvidence = Convert-TestCoverageEvidence -ResolvedRoadmapPath $ResolvedTestCoverageRoadmapPath -ResolvedRepoRoot $ResolvedRepoRoot
@@ -3289,6 +3653,7 @@ function New-EngineCompletionScorecardReport {
         DeploymentModeClaimsReport = if ([string]::IsNullOrWhiteSpace($ResolvedDeploymentModeClaimsReportPath)) { "" } else { Get-RepoRelativePath -Path $ResolvedDeploymentModeClaimsReportPath -RepoRoot $ResolvedRepoRoot }
         AdoptionSmokeManifest = Get-RepoRelativePath -Path $ResolvedAdoptionSmokeManifestPath -RepoRoot $ResolvedRepoRoot
         ProviderIntegrationManifest = Get-RepoRelativePath -Path $ResolvedProviderIntegrationManifestPath -RepoRoot $ResolvedRepoRoot
+        EventingOperationalSuperiorityManifest = Get-RepoRelativePath -Path $ResolvedEventingOperationalSuperiorityManifestPath -RepoRoot $ResolvedRepoRoot
         SrePostureManifest = Get-RepoRelativePath -Path $ResolvedSrePostureManifestPath -RepoRoot $ResolvedRepoRoot
         SupplyChainManifest = Get-RepoRelativePath -Path $ResolvedSupplyChainManifestPath -RepoRoot $ResolvedRepoRoot
         TestCoverageRoadmap = Get-RepoRelativePath -Path $ResolvedTestCoverageRoadmapPath -RepoRoot $ResolvedRepoRoot
@@ -3303,6 +3668,7 @@ function New-EngineCompletionScorecardReport {
         DeploymentModeEvidence = $deploymentModeEvidence
         AdoptionSmokeEvidence = $adoptionSmokeEvidence
         ProviderIntegrationEvidence = $providerIntegrationEvidence
+        EventingOperationalSuperiorityEvidence = $eventingOperationalSuperiorityEvidence
         SrePostureEvidence = $srePostureEvidence
         SupplyChainEvidence = $supplyChainEvidence
         TestCoverageEvidence = $testCoverageEvidence
@@ -3346,6 +3712,13 @@ function New-EngineCompletionScorecardReport {
             ProviderIntegrationExternalServiceGateCount = $providerIntegrationEvidence.ExternalServiceGateCount
             ProviderIntegrationDefaultSkippedCount = $providerIntegrationEvidence.DefaultSkippedCount
             ProviderIntegrationRuntimeContractCount = $providerIntegrationEvidence.RuntimeContractCount
+            EventingOperationalSuperiorityRequiredDimensionCount = $eventingOperationalSuperiorityEvidence.RequiredDimensionCount
+            EventingOperationalSuperiorityCoveredDimensionCount = $eventingOperationalSuperiorityEvidence.CoveredDimensionCount
+            EventingOperationalSuperiorityPartialDimensionCount = $eventingOperationalSuperiorityEvidence.PartialDimensionCount
+            EventingOperationalSuperiorityMissingDimensionCount = $eventingOperationalSuperiorityEvidence.MissingDimensionCount
+            EventingOperationalSuperiorityCoveragePercent = $eventingOperationalSuperiorityEvidence.CoveragePercent
+            EventingOperationalSuperiorityPromotionAllowed = $eventingOperationalSuperiorityEvidence.PromotionAllowed
+            EventingOperationalSuperiorityWolverineRequired = $eventingOperationalSuperiorityEvidence.WolverineRequired
             SreSliCount = $srePostureEvidence.SliCount
             SreTargetDeclaredCount = $srePostureEvidence.TargetDeclaredCount
             SrePendingStableBaselineCount = $srePostureEvidence.PendingStableBaselineCount
@@ -3413,6 +3786,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("Deployment-mode manifest: ``$($Report.DeploymentModeManifest)``")
     $markdown.Add("Adoption smoke manifest: ``$($Report.AdoptionSmokeManifest)``")
     $markdown.Add("Provider integration manifest: ``$($Report.ProviderIntegrationManifest)``")
+    $markdown.Add("Eventing operational-superiority manifest: ``$($Report.EventingOperationalSuperiorityManifest)``")
     $markdown.Add("SRE posture manifest: ``$($Report.SrePostureManifest)``")
     $markdown.Add("Supply-chain release manifest: ``$($Report.SupplyChainManifest)``")
     $markdown.Add("Test coverage roadmap: ``$($Report.TestCoverageRoadmap)``")
@@ -3442,6 +3816,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Provider integration external-service gates: $($Report.Summary.ProviderIntegrationExternalServiceGateCount)")
     $markdown.Add("- Provider integration default-skipped rows: $($Report.Summary.ProviderIntegrationDefaultSkippedCount)")
     $markdown.Add("- Provider integration runtime contracts: $($Report.Summary.ProviderIntegrationRuntimeContractCount)")
+    $markdown.Add("- Eventing operational-superiority dimensions: $($Report.Summary.EventingOperationalSuperiorityCoveredDimensionCount)/$($Report.Summary.EventingOperationalSuperiorityRequiredDimensionCount) covered, partial $($Report.Summary.EventingOperationalSuperiorityPartialDimensionCount), missing $($Report.Summary.EventingOperationalSuperiorityMissingDimensionCount), coverage $($Report.Summary.EventingOperationalSuperiorityCoveragePercent)%, promotion allowed $($Report.Summary.EventingOperationalSuperiorityPromotionAllowed), Wolverine required $($Report.Summary.EventingOperationalSuperiorityWolverineRequired)")
     $markdown.Add("- SRE SLIs: $($Report.Summary.SreSliCount)")
     $markdown.Add("- SRE target-declared SLIs: $($Report.Summary.SreTargetDeclaredCount)")
     $markdown.Add("- SRE pending stable baselines: $($Report.Summary.SrePendingStableBaselineCount)")
@@ -3533,6 +3908,25 @@ function Write-EngineCompletionScorecardReport {
     foreach ($package in $Report.DeploymentModeEvidence.PackageRows) {
         $supportedModes = if (@($package.SupportedModes).Count -eq 0) { "" } else { [string]::Join(", ", @($package.SupportedModes)) }
         $markdown.Add("| $($package.PackageName) | $($package.ClaimAuditTier) | $supportedModes | $($package.KnownHazardCount) |")
+    }
+
+    $markdown.Add("")
+    $markdown.Add("## Eventing Operational-Superiority Evidence")
+    $markdown.Add("")
+    $markdown.Add("- Manifest: ``$($Report.EventingOperationalSuperiorityEvidence.Manifest)``")
+    $markdown.Add("- Status: $($Report.EventingOperationalSuperiorityEvidence.Status)")
+    $markdown.Add("- Technology surface: $($Report.EventingOperationalSuperiorityEvidence.Technology) / $($Report.EventingOperationalSuperiorityEvidence.SurfaceId) / $($Report.EventingOperationalSuperiorityEvidence.ProfileEntryId)")
+    $markdown.Add("- Dimensions: $($Report.EventingOperationalSuperiorityEvidence.CoveredDimensionCount)/$($Report.EventingOperationalSuperiorityEvidence.RequiredDimensionCount) covered; partial $($Report.EventingOperationalSuperiorityEvidence.PartialDimensionCount); missing $($Report.EventingOperationalSuperiorityEvidence.MissingDimensionCount); coverage $($Report.EventingOperationalSuperiorityEvidence.CoveragePercent)%")
+    $markdown.Add("- Promotion: $($Report.EventingOperationalSuperiorityEvidence.PromotionGate); allowed $($Report.EventingOperationalSuperiorityEvidence.PromotionAllowed); decision $($Report.EventingOperationalSuperiorityEvidence.PromotionDecisionCode); contract $($Report.EventingOperationalSuperiorityEvidence.PromotionEvidenceContract) $($Report.EventingOperationalSuperiorityEvidence.PromotionEvidenceContractVersion)")
+    $markdown.Add("- Hot-path binding mode: $($Report.EventingOperationalSuperiorityEvidence.HotPathBindingMode)")
+    $markdown.Add("- Configuration role: $($Report.EventingOperationalSuperiorityEvidence.ConfigurationRole)")
+    $markdown.Add("- Wolverine required: $($Report.EventingOperationalSuperiorityEvidence.WolverineRequired)")
+    $markdown.Add("- Comparison baseline: $([string]::Join(', ', @($Report.EventingOperationalSuperiorityEvidence.ComparisonBaseline)))")
+    $markdown.Add("")
+    $markdown.Add("| Dimension | Status | Required status | Next requirement |")
+    $markdown.Add("| --- | --- | --- | --- |")
+    foreach ($dimension in $Report.EventingOperationalSuperiorityEvidence.RequiredDimensions) {
+        $markdown.Add("| $($dimension.Id) | $($dimension.Status) | $($dimension.RequiredStatus) | $($dimension.NextRequirement) |")
     }
 
     $markdown.Add("")
@@ -3761,6 +4155,7 @@ function Invoke-EngineCompletionScorecardPublish {
         [string]$DeploymentModeClaimsReportPath = "artifacts/deployment-mode-claims-release/claim-validation-report.json",
         [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
         [string]$ProviderIntegrationManifestPath = "scripts/provider-integration-support.json",
+        [string]$EventingOperationalSuperiorityManifestPath = "scripts/eventing-operational-superiority-support.json",
         [string]$SrePostureManifestPath = "scripts/sre-posture-support.json",
         [string]$SupplyChainManifestPath = "scripts/supply-chain-release-support.json",
         [string]$TestCoverageRoadmapPath = "docs/test-coverage-roadmap.md",
@@ -3778,13 +4173,14 @@ function Invoke-EngineCompletionScorecardPublish {
     $resolvedDeploymentModeClaimsReportPath = Resolve-FullPath -Path $DeploymentModeClaimsReportPath -BasePath $resolvedRepoRoot
     $resolvedAdoptionSmokeManifestPath = Resolve-FullPath -Path $AdoptionSmokeManifestPath -BasePath $resolvedRepoRoot
     $resolvedProviderIntegrationManifestPath = Resolve-FullPath -Path $ProviderIntegrationManifestPath -BasePath $resolvedRepoRoot
+    $resolvedEventingOperationalSuperiorityManifestPath = Resolve-FullPath -Path $EventingOperationalSuperiorityManifestPath -BasePath $resolvedRepoRoot
     $resolvedSrePostureManifestPath = Resolve-FullPath -Path $SrePostureManifestPath -BasePath $resolvedRepoRoot
     $resolvedSupplyChainManifestPath = Resolve-FullPath -Path $SupplyChainManifestPath -BasePath $resolvedRepoRoot
     $resolvedTestCoverageRoadmapPath = Resolve-FullPath -Path $TestCoverageRoadmapPath -BasePath $resolvedRepoRoot
     $resolvedPublicApiDeltaScriptPath = Resolve-FullPath -Path $PublicApiDeltaScriptPath -BasePath $resolvedRepoRoot
     $resolvedOutputPath = Resolve-FullPath -Path $OutputPath -BasePath $resolvedRepoRoot
 
-    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedDeploymentModeManifestPath $resolvedDeploymentModeManifestPath -ResolvedDeploymentModeClaimsReportPath $resolvedDeploymentModeClaimsReportPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedProviderIntegrationManifestPath $resolvedProviderIntegrationManifestPath -ResolvedSrePostureManifestPath $resolvedSrePostureManifestPath -ResolvedSupplyChainManifestPath $resolvedSupplyChainManifestPath -ResolvedTestCoverageRoadmapPath $resolvedTestCoverageRoadmapPath -ResolvedPublicApiDeltaScriptPath $resolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $resolvedRepoRoot
+    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedDeploymentModeManifestPath $resolvedDeploymentModeManifestPath -ResolvedDeploymentModeClaimsReportPath $resolvedDeploymentModeClaimsReportPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedProviderIntegrationManifestPath $resolvedProviderIntegrationManifestPath -ResolvedEventingOperationalSuperiorityManifestPath $resolvedEventingOperationalSuperiorityManifestPath -ResolvedSrePostureManifestPath $resolvedSrePostureManifestPath -ResolvedSupplyChainManifestPath $resolvedSupplyChainManifestPath -ResolvedTestCoverageRoadmapPath $resolvedTestCoverageRoadmapPath -ResolvedPublicApiDeltaScriptPath $resolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $resolvedRepoRoot
     $paths = Write-EngineCompletionScorecardReport -Report $report -ResolvedOutputPath $resolvedOutputPath
 
     Write-Host "Engine completion scorecard artifact written to $($paths.JsonPath)"
@@ -3803,5 +4199,5 @@ if (-not $env:CEPHALON_ENGINE_COMPLETION_SCORECARD_NO_RUN) {
         $resolvedRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
     }
 
-    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -DeploymentModeManifestPath $DeploymentModeManifestPath -DeploymentModeClaimsReportPath $DeploymentModeClaimsReportPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -ProviderIntegrationManifestPath $ProviderIntegrationManifestPath -SrePostureManifestPath $SrePostureManifestPath -SupplyChainManifestPath $SupplyChainManifestPath -TestCoverageRoadmapPath $TestCoverageRoadmapPath -PublicApiDeltaScriptPath $PublicApiDeltaScriptPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
+    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -DeploymentModeManifestPath $DeploymentModeManifestPath -DeploymentModeClaimsReportPath $DeploymentModeClaimsReportPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -ProviderIntegrationManifestPath $ProviderIntegrationManifestPath -EventingOperationalSuperiorityManifestPath $EventingOperationalSuperiorityManifestPath -SrePostureManifestPath $SrePostureManifestPath -SupplyChainManifestPath $SupplyChainManifestPath -TestCoverageRoadmapPath $TestCoverageRoadmapPath -PublicApiDeltaScriptPath $PublicApiDeltaScriptPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
 }

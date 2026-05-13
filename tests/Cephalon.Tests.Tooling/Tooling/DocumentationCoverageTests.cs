@@ -506,6 +506,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("ProviderIntegrationEvidence.DependencyHealthProviderManifest", scorecard, StringComparison.Ordinal);
         Assert.Contains("claims-report path, gate status, target count, warning count, error count, and package-claim verdict counts", scorecard, StringComparison.Ordinal);
         Assert.Contains("boundary/core/full-common/full-operator route-delegate, operator response JSON contract, non-operator endpoint, and framework endpoint boundary audit status/failure counts", scorecard, StringComparison.Ordinal);
+        Assert.Contains("Eventing operational-superiority counts from `EventingOperationalSuperiorityEvidence`", scorecard, StringComparison.Ordinal);
+        Assert.Contains("code-first hot-path binding mode", scorecard, StringComparison.Ordinal);
         Assert.Contains("SRE posture counts from `SrePostureEvidence`", scorecard, StringComparison.Ordinal);
         Assert.Contains("stable-baseline manifest rows/measurements", scorecard, StringComparison.Ordinal);
         Assert.Contains("pending-baseline blocker evidence rows", scorecard, StringComparison.Ordinal);
@@ -521,6 +523,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("ProviderIntegrationEvidence.DependencyHealthProviderManifest", projectMemory, StringComparison.Ordinal);
         Assert.Contains("scripts/sre-stable-baselines.json", projectMemory, StringComparison.Ordinal);
         Assert.Contains("provider live/composition/gate/runtime-contract posture", projectMemory, StringComparison.Ordinal);
+        Assert.Contains("scripts/eventing-operational-superiority-support.json", projectMemory, StringComparison.Ordinal);
+        Assert.Contains("EventingOperationalSuperiorityEvidence", projectMemory, StringComparison.Ordinal);
         Assert.Contains("validates `docs/test-coverage-roadmap.md` into `TestCoverageEvidence`", projectMemory, StringComparison.Ordinal);
         Assert.Contains("test coverage counts from `TestCoverageEvidence`", projectMemory, StringComparison.Ordinal);
         Assert.Contains("claims-report gate/target/warning/error/package-claim", cliComponentDoc, StringComparison.Ordinal);
@@ -530,6 +534,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("dependency-health provider-manifest readback", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("provider integration row/live/composition counts", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("dependency-health provider-manifest readback", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("Eventing operational-superiority promotion contract/status/dimension/coverage/hot-path/Wolverine", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("Eventing operational-superiority promotion contract/status/dimension/coverage/hot-path/Wolverine", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("SRE posture plus stable-baseline manifest, pending-baseline blocker, and guardrail-coverage counts", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("SRE SLI/target/baseline/stable-baseline-manifest/pending-baseline-blocker/guardrail-coverage counts", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("test coverage counts from `TestCoverageEvidence`", cliComponentDoc, StringComparison.Ordinal);
@@ -545,6 +551,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("release-validation and optional `cephalon doctor --scorecard", releaseChecklistTemplate, StringComparison.Ordinal);
         Assert.Contains("TestCoverageEvidence", releaseChecklist, StringComparison.Ordinal);
         Assert.Contains("TestCoverageEvidence", releaseChecklistTemplate, StringComparison.Ordinal);
+        Assert.Contains("EventingOperationalSuperiorityEvidence", releaseChecklist, StringComparison.Ordinal);
+        Assert.Contains("EventingOperationalSuperiorityEvidence", releaseChecklistTemplate, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", cliPackageReadme, StringComparison.Ordinal);
     }

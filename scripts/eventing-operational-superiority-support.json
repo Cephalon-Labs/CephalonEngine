@@ -1,0 +1,149 @@
+{
+  "$schemaVersion": "1.0.0",
+  "status": "claimed",
+  "summary": "Native Cephalon Eventing operational-superiority promotion contract for release scorecard readback.",
+  "technology": "event-driven-integration",
+  "surfaceId": "eventing-superiority-profile",
+  "profileEntryId": "operational-superiority-coverage",
+  "sourceDocs": [
+    "docs/components/eventing.md",
+    "docs/project-memory.md",
+    "docs/engine-completion-scorecard.md"
+  ],
+  "validationProjects": [
+    "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+    "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+    "benchmarks/Cephalon.Benchmarks/Cephalon.Benchmarks.csproj"
+  ],
+  "validationFiles": [
+    "tests/Cephalon.Tests.Composition/Composition/EntityFrameworkDataPackTests.cs",
+    "tests/Cephalon.Tests.Hosting/EventDispatchHostingTests.cs",
+    "benchmarks/Cephalon.Benchmarks/HotPath/EventProviderOperatedEventingBenchmarks.cs",
+    "benchmarks/Cephalon.Benchmarks/HotPath/EventProviderManagedEventingBenchmarks.cs",
+    "benchmarks/Cephalon.Benchmarks/HotPath/EventDispatchBrokerDispatchBenchmarks.cs",
+    "benchmarks/Cephalon.Benchmarks/HotPath/EventDispatchDurableJournalBenchmarks.cs",
+    "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
+  ],
+  "comparisonBaseline": [
+    "MassTransit",
+    "NServiceBus",
+    "Wolverine",
+    "MediatR"
+  ],
+  "providerNeutral": true,
+  "wolverineRequired": false,
+  "hotPathBindingMode": "code-first-publish-subscribe",
+  "configurationRole": "environment-policy-and-provider-selection",
+  "promotionGate": "allowed",
+  "promotionAllowed": true,
+  "promotionPolicy": "all-operational-superiority-dimensions-claimed",
+  "promotionEvidenceContract": "cephalon-eventing-operational-superiority-promotion-v1",
+  "promotionEvidenceContractVersion": "1.0.0",
+  "promotionTarget": "eventing-operational-superiority",
+  "promotionRequiredStatus": "claimed",
+  "promotionDecisionCode": "all-required-dimensions-claimed",
+  "requiredDimensions": [
+    {
+      "id": "provider-operated-runtime-proof-coverage",
+      "status": "claimed",
+      "requiredStatus": "claimed",
+      "nextRequirement": "none",
+      "sourceDocs": [
+        "docs/components/eventing.md"
+      ],
+      "validationFiles": [
+        "tests/Cephalon.Tests.Composition/Composition/EntityFrameworkDataPackTests.cs",
+        "benchmarks/Cephalon.Benchmarks/HotPath/EventProviderOperatedEventingBenchmarks.cs"
+      ],
+      "runtimeEvidenceTokens": [
+        "coveredOperationalProofDimensionCount=6",
+        "wolverineRequired=false"
+      ]
+    },
+    {
+      "id": "choreography-handoff-ownership",
+      "status": "claimed",
+      "requiredStatus": "claimed",
+      "nextRequirement": "none",
+      "sourceDocs": [
+        "docs/components/eventing.md"
+      ],
+      "validationFiles": [
+        "tests/Cephalon.Tests.Hosting/EventDispatchHostingTests.cs"
+      ],
+      "runtimeEvidenceTokens": [
+        "choreographyHandoffProof=choreography-handoff-ownership",
+        "wolverineRequired=false"
+      ]
+    },
+    {
+      "id": "durable-remediation-command-audit",
+      "status": "claimed",
+      "requiredStatus": "claimed",
+      "nextRequirement": "none",
+      "sourceDocs": [
+        "docs/components/eventing.md"
+      ],
+      "validationFiles": [
+        "tests/Cephalon.Tests.Composition/Composition/EntityFrameworkDataPackTests.cs",
+        "benchmarks/Cephalon.Benchmarks/HotPath/EventDispatchDurableJournalBenchmarks.cs"
+      ],
+      "runtimeEvidenceTokens": [
+        "durable-remediation-command-audit:claimed",
+        "operationalSuperiorityPromotionAllowed=true"
+      ]
+    },
+    {
+      "id": "durable-command-journal-replay-cursor",
+      "status": "claimed",
+      "requiredStatus": "claimed",
+      "nextRequirement": "none",
+      "sourceDocs": [
+        "docs/components/eventing.md"
+      ],
+      "validationFiles": [
+        "tests/Cephalon.Tests.Composition/Composition/EntityFrameworkDataPackTests.cs",
+        "benchmarks/Cephalon.Benchmarks/HotPath/EventDispatchDurableJournalBenchmarks.cs"
+      ],
+      "runtimeEvidenceTokens": [
+        "durable-command-journal-replay-cursor:claimed",
+        "operationalSuperiorityPromotionDecisionCode=all-required-dimensions-claimed"
+      ]
+    },
+    {
+      "id": "observability-compliance-and-auditability",
+      "status": "claimed",
+      "requiredStatus": "claimed",
+      "nextRequirement": "none",
+      "sourceDocs": [
+        "docs/components/eventing.md",
+        "docs/engine-completion-scorecard.md"
+      ],
+      "validationFiles": [
+        "tests/Cephalon.Tests.Hosting/EventDispatchHostingTests.cs"
+      ],
+      "runtimeEvidenceTokens": [
+        "observability-compliance-and-auditability:claimed",
+        "operationalSuperiorityComplete=true"
+      ]
+    },
+    {
+      "id": "testability-and-benchmark-evidence",
+      "status": "claimed",
+      "requiredStatus": "claimed",
+      "nextRequirement": "none",
+      "sourceDocs": [
+        "docs/components/eventing.md",
+        "docs/benchmarking.md"
+      ],
+      "validationFiles": [
+        "tests/Cephalon.Tests.Composition/Composition/EntityFrameworkDataPackTests.cs",
+        "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
+      ],
+      "runtimeEvidenceTokens": [
+        "testability-and-benchmark-evidence:claimed",
+        "coveredGuardrailFamilies=broker-dispatch,cold-start,durable-journal,provider-managed-eventing,provider-operated-eventing,remediation-filtered-reads"
+      ]
+    }
+  ]
+}

@@ -414,11 +414,31 @@ function Assert-EngineCompletionScorecardHardBlockers {
         $hardBlockers.Add("test coverage active gaps: $testCoverageActiveGapCount; open quarantine entries: $testCoverageOpenQuarantineCount; queue status: $testCoverageQueueStatus")
     }
 
+    $eventingOperationalSuperiorityEvidence = Get-ScorecardRequiredNode -Object $Scorecard -NodeName "EventingOperationalSuperiorityEvidence"
+    $eventingPromotionAllowed = Get-ScorecardBooleanProperty -Object $eventingOperationalSuperiorityEvidence -PropertyName "PromotionAllowed"
+    $eventingWolverineRequired = Get-ScorecardBooleanProperty -Object $eventingOperationalSuperiorityEvidence -PropertyName "WolverineRequired"
+    $eventingStatus = [string](Get-ScorecardRequiredPropertyValue -Object $eventingOperationalSuperiorityEvidence -PropertyName "Status" -OwnerName "EventingOperationalSuperiorityEvidence")
+    $eventingPromotionGate = [string](Get-ScorecardRequiredPropertyValue -Object $eventingOperationalSuperiorityEvidence -PropertyName "PromotionGate" -OwnerName "EventingOperationalSuperiorityEvidence")
+    $eventingPromotionRequiredStatus = [string](Get-ScorecardRequiredPropertyValue -Object $eventingOperationalSuperiorityEvidence -PropertyName "PromotionRequiredStatus" -OwnerName "EventingOperationalSuperiorityEvidence")
+    $eventingPromotionDecisionCode = [string](Get-ScorecardRequiredPropertyValue -Object $eventingOperationalSuperiorityEvidence -PropertyName "PromotionDecisionCode" -OwnerName "EventingOperationalSuperiorityEvidence")
+    $eventingMissingDimensionCount = Get-ScorecardIntegerProperty -Object $eventingOperationalSuperiorityEvidence -PropertyName "MissingDimensionCount"
+    $eventingPartialDimensionCount = Get-ScorecardIntegerProperty -Object $eventingOperationalSuperiorityEvidence -PropertyName "PartialDimensionCount"
+    if (-not $eventingPromotionAllowed -or
+        $eventingWolverineRequired -or
+        $eventingStatus -ne "claimed" -or
+        $eventingPromotionGate -ne "allowed" -or
+        $eventingPromotionRequiredStatus -ne "claimed" -or
+        $eventingPromotionDecisionCode -ne "all-required-dimensions-claimed" -or
+        $eventingMissingDimensionCount -gt 0 -or
+        $eventingPartialDimensionCount -gt 0) {
+        $hardBlockers.Add("eventing operational-superiority promotion: status $eventingStatus; gate $eventingPromotionGate; required $eventingPromotionRequiredStatus; decision $eventingPromotionDecisionCode; promotionAllowed $eventingPromotionAllowed; wolverineRequired $eventingWolverineRequired; partial dimensions $eventingPartialDimensionCount; missing dimensions $eventingMissingDimensionCount")
+    }
+
     if ($hardBlockers.Count -gt 0) {
         throw "Engine completion scorecard has hard release blocker(s): $($hardBlockers -join '; ')."
     }
 
-    Write-Host "Engine completion scorecard hard-blocker gate: no blocked platform gates, no supply-chain blocked items, no public API removals, and no active test-coverage gaps or open quarantine entries."
+    Write-Host "Engine completion scorecard hard-blocker gate: no blocked platform gates, no supply-chain blocked items, no public API removals, no active test-coverage gaps or open quarantine entries, and eventing operational-superiority promotion is allowed without Wolverine."
 }
 
 function Write-EngineCompletionScorecardEvidenceSummary {
@@ -433,6 +453,7 @@ function Write-EngineCompletionScorecardEvidenceSummary {
     $deploymentModeEvidence = Get-ScorecardRequiredNode -Object $scorecard -NodeName "DeploymentModeEvidence"
     $srePostureEvidence = Get-ScorecardRequiredNode -Object $scorecard -NodeName "SrePostureEvidence"
     $providerIntegrationEvidence = Get-ScorecardRequiredNode -Object $scorecard -NodeName "ProviderIntegrationEvidence"
+    $eventingOperationalSuperiorityEvidence = Get-ScorecardRequiredNode -Object $scorecard -NodeName "EventingOperationalSuperiorityEvidence"
     $testCoverageEvidence = Get-ScorecardRequiredNode -Object $scorecard -NodeName "TestCoverageEvidence"
 
     $deploymentModeClaimsReport = Get-ScorecardRequiredPropertyValue `
@@ -595,6 +616,73 @@ function Write-EngineCompletionScorecardEvidenceSummary {
             -OwnerName "ProviderIntegrationEvidence.DependencyHealthProviderManifest"),
         [System.Globalization.CultureInfo]::InvariantCulture)
 
+    $eventingRequiredDimensionCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $eventingOperationalSuperiorityEvidence `
+            -PropertyName "RequiredDimensionCount" `
+            -OwnerName "EventingOperationalSuperiorityEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $eventingCoveredDimensionCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $eventingOperationalSuperiorityEvidence `
+            -PropertyName "CoveredDimensionCount" `
+            -OwnerName "EventingOperationalSuperiorityEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $eventingPartialDimensionCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $eventingOperationalSuperiorityEvidence `
+            -PropertyName "PartialDimensionCount" `
+            -OwnerName "EventingOperationalSuperiorityEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $eventingMissingDimensionCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $eventingOperationalSuperiorityEvidence `
+            -PropertyName "MissingDimensionCount" `
+            -OwnerName "EventingOperationalSuperiorityEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $eventingCoveragePercent = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $eventingOperationalSuperiorityEvidence `
+            -PropertyName "CoveragePercent" `
+            -OwnerName "EventingOperationalSuperiorityEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $eventingPromotionAllowed = [System.Convert]::ToBoolean(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $eventingOperationalSuperiorityEvidence `
+            -PropertyName "PromotionAllowed" `
+            -OwnerName "EventingOperationalSuperiorityEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $eventingWolverineRequired = [System.Convert]::ToBoolean(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $eventingOperationalSuperiorityEvidence `
+            -PropertyName "WolverineRequired" `
+            -OwnerName "EventingOperationalSuperiorityEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $eventingPromotionEvidenceContract = Get-ScorecardRequiredPropertyValue `
+        -Object $eventingOperationalSuperiorityEvidence `
+        -PropertyName "PromotionEvidenceContract" `
+        -OwnerName "EventingOperationalSuperiorityEvidence"
+    $eventingPromotionEvidenceContractVersion = Get-ScorecardRequiredPropertyValue `
+        -Object $eventingOperationalSuperiorityEvidence `
+        -PropertyName "PromotionEvidenceContractVersion" `
+        -OwnerName "EventingOperationalSuperiorityEvidence"
+    $eventingPromotionTarget = Get-ScorecardRequiredPropertyValue `
+        -Object $eventingOperationalSuperiorityEvidence `
+        -PropertyName "PromotionTarget" `
+        -OwnerName "EventingOperationalSuperiorityEvidence"
+    $eventingPromotionRequiredStatus = Get-ScorecardRequiredPropertyValue `
+        -Object $eventingOperationalSuperiorityEvidence `
+        -PropertyName "PromotionRequiredStatus" `
+        -OwnerName "EventingOperationalSuperiorityEvidence"
+    $eventingPromotionDecisionCode = Get-ScorecardRequiredPropertyValue `
+        -Object $eventingOperationalSuperiorityEvidence `
+        -PropertyName "PromotionDecisionCode" `
+        -OwnerName "EventingOperationalSuperiorityEvidence"
+    $eventingPromotionGate = Get-ScorecardRequiredPropertyValue `
+        -Object $eventingOperationalSuperiorityEvidence `
+        -PropertyName "PromotionGate" `
+        -OwnerName "EventingOperationalSuperiorityEvidence"
+
     if ($null -eq $scorecard.SupplyChainEvidence) {
         throw "Engine completion scorecard JSON is missing SupplyChainEvidence."
     }
@@ -725,6 +813,22 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $dependencyHealthProviderManifestReference,
         $dependencyHealthProviderManifestSchemaVersion,
         $dependencyHealthProviderManifestStatus)
+
+    Write-Host ("Eventing operational-superiority evidence: contract {0} {1}; target {2}; status {3}; required {4}; dimensions {5}/{6} covered, partial {7}, missing {8}; coverage {9}%; promotion gate {10}; promotion allowed {11}; decision {12}; Wolverine required {13}." -f `
+        $eventingPromotionEvidenceContract,
+        $eventingPromotionEvidenceContractVersion,
+        $eventingPromotionTarget,
+        $scorecard.EventingOperationalSuperiorityEvidence.Status,
+        $eventingPromotionRequiredStatus,
+        $eventingCoveredDimensionCount,
+        $eventingRequiredDimensionCount,
+        $eventingPartialDimensionCount,
+        $eventingMissingDimensionCount,
+        $eventingCoveragePercent,
+        $eventingPromotionGate,
+        $eventingPromotionAllowed,
+        $eventingPromotionDecisionCode,
+        $eventingWolverineRequired)
 
     Write-Host ("SRE posture: {0} SLIs; target-declared {1}; pending stable baselines {2}; stable baselines {3}; stable baseline rows {4}; stable baseline measurements {5}; pending baseline rows {6}; blockers {7}; pending evidence {8}; guardrail-mapped {9}; pending guardrail coverage {10}; guardrail not-applicable {11}; summary mode {12}; stable baseline manifest {13}." -f `
         $scorecard.SrePostureEvidence.SliCount,

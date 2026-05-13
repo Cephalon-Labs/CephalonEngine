@@ -17,7 +17,7 @@ internal static class DoctorCommand
     private const string DotNetSdkDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/sdk:";
     private const string DotNetAspNetDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/aspnet:";
     private const string TemplatePackCustomHiveEnvironmentVariable = "CEPHALON_DOCTOR_TEMPLATE_HIVE";
-    private const string RequiredScorecardSchemaVersion = "1.20.0";
+    private const string RequiredScorecardSchemaVersion = "1.21.0";
 
     private static readonly string[] ExpectedTemplateShortNames =
     [
@@ -775,6 +775,7 @@ internal static class DoctorCommand
         var deploymentModeEvidence = scorecard["DeploymentModeEvidence"];
         var adoptionSmokeEvidence = scorecard["AdoptionSmokeEvidence"];
         var providerIntegrationEvidence = scorecard["ProviderIntegrationEvidence"];
+        var eventingOperationalSuperiorityEvidence = scorecard["EventingOperationalSuperiorityEvidence"];
         var srePostureEvidence = scorecard["SrePostureEvidence"];
         var supplyChainEvidence = scorecard["SupplyChainEvidence"];
         var testCoverageEvidence = scorecard["TestCoverageEvidence"];
@@ -793,6 +794,11 @@ internal static class DoctorCommand
         if (providerIntegrationEvidence is null)
         {
             errors.Add("ProviderIntegrationEvidence");
+        }
+
+        if (eventingOperationalSuperiorityEvidence is null)
+        {
+            errors.Add("EventingOperationalSuperiorityEvidence");
         }
 
         if (srePostureEvidence is null)
@@ -854,6 +860,13 @@ internal static class DoctorCommand
         var providerIntegrationExternalServiceGateCount = GetRequiredScorecardInt(summary, "ProviderIntegrationExternalServiceGateCount", errors);
         var providerIntegrationDefaultSkippedCount = GetRequiredScorecardInt(summary, "ProviderIntegrationDefaultSkippedCount", errors);
         var providerIntegrationRuntimeContractCount = GetRequiredScorecardInt(summary, "ProviderIntegrationRuntimeContractCount", errors);
+        var eventingOperationalSuperiorityRequiredDimensionCount = GetRequiredScorecardInt(summary, "EventingOperationalSuperiorityRequiredDimensionCount", errors);
+        var eventingOperationalSuperiorityCoveredDimensionCount = GetRequiredScorecardInt(summary, "EventingOperationalSuperiorityCoveredDimensionCount", errors);
+        var eventingOperationalSuperiorityPartialDimensionCount = GetRequiredScorecardInt(summary, "EventingOperationalSuperiorityPartialDimensionCount", errors);
+        var eventingOperationalSuperiorityMissingDimensionCount = GetRequiredScorecardInt(summary, "EventingOperationalSuperiorityMissingDimensionCount", errors);
+        var eventingOperationalSuperiorityCoveragePercent = GetRequiredScorecardInt(summary, "EventingOperationalSuperiorityCoveragePercent", errors);
+        var eventingOperationalSuperiorityPromotionAllowed = GetRequiredScorecardBool(summary, "EventingOperationalSuperiorityPromotionAllowed", errors);
+        var eventingOperationalSuperiorityWolverineRequired = GetRequiredScorecardBool(summary, "EventingOperationalSuperiorityWolverineRequired", errors);
         var sreSliCount = GetRequiredScorecardInt(summary, "SreSliCount", errors);
         var sreTargetDeclaredCount = GetRequiredScorecardInt(summary, "SreTargetDeclaredCount", errors);
         var srePendingStableBaselineCount = GetRequiredScorecardInt(summary, "SrePendingStableBaselineCount", errors);
@@ -968,6 +981,21 @@ internal static class DoctorCommand
             "ProviderCount",
             errors,
             "ProviderIntegrationEvidence.DependencyHealthProviderManifest");
+        var evidenceEventingOperationalSuperiorityStatus = GetRequiredScorecardString(eventingOperationalSuperiorityEvidence, "Status", errors, "EventingOperationalSuperiorityEvidence") ?? "unknown";
+        var evidenceEventingOperationalSuperiorityRequiredDimensionCount = GetRequiredScorecardInt(eventingOperationalSuperiorityEvidence, "RequiredDimensionCount", errors, "EventingOperationalSuperiorityEvidence");
+        var evidenceEventingOperationalSuperiorityCoveredDimensionCount = GetRequiredScorecardInt(eventingOperationalSuperiorityEvidence, "CoveredDimensionCount", errors, "EventingOperationalSuperiorityEvidence");
+        var evidenceEventingOperationalSuperiorityPartialDimensionCount = GetRequiredScorecardInt(eventingOperationalSuperiorityEvidence, "PartialDimensionCount", errors, "EventingOperationalSuperiorityEvidence");
+        var evidenceEventingOperationalSuperiorityMissingDimensionCount = GetRequiredScorecardInt(eventingOperationalSuperiorityEvidence, "MissingDimensionCount", errors, "EventingOperationalSuperiorityEvidence");
+        var evidenceEventingOperationalSuperiorityCoveragePercent = GetRequiredScorecardInt(eventingOperationalSuperiorityEvidence, "CoveragePercent", errors, "EventingOperationalSuperiorityEvidence");
+        var evidenceEventingOperationalSuperiorityPromotionGate = GetRequiredScorecardString(eventingOperationalSuperiorityEvidence, "PromotionGate", errors, "EventingOperationalSuperiorityEvidence") ?? "unknown";
+        var evidenceEventingOperationalSuperiorityPromotionAllowed = GetRequiredScorecardBool(eventingOperationalSuperiorityEvidence, "PromotionAllowed", errors, "EventingOperationalSuperiorityEvidence");
+        var evidenceEventingOperationalSuperiorityPromotionEvidenceContract = GetRequiredScorecardString(eventingOperationalSuperiorityEvidence, "PromotionEvidenceContract", errors, "EventingOperationalSuperiorityEvidence") ?? "unknown";
+        var evidenceEventingOperationalSuperiorityPromotionEvidenceContractVersion = GetRequiredScorecardString(eventingOperationalSuperiorityEvidence, "PromotionEvidenceContractVersion", errors, "EventingOperationalSuperiorityEvidence") ?? "unknown";
+        var evidenceEventingOperationalSuperiorityPromotionTarget = GetRequiredScorecardString(eventingOperationalSuperiorityEvidence, "PromotionTarget", errors, "EventingOperationalSuperiorityEvidence") ?? "unknown";
+        var evidenceEventingOperationalSuperiorityPromotionRequiredStatus = GetRequiredScorecardString(eventingOperationalSuperiorityEvidence, "PromotionRequiredStatus", errors, "EventingOperationalSuperiorityEvidence") ?? "unknown";
+        var evidenceEventingOperationalSuperiorityPromotionDecisionCode = GetRequiredScorecardString(eventingOperationalSuperiorityEvidence, "PromotionDecisionCode", errors, "EventingOperationalSuperiorityEvidence") ?? "unknown";
+        var evidenceEventingOperationalSuperiorityWolverineRequired = GetRequiredScorecardBool(eventingOperationalSuperiorityEvidence, "WolverineRequired", errors, "EventingOperationalSuperiorityEvidence");
+        var evidenceEventingOperationalSuperiorityHotPathBindingMode = GetRequiredScorecardString(eventingOperationalSuperiorityEvidence, "HotPathBindingMode", errors, "EventingOperationalSuperiorityEvidence") ?? "unknown";
         var evidenceSreSliCount = GetRequiredScorecardInt(srePostureEvidence, "SliCount", errors, "SrePostureEvidence");
         var evidenceSreTargetDeclaredCount = GetRequiredScorecardInt(srePostureEvidence, "TargetDeclaredCount", errors, "SrePostureEvidence");
         var evidenceSrePendingStableBaselineCount = GetRequiredScorecardInt(srePostureEvidence, "PendingStableBaselineCount", errors, "SrePostureEvidence");
@@ -1092,6 +1120,40 @@ internal static class DoctorCommand
                 "Engine completion scorecard provider integration evidence",
                 $"Artifact '{resolvedScorecardPath}' has provider integration summary counts that do not match ProviderIntegrationEvidence.",
                 "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1`."));
+            return;
+        }
+
+        if (eventingOperationalSuperiorityRequiredDimensionCount != evidenceEventingOperationalSuperiorityRequiredDimensionCount ||
+            eventingOperationalSuperiorityCoveredDimensionCount != evidenceEventingOperationalSuperiorityCoveredDimensionCount ||
+            eventingOperationalSuperiorityPartialDimensionCount != evidenceEventingOperationalSuperiorityPartialDimensionCount ||
+            eventingOperationalSuperiorityMissingDimensionCount != evidenceEventingOperationalSuperiorityMissingDimensionCount ||
+            eventingOperationalSuperiorityCoveragePercent != evidenceEventingOperationalSuperiorityCoveragePercent ||
+            eventingOperationalSuperiorityPromotionAllowed != evidenceEventingOperationalSuperiorityPromotionAllowed ||
+            eventingOperationalSuperiorityWolverineRequired != evidenceEventingOperationalSuperiorityWolverineRequired)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard eventing operational superiority",
+                $"Artifact '{resolvedScorecardPath}' has eventing operational-superiority summary counts that do not match EventingOperationalSuperiorityEvidence.",
+                "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1`."));
+            return;
+        }
+
+        if (!string.Equals(evidenceEventingOperationalSuperiorityStatus, "claimed", StringComparison.OrdinalIgnoreCase) ||
+            !string.Equals(evidenceEventingOperationalSuperiorityPromotionGate, "allowed", StringComparison.OrdinalIgnoreCase) ||
+            !evidenceEventingOperationalSuperiorityPromotionAllowed ||
+            !string.Equals(evidenceEventingOperationalSuperiorityPromotionRequiredStatus, "claimed", StringComparison.OrdinalIgnoreCase) ||
+            !string.Equals(evidenceEventingOperationalSuperiorityPromotionDecisionCode, "all-required-dimensions-claimed", StringComparison.OrdinalIgnoreCase) ||
+            evidenceEventingOperationalSuperiorityPartialDimensionCount != 0 ||
+            evidenceEventingOperationalSuperiorityMissingDimensionCount != 0 ||
+            evidenceEventingOperationalSuperiorityWolverineRequired ||
+            !string.Equals(evidenceEventingOperationalSuperiorityHotPathBindingMode, "code-first-publish-subscribe", StringComparison.OrdinalIgnoreCase))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard eventing operational superiority",
+                $"Artifact '{resolvedScorecardPath}' has invalid Eventing operational-superiority readback: status {evidenceEventingOperationalSuperiorityStatus}, gate {evidenceEventingOperationalSuperiorityPromotionGate}, promotion allowed {evidenceEventingOperationalSuperiorityPromotionAllowed}, required {evidenceEventingOperationalSuperiorityPromotionRequiredStatus}, decision {evidenceEventingOperationalSuperiorityPromotionDecisionCode}, partial dimensions {evidenceEventingOperationalSuperiorityPartialDimensionCount}, missing dimensions {evidenceEventingOperationalSuperiorityMissingDimensionCount}, Wolverine required {evidenceEventingOperationalSuperiorityWolverineRequired}, hot-path binding {evidenceEventingOperationalSuperiorityHotPathBindingMode}.",
+                "Keep Eventing promotion evidence claimed only when every native operational-superiority dimension is claimed, hot-path publish/subscription remains code-first, and Wolverine stays optional."));
             return;
         }
 
@@ -1257,6 +1319,12 @@ internal static class DoctorCommand
             providerIntegrationSeverity == DoctorCheckSeverity.Pass
                 ? null
                 : "Treat provider integration posture as release-readiness evidence; enable external gates on capable runners before release promotion and keep live-proof rows backed by executable provider tests."));
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Engine completion scorecard eventing operational superiority",
+            $"contract {evidenceEventingOperationalSuperiorityPromotionEvidenceContract} {evidenceEventingOperationalSuperiorityPromotionEvidenceContractVersion}; target {evidenceEventingOperationalSuperiorityPromotionTarget}; status {evidenceEventingOperationalSuperiorityStatus}; required {evidenceEventingOperationalSuperiorityPromotionRequiredStatus}; dimensions {eventingOperationalSuperiorityCoveredDimensionCount}/{eventingOperationalSuperiorityRequiredDimensionCount} covered, partial {eventingOperationalSuperiorityPartialDimensionCount}, missing {eventingOperationalSuperiorityMissingDimensionCount}; coverage {eventingOperationalSuperiorityCoveragePercent}%; promotion gate {evidenceEventingOperationalSuperiorityPromotionGate}; promotion allowed {eventingOperationalSuperiorityPromotionAllowed}; decision {evidenceEventingOperationalSuperiorityPromotionDecisionCode}; hot-path {evidenceEventingOperationalSuperiorityHotPathBindingMode}; Wolverine required {eventingOperationalSuperiorityWolverineRequired}.",
+            null));
 
         var sreSeverity = srePendingStableBaselineCount > 0
             ? DoctorCheckSeverity.Warning
