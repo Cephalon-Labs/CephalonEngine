@@ -17,7 +17,7 @@ internal static class DoctorCommand
     private const string DotNetSdkDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/sdk:";
     private const string DotNetAspNetDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/aspnet:";
     private const string TemplatePackCustomHiveEnvironmentVariable = "CEPHALON_DOCTOR_TEMPLATE_HIVE";
-    private const string RequiredScorecardSchemaVersion = "1.22.0";
+    private const string RequiredScorecardSchemaVersion = "1.23.0";
 
     private static readonly string[] ExpectedTemplateShortNames =
     [
@@ -885,6 +885,8 @@ internal static class DoctorCommand
         var supplyChainWorkflowReadyCount = GetRequiredScorecardInt(summary, "SupplyChainWorkflowReadyCount", errors);
         var supplyChainExternalPolicyPendingCount = GetRequiredScorecardInt(summary, "SupplyChainExternalPolicyPendingCount", errors);
         var supplyChainExternalPolicyPreflightCheckCount = GetRequiredScorecardInt(summary, "SupplyChainExternalPolicyPreflightCheckCount", errors);
+        var supplyChainSignedReleaseDryRunStatus = GetRequiredScorecardString(summary, "SupplyChainSignedReleaseDryRunStatus", errors, "Summary") ?? "unknown";
+        var supplyChainSignedReleaseDryRunBlockerClass = GetRequiredScorecardString(summary, "SupplyChainSignedReleaseDryRunBlockerClass", errors, "Summary") ?? "unknown";
         var supplyChainBlockedCount = GetRequiredScorecardInt(summary, "SupplyChainBlockedCount", errors);
         var testCoverageLayeredProjectCount = GetRequiredScorecardInt(summary, "TestCoverageLayeredProjectCount", errors);
         var testCoverageGapCriterionCount = GetRequiredScorecardInt(summary, "TestCoverageGapCriterionCount", errors);
@@ -1035,6 +1037,42 @@ internal static class DoctorCommand
                 "Status",
                 errors,
                 "SupplyChainEvidence.ExternalPolicyPreflight") ?? "unknown";
+        var supplyChainSignedReleaseDryRun = supplyChainEvidence?["SignedReleaseDryRun"];
+        if (supplyChainEvidence is not null && supplyChainSignedReleaseDryRun is null)
+        {
+            errors.Add("SupplyChainEvidence.SignedReleaseDryRun");
+        }
+
+        var evidenceSupplyChainSignedReleaseDryRunStatus = GetRequiredScorecardString(
+            supplyChainSignedReleaseDryRun,
+            "Status",
+            errors,
+            "SupplyChainEvidence.SignedReleaseDryRun") ?? "unknown";
+        var evidenceSupplyChainSignedReleaseDryRunProofState = GetRequiredScorecardString(
+            supplyChainSignedReleaseDryRun,
+            "CurrentProofState",
+            errors,
+            "SupplyChainEvidence.SignedReleaseDryRun") ?? "unknown";
+        var evidenceSupplyChainSignedReleaseDryRunBlockerClass = GetRequiredScorecardString(
+            supplyChainSignedReleaseDryRun,
+            "CurrentBlockerClass",
+            errors,
+            "SupplyChainEvidence.SignedReleaseDryRun") ?? "unknown";
+        var evidenceSupplyChainSignedReleaseDryRunRequiredCommand = GetRequiredScorecardString(
+            supplyChainSignedReleaseDryRun,
+            "RequiredCommand",
+            errors,
+            "SupplyChainEvidence.SignedReleaseDryRun") ?? "unknown";
+        var evidenceSupplyChainSignedReleaseDryRunOutputPath = GetRequiredScorecardString(
+            supplyChainSignedReleaseDryRun,
+            "OutputPath",
+            errors,
+            "SupplyChainEvidence.SignedReleaseDryRun") ?? "unknown";
+        var evidenceSupplyChainSignedReleaseDryRunRequiredReportFieldCount = GetRequiredScorecardInt(
+            supplyChainSignedReleaseDryRun,
+            "RequiredReportFieldCount",
+            errors,
+            "SupplyChainEvidence.SignedReleaseDryRun");
         var evidenceSupplyChainBlockedCount = GetRequiredScorecardInt(supplyChainEvidence, "BlockedCount", errors, "SupplyChainEvidence");
         var evidenceTestCoverageLayeredProjectCount = GetRequiredScorecardInt(testCoverageEvidence, "LayeredProjectCount", errors, "TestCoverageEvidence");
         var evidenceTestCoverageGapCriterionCount = GetRequiredScorecardInt(testCoverageEvidence, "GapDefinitionCriterionCount", errors, "TestCoverageEvidence");
@@ -1208,12 +1246,14 @@ internal static class DoctorCommand
             supplyChainWorkflowReadyCount != evidenceSupplyChainWorkflowReadyCount ||
             supplyChainExternalPolicyPendingCount != evidenceSupplyChainExternalPolicyPendingCount ||
             supplyChainExternalPolicyPreflightCheckCount != evidenceSupplyChainExternalPolicyPreflightCheckCount ||
+            !string.Equals(supplyChainSignedReleaseDryRunStatus, evidenceSupplyChainSignedReleaseDryRunStatus, StringComparison.OrdinalIgnoreCase) ||
+            !string.Equals(supplyChainSignedReleaseDryRunBlockerClass, evidenceSupplyChainSignedReleaseDryRunBlockerClass, StringComparison.OrdinalIgnoreCase) ||
             supplyChainBlockedCount != evidenceSupplyChainBlockedCount)
         {
             checks.Add(new DoctorCheck(
                 DoctorCheckSeverity.Failure,
                 "Engine completion scorecard supply-chain release evidence",
-                $"Artifact '{resolvedScorecardPath}' has supply-chain summary counts that do not match SupplyChainEvidence.",
+                $"Artifact '{resolvedScorecardPath}' has supply-chain summary readback that does not match SupplyChainEvidence.",
                 "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1`."));
             return;
         }
@@ -1352,16 +1392,17 @@ internal static class DoctorCommand
                 : "Treat SRE posture as release-readiness evidence, not an application SLO claim; stable baselines are published only for the benchmark-backed subset and remaining pending rows must keep their own evidence lanes."));
 
         var supplyChainSeverity = supplyChainBlockedCount > 0 ||
-            supplyChainExternalPolicyPendingCount > 0
+            supplyChainExternalPolicyPendingCount > 0 ||
+            string.Equals(evidenceSupplyChainSignedReleaseDryRunStatus, "blocked", StringComparison.OrdinalIgnoreCase)
                 ? DoctorCheckSeverity.Warning
                 : DoctorCheckSeverity.Pass;
         checks.Add(new DoctorCheck(
             supplyChainSeverity,
             "Engine completion scorecard supply-chain release evidence",
-            $"{supplyChainEvidenceItemCount} items; workflow-ready {supplyChainWorkflowReadyCount}, external-policy-pending {supplyChainExternalPolicyPendingCount}, preflight checks {supplyChainExternalPolicyPreflightCheckCount}, preflight status {evidenceSupplyChainExternalPolicyPreflightStatus}, blocked {supplyChainBlockedCount}.",
+            $"{supplyChainEvidenceItemCount} items; workflow-ready {supplyChainWorkflowReadyCount}, external-policy-pending {supplyChainExternalPolicyPendingCount}, preflight checks {supplyChainExternalPolicyPreflightCheckCount}, preflight status {evidenceSupplyChainExternalPolicyPreflightStatus}, signed-release dry-run {evidenceSupplyChainSignedReleaseDryRunStatus}/{evidenceSupplyChainSignedReleaseDryRunProofState}, blocker {evidenceSupplyChainSignedReleaseDryRunBlockerClass}, required command {evidenceSupplyChainSignedReleaseDryRunRequiredCommand}, output {evidenceSupplyChainSignedReleaseDryRunOutputPath}, report fields {evidenceSupplyChainSignedReleaseDryRunRequiredReportFieldCount}, blocked {supplyChainBlockedCount}.",
             supplyChainSeverity == DoctorCheckSeverity.Pass
                 ? null
-                : "Treat workflow-ready evidence as release-readiness posture only; complete nuget.org-side trusted publishing, prefix reservation, repository secret policy, and the fail-closed publish-workflow preflight before a real tag push."));
+                : "Treat workflow-ready evidence as release-readiness posture only; complete nuget.org-side trusted publishing, prefix reservation, repository secret policy, fail-closed publish-workflow preflight, and signed-release dry-run dispatch before a real tag push."));
 
         checks.Add(new DoctorCheck(
             DoctorCheckSeverity.Pass,

@@ -1,5 +1,5 @@
 {
-  "$schemaVersion": "1.3.0",
+  "$schemaVersion": "1.4.0",
   "status": "workflow-ready-external-policy-pending",
   "summary": "Tag-triggered package release provenance is wired in GitHub Actions, while nuget.org-side trusted-publishing policy, prefix reservation, and the publishing account secret remain external release-manager prerequisites before the first real tag push.",
   "releaseWorkflow": ".github/workflows/publish-release.yml",
@@ -68,6 +68,28 @@
       "CEPHALON_NUGET_PREFIX_RESERVATION_CONFIRMED",
       "validate-supply-chain-external-policy-preflight.ps1",
       "-RequireAll"
+    ]
+  },
+  "signedReleaseDryRun": {
+    "status": "blocked",
+    "currentProofState": "partial",
+    "currentBlockerClass": "dispatch-identity-actions-disabled",
+    "readinessPolicy": "workflow-dispatch-run-required-before-signed-release-proof",
+    "validationScript": "scripts/invoke-signed-release-dry-run.ps1",
+    "outputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
+    "requiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
+    "requiredStatus": "submitted",
+    "requiredRunCreated": true,
+    "requiredRunUrl": true,
+    "sourceDocument": "docs/package-publishing.md",
+    "sourceToken": "Status = submitted",
+    "summary": "The signed-release dry-run proof remains partial until an Actions-enabled release-manager identity dispatches the Publish Release workflow with dry_run=true and the generated report records a workflow run URL.",
+    "requiredReportFields": [
+      "Status",
+      "BlockerClass",
+      "DispatchAttempted",
+      "RunCreated",
+      "RunUrl"
     ]
   },
   "evidenceItems": [

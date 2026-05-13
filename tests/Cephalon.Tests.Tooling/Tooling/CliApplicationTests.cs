@@ -388,7 +388,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.22.0",
+              "$schemaVersion": "1.23.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -518,6 +518,14 @@ public sealed class CliApplicationTests
                   "Status": "required-before-real-tag-push",
                   "RequiredCheckCount": 3
                 },
+                "SignedReleaseDryRun": {
+                  "Status": "blocked",
+                  "CurrentProofState": "partial",
+                  "CurrentBlockerClass": "dispatch-identity-actions-disabled",
+                  "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
+                  "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
+                  "RequiredReportFieldCount": 5
+                },
                 "BlockedCount": 0
               },
               "TestCoverageEvidence": {
@@ -602,6 +610,8 @@ public sealed class CliApplicationTests
                 "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
+                "SupplyChainSignedReleaseDryRunStatus": "blocked",
+                "SupplyChainSignedReleaseDryRunBlockerClass": "dispatch-identity-actions-disabled",
                 "SupplyChainBlockedCount": 0,
                 "TestCoverageLayeredProjectCount": 8,
                 "TestCoverageGapCriterionCount": 4,
@@ -632,7 +642,7 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(0, exitCode);
-            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.22.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.23.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard platform gates: 12 gates; blocked 0, needs-refresh 0, partial 8, not-claimed 1.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard evidence references: 33 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard package GA readiness: 90 package rows; partial 89, not-claimed 1, needs-refresh 0.", stdout.ToString(), StringComparison.Ordinal);
@@ -641,7 +651,7 @@ public sealed class CliApplicationTests
             Assert.Contains("[warn] Engine completion scorecard provider integration evidence: 33 rows; live proofs 33, composition-only 0, external-service gates 14, default-skipped 14, runtime contracts 99; dependency-health providers 18 from scripts/observability-dependency-health-providers.json schema 1.0.0 (source-derived-provider-family-contract).", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard eventing operational superiority: contract cephalon-eventing-operational-superiority-promotion-v1 1.0.0; target eventing-operational-superiority; status claimed; required claimed; dimensions 6/6 covered, partial 0, missing 0; coverage 100%; promotion gate allowed; promotion allowed True; decision all-required-dimensions-claimed; runtime concordance matched (19/19 tokens, source src/Cephalon.Eventing/Services/EventingSuperiorityProfileRuntimeSurfaceContributor.cs); hot-path code-first-publish-subscribe; Wolverine required False.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard SRE posture: 11 SLIs; target-declared 11, pending stable baselines 1, stable baselines 10, stable baseline rows 10, stable baseline measurements 12, pending baseline rows 1, blockers 1, pending evidence 1, guardrail-mapped 6, pending guardrail coverage 0, guardrail not-applicable 5, guardrail references 8; stable baseline manifest scripts/sre-stable-baselines.json.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[warn] Engine completion scorecard supply-chain release evidence: 12 items; workflow-ready 9, external-policy-pending 3, preflight checks 3, preflight status required-before-real-tag-push, blocked 0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Engine completion scorecard supply-chain release evidence: 12 items; workflow-ready 9, external-policy-pending 3, preflight checks 3, preflight status required-before-real-tag-push, signed-release dry-run blocked/partial, blocker dispatch-identity-actions-disabled, required command pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated, output artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json, report fields 5, blocked 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard test coverage evidence: 8 layered projects; gap criteria 4; recommendations 11; shipped 10, gated 1, active gaps 0; quarantine entries 2, open 0, queue empty.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard public API compatibility: 104 package baselines; pending packages 0, additions 0, removals 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Equal(string.Empty, stderr.ToString());
@@ -730,7 +740,7 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(1, exitCode);
-            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.22.0'.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.23.0'.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -753,7 +763,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.22.0",
+              "$schemaVersion": "1.23.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -883,6 +893,14 @@ public sealed class CliApplicationTests
                   "Status": "required-before-real-tag-push",
                   "RequiredCheckCount": 3
                 },
+                "SignedReleaseDryRun": {
+                  "Status": "blocked",
+                  "CurrentProofState": "partial",
+                  "CurrentBlockerClass": "dispatch-identity-actions-disabled",
+                  "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
+                  "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
+                  "RequiredReportFieldCount": 5
+                },
                 "BlockedCount": 0
               },
               "TestCoverageEvidence": {
@@ -967,6 +985,8 @@ public sealed class CliApplicationTests
                 "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
+                "SupplyChainSignedReleaseDryRunStatus": "blocked",
+                "SupplyChainSignedReleaseDryRunBlockerClass": "dispatch-identity-actions-disabled",
                 "SupplyChainBlockedCount": 0,
                 "TestCoverageLayeredProjectCount": 8,
                 "TestCoverageGapCriterionCount": 4,
@@ -1021,7 +1041,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.22.0",
+              "$schemaVersion": "1.23.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1151,6 +1171,14 @@ public sealed class CliApplicationTests
                   "Status": "required-before-real-tag-push",
                   "RequiredCheckCount": 3
                 },
+                "SignedReleaseDryRun": {
+                  "Status": "blocked",
+                  "CurrentProofState": "partial",
+                  "CurrentBlockerClass": "dispatch-identity-actions-disabled",
+                  "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
+                  "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
+                  "RequiredReportFieldCount": 5
+                },
                 "BlockedCount": 0
               },
               "TestCoverageEvidence": {
@@ -1235,6 +1263,8 @@ public sealed class CliApplicationTests
                 "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
+                "SupplyChainSignedReleaseDryRunStatus": "blocked",
+                "SupplyChainSignedReleaseDryRunBlockerClass": "dispatch-identity-actions-disabled",
                 "SupplyChainBlockedCount": 0,
                 "TestCoverageLayeredProjectCount": 8,
                 "TestCoverageGapCriterionCount": 4,
@@ -1289,7 +1319,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.22.0",
+              "$schemaVersion": "1.23.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1413,6 +1443,14 @@ public sealed class CliApplicationTests
                   "Status": "required-before-real-tag-push",
                   "RequiredCheckCount": 3
                 },
+                "SignedReleaseDryRun": {
+                  "Status": "blocked",
+                  "CurrentProofState": "partial",
+                  "CurrentBlockerClass": "dispatch-identity-actions-disabled",
+                  "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
+                  "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
+                  "RequiredReportFieldCount": 5
+                },
                 "BlockedCount": 0
               },
               "TestCoverageEvidence": {
@@ -1497,6 +1535,8 @@ public sealed class CliApplicationTests
                 "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
+                "SupplyChainSignedReleaseDryRunStatus": "blocked",
+                "SupplyChainSignedReleaseDryRunBlockerClass": "dispatch-identity-actions-disabled",
                 "SupplyChainBlockedCount": 0,
                 "TestCoverageLayeredProjectCount": 8,
                 "TestCoverageGapCriterionCount": 4,
@@ -1551,7 +1591,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.22.0",
+              "$schemaVersion": "1.23.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1681,6 +1721,14 @@ public sealed class CliApplicationTests
                   "Status": "required-before-real-tag-push",
                   "RequiredCheckCount": 3
                 },
+                "SignedReleaseDryRun": {
+                  "Status": "blocked",
+                  "CurrentProofState": "partial",
+                  "CurrentBlockerClass": "dispatch-identity-actions-disabled",
+                  "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
+                  "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
+                  "RequiredReportFieldCount": 5
+                },
                 "BlockedCount": 0
               },
               "TestCoverageEvidence": {
@@ -1765,6 +1813,8 @@ public sealed class CliApplicationTests
                 "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
+                "SupplyChainSignedReleaseDryRunStatus": "blocked",
+                "SupplyChainSignedReleaseDryRunBlockerClass": "dispatch-identity-actions-disabled",
                 "SupplyChainBlockedCount": 0,
                 "TestCoverageLayeredProjectCount": 8,
                 "TestCoverageGapCriterionCount": 4,
@@ -1819,7 +1869,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.22.0",
+              "$schemaVersion": "1.23.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1949,6 +1999,14 @@ public sealed class CliApplicationTests
                   "Status": "required-before-real-tag-push",
                   "RequiredCheckCount": 3
                 },
+                "SignedReleaseDryRun": {
+                  "Status": "blocked",
+                  "CurrentProofState": "partial",
+                  "CurrentBlockerClass": "dispatch-identity-actions-disabled",
+                  "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
+                  "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
+                  "RequiredReportFieldCount": 5
+                },
                 "BlockedCount": 0
               },
               "TestCoverageEvidence": {
@@ -2033,6 +2091,8 @@ public sealed class CliApplicationTests
                 "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
+                "SupplyChainSignedReleaseDryRunStatus": "blocked",
+                "SupplyChainSignedReleaseDryRunBlockerClass": "dispatch-identity-actions-disabled",
                 "SupplyChainBlockedCount": 0,
                 "TestCoverageLayeredProjectCount": 8,
                 "TestCoverageGapCriterionCount": 4,
@@ -2087,7 +2147,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.22.0",
+              "$schemaVersion": "1.23.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -2217,6 +2277,14 @@ public sealed class CliApplicationTests
                   "Status": "required-before-real-tag-push",
                   "RequiredCheckCount": 3
                 },
+                "SignedReleaseDryRun": {
+                  "Status": "blocked",
+                  "CurrentProofState": "partial",
+                  "CurrentBlockerClass": "dispatch-identity-actions-disabled",
+                  "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
+                  "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
+                  "RequiredReportFieldCount": 5
+                },
                 "BlockedCount": 0
               },
               "TestCoverageEvidence": {
@@ -2301,6 +2369,8 @@ public sealed class CliApplicationTests
                 "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
+                "SupplyChainSignedReleaseDryRunStatus": "blocked",
+                "SupplyChainSignedReleaseDryRunBlockerClass": "dispatch-identity-actions-disabled",
                 "SupplyChainBlockedCount": 0,
                 "TestCoverageLayeredProjectCount": 8,
                 "TestCoverageGapCriterionCount": 4,
@@ -2332,7 +2402,7 @@ public sealed class CliApplicationTests
 
             Assert.Equal(1, exitCode);
             Assert.Contains("[error] Engine completion scorecard supply-chain release evidence: Artifact", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("supply-chain summary counts that do not match SupplyChainEvidence", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("supply-chain summary readback that does not match SupplyChainEvidence", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally

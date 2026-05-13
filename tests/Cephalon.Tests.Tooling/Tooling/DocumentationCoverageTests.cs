@@ -511,6 +511,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("SRE posture counts from `SrePostureEvidence`", scorecard, StringComparison.Ordinal);
         Assert.Contains("stable-baseline manifest rows/measurements", scorecard, StringComparison.Ordinal);
         Assert.Contains("pending-baseline blocker evidence rows", scorecard, StringComparison.Ordinal);
+        Assert.Contains("signed-release dry-run status/proof/blocker", scorecard, StringComparison.Ordinal);
         Assert.Contains("test coverage counts from `TestCoverageEvidence`", scorecard, StringComparison.Ordinal);
         Assert.Contains($"generated artifact is now schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
         Assert.Contains($"currently requires scorecard schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
@@ -538,6 +539,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("Eventing operational-superiority promotion contract/status/dimension/coverage/hot-path/Wolverine", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("SRE posture plus stable-baseline manifest, pending-baseline blocker, and guardrail-coverage counts", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("SRE SLI/target/baseline/stable-baseline-manifest/pending-baseline-blocker/guardrail-coverage counts", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("signed-release dry-run status/proof/blocker/command/output", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("signed-release dry-run status/proof/blocker/command/output", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("test coverage counts from `TestCoverageEvidence`", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("test coverage layered-project/gap/recommendation/quarantine counts from `TestCoverageEvidence`", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", planningGovernance, StringComparison.Ordinal);
@@ -549,6 +552,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("deployment-mode claims-report", releaseChecklistTemplate, StringComparison.Ordinal);
         Assert.Contains("release-validation and optional `cephalon doctor --scorecard", releaseChecklist, StringComparison.Ordinal);
         Assert.Contains("release-validation and optional `cephalon doctor --scorecard", releaseChecklistTemplate, StringComparison.Ordinal);
+        Assert.Contains("signed-release dry-run", releaseChecklist, StringComparison.Ordinal);
+        Assert.Contains("signed-release dry-run", releaseChecklistTemplate, StringComparison.Ordinal);
         Assert.Contains("TestCoverageEvidence", releaseChecklist, StringComparison.Ordinal);
         Assert.Contains("TestCoverageEvidence", releaseChecklistTemplate, StringComparison.Ordinal);
         Assert.Contains("EventingOperationalSuperiorityEvidence", releaseChecklist, StringComparison.Ordinal);

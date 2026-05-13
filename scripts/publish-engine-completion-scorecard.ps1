@@ -17,7 +17,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.22.0"
+$Script:SchemaVersion = "1.23.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -3513,6 +3513,91 @@ function Convert-SupplyChainEvidence {
         })
     }
 
+    $signedReleaseDryRunManifest = Get-ManifestPropertyValue -Object $manifest -PropertyName "signedReleaseDryRun" -DefaultValue $null
+    $signedReleaseDryRun = $null
+    $validationScriptReferenceNames = @($validationScriptReferences | ForEach-Object { $_.Reference })
+    if ($null -eq $signedReleaseDryRunManifest) {
+        if ($validationScriptReferenceNames -contains "scripts/invoke-signed-release-dry-run.ps1") {
+            throw "Supply-chain release support manifest must declare signedReleaseDryRun when scripts/invoke-signed-release-dry-run.ps1 is listed in validationScripts."
+        }
+    }
+    else {
+        $dryRunStatus = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "status" -DefaultValue "")
+        $dryRunCurrentProofState = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "currentProofState" -DefaultValue "")
+        $dryRunCurrentBlockerClass = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "currentBlockerClass" -DefaultValue "")
+        $dryRunReadinessPolicy = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "readinessPolicy" -DefaultValue "")
+        $dryRunValidationScriptPath = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "validationScript" -DefaultValue "")
+        $dryRunOutputPath = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "outputPath" -DefaultValue "")
+        $dryRunRequiredCommand = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "requiredCommand" -DefaultValue "")
+        $dryRunRequiredStatus = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "requiredStatus" -DefaultValue "")
+        $dryRunSourceDocumentPath = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "sourceDocument" -DefaultValue "")
+        $dryRunSourceToken = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "sourceToken" -DefaultValue "")
+        $dryRunSummary = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "summary" -DefaultValue "")
+
+        foreach ($field in @(
+            @{ Name = "status"; Value = $dryRunStatus },
+            @{ Name = "currentProofState"; Value = $dryRunCurrentProofState },
+            @{ Name = "readinessPolicy"; Value = $dryRunReadinessPolicy },
+            @{ Name = "validationScript"; Value = $dryRunValidationScriptPath },
+            @{ Name = "outputPath"; Value = $dryRunOutputPath },
+            @{ Name = "requiredCommand"; Value = $dryRunRequiredCommand },
+            @{ Name = "requiredStatus"; Value = $dryRunRequiredStatus },
+            @{ Name = "sourceDocument"; Value = $dryRunSourceDocumentPath },
+            @{ Name = "sourceToken"; Value = $dryRunSourceToken },
+            @{ Name = "summary"; Value = $dryRunSummary }
+        )) {
+            if ([string]::IsNullOrWhiteSpace([string]$field.Value)) {
+                throw "Supply-chain signedReleaseDryRun must include $($field.Name)."
+            }
+        }
+
+        if (@("ready", "blocked", "submitted") -notcontains $dryRunStatus) {
+            throw "Unsupported supply-chain signed-release dry-run status '$dryRunStatus'."
+        }
+
+        if ($dryRunStatus -eq "blocked" -and [string]::IsNullOrWhiteSpace($dryRunCurrentBlockerClass)) {
+            throw "Supply-chain signedReleaseDryRun.currentBlockerClass is required when status is blocked."
+        }
+
+        $dryRunValidationScriptReference = Resolve-SupplyChainManifestPath -DeclaredPath $dryRunValidationScriptPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "signedReleaseDryRun.validationScript" -PathType "File"
+        if ($validationScriptReferenceNames -notcontains $dryRunValidationScriptReference.Reference) {
+            throw "Supply-chain signedReleaseDryRun validationScript '$($dryRunValidationScriptReference.Reference)' must also be listed in validationScripts."
+        }
+
+        $dryRunSourceDocumentReference = Resolve-SupplyChainManifestPath -DeclaredPath $dryRunSourceDocumentPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "signedReleaseDryRun.sourceDocument" -PathType "File"
+        $dryRunSourceDocument = Get-Content -LiteralPath (Resolve-FullPath -Path $dryRunSourceDocumentPath -BasePath $ResolvedRepoRoot) -Raw -Encoding UTF8
+        if (-not $dryRunSourceDocument.Contains($dryRunSourceToken, [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw "Supply-chain signedReleaseDryRun source document '$($dryRunSourceDocumentReference.Reference)' does not contain token '$dryRunSourceToken'."
+        }
+
+        $dryRunRequiredReportFields = @(
+            Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "requiredReportFields" -DefaultValue @() |
+                ForEach-Object { [string]$_ } |
+                Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        )
+        if ($dryRunRequiredReportFields.Count -eq 0) {
+            throw "Supply-chain signedReleaseDryRun must declare requiredReportFields."
+        }
+
+        $signedReleaseDryRun = [pscustomobject]([ordered]@{
+            Status                   = $dryRunStatus
+            CurrentProofState        = $dryRunCurrentProofState
+            CurrentBlockerClass      = $dryRunCurrentBlockerClass
+            ReadinessPolicy          = $dryRunReadinessPolicy
+            ValidationScript         = $dryRunValidationScriptReference.Reference
+            OutputPath               = $dryRunOutputPath
+            RequiredCommand          = $dryRunRequiredCommand
+            RequiredStatus           = $dryRunRequiredStatus
+            RequiredRunCreated       = ConvertTo-RequiredSupplyChainBoolean -Value (Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "requiredRunCreated" -DefaultValue $true) -Name "signedReleaseDryRun.requiredRunCreated"
+            RequiredRunUrl           = ConvertTo-RequiredSupplyChainBoolean -Value (Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "requiredRunUrl" -DefaultValue $true) -Name "signedReleaseDryRun.requiredRunUrl"
+            SourceDocument           = $dryRunSourceDocumentReference.Reference
+            SourceToken              = $dryRunSourceToken
+            Summary                  = $dryRunSummary
+            RequiredReportFields     = $dryRunRequiredReportFields
+            RequiredReportFieldCount = $dryRunRequiredReportFields.Count
+        })
+    }
+
     return [pscustomobject]([ordered]@{
         Manifest                   = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
         ManifestSchemaVersion      = $schemaVersion
@@ -3527,6 +3612,9 @@ function Convert-SupplyChainEvidence {
         ExternalPolicyPendingCount = $externalPolicyPendingCount
         ExternalPolicyPreflight    = $externalPolicyPreflight
         ExternalPolicyPreflightCheckCount = if ($null -eq $externalPolicyPreflight) { 0 } else { $externalPolicyPreflight.RequiredCheckCount }
+        SignedReleaseDryRun        = $signedReleaseDryRun
+        SignedReleaseDryRunStatus  = if ($null -eq $signedReleaseDryRun) { "not-declared" } else { $signedReleaseDryRun.Status }
+        SignedReleaseDryRunBlockerClass = if ($null -eq $signedReleaseDryRun) { "" } else { $signedReleaseDryRun.CurrentBlockerClass }
         BlockedCount               = $blockedCount
         EvidenceItems              = $evidenceItems
         ValidatedReferences        = @(
@@ -3816,6 +3904,8 @@ function New-EngineCompletionScorecardReport {
             SupplyChainWorkflowReadyCount = $supplyChainEvidence.WorkflowReadyCount
             SupplyChainExternalPolicyPendingCount = $supplyChainEvidence.ExternalPolicyPendingCount
             SupplyChainExternalPolicyPreflightCheckCount = $supplyChainEvidence.ExternalPolicyPreflightCheckCount
+            SupplyChainSignedReleaseDryRunStatus = $supplyChainEvidence.SignedReleaseDryRunStatus
+            SupplyChainSignedReleaseDryRunBlockerClass = $supplyChainEvidence.SignedReleaseDryRunBlockerClass
             SupplyChainBlockedCount = $supplyChainEvidence.BlockedCount
             TestCoverageLayeredProjectCount = $testCoverageEvidence.LayeredProjectCount
             TestCoverageGapCriterionCount = $testCoverageEvidence.GapDefinitionCriterionCount
@@ -4103,8 +4193,25 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Workflow-ready items: $($Report.SupplyChainEvidence.WorkflowReadyCount)")
     $markdown.Add("- External-policy-pending items: $($Report.SupplyChainEvidence.ExternalPolicyPendingCount)")
     $markdown.Add("- External-policy preflight checks: $($Report.SupplyChainEvidence.ExternalPolicyPreflightCheckCount)")
+    $markdown.Add("- Signed-release dry-run status: $($Report.SupplyChainEvidence.SignedReleaseDryRunStatus)")
+    if (-not [string]::IsNullOrWhiteSpace($Report.SupplyChainEvidence.SignedReleaseDryRunBlockerClass)) {
+        $markdown.Add("- Signed-release dry-run blocker: ``$($Report.SupplyChainEvidence.SignedReleaseDryRunBlockerClass)``")
+    }
     $markdown.Add("- Blocked items: $($Report.SupplyChainEvidence.BlockedCount)")
     $markdown.Add("")
+
+    if ($null -ne $Report.SupplyChainEvidence.SignedReleaseDryRun) {
+        $markdown.Add("### Signed-Release Dry Run")
+        $markdown.Add("")
+        $markdown.Add("- Status: $($Report.SupplyChainEvidence.SignedReleaseDryRun.Status)")
+        $markdown.Add("- Current proof state: $($Report.SupplyChainEvidence.SignedReleaseDryRun.CurrentProofState)")
+        $markdown.Add("- Current blocker class: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.CurrentBlockerClass)``")
+        $markdown.Add("- Readiness policy: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.ReadinessPolicy)``")
+        $markdown.Add("- Required command: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.RequiredCommand)``")
+        $markdown.Add("- Output path: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.OutputPath)``")
+        $markdown.Add("- Required report fields: $($Report.SupplyChainEvidence.SignedReleaseDryRun.RequiredReportFieldCount)")
+        $markdown.Add("")
+    }
 
     if ($null -ne $Report.SupplyChainEvidence.ExternalPolicyPreflight) {
         $markdown.Add("### External-Policy Preflight")

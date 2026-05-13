@@ -69,6 +69,37 @@ Current focus:
 - treat the event-dispatch remediation command-result filtered read path as benchmark-governed: `EventDispatchRemediationCatalogBenchmarks` now covers native Wolverine-free filtered summary, retention, latest, oldest, and compact dashboard selectors, and `scripts/validate-release.ps1` includes that benchmark class in the default guardrail lane
 - treat open GitHub issue drift as a planning-quality risk: `scripts/validate-planning-github-issues.ps1` now checks open `ENG-*` issues against backlog truth, detects duplicate open issue numbers for the same ENG id, and detects stale open duplicates for backlog rows that are already `done` or `shipped` at another issue number
 - treat missing GitHub Project 2 planning fields as a planning-quality risk: `scripts/validate-planning-project-fields.ps1` now verifies open `ENG-*` issue project items have populated `Status`, `Estimate`, `Iteration`, `Test`, and `Benchmark`, and the first live run corrected the missing `Iteration` field on `ENG-532` / issue `#1180`
+- treat signed-release dry-run dispatch proof as scorecard readback, not prose-only release context: `SupplyChainEvidence.SignedReleaseDryRun` now records the dry-run status, partial proof state, current `dispatch-identity-actions-disabled` blocker, required `-RequireRunCreated` command, output path, and required report fields while `ENG-532` remains open until an Actions-enabled release-manager identity creates the workflow run
+
+### ENG-679 Signed-release dry-run scorecard readback
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: release-readiness / supply-chain / scorecard
+Quality dimensions: Security, Compliance, Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1347
+
+Why:
+
+- `ENG-532` made the signed-release dry-run probe machine-readable, but the scorecard still carried the dispatch blocker mostly through prose and the standalone probe report
+- release managers need one generated artifact to explain whether the signed-release proof is complete, partial, or externally blocked
+- the current blocker is an account-level dispatch identity issue, so the scorecard should expose it without converting the partial proof into an unrelated hard release-validation blocker
+
+Delivered:
+
+- raised `scripts/supply-chain-release-support.json` to schema `1.4.0` with a `signedReleaseDryRun` contract
+- `scripts/publish-engine-completion-scorecard.ps1` now emits `SupplyChainEvidence.SignedReleaseDryRun`, `SignedReleaseDryRunStatus`, and `SignedReleaseDryRunBlockerClass`
+- scorecard Markdown now includes a signed-release dry-run section with status, proof state, blocker class, readiness policy, required command, output path, and required report-field count
+- `scripts/validate-release.ps1` now prints signed-release dry-run status/proof/blocker/command/output from the generated scorecard artifact
+- focused Pester coverage keeps the new scorecard and release-validation readback aligned
+
+Validation:
+
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\publish-engine-completion-scorecard.Tests.ps1 -Output Detailed`
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\validate-release.Tests.ps1 -Output Detailed`
+- `pwsh ./scripts/publish-engine-completion-scorecard.ps1 -OutputPath artifacts/engine-completion-scorecard-eng679`
+- `git diff --check`
 
 ### ENG-678 Planning Project field completeness guard
 
@@ -257,6 +288,7 @@ Observed:
 - `gh workflow list --repo Cephalon-Labs/CephalonEngine` reports `Publish Release` as `active`
 - `gh api repos/Cephalon-Labs/CephalonEngine/actions/permissions` reports repository Actions `enabled=true` and `allowed_actions=all`
 - `pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated` records workflow state, repository Actions permission state, dispatch result, blocker class, and run URL when one exists
+- `SupplyChainEvidence.SignedReleaseDryRun` now reads back the same partial proof state, current blocker class, required command, and required report fields from `scripts/supply-chain-release-support.json`
 - the current dry-run probe still fails with GitHub blocker class `dispatch-identity-actions-disabled` because `gh workflow run "Publish Release" --repo Cephalon-Labs/CephalonEngine --ref master -f dry_run=true` returns `HTTP 422: Actions has been disabled for this user`
 - no signed-release dry-run workflow run was created, so the scorecard must keep package-publishing / signed-release proof `partial`
 

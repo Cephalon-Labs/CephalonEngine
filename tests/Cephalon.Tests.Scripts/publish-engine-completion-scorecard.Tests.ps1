@@ -255,7 +255,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.22.0"
+        $json.'$schemaVersion' | Should -Be "1.23.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
@@ -335,6 +335,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.SupplyChainWorkflowReadyCount | Should -Be 9
         $json.Summary.SupplyChainExternalPolicyPendingCount | Should -Be 3
         $json.Summary.SupplyChainExternalPolicyPreflightCheckCount | Should -Be 3
+        $json.Summary.SupplyChainSignedReleaseDryRunStatus | Should -Be "blocked"
+        $json.Summary.SupplyChainSignedReleaseDryRunBlockerClass | Should -Be "dispatch-identity-actions-disabled"
         $json.Summary.SupplyChainBlockedCount | Should -Be 0
         $json.Summary.TestCoverageLayeredProjectCount | Should -Be 8
         $json.Summary.TestCoverageGapCriterionCount | Should -Be 4
@@ -695,7 +697,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $aspNetCoreColdStartBaseline.Measurements.GuardrailMaxAllocatedBytes | Should -Be 30000000
         $requestAllocationBaseline.Measurements.AllocatedBytes | Should -Contain 27914.24
 
-        $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.3.0"
+        $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.4.0"
         $json.SupplyChainEvidence.Status | Should -Be "workflow-ready-external-policy-pending"
         $json.SupplyChainEvidence.ReleaseWorkflow | Should -Be ".github/workflows/publish-release.yml"
         $json.SupplyChainEvidence.SourceDocuments | Should -Contain "docs/package-publishing.md"
@@ -703,6 +705,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SupplyChainEvidence.ValidationScripts | Should -Contain "scripts/validate-release.ps1"
         $json.SupplyChainEvidence.ValidationScripts | Should -Contain "scripts/validate-nuget-vulnerability-audit.ps1"
         $json.SupplyChainEvidence.ValidationScripts | Should -Contain "scripts/validate-supply-chain-external-policy-preflight.ps1"
+        $json.SupplyChainEvidence.ValidationScripts | Should -Contain "scripts/invoke-signed-release-dry-run.ps1"
         $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "actions/attest-build-provenance"
         $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "NuGet/login"
         $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "Validate supply-chain external policy preflight"
@@ -721,6 +724,18 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SupplyChainEvidence.ExternalPolicyPreflight.RequiredChecks.EvidenceItemId | Should -Contain "nuget-prefix-reservation"
         $json.SupplyChainEvidence.ExternalPolicyPreflight.RequiredChecks.EvidenceItemId | Should -Contain "nuget-user-secret"
         $json.SupplyChainEvidence.ExternalPolicyPreflight.ReleaseWorkflowTokens | Should -Contain "-RequireAll"
+        $json.SupplyChainEvidence.SignedReleaseDryRun.Status | Should -Be "blocked"
+        $json.SupplyChainEvidence.SignedReleaseDryRun.CurrentProofState | Should -Be "partial"
+        $json.SupplyChainEvidence.SignedReleaseDryRun.CurrentBlockerClass | Should -Be "dispatch-identity-actions-disabled"
+        $json.SupplyChainEvidence.SignedReleaseDryRun.ReadinessPolicy | Should -Be "workflow-dispatch-run-required-before-signed-release-proof"
+        $json.SupplyChainEvidence.SignedReleaseDryRun.ValidationScript | Should -Be "scripts/invoke-signed-release-dry-run.ps1"
+        $json.SupplyChainEvidence.SignedReleaseDryRun.OutputPath | Should -Be "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json"
+        $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredCommand | Should -Be "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated"
+        $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredStatus | Should -Be "submitted"
+        $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredRunCreated | Should -BeTrue
+        $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredRunUrl | Should -BeTrue
+        $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredReportFieldCount | Should -Be 5
+        $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredReportFields | Should -Contain "RunUrl"
         $json.SupplyChainEvidence.BlockedCount | Should -Be 0
         $json.SupplyChainEvidence.EvidenceItems.Id | Should -Contain "nuget-vulnerability-audit"
         $json.SupplyChainEvidence.EvidenceItems.Id | Should -Contain "cyclonedx-sbom-per-package"
@@ -785,6 +800,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Guardrail coverage"
         $markdown | Should -Match "Supply-Chain Release Evidence"
         $markdown | Should -Match "Supply-chain evidence items: 12"
+        $markdown | Should -Match "Signed-release dry-run status: blocked"
+        $markdown | Should -Match "Signed-Release Dry Run"
         $markdown | Should -Match "External-Policy Preflight"
         $markdown | Should -Match "External-policy preflight checks: 3"
         $markdown | Should -Match "external-policy-pending"
@@ -1661,10 +1678,13 @@ jobs:
         $checkpoint | Should -Match "ENG-673"
         $checkpoint | Should -Match "ENG-674"
         $checkpoint | Should -Match "ENG-675"
+        $checkpoint | Should -Match "ENG-679"
         $checkpoint | Should -Match "Eventing operational-superiority"
         $checkpoint | Should -Match "runtime concordance ``matched``"
         $checkpoint | Should -Match "wolverineRequired=false"
         $checkpoint | Should -Match "19 of 19 tokens"
+        $checkpoint | Should -Match "SupplyChainEvidence\.SignedReleaseDryRun"
+        $checkpoint | Should -Match "dispatch-identity-actions-disabled"
         $checkpoint | Should -Match "``104`` baselines / ``0`` pending packages / ``0`` additions / ``0`` removals"
         $checkpoint | Should -Match "cephalon doctor --scorecard"
         $checkpoint | Should -Not -Match "schema ``1\.20\.0``"
@@ -1699,6 +1719,8 @@ jobs:
         $releaseValidation | Should -Match "Supply-chain release evidence"
         $releaseValidation | Should -Match "external policy preflight checks"
         $releaseValidation | Should -Match "SupplyChainEvidence\.ExternalPolicyPreflight"
+        $releaseValidation | Should -Match "SupplyChainEvidence\.SignedReleaseDryRun"
+        $releaseValidation | Should -Match "Signed-release dry-run evidence"
         $releaseValidation | Should -Match "PublicApiCompatibilityEvidence"
         $releaseValidation | Should -Match "Public API compatibility"
         $releaseValidation | Should -Match "Assert-EngineCompletionScorecardHardBlockers"
