@@ -491,6 +491,7 @@ public sealed class DocumentationCoverageTests
         var repositoryRoot = GetRepositoryRoot();
         var expectedSchemaVersion = ReadScorecardSchemaVersion(repositoryRoot);
         var scorecard = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-completion-scorecard.md"));
+        var roadmap = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-roadmap.md"));
         var projectMemory = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "project-memory.md"));
         var planningGovernance = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "planning-governance.md"));
         var releaseChecklist = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "release-checklist.md"));
@@ -513,6 +514,11 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("pending-baseline blocker evidence rows", scorecard, StringComparison.Ordinal);
         Assert.Contains("signed-release dry-run status/proof/blocker", scorecard, StringComparison.Ordinal);
         Assert.Contains("test coverage counts from `TestCoverageEvidence`", scorecard, StringComparison.Ordinal);
+        Assert.Contains($"scorecard schema `{expectedSchemaVersion}`", roadmap, StringComparison.Ordinal);
+        Assert.Contains("SupplyChainEvidence.SignedReleaseDryRun", roadmap, StringComparison.Ordinal);
+        Assert.Contains("signed-release dry-run", roadmap, StringComparison.Ordinal);
+        Assert.Contains("EventingOperationalSuperiorityEvidence", roadmap, StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor --scorecard", roadmap, StringComparison.Ordinal);
         Assert.Contains($"generated artifact is now schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
         Assert.Contains($"currently requires scorecard schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
         Assert.Contains("deployment-mode claims-report gate/target/warning/error/package-claim verdict counts", projectMemory, StringComparison.Ordinal);
