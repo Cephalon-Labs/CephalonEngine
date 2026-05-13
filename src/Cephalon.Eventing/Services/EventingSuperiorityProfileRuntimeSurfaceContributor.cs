@@ -15,6 +15,8 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private const string ReferenceFrameworks = "MassTransit,NServiceBus,Wolverine,MediatR";
     private const string ClaimPolicy = "claimed-only-with-runtime-evidence";
     private const string RemediationFilteredReadBenchmarks = "FilterSummaryByMessageId,FilterRetentionByMessageId,FilterLatestByCorrelationId,FilterOldestByDispatchOutcome,FilterOperatorDashboardSelectors";
+    private const string EventingBridgeSagaChoreographyPublisherTypeName =
+        "Cephalon.Eventing.Behaviors.Services.EventingSagaChoreographyPublisher";
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -340,6 +342,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var publicationStates = publicationStateCatalog?.States ?? [];
         var choreographyCount = choreographies.Count.ToString(CultureInfo.InvariantCulture);
         var publicationStateCount = publicationStates.Count.ToString(CultureInfo.InvariantCulture);
+        var choreographyHandoffProvenCount = publicationStates.Count(IsCompleteChoreographyHandoffProof);
         var acceptedHandoffs = publicationStates.Sum(static state => state.AcceptedCount).ToString(CultureInfo.InvariantCulture);
         var failedHandoffs = publicationStates.Sum(static state => state.FailedCount).ToString(CultureInfo.InvariantCulture);
         var compensationHandoffs = publicationStates.Count(static state => state.IsCompensation).ToString(CultureInfo.InvariantCulture);
@@ -363,9 +366,53 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 ? "Activate the explicit Eventing behavior bridge with an outbox-backed publish path before claiming choreography handoff ownership."
                 : "Activate behavior choreography catalogs and the explicit Eventing bridge before claiming choreography handoff ownership.";
 
+        var selectedHandoffState = SelectBestChoreographyHandoffState(
+            publicationStates,
+            IsCompleteChoreographyHandoffProof);
+        var selectedHandoffStateId = "not-reported";
+        var selectedHandoffBehaviorId = "not-reported";
+        var selectedHandoffPublicationId = "not-reported";
+        var selectedHandoffChannelId = "not-reported";
+        var selectedHandoffEventType = "not-reported";
+        var selectedHandoffSourceModuleId = "not-reported";
+        var selectedHandoffCorrelationId = "not-reported";
+        var selectedHandoffTenantId = "not-reported";
+        var selectedHandoffLastOutcome = "not-reported";
+        var selectedHandoffLastObservedAtUtc = "not-reported";
+        var selectedHandoffLastPublisherType = "not-reported";
+        var selectedHandoffIsCompensation = "not-reported";
+        var selectedHandoffBridgeMatch = "not-reported";
+
+        if (selectedHandoffState is not null)
+        {
+            selectedHandoffStateId = selectedHandoffState.Id;
+            selectedHandoffBehaviorId = selectedHandoffState.BehaviorId;
+            selectedHandoffPublicationId = selectedHandoffState.PublicationId;
+            selectedHandoffChannelId = selectedHandoffState.ChannelId;
+            selectedHandoffEventType = selectedHandoffState.EventType;
+            selectedHandoffSourceModuleId = string.IsNullOrWhiteSpace(selectedHandoffState.SourceModuleId)
+                ? "not-reported"
+                : selectedHandoffState.SourceModuleId;
+            selectedHandoffCorrelationId = string.IsNullOrWhiteSpace(selectedHandoffState.CorrelationId)
+                ? "not-reported"
+                : selectedHandoffState.CorrelationId;
+            selectedHandoffTenantId = string.IsNullOrWhiteSpace(selectedHandoffState.TenantId)
+                ? "not-reported"
+                : selectedHandoffState.TenantId;
+            selectedHandoffLastOutcome = selectedHandoffState.LastOutcome ?? "unknown";
+            selectedHandoffLastObservedAtUtc = FormatObservedAt(selectedHandoffState.LastObservedAtUtc);
+            selectedHandoffLastPublisherType = string.IsNullOrWhiteSpace(selectedHandoffState.LastPublisherType)
+                ? "not-reported"
+                : selectedHandoffState.LastPublisherType;
+            selectedHandoffIsCompensation = selectedHandoffState.IsCompensation ? "true" : "false";
+            selectedHandoffBridgeMatch = IsCompleteChoreographyHandoffProof(selectedHandoffState)
+                ? "eventing-bridge"
+                : "non-eventing";
+        }
+
         var evidence = string.Create(
             CultureInfo.InvariantCulture,
-            $"choreographyCatalog={choreographyCatalogState}; choreographyCount={choreographyCount}; publicationStateCatalog={publicationStateCatalogState}; publicationStateCount={publicationStateCount}; acceptedHandoffs={acceptedHandoffs}; failedHandoffs={failedHandoffs}; compensationHandoffs={compensationHandoffs}; eventingBridge={eventingBridge}; outboxHandoff={outboxHandoff}; handoffDurability={handoffDurability}; processManagerState=not-claimed; sagaStatePersistence=not-claimed; wolverineRequired=false");
+            $"choreographyCatalog={choreographyCatalogState}; choreographyCount={choreographyCount}; publicationStateCatalog={publicationStateCatalogState}; publicationStateCount={publicationStateCount}; choreographyHandoffProofSelection=latest-proven-publication-state; choreographyHandoffStateCount={publicationStateCount}; choreographyHandoffProvenCount={choreographyHandoffProvenCount.ToString(CultureInfo.InvariantCulture)}; acceptedHandoffs={acceptedHandoffs}; failedHandoffs={failedHandoffs}; compensationHandoffs={compensationHandoffs}; eventingBridge={eventingBridge}; outboxHandoff={outboxHandoff}; handoffDurability={handoffDurability}; selectedHandoffStateId={selectedHandoffStateId}; selectedHandoffBehaviorId={selectedHandoffBehaviorId}; selectedHandoffPublicationId={selectedHandoffPublicationId}; selectedHandoffChannelId={selectedHandoffChannelId}; selectedHandoffEventType={selectedHandoffEventType}; selectedHandoffSourceModuleId={selectedHandoffSourceModuleId}; selectedHandoffCorrelationId={selectedHandoffCorrelationId}; selectedHandoffTenantId={selectedHandoffTenantId}; selectedHandoffIsCompensation={selectedHandoffIsCompensation}; selectedHandoffLastOutcome={selectedHandoffLastOutcome}; selectedHandoffLastObservedAtUtc={selectedHandoffLastObservedAtUtc}; selectedHandoffLastPublisherType={selectedHandoffLastPublisherType}; selectedHandoffBridgeMatch={selectedHandoffBridgeMatch}; processManagerState=not-claimed; sagaStatePersistence=not-claimed; wolverineRequired=false");
 
         return new ChoreographyHandoffProfile(status, evidence, nextGap);
     }
@@ -812,6 +859,26 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             .ThenBy(static state => state.SubscriptionId, StringComparer.OrdinalIgnoreCase)
             .FirstOrDefault();
     }
+
+    private static SagaChoreographyPublicationRuntimeState? SelectBestChoreographyHandoffState(
+        IEnumerable<SagaChoreographyPublicationRuntimeState> states,
+        Func<SagaChoreographyPublicationRuntimeState, bool> isProven)
+    {
+        return states
+            .OrderByDescending(isProven)
+            .ThenByDescending(static state => state.LastObservedAtUtc ?? DateTimeOffset.MinValue)
+            .ThenBy(static state => state.SourceModuleId ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(static state => state.BehaviorId, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(static state => state.Id, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
+    }
+
+    private static bool IsCompleteChoreographyHandoffProof(SagaChoreographyPublicationRuntimeState state) =>
+        state.IsAccepted &&
+        string.Equals(
+            state.LastPublisherType,
+            EventingBridgeSagaChoreographyPublisherTypeName,
+            StringComparison.Ordinal);
 
     private static bool IsSuccessfulSerializationExecutionProof(EventDispatchRuntimeState state) =>
         string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
