@@ -785,6 +785,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
         EventDispatchWireContractMetadata.IsWireContractProven(state.Metadata);
 
+    private static bool IsSuccessfulScheduledDeliveryProof(EventDispatchRuntimeState state) =>
+        string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+        EventDispatchScheduledDeliveryMetadata.IsScheduledDeliveryProven(state.Metadata);
+
     private static string FormatObservedAt(DateTimeOffset? observedAtUtc) =>
         observedAtUtc.HasValue
             ? observedAtUtc.Value.ToString("O", CultureInfo.InvariantCulture)
@@ -1110,9 +1114,15 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
 
         using var scope = scopeFactory.CreateScope();
         var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
-        var scheduledDeliveryState = dispatchRuntimeCatalog?.States.FirstOrDefault(static state =>
-            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.ScheduledDeliveryOwnership, out var value) &&
-            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+        var scheduledDeliveryStates = dispatchRuntimeCatalog?.States
+            .Where(static state =>
+                state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.ScheduledDeliveryOwnership, out var value) &&
+                string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase))
+            .ToArray() ?? [];
+        var scheduledDeliveryProvenCount = scheduledDeliveryStates.Count(IsSuccessfulScheduledDeliveryProof);
+        var scheduledDeliveryState = SelectBestDispatchProof(
+            scheduledDeliveryStates,
+            IsSuccessfulScheduledDeliveryProof);
 
         if (scheduledDeliveryState is not null)
         {
@@ -1184,7 +1194,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 status,
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"publicationPath={publicationPath}; publicationScheduling={publicationScheduling}; schedulePolicy={schedulePolicy}; processLocalScheduleQueue={processLocalScheduleQueue}; maxDelayMilliseconds={maxDelayMilliseconds}; maxPendingCount={maxPendingCount}; scheduleDurability={scheduleDurability}; scheduleScope={scheduleScope}; scheduledDeliveryOwnership={scheduledDeliveryOwnership}; scheduledDeliveryOwnershipSource={scheduledDeliveryOwnershipSource}; durableScheduledDelivery={durableScheduledDelivery}; durableScheduledDeliveryId={durableScheduledDeliveryId}; providerDelayQueue={providerDelayQueue}; providerDelayQueueId={providerDelayQueueId}; brokerScheduledDelivery={brokerScheduledDelivery}; brokerScheduledDeliveryId={brokerScheduledDeliveryId}; crossNodeScheduleCoordination={crossNodeScheduleCoordination}; scheduleCoordinationId={scheduleCoordinationId}; scheduleRecovery={scheduleRecovery}; scheduleRecoveryId={scheduleRecoveryId}; outboxId={scheduledDeliveryState.OutboxId}; lastOutcome={scheduledDeliveryState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                    $"publicationPath={publicationPath}; publicationScheduling={publicationScheduling}; schedulePolicy={schedulePolicy}; processLocalScheduleQueue={processLocalScheduleQueue}; maxDelayMilliseconds={maxDelayMilliseconds}; maxPendingCount={maxPendingCount}; scheduleDurability={scheduleDurability}; scheduleScope={scheduleScope}; scheduledDeliveryProofSelection=latest-proven-dispatch-state; scheduledDeliveryStateCount={scheduledDeliveryStates.Length.ToString(CultureInfo.InvariantCulture)}; scheduledDeliveryProvenCount={scheduledDeliveryProvenCount.ToString(CultureInfo.InvariantCulture)}; scheduledDeliveryOwnership={scheduledDeliveryOwnership}; scheduledDeliveryOwnershipSource={scheduledDeliveryOwnershipSource}; durableScheduledDelivery={durableScheduledDelivery}; durableScheduledDeliveryId={durableScheduledDeliveryId}; providerDelayQueue={providerDelayQueue}; providerDelayQueueId={providerDelayQueueId}; brokerScheduledDelivery={brokerScheduledDelivery}; brokerScheduledDeliveryId={brokerScheduledDeliveryId}; crossNodeScheduleCoordination={crossNodeScheduleCoordination}; scheduleCoordinationId={scheduleCoordinationId}; scheduleRecovery={scheduleRecovery}; scheduleRecoveryId={scheduleRecoveryId}; outboxId={scheduledDeliveryState.OutboxId}; lastOutcome={scheduledDeliveryState.LastOutcome ?? "unknown"}; lastObservedAtUtc={FormatObservedAt(scheduledDeliveryState.LastObservedAtUtc)}; wolverineRequired=false"),
                 nextGap);
         }
 
@@ -1194,7 +1204,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 "not-claimed",
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"publicationPath={publicationPath}; publicationScheduling={publicationScheduling}; processLocalScheduleQueue={processLocalScheduleQueue}; scheduleDurability={fallbackScheduleDurability}; scheduledDeliveryOwnership=not-claimed; scheduledDeliveryOwnershipSource=not-reported; durableScheduledDelivery=not-claimed; durableScheduledDeliveryId=not-reported; providerDelayQueue=not-present; providerDelayQueueId=not-reported; brokerScheduledDelivery=not-claimed; brokerScheduledDeliveryId=not-reported; crossNodeScheduleCoordination=not-claimed; scheduleCoordinationId=not-reported; scheduleRecovery=not-claimed; scheduleRecoveryId=not-reported; wolverineRequired=false"),
+                    $"publicationPath={publicationPath}; publicationScheduling={publicationScheduling}; processLocalScheduleQueue={processLocalScheduleQueue}; scheduleDurability={fallbackScheduleDurability}; scheduledDeliveryProofSelection=latest-proven-dispatch-state; scheduledDeliveryStateCount={scheduledDeliveryStates.Length.ToString(CultureInfo.InvariantCulture)}; scheduledDeliveryProvenCount={scheduledDeliveryProvenCount.ToString(CultureInfo.InvariantCulture)}; scheduledDeliveryOwnership=not-claimed; scheduledDeliveryOwnershipSource=not-reported; durableScheduledDelivery=not-claimed; durableScheduledDeliveryId=not-reported; providerDelayQueue=not-present; providerDelayQueueId=not-reported; brokerScheduledDelivery=not-claimed; brokerScheduledDeliveryId=not-reported; crossNodeScheduleCoordination=not-claimed; scheduleCoordinationId=not-reported; scheduleRecovery=not-claimed; scheduleRecoveryId=not-reported; wolverineRequired=false"),
                 "Enable bounded process-local publication scheduling or supply complete provider scheduled-delivery proof before claiming scheduled/delayed delivery evidence.");
         }
 
@@ -1202,7 +1212,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "partial",
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"publicationPath={publicationPath}; publicationScheduling={publicationScheduling}; schedulePolicy={schedulePolicy}; processLocalScheduleQueue={processLocalScheduleQueue}; maxDelayMilliseconds={maxDelayMilliseconds}; maxPendingCount={maxPendingCount}; scheduleDurability={fallbackScheduleDurability}; scheduleScope={fallbackScheduleScope}; scheduledDeliveryOwnership=not-claimed; scheduledDeliveryOwnershipSource=not-reported; durableScheduledDelivery=not-claimed; durableScheduledDeliveryId=not-reported; providerDelayQueue=not-present; providerDelayQueueId=not-reported; brokerScheduledDelivery=not-claimed; brokerScheduledDeliveryId=not-reported; crossNodeScheduleCoordination=not-claimed; scheduleCoordinationId=not-reported; scheduleRecovery=not-claimed; scheduleRecoveryId=not-reported; wolverineRequired=false"),
+                $"publicationPath={publicationPath}; publicationScheduling={publicationScheduling}; schedulePolicy={schedulePolicy}; processLocalScheduleQueue={processLocalScheduleQueue}; maxDelayMilliseconds={maxDelayMilliseconds}; maxPendingCount={maxPendingCount}; scheduleDurability={fallbackScheduleDurability}; scheduleScope={fallbackScheduleScope}; scheduledDeliveryProofSelection=latest-proven-dispatch-state; scheduledDeliveryStateCount={scheduledDeliveryStates.Length.ToString(CultureInfo.InvariantCulture)}; scheduledDeliveryProvenCount={scheduledDeliveryProvenCount.ToString(CultureInfo.InvariantCulture)}; scheduledDeliveryOwnership=not-claimed; scheduledDeliveryOwnershipSource=not-reported; durableScheduledDelivery=not-claimed; durableScheduledDeliveryId=not-reported; providerDelayQueue=not-present; providerDelayQueueId=not-reported; brokerScheduledDelivery=not-claimed; brokerScheduledDeliveryId=not-reported; crossNodeScheduleCoordination=not-claimed; scheduleCoordinationId=not-reported; scheduleRecovery=not-claimed; scheduleRecoveryId=not-reported; wolverineRequired=false"),
             "Add provider-reported durable scheduled delivery, provider delay queue, broker scheduling, recovery, and cross-node coordination evidence before claiming scheduled/delayed delivery ownership.");
     }
 

@@ -2490,6 +2490,85 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingSelectsLatestProvenScheduledDeliveryEvidenceAcrossOutboxesWithoutWolverine()
+    {
+        var olderScheduledDeliveryReport = EventDispatchScheduledDeliveryMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "alpha-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 9, 0, 0, TimeSpan.Zero),
+                messageId: "evt-alpha-schedule-001",
+                attempt: 1),
+            source: "alpha-schedule-runtime",
+            durableScheduledDeliveryId: "alpha-durable-schedule",
+            providerDelayQueueId: "alpha-provider-delay",
+            brokerScheduledDeliveryId: "alpha-broker-schedule",
+            scheduleCoordinationId: "alpha-schedule-coordination",
+            scheduleRecoveryId: "alpha-schedule-recovery");
+        var newerScheduledDeliveryReport = EventDispatchScheduledDeliveryMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "beta-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 9, 30, 0, TimeSpan.Zero),
+                messageId: "evt-beta-schedule-001",
+                attempt: 1),
+            source: "beta-schedule-runtime",
+            durableScheduledDeliveryId: "beta-durable-schedule",
+            providerDelayQueueId: "beta-provider-delay",
+            brokerScheduledDeliveryId: "beta-broker-schedule",
+            scheduleCoordinationId: "beta-schedule-coordination",
+            scheduleRecoveryId: "beta-schedule-recovery");
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventDispatchRuntimeCatalog>(new TestEventDispatchRuntimeCatalog(
+            CreateDispatchRuntimeState(olderScheduledDeliveryReport),
+            CreateDispatchRuntimeState(newerScheduledDeliveryReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new MultiOutboxEventingTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Scheduled delivery proof events."));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["status"]);
+        Assert.Contains("scheduledDeliveryProofSelection=latest-proven-dispatch-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("scheduledDeliveryStateCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("scheduledDeliveryProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("scheduledDeliveryOwnershipSource=beta-schedule-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("durableScheduledDeliveryId=beta-durable-schedule", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerDelayQueueId=beta-provider-delay", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerScheduledDeliveryId=beta-broker-schedule", evidence, StringComparison.Ordinal);
+        Assert.Contains("scheduleCoordinationId=beta-schedule-coordination", evidence, StringComparison.Ordinal);
+        Assert.Contains("scheduleRecoveryId=beta-schedule-recovery", evidence, StringComparison.Ordinal);
+        Assert.Contains("outboxId=beta-outbox", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastObservedAtUtc=2026-05-13T09:30:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("durableScheduledDeliveryId=alpha-durable-schedule", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AddEventingProjectsContractCatalogProfileEvidenceWithoutWolverine()
     {
         var services = new ServiceCollection();
@@ -4917,7 +4996,7 @@ public sealed class EngineBuilderTests
             outboxes.Add(new OutboxDescriptor(
                 id: "alpha-outbox",
                 displayName: "Alpha Outbox",
-                description: "Older wire-contract proof outbox.",
+                description: "Older eventing proof outbox.",
                 sourceModuleId: Descriptor.Id,
                 provider: "test",
                 mode: "in-memory",
@@ -4926,7 +5005,7 @@ public sealed class EngineBuilderTests
             outboxes.Add(new OutboxDescriptor(
                 id: "beta-outbox",
                 displayName: "Beta Outbox",
-                description: "Newer wire-contract proof outbox.",
+                description: "Newer eventing proof outbox.",
                 sourceModuleId: Descriptor.Id,
                 provider: "test",
                 mode: "in-memory",
