@@ -2544,9 +2544,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             .Where(static dimension => !string.Equals(dimension.Status, "claimed", StringComparison.OrdinalIgnoreCase))
             .Select(static dimension => dimension.Id)
             .ToArray();
+        var dimensionStatuses = FormatDimensionStatuses(requiredDimensions);
+        var coveragePercent = (int)Math.Round(
+            (double)coveredDimensions.Length / requiredDimensions.Length * 100,
+            MidpointRounding.AwayFromZero);
         var status = missingDimensions.Length == 0
             ? "claimed"
             : coveredDimensions.Length == 0 ? "not-claimed" : "partial";
+        var complete = status == "claimed";
         var nextGap = status == "claimed"
             ? "Keep provider-operated proof, choreography handoff, durable command audit, replay cursor, observability, and benchmark evidence covered together while Wolverine remains optional."
             : "Complete the missing native operational proof dimensions before claiming full Eventing operational superiority coverage.";
@@ -2555,8 +2560,13 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             status,
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"requiredOperationalSuperiorityDimensions={string.Join(',', requiredDimensions.Select(static dimension => dimension.Id))}; requiredOperationalSuperiorityDimensionCount={requiredDimensions.Length.ToString(CultureInfo.InvariantCulture)}; coveredOperationalSuperiorityDimensions={FormatDimensionList(coveredDimensions)}; coveredOperationalSuperiorityDimensionCount={coveredDimensions.Length.ToString(CultureInfo.InvariantCulture)}; partialOperationalSuperiorityDimensions={FormatDimensionList(partialDimensions)}; partialOperationalSuperiorityDimensionCount={partialDimensions.Length.ToString(CultureInfo.InvariantCulture)}; missingOperationalSuperiorityDimensions={FormatDimensionList(missingDimensions)}; missingOperationalSuperiorityDimensionCount={missingDimensions.Length.ToString(CultureInfo.InvariantCulture)}; proofSource=eventing-superiority-profile; providerOperatedRuntimeProof=provider-operated-runtime-proof-coverage; choreographyHandoffProof=choreography-handoff-ownership; commandJournalAuditProof=durable-remediation-command-audit; commandJournalReplayProof=durable-command-journal-replay-cursor; observabilityProof=observability-compliance-and-auditability; benchmarkProof=testability-and-benchmark-evidence; comparisonBaseline=MassTransit,NServiceBus,Wolverine,MediatR; providerNeutral=true; wolverineRequired=false"),
+                $"requiredOperationalSuperiorityDimensions={string.Join(',', requiredDimensions.Select(static dimension => dimension.Id))}; requiredOperationalSuperiorityDimensionCount={requiredDimensions.Length.ToString(CultureInfo.InvariantCulture)}; dimensionStatuses={dimensionStatuses}; coveredOperationalSuperiorityDimensions={FormatDimensionList(coveredDimensions)}; coveredOperationalSuperiorityDimensionCount={coveredDimensions.Length.ToString(CultureInfo.InvariantCulture)}; partialOperationalSuperiorityDimensions={FormatDimensionList(partialDimensions)}; partialOperationalSuperiorityDimensionCount={partialDimensions.Length.ToString(CultureInfo.InvariantCulture)}; missingOperationalSuperiorityDimensions={FormatDimensionList(missingDimensions)}; missingOperationalSuperiorityDimensionCount={missingDimensions.Length.ToString(CultureInfo.InvariantCulture)}; operationalSuperiorityCoveragePercent={coveragePercent.ToString(CultureInfo.InvariantCulture)}; operationalSuperiorityComplete={ToMetadataValue(complete)}; proofSource=eventing-superiority-profile; providerOperatedRuntimeProof=provider-operated-runtime-proof-coverage; choreographyHandoffProof=choreography-handoff-ownership; commandJournalAuditProof=durable-remediation-command-audit; commandJournalReplayProof=durable-command-journal-replay-cursor; observabilityProof=observability-compliance-and-auditability; benchmarkProof=testability-and-benchmark-evidence; comparisonBaseline=MassTransit,NServiceBus,Wolverine,MediatR; providerNeutral=true; wolverineRequired=false"),
             nextGap);
+    }
+
+    private static string FormatDimensionStatuses(IEnumerable<(string Id, string Status)> dimensions)
+    {
+        return string.Join(',', dimensions.Select(static dimension => $"{dimension.Id}:{dimension.Status}"));
     }
 
     private static TechnologyRuntimeEntry CreateEntry(
