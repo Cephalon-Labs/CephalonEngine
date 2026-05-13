@@ -806,32 +806,23 @@ public sealed class DocumentationCoverageTests
     {
         var repositoryRoot = GetRepositoryRoot();
         var packagePublishing = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "package-publishing.md"));
-        using var supplyChainManifest = JsonDocument.Parse(File.ReadAllText(Path.Combine(
-            repositoryRoot,
-            "scripts",
-            "supply-chain-release-support.json")));
 
-        var root = supplyChainManifest.RootElement;
-        Assert.Equal("1.5.0", ReadRequiredJsonString(root, "$schemaVersion", "supply-chain release support manifest"));
-        Assert.True(
-            root.TryGetProperty("signedReleaseDryRun", out var signedReleaseDryRun),
-            "Expected supply-chain release support manifest to define signedReleaseDryRun.");
-        Assert.True(
-            signedReleaseDryRun.TryGetProperty("requiredReportFields", out var requiredReportFields),
-            "Expected signedReleaseDryRun to define requiredReportFields.");
+        AssertDocumentContainsAllTokens(
+            packagePublishing,
+            ReadSignedReleaseDryRunRequiredReportFields(repositoryRoot),
+            "docs/package-publishing.md");
+    }
 
-        var requiredFields = requiredReportFields
-            .EnumerateArray()
-            .Select(field => field.GetString())
-            .Where(field => !string.IsNullOrWhiteSpace(field))
-            .Select(field => field!)
-            .ToArray();
-        Assert.NotEmpty(requiredFields);
+    [Fact]
+    public void ReleaseChecklistDocsStayAlignedWithSignedReleaseDryRunReportContract()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var requiredFields = ReadSignedReleaseDryRunRequiredReportFields(repositoryRoot);
+        var releaseChecklist = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "release-checklist.md"));
+        var releaseChecklistTemplate = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "release-checklist-template.md"));
 
-        foreach (var requiredField in requiredFields)
-        {
-            Assert.Contains(requiredField, packagePublishing, StringComparison.Ordinal);
-        }
+        AssertDocumentContainsAllTokens(releaseChecklist, requiredFields, "docs/release-checklist.md");
+        AssertDocumentContainsAllTokens(releaseChecklistTemplate, requiredFields, "docs/release-checklist-template.md");
     }
 
     [Fact]
@@ -1554,6 +1545,45 @@ public sealed class DocumentationCoverageTests
         }
 
         return anchors;
+    }
+
+    private static string[] ReadSignedReleaseDryRunRequiredReportFields(string repositoryRoot)
+    {
+        using var supplyChainManifest = JsonDocument.Parse(File.ReadAllText(Path.Combine(
+            repositoryRoot,
+            "scripts",
+            "supply-chain-release-support.json")));
+
+        var root = supplyChainManifest.RootElement;
+        Assert.Equal("1.5.0", ReadRequiredJsonString(root, "$schemaVersion", "supply-chain release support manifest"));
+        Assert.True(
+            root.TryGetProperty("signedReleaseDryRun", out var signedReleaseDryRun),
+            "Expected supply-chain release support manifest to define signedReleaseDryRun.");
+        Assert.True(
+            signedReleaseDryRun.TryGetProperty("requiredReportFields", out var requiredReportFields),
+            "Expected signedReleaseDryRun to define requiredReportFields.");
+
+        var requiredFields = requiredReportFields
+            .EnumerateArray()
+            .Select(field => field.GetString())
+            .Where(field => !string.IsNullOrWhiteSpace(field))
+            .Select(field => field!)
+            .ToArray();
+        Assert.NotEmpty(requiredFields);
+        return requiredFields;
+    }
+
+    private static void AssertDocumentContainsAllTokens(
+        string document,
+        IEnumerable<string> requiredTokens,
+        string documentDescription)
+    {
+        foreach (var requiredToken in requiredTokens)
+        {
+            Assert.True(
+                document.Contains(requiredToken, StringComparison.Ordinal),
+                $"Expected {documentDescription} to contain required token '{requiredToken}'.");
+        }
     }
 
     private static string ReadRequiredJsonString(JsonElement element, string propertyName, string description)
