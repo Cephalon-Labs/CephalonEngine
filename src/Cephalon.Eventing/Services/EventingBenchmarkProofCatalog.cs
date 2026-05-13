@@ -75,7 +75,15 @@ internal sealed class EventingBenchmarkProofCatalog : IEventingBenchmarkProofCat
             Benchmark: "ReportProjectedBrokerDispatches",
             MaxMeanNanoseconds: 10000,
             MaxAllocatedBytes: 5000,
-            HotPath: "provider-neutral-broker-dispatch-report")
+            HotPath: "provider-neutral-broker-dispatch-report"),
+        new(
+            Id: "eventing.durable-journal.record-replay-cursor",
+            Family: "durable-journal",
+            ReportFileName: "Cephalon.Benchmarks.HotPath.EventDispatchDurableJournalBenchmarks-report.csv",
+            Benchmark: "RecordAndReadDurableJournal",
+            MaxMeanNanoseconds: 500000,
+            MaxAllocatedBytes: 262144,
+            HotPath: "durable-command-journal-record-replay-cursor")
     ];
 
     public IReadOnlyList<EventingBenchmarkProofDescriptor> Guardrails => DefaultGuardrails;

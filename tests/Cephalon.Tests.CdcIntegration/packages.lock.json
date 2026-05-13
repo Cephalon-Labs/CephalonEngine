@@ -1824,6 +1824,7 @@
           "Cephalon.Behaviors.Http": "[0.1.0-preview, )",
           "Cephalon.Data": "[0.1.0-preview, )",
           "Cephalon.Data.Debezium": "[0.1.0-preview, )",
+          "Cephalon.Data.EntityFramework": "[0.1.0-preview, )",
           "Cephalon.Engine": "[0.1.0-preview, )",
           "Cephalon.Eventing": "[0.1.0-preview, )",
           "Cephalon.Eventing.Wolverine": "[0.1.0-preview, )",
@@ -1832,7 +1833,8 @@
           "Cephalon.MultiTenancy": "[0.1.0-preview, )",
           "Cephalon.Scaffolding": "[0.1.0-preview, )",
           "Cephalon.Worker": "[0.1.0-preview, )",
-          "Microsoft.AspNetCore.TestHost": "[10.0.5, )"
+          "Microsoft.AspNetCore.TestHost": "[10.0.5, )",
+          "Microsoft.EntityFrameworkCore.InMemory": "[10.0.5, )"
         }
       },
       "cephalon.cli": {

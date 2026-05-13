@@ -16,7 +16,7 @@ It currently tracks the following benchmark lanes across composition, runtime, A
 - `Cephalon.Benchmarks.Runtime`: engine-first REST projection, governance, and runtime-catalog materialization across generated/profile/DSL precedence, grouped generated module ownership, authoring policy, suppression, override, and preserved implicit query fallback
 - `Cephalon.Benchmarks.Scaffolding`: blueprint-to-files scaffold generation
 - `Cephalon.Benchmarks.Scaffolding`: phase-8 blueprint-to-files scaffold generation with structured `Engine:*` sections, additive pack hints, and starter-test conventions
-- `Cephalon.Benchmarks.HotPath`: CDC execution-runtime catalog projections over Debezium-managed external runtimes plus native event-dispatch remediation filtered summary, retention, latest, oldest, compact operator selector reads, and provider-neutral broker-dispatch report projection
+- `Cephalon.Benchmarks.HotPath`: CDC execution-runtime catalog projections over Debezium-managed external runtimes plus native event-dispatch remediation filtered summary, retention, latest, oldest, compact operator selector reads, provider-neutral broker-dispatch report projection, and provider-backed durable command-journal replay-cursor proof
 
 The benchmark suite now also ships a guardrail catalog at `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`.
 
@@ -37,6 +37,7 @@ That catalog is the repository baseline for the currently shipped benchmark meth
 - `CdcExecutionRuntimeCatalogBenchmarks`: `EnumerateRuntimes`, `FilterManagedConnectorDriftState`, `FilterManagedConnectorDryRunState`, `FilterManagedConnectorCommandIssuanceState`, `FilterManagedConnectorOperatorSelectors`
 - `EventDispatchRemediationCatalogBenchmarks`: `FilterSummaryByMessageId`, `FilterRetentionByMessageId`, `FilterLatestByCorrelationId`, `FilterOldestByDispatchOutcome`, `FilterOperatorDashboardSelectors`
 - `EventDispatchBrokerDispatchBenchmarks`: `ReportProjectedBrokerDispatches`
+- `EventDispatchDurableJournalBenchmarks`: `RecordAndReadDurableJournal`
 
 The composition and runtime baselines prepare configured builders, runtimes, and service providers outside the measured loop so the guardrails track `Build()` and lifecycle transition costs rather than one-time benchmark harness setup.
 That baseline now also includes the stricter trust-policy composition path, the shipped phase-8 low-ceremony companion-pack path, the bounded-truncation HTTP logging path, the engine-first REST projection/governance startup path, a concurrent logging throughput path, and the cold-start path for ASP.NET Core minimal API hosts that opt into `Engine:AspNetCore:OperatorSurface:Mode=core`, so security and startup hardening work stays measurable under both request and host-start pressure. The SRE manifest maps the ASP.NET Core request-allocation SLI to the three `AspNetCoreRequestLoggingBenchmarks` guardrail entries, so request logging allocation regressions are scorecard-visible.
@@ -46,6 +47,7 @@ The stable SRE baseline manifest lives at `scripts/sre-stable-baselines.json`. I
 The hot-path data baseline now also includes the CDC execution-runtime catalog path that powers filter-heavy managed-connector operator surfaces, so the versioned snapshot and capture-ownership indexes remain benchmark-governed after the ENG-488 runtime fix.
 The hot-path baseline also includes `ENG-590` native event-dispatch remediation filtered reads. The process-local catalog now measures filter-summary and filter-retention as single-pass retained-history aggregates, and filter-latest / filter-oldest as single-pass single-record selectors with no matching list, sort buffer, or predicate-closure allocation on the main string filter families. A focused BenchmarkDotNet run on May 11, 2026 measured `FilterSummaryByMessageId` at `3,104.3 ns` / `176 B`, `FilterRetentionByMessageId` at `2,886.6 ns` / `112 B`, `FilterLatestByCorrelationId` at `9,694.1 ns` / `0 B`, `FilterOldestByDispatchOutcome` at `895.6 ns` / `0 B`, and `FilterOperatorDashboardSelectors` at `17,949.0 ns` / `288 B`.
 `ENG-662` adds the native broker-dispatch proof lane without Wolverine or an external broker package. `EventDispatchBrokerDispatchBenchmarks.ReportProjectedBrokerDispatches` builds Eventing through public `EngineBuilder` composition, projects Cephalon provider/broker handoff headers from an `EventDispatchItem`, reports success through `IEventDispatchRuntimeReporter`, and reads the latest `IEventDispatchRuntimeCatalog` state. A focused BenchmarkDotNet run on May 13, 2026 measured about `869.9 ns` / `2.37 KB`, and the guardrail catalog caps the path at `10 us` / `5 KB`.
+`ENG-663` adds the durable-journal proof lane without making Wolverine required. `EventDispatchDurableJournalBenchmarks.RecordAndReadDurableJournal` composes Eventing with the Entity Framework data companion pack through public `EngineBuilder` APIs, records provider-backed event-dispatch remediation command results, and reads durable replay-cursor windows through `IEventDispatchRemediationCommandReplayCursorCatalog`. A focused BenchmarkDotNet run on May 13, 2026 measured about `224.1 us` / `174.48 KB`, and the guardrail catalog caps the path at `500 us` / `256 KB`.
 The shipped local smoke suite now uses a shared in-process short-run BenchmarkDotNet config across every benchmark class so mirrored worktree artifacts such as repo-local `.build/*` copies do not break benchmark project resolution during `validate-release`.
 
 ## Run all benchmarks
@@ -72,6 +74,7 @@ dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*Out
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*CdcExecutionRuntimeCatalogBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*EventDispatchRemediationCatalogBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*EventDispatchBrokerDispatchBenchmarks*"
+dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*EventDispatchDurableJournalBenchmarks*"
 ```
 
 The phase-8 composition, runtime, and scaffolding scenarios live in the same benchmark classes as the earlier baselines, so those filters cover both the original and phase-8 paths.
@@ -106,7 +109,7 @@ pwsh ./scripts/validate-release.ps1 -SkipTests
 pwsh ./scripts/validate-release.ps1 -SkipOperationalConventions
 pwsh ./scripts/validate-release.ps1 -SkipPhase8Conventions
 pwsh ./scripts/validate-release.ps1 -SkipReferenceDocs
-pwsh ./scripts/validate-release.ps1 -BenchmarkFilters "*EngineBuilderBenchmarks*" "*EngineRuntimeBenchmarks*" "*AspNetCoreRequestLoggingBenchmarks*" "*RestEndpointProjectionGovernanceBenchmarks*" "*ScaffoldGeneratorBenchmarks*" "*DataDispatchBenchmarks*" "*BehaviorDispatchBenchmarks*" "*AuthorizationEvaluationBenchmarks*" "*TenantResolutionBenchmarks*" "*EventSourcingBenchmarks*" "*OutboxStagingBenchmarks*" "*CdcExecutionRuntimeCatalogBenchmarks*" "*EventDispatchRemediationCatalogBenchmarks*" "*EventDispatchBrokerDispatchBenchmarks*"
+pwsh ./scripts/validate-release.ps1 -BenchmarkFilters "*EngineBuilderBenchmarks*" "*EngineRuntimeBenchmarks*" "*AspNetCoreRequestLoggingBenchmarks*" "*RestEndpointProjectionGovernanceBenchmarks*" "*ScaffoldGeneratorBenchmarks*" "*DataDispatchBenchmarks*" "*BehaviorDispatchBenchmarks*" "*AuthorizationEvaluationBenchmarks*" "*TenantResolutionBenchmarks*" "*EventSourcingBenchmarks*" "*OutboxStagingBenchmarks*" "*CdcExecutionRuntimeCatalogBenchmarks*" "*EventDispatchRemediationCatalogBenchmarks*" "*EventDispatchBrokerDispatchBenchmarks*" "*EventDispatchDurableJournalBenchmarks*"
 ```
 
 Run only the focused health/export convention suite:
@@ -149,3 +152,4 @@ Treat `scripts/validate-release.ps1` as the source of truth. If the local releas
 - keep trust-policy and bounded-capture paths benchmarked when security-sensitive host behavior changes materially
 - keep CDC execution-runtime catalog operator filters benchmarked when runtime snapshot invalidation, external-runtime report projection, or managed-connector drill-down behavior changes materially
 - keep Eventing broker-dispatch report projection benchmarked when provider/broker handoff metadata, dispatch runtime reporting, or dispatch runtime catalog readback changes materially
+- keep Eventing durable command-journal record and replay-cursor readback benchmarked when provider-backed remediation command audit or replay-cursor contracts change materially

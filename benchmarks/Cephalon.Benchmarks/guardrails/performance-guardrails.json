@@ -191,6 +191,13 @@
       "notes": "Native provider-neutral broker-dispatch report projection should create Cephalon broker handoff headers, report a successful dispatch through IEventDispatchRuntimeReporter, and read back IEventDispatchRuntimeCatalog state below 10 us and under roughly 5 KB allocated per dispatch."
     },
     {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.EventDispatchDurableJournalBenchmarks-report.csv",
+      "benchmark": "RecordAndReadDurableJournal",
+      "maxMeanNanoseconds": 500000,
+      "maxAllocatedBytes": 262144,
+      "notes": "Native durable command-journal proof should record provider-backed remediation command results and read replay-cursor windows below 500 us and under roughly 256 KB allocated per command without requiring Wolverine."
+    },
+    {
       "reportFileName": "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
       "benchmark": "DispatchBehavior",
       "maxMeanNanoseconds": 10000,

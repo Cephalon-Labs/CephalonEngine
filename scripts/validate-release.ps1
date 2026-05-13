@@ -27,7 +27,8 @@ param(
         "*OutboxStagingBenchmarks*",
         "*CdcExecutionRuntimeCatalogBenchmarks*",
         "*EventDispatchRemediationCatalogBenchmarks*",
-        "*EventDispatchBrokerDispatchBenchmarks*"
+        "*EventDispatchBrokerDispatchBenchmarks*",
+        "*EventDispatchDurableJournalBenchmarks*"
     )
 )
 
@@ -77,7 +78,8 @@ $canonicalBenchmarkFilters = @(
     "*OutboxStagingBenchmarks*",
     "*CdcExecutionRuntimeCatalogBenchmarks*",
     "*EventDispatchRemediationCatalogBenchmarks*",
-    "*EventDispatchBrokerDispatchBenchmarks*"
+    "*EventDispatchBrokerDispatchBenchmarks*",
+    "*EventDispatchDurableJournalBenchmarks*"
 )
 
 function Invoke-Step {

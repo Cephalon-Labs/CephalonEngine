@@ -13,6 +13,7 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +27,7 @@
                       GlobalPropertiesToRemove="$(CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove)" />
     <ProjectReference Include="..\..\src\Cephalon.Data\Cephalon.Data.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.Debezium\Cephalon.Data.Debezium.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.EntityFramework\Cephalon.Data.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Engine\Cephalon.Engine.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Eventing.Wolverine\Cephalon.Eventing.Wolverine.csproj" />
