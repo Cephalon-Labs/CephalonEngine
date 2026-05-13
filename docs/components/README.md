@@ -28,7 +28,7 @@ Each component page surfaces a one-line maturity badge directly under the `# <Pa
 
 When a package surface has mixed ownership (for example `Cephalon.Behaviors.Http`'s `mixed: application-managed + cephalon-managed`), the badge mirrors the audit's wording verbatim so the two never drift. When the audit changes a maturity label or ownership mode, the matching component page is updated in the same slice — never trail the audit.
 
-Every shipped source-project component page now carries this badge. Tooling coverage fails if a shipped `src/Cephalon.*` project has a component page without a maturity label, ownership label, and authoritative `engine-surface-maturity-audit.md` back-pointer. It also fails when a component page under `docs/components/` is not linked exactly once from this catalog, so the map stays complete in both directions. Pages with prose-style "Maturity and ownership" sections keep those sections; the badge is the required first-scan contract and those sections provide deeper adoption context.
+Every shipped source-project component page now carries this badge. Tooling coverage fails if a shipped `src/Cephalon.*` project has a component page without a maturity label, ownership label, and authoritative `engine-surface-maturity-audit.md` back-pointer. It also fails when a component page under `docs/components/` is not linked exactly once from this catalog, so the map stays complete in both directions. Repo-local Markdown links in this catalog must resolve to existing files so component and related-doc pointers cannot rot silently. Pages with prose-style "Maturity and ownership" sections keep those sections; the badge is the required first-scan contract and those sections provide deeper adoption context.
 
 
 ## Core runtime

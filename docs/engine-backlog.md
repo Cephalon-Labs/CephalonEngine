@@ -73,6 +73,33 @@ Current focus:
 - treat component-page maturity badges as a completed adoption contract: every shipped source-project component page now carries a maturity label, ownership label, and `engine-surface-maturity-audit.md` back-pointer, and Tooling coverage blocks any new shipped component page from skipping that first-scan truth
 - treat the component catalog as a unique source-project map: every shipped `src/Cephalon.*` project must appear exactly once in `docs/components/README.md`, so future family re-grouping cannot leave duplicate component links behind
 - treat the component catalog as a two-way adoption map: every hand-authored component doc under `docs/components/*.md` must be linked exactly once from `docs/components/README.md`, so new component pages cannot become orphan docs outside the catalog
+- treat component catalog repo-local links as guarded adoption pointers: every Markdown link in `docs/components/README.md` that points inside the repository must resolve to an existing file before component-doc guidance can ship
+
+### ENG-684 Component catalog link-target guard
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: component-docs / planning-governance / documentation coverage
+Quality dimensions: Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1353
+
+Why:
+
+- `ENG-681` through `ENG-683` made component docs mature, unique, and non-orphaned
+- `docs/components/README.md` could still carry a repo-local Markdown link whose target file no longer exists
+- broken component or related-doc links weaken the catalog as the map before source because readers hit dead pointers after trusting the catalog
+
+Delivered:
+
+- documented that repo-local Markdown links in `docs/components/README.md` must resolve to existing files
+- added Tooling documentation coverage that resolves every repo-local Markdown link from the component catalog relative to the catalog file
+- kept external URLs and fragment-only anchors outside this guard while ensuring resolved local paths stay inside the repository
+
+Validation:
+
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~DocumentationCoverageTests" --logger "console;verbosity=minimal"`
+- `git diff --check`
 
 ### ENG-683 Component catalog orphan-doc guard
 

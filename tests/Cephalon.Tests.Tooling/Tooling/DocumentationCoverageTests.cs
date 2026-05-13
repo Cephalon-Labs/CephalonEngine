@@ -1,9 +1,14 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Cephalon.Tests.Tooling;
 
 public sealed class DocumentationCoverageTests
 {
+    private static readonly Regex MarkdownLinkPattern = new(
+        @"\[[^\]]+\]\((?<target>[^)]+)\)",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
     // Projects that are internal implementation helpers (IsPackable=false) — not shipped as NuGet packages
     // and therefore do not require component documentation.
     private static readonly HashSet<string> NonPackableProjects = new(StringComparer.Ordinal)
@@ -176,6 +181,39 @@ public sealed class DocumentationCoverageTests
             Assert.True(
                 componentCatalogTargetCount == 1,
                 $"Expected component document '{componentDocFileName}' to be linked exactly once from docs/components/README.md but found {componentCatalogTargetCount}.");
+        }
+    }
+
+    [Fact]
+    public void ComponentCatalogLocalLinksResolve()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var componentCatalogPath = Path.Combine(repositoryRoot, "docs", "components", "README.md");
+        var componentCatalogRoot = Path.GetDirectoryName(componentCatalogPath)!;
+        var componentCatalog = File.ReadAllText(componentCatalogPath);
+        var localLinkTargets = MarkdownLinkPattern
+            .Matches(componentCatalog)
+            .Select(static match => match.Groups["target"].Value.Trim())
+            .Where(IsRepositoryLocalLink)
+            .Select(static target => target.Split('#')[0])
+            .Where(static target => target.Length > 0)
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(target => target, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.NotEmpty(localLinkTargets);
+
+        foreach (var localLinkTarget in localLinkTargets)
+        {
+            var normalizedTarget = localLinkTarget.Replace('/', Path.DirectorySeparatorChar);
+            var resolvedPath = Path.GetFullPath(Path.Combine(componentCatalogRoot, normalizedTarget));
+
+            Assert.True(
+                IsPathInsideRepository(repositoryRoot, resolvedPath),
+                $"Expected component catalog link target '{localLinkTarget}' to stay inside the repository but resolved to '{resolvedPath}'.");
+            Assert.True(
+                File.Exists(resolvedPath),
+                $"Expected component catalog link target '{localLinkTarget}' to resolve to an existing file at '{resolvedPath}'.");
         }
     }
 
@@ -1154,6 +1192,26 @@ public sealed class DocumentationCoverageTests
         }
 
         return count;
+    }
+
+    private static bool IsRepositoryLocalLink(string target)
+    {
+        if (string.IsNullOrWhiteSpace(target))
+            return false;
+
+        if (target.StartsWith('#'))
+            return false;
+
+        return !Uri.TryCreate(target, UriKind.Absolute, out _);
+    }
+
+    private static bool IsPathInsideRepository(string repositoryRoot, string path)
+    {
+        var normalizedRepositoryRoot = Path.TrimEndingDirectorySeparator(Path.GetFullPath(repositoryRoot));
+        var normalizedPath = Path.GetFullPath(path);
+
+        return normalizedPath.Equals(normalizedRepositoryRoot, StringComparison.OrdinalIgnoreCase) ||
+               normalizedPath.StartsWith(normalizedRepositoryRoot + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
     }
 
     private static DependencyHealthProviderManifestRow[] ReadDependencyHealthProviderManifest(string repositoryRoot)
