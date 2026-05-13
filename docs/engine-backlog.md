@@ -72,6 +72,33 @@ Current focus:
 - treat signed-release dry-run dispatch proof as scorecard readback, not prose-only release context: `SupplyChainEvidence.SignedReleaseDryRun` now records the dry-run status, partial proof state, current `dispatch-identity-actions-disabled` blocker, required `-RequireRunCreated` command, output path, and required report fields while `ENG-532` remains open until an Actions-enabled release-manager identity creates the workflow run
 - treat component-page maturity badges as a completed adoption contract: every shipped source-project component page now carries a maturity label, ownership label, and `engine-surface-maturity-audit.md` back-pointer, and Tooling coverage blocks any new shipped component page from skipping that first-scan truth
 - treat the component catalog as a unique source-project map: every shipped `src/Cephalon.*` project must appear exactly once in `docs/components/README.md`, so future family re-grouping cannot leave duplicate component links behind
+- treat the component catalog as a two-way adoption map: every hand-authored component doc under `docs/components/*.md` must be linked exactly once from `docs/components/README.md`, so new component pages cannot become orphan docs outside the catalog
+
+### ENG-683 Component catalog orphan-doc guard
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: component-docs / planning-governance / documentation coverage
+Quality dimensions: Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1352
+
+Why:
+
+- `ENG-682` made each shipped source-project component catalog entry unique, but the reverse direction was still unguarded
+- a new hand-authored component page could be added under `docs/components/` without appearing in `docs/components/README.md`
+- orphan component docs weaken the catalog as the map before source because developers may miss valid package guidance when drilling into a component family
+
+Delivered:
+
+- documented the component catalog as a two-way map in `docs/components/README.md`
+- extended Tooling documentation coverage so every hand-authored `docs/components/*.md` page except the catalog itself must be linked exactly once from the catalog
+- kept the existing shipped source-project catalog guard intact so source projects and component docs are both checked from their owning direction
+
+Validation:
+
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~DocumentationCoverageTests" --logger "console;verbosity=minimal"`
+- `git diff --check`
 
 ### ENG-682 Component catalog duplicate-link guard
 

@@ -156,6 +156,30 @@ public sealed class DocumentationCoverageTests
     }
 
     [Fact]
+    public void EveryComponentDocumentIsCatalogedExactlyOnce()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var componentDocsRoot = Path.Combine(repositoryRoot, "docs", "components");
+        var componentCatalog = File.ReadAllText(Path.Combine(componentDocsRoot, "README.md"));
+        var componentDocFileNames = Directory
+            .EnumerateFiles(componentDocsRoot, "*.md", SearchOption.TopDirectoryOnly)
+            .Select(Path.GetFileName)
+            .Where(static fileName => !string.Equals(fileName, "README.md", StringComparison.Ordinal))
+            .OrderBy(fileName => fileName, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.NotEmpty(componentDocFileNames);
+
+        foreach (var componentDocFileName in componentDocFileNames)
+        {
+            var componentCatalogTargetCount = CountOrdinalOccurrences(componentCatalog, $"]({componentDocFileName})");
+            Assert.True(
+                componentCatalogTargetCount == 1,
+                $"Expected component document '{componentDocFileName}' to be linked exactly once from docs/components/README.md but found {componentCatalogTargetCount}.");
+        }
+    }
+
+    [Fact]
     public void ObservabilityDependencyProbeDocsMatchRuntimeOwnership()
     {
         var repositoryRoot = GetRepositoryRoot();
