@@ -15,6 +15,8 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private const string ReferenceFrameworks = "MassTransit,NServiceBus,Wolverine,MediatR";
     private const string ClaimPolicy = "claimed-only-with-runtime-evidence";
     private const string RemediationFilteredReadBenchmarks = "FilterSummaryByMessageId,FilterRetentionByMessageId,FilterLatestByCorrelationId,FilterOldestByDispatchOutcome,FilterOperatorDashboardSelectors";
+    private const string BehaviorEventingRuntimeSurfaceContributorTypeName = "Cephalon.Eventing.Behaviors.Services.BehaviorEventingRuntimeSurfaceContributor";
+    private const string EventingSagaChoreographyPublisherTypeName = "Cephalon.Eventing.Behaviors.Services.EventingSagaChoreographyPublisher";
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -343,6 +345,13 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var acceptedHandoffs = publicationStates.Sum(static state => state.AcceptedCount).ToString(CultureInfo.InvariantCulture);
         var failedHandoffs = publicationStates.Sum(static state => state.FailedCount).ToString(CultureInfo.InvariantCulture);
         var compensationHandoffs = publicationStates.Count(static state => state.IsCompensation).ToString(CultureInfo.InvariantCulture);
+        var handoffProvenCount = publicationStates
+            .Count(state => IsChoreographyHandoffProof(state, eventingBridgeConfigured, topology.HasOutboxPublishingPath))
+            .ToString(CultureInfo.InvariantCulture);
+        var handoffState = SelectBestChoreographyHandoffProof(
+            publicationStates,
+            eventingBridgeConfigured,
+            topology.HasOutboxPublishingPath);
         var choreographyCatalogState = choreographyCatalog is null ? "not-present" : "present";
         var publicationStateCatalogState = publicationStateCatalog is null ? "not-present" : "present";
         var eventingBridge = eventingBridgeConfigured && topology.HasOutboxPublishingPath
@@ -363,9 +372,13 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 ? "Activate the explicit Eventing behavior bridge with an outbox-backed publish path before claiming choreography handoff ownership."
                 : "Activate behavior choreography catalogs and the explicit Eventing bridge before claiming choreography handoff ownership.";
 
-        var evidence = string.Create(
-            CultureInfo.InvariantCulture,
-            $"choreographyCatalog={choreographyCatalogState}; choreographyCount={choreographyCount}; publicationStateCatalog={publicationStateCatalogState}; publicationStateCount={publicationStateCount}; acceptedHandoffs={acceptedHandoffs}; failedHandoffs={failedHandoffs}; compensationHandoffs={compensationHandoffs}; eventingBridge={eventingBridge}; outboxHandoff={outboxHandoff}; handoffDurability={handoffDurability}; processManagerState=not-claimed; sagaStatePersistence=not-claimed; wolverineRequired=false");
+        var evidence = handoffState is null
+            ? string.Create(
+                CultureInfo.InvariantCulture,
+                $"choreographyCatalog={choreographyCatalogState}; choreographyCount={choreographyCount}; publicationStateCatalog={publicationStateCatalogState}; publicationStateCount={publicationStateCount}; acceptedHandoffs={acceptedHandoffs}; failedHandoffs={failedHandoffs}; compensationHandoffs={compensationHandoffs}; choreographyHandoffProofSelection=latest-proven-publication-state; choreographyHandoffStateCount={publicationStateCount}; choreographyHandoffProvenCount={handoffProvenCount}; publicationStateId=not-reported; behaviorId=not-reported; publicationId=not-reported; channelId=not-reported; handoffPublisher=not-reported; handoffSourceModule=not-reported; lastOutcome=not-reported; lastObservedAtUtc=not-reported; eventingBridge={eventingBridge}; outboxHandoff={outboxHandoff}; handoffDurability={handoffDurability}; processManagerState=not-claimed; sagaStatePersistence=not-claimed; wolverineRequired=false")
+            : string.Create(
+                CultureInfo.InvariantCulture,
+                $"choreographyCatalog={choreographyCatalogState}; choreographyCount={choreographyCount}; publicationStateCatalog={publicationStateCatalogState}; publicationStateCount={publicationStateCount}; acceptedHandoffs={acceptedHandoffs}; failedHandoffs={failedHandoffs}; compensationHandoffs={compensationHandoffs}; choreographyHandoffProofSelection=latest-proven-publication-state; choreographyHandoffStateCount={publicationStateCount}; choreographyHandoffProvenCount={handoffProvenCount}; publicationStateId={handoffState.Id}; behaviorId={handoffState.BehaviorId}; publicationId={handoffState.PublicationId}; channelId={handoffState.ChannelId}; handoffPublisher={FormatMetadataValue(handoffState.LastPublisherType)}; handoffSourceModule={FormatMetadataValue(handoffState.SourceModuleId)}; lastOutcome={FormatMetadataValue(handoffState.LastOutcome)}; lastObservedAtUtc={FormatObservedAt(handoffState.LastObservedAtUtc)}; eventingBridge={eventingBridge}; outboxHandoff={outboxHandoff}; handoffDurability={handoffDurability}; processManagerState=not-claimed; sagaStatePersistence=not-claimed; wolverineRequired=false");
 
         return new ChoreographyHandoffProfile(status, evidence, nextGap);
     }
@@ -375,7 +388,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return serviceProvider.GetServices<ITechnologyRuntimeContributor>().Any(
             static contributor => string.Equals(
                 contributor.GetType().FullName,
-                "Cephalon.Eventing.Behaviors.Services.BehaviorEventingRuntimeSurfaceContributor",
+                BehaviorEventingRuntimeSurfaceContributorTypeName,
                 StringComparison.Ordinal));
     }
 
@@ -813,6 +826,38 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             .FirstOrDefault();
     }
 
+    private static SagaChoreographyPublicationRuntimeState? SelectBestChoreographyHandoffProof(
+        IEnumerable<SagaChoreographyPublicationRuntimeState> states,
+        bool eventingBridgeConfigured,
+        bool hasOutboxPublishingPath)
+    {
+        return states
+            .OrderByDescending(state => IsChoreographyHandoffProof(
+                state,
+                eventingBridgeConfigured,
+                hasOutboxPublishingPath))
+            .ThenByDescending(static state => state.LastObservedAtUtc ?? DateTimeOffset.MinValue)
+            .ThenBy(static state => state.SourceModuleId ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(static state => state.BehaviorId, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(static state => state.Id, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
+    }
+
+    private static bool IsChoreographyHandoffProof(
+        SagaChoreographyPublicationRuntimeState state,
+        bool eventingBridgeConfigured,
+        bool hasOutboxPublishingPath)
+    {
+        return eventingBridgeConfigured &&
+            hasOutboxPublishingPath &&
+            state.IsAccepted &&
+            state.AcceptedCount > 0 &&
+            string.Equals(
+                state.LastPublisherType,
+                EventingSagaChoreographyPublisherTypeName,
+                StringComparison.Ordinal);
+    }
+
     private static bool IsSuccessfulSerializationExecutionProof(EventDispatchRuntimeState state) =>
         string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
         EventDispatchSerializationExecutionMetadata.IsSerializationExecutionProven(state.Metadata);
@@ -895,6 +940,9 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         observedAtUtc.HasValue
             ? observedAtUtc.Value.ToString("O", CultureInfo.InvariantCulture)
             : "not-reported";
+
+    private static string FormatMetadataValue(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? "not-reported" : value;
 
     private static bool HasMetadataValue(
         IReadOnlyDictionary<string, string> metadata,

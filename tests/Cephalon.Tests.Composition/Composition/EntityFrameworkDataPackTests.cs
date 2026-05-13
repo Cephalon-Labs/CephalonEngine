@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Cephalon.Abstractions.Data;
+using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Health;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Behaviors.Hosting;
@@ -27,6 +28,8 @@ namespace Cephalon.Tests.Composition;
 
 public sealed class EntityFrameworkDataPackTests
 {
+    private const string EventingSagaChoreographyPublisherTypeName = "Cephalon.Eventing.Behaviors.Services.EventingSagaChoreographyPublisher";
+
     [Fact]
     public async Task AddEntityFrameworkDataCanConsumeSharedEngineDatabaseTopology()
     {
@@ -4043,8 +4046,97 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("eventingBridge=active", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("outboxHandoff=available", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("handoffDurability=outbox-backed", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("choreographyHandoffProofSelection=latest-proven-publication-state", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("choreographyHandoffProvenCount=0", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("publicationStateId=not-reported", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("processManagerState=not-claimed", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AddEventingSelectsLatestProvenChoreographyHandoffState()
+    {
+        var databaseName = $"cephalon-data-ef-saga-choreography-proof-{Guid.NewGuid():N}";
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"],
+                data: new DataSettings(
+                    provider: "EntityFramework",
+                    outboxEnabled: true),
+                messaging: new MessagingSettings(provider: "InMemoryChannels")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddBehaviors(behaviors => behaviors.AddBehaviorPatterns());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "catalog-events",
+                    displayName: "Catalog Events",
+                    description: "Catalog integration events."));
+            });
+            engine.AddBehaviorEventingBridge();
+            engine.AddEntityFrameworkData<OutboxCatalogDbContext>(
+                options => options.UseInMemoryDatabase(databaseName),
+                configure: options => options.RegisterOutbox = true);
+        });
+        services.AddSingleton<ISagaChoreographyPublicationRuntimeStateCatalog>(
+            new TestSagaChoreographyPublicationRuntimeStateCatalog(
+            [
+                CreateChoreographyPublicationRuntimeState(
+                    id: "handoff-alpha",
+                    behaviorId: "tests.saga.alpha",
+                    publicationId: "evt-handoff-alpha",
+                    correlationId: "corr-alpha",
+                    sourceModuleId: "tests.saga-alpha",
+                    lastObservedAtUtc: new DateTimeOffset(2026, 05, 13, 10, 0, 0, TimeSpan.Zero),
+                    publisherType: EventingSagaChoreographyPublisherTypeName),
+                CreateChoreographyPublicationRuntimeState(
+                    id: "handoff-gamma",
+                    behaviorId: "tests.saga.gamma",
+                    publicationId: "evt-handoff-gamma",
+                    correlationId: "corr-gamma",
+                    sourceModuleId: "tests.saga-gamma",
+                    lastObservedAtUtc: new DateTimeOffset(2026, 05, 13, 10, 30, 0, TimeSpan.Zero),
+                    publisherType: typeof(TestSagaChoreographyPublisher).FullName),
+                CreateChoreographyPublicationRuntimeState(
+                    id: "handoff-beta",
+                    behaviorId: "tests.saga.beta",
+                    publicationId: "evt-handoff-beta",
+                    correlationId: "corr-beta",
+                    sourceModuleId: "tests.saga-beta",
+                    lastObservedAtUtc: new DateTimeOffset(2026, 05, 13, 10, 20, 0, TimeSpan.Zero),
+                    publisherType: EventingSagaChoreographyPublisherTypeName)
+            ]));
+
+        using var provider = services.BuildServiceProvider();
+        var technologyRuntimeCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var choreographyHandoffEntry = Assert.Single(
+            technologyRuntimeCatalog.GetByTechnology("event-driven-integration")
+                .Single(surface => surface.SurfaceId == "eventing-superiority-profile")
+                .Entries,
+            entry => entry.Id == "choreography-handoff-ownership");
+        var evidence = choreographyHandoffEntry.Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", choreographyHandoffEntry.Metadata["status"]);
+        Assert.Contains("choreographyHandoffProofSelection=latest-proven-publication-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("choreographyHandoffStateCount=3", evidence, StringComparison.Ordinal);
+        Assert.Contains("choreographyHandoffProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("publicationStateId=handoff-beta", evidence, StringComparison.Ordinal);
+        Assert.Contains("behaviorId=tests.saga.beta", evidence, StringComparison.Ordinal);
+        Assert.Contains("publicationId=evt-handoff-beta", evidence, StringComparison.Ordinal);
+        Assert.Contains("channelId=catalog-events", evidence, StringComparison.Ordinal);
+        Assert.Contains($"handoffPublisher={EventingSagaChoreographyPublisherTypeName}", evidence, StringComparison.Ordinal);
+        Assert.Contains("handoffSourceModule=tests.saga-beta", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=accepted", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastObservedAtUtc=2026-05-13T10:20:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("processManagerState=not-claimed", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("publicationStateId=handoff-gamma", evidence, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -4147,6 +4239,107 @@ public sealed class EntityFrameworkDataPackTests
         public void Advance(TimeSpan duration)
         {
             now = now.Add(duration);
+        }
+    }
+
+    private static SagaChoreographyPublicationRuntimeState CreateChoreographyPublicationRuntimeState(
+        string id,
+        string behaviorId,
+        string publicationId,
+        string correlationId,
+        string sourceModuleId,
+        DateTimeOffset lastObservedAtUtc,
+        string? publisherType)
+    {
+        return new SagaChoreographyPublicationRuntimeState(
+            Id: id,
+            BehaviorId: behaviorId,
+            PublicationId: publicationId,
+            ChannelId: "catalog-events",
+            EventType: "catalog.inventory.reserved",
+            OccurredAtUtc: lastObservedAtUtc.AddSeconds(-5),
+            SourceModuleId: sourceModuleId,
+            TransportIds: ["rest"],
+            CorrelationId: correlationId,
+            TenantId: "tenant-001",
+            ContentType: "application/json",
+            IsCompensation: false,
+            LastOutcome: "accepted",
+            LastObservedAtUtc: lastObservedAtUtc,
+            LastPublisherType: publisherType,
+            AcceptedCount: 1,
+            FailedCount: 0,
+            LastError: null,
+            Metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["lane"] = "proof-selection"
+            });
+    }
+
+    private sealed class TestSagaChoreographyPublicationRuntimeStateCatalog(
+        IReadOnlyList<SagaChoreographyPublicationRuntimeState> states) : ISagaChoreographyPublicationRuntimeStateCatalog
+    {
+        private readonly SagaChoreographyPublicationRuntimeState[] snapshot = states.ToArray();
+
+        public IReadOnlyList<SagaChoreographyPublicationRuntimeState> States => snapshot;
+
+        public SagaChoreographyPublicationRuntimeState? GetById(string id)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(id);
+            return snapshot.FirstOrDefault(state => string.Equals(state.Id, id.Trim(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        public IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByBehaviorId(string behaviorId)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+            return Filter(state => string.Equals(state.BehaviorId, behaviorId.Trim(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        public IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetBySourceModule(string sourceModuleId)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(sourceModuleId);
+            return Filter(state => string.Equals(state.SourceModuleId, sourceModuleId.Trim(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        public IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByTransportId(string transportId)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
+            var normalizedTransportId = transportId.Trim();
+            return Filter(state => state.TransportIds.Contains(normalizedTransportId, StringComparer.OrdinalIgnoreCase));
+        }
+
+        public IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByChannelId(string channelId)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(channelId);
+            return Filter(state => string.Equals(state.ChannelId, channelId.Trim(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        public IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByCorrelationId(string correlationId)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(correlationId);
+            return Filter(state => string.Equals(state.CorrelationId, correlationId.Trim(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        public IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetCompensationPublications()
+        {
+            return Filter(static state => state.IsCompensation);
+        }
+
+        public IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetFailedPublications()
+        {
+            return Filter(static state => state.IsFailed);
+        }
+
+        public bool TryGetById(string id, out SagaChoreographyPublicationRuntimeState? state)
+        {
+            state = GetById(id);
+            return state is not null;
+        }
+
+        private SagaChoreographyPublicationRuntimeState[] Filter(
+            Func<SagaChoreographyPublicationRuntimeState, bool> predicate)
+        {
+            return snapshot.Where(predicate).ToArray();
         }
     }
 
