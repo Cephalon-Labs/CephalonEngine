@@ -83,7 +83,15 @@ internal sealed class EventingBenchmarkProofCatalog : IEventingBenchmarkProofCat
             Benchmark: "RecordAndReadDurableJournal",
             MaxMeanNanoseconds: 500000,
             MaxAllocatedBytes: 262144,
-            HotPath: "durable-command-journal-record-replay-cursor")
+            HotPath: "durable-command-journal-record-replay-cursor"),
+        new(
+            Id: "eventing.provider-managed.report-runtime-proofs",
+            Family: "provider-managed-eventing",
+            ReportFileName: "Cephalon.Benchmarks.HotPath.EventProviderManagedEventingBenchmarks-report.csv",
+            Benchmark: "ReportProviderManagedEventingProofs",
+            MaxMeanNanoseconds: 20000,
+            MaxAllocatedBytes: 65536,
+            HotPath: "provider-managed-dispatch-subscription-proof-report")
     ];
 
     public IReadOnlyList<EventingBenchmarkProofDescriptor> Guardrails => DefaultGuardrails;
