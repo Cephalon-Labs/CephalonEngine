@@ -80,6 +80,7 @@ Each test file should:
 | `scripts/validate-release.ps1` | `validate-release.Tests.ps1` | scorecard evidence readback behavior + dependency-health provider manifest readback + Eventing operational-superiority missing-node/blocked-promotion/runtime-concordance failure + missing manifest failure |
 | `scripts/summarise-public-api-deltas.ps1` | `summarise-public-api-deltas.Tests.ps1` | markdown/JSON report shape + optional removal gate + release-validation removal-gate wiring |
 | `scripts/validate-planning-github-issues.ps1` | `validate-planning-github-issues.Tests.ps1` | duplicate open ENG issue detection + stale open issue detection for done backlog rows + closeout warning behavior |
+| `scripts/validate-planning-project-fields.ps1` | `validate-planning-project-fields.Tests.ps1` | Project 2 required-field validation + missing Project item detection + offline GraphQL-shaped fixture import |
 | `scripts/validate-deployment-mode-claims.ps1` | `validate-deployment-mode-claims.Tests.ps1` | 57 cases across 12 describe groups |
 | `scripts/deployment-mode-support.json` | `deployment-mode-support-manifest.Tests.ps1` | manifest schema 1.1.0 shape + per-mode field assertions |
 

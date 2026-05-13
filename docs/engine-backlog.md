@@ -68,6 +68,37 @@ Current focus:
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
 - treat the event-dispatch remediation command-result filtered read path as benchmark-governed: `EventDispatchRemediationCatalogBenchmarks` now covers native Wolverine-free filtered summary, retention, latest, oldest, and compact dashboard selectors, and `scripts/validate-release.ps1` includes that benchmark class in the default guardrail lane
 - treat open GitHub issue drift as a planning-quality risk: `scripts/validate-planning-github-issues.ps1` now checks open `ENG-*` issues against backlog truth, detects duplicate open issue numbers for the same ENG id, and detects stale open duplicates for backlog rows that are already `done` or `shipped` at another issue number
+- treat missing GitHub Project 2 planning fields as a planning-quality risk: `scripts/validate-planning-project-fields.ps1` now verifies open `ENG-*` issue project items have populated `Status`, `Estimate`, `Iteration`, `Test`, and `Benchmark`, and the first live run corrected the missing `Iteration` field on `ENG-532` / issue `#1180`
+
+### ENG-678 Planning Project field completeness guard
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: planning-governance / GitHub Project / automation
+Quality dimensions: Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1346
+
+Why:
+
+- live Project 2 metadata for the remaining blocked `ENG-532` issue `#1180` had `Status`, `Estimate`, `Test`, and `Benchmark`, but no populated `Iteration`
+- missing Project fields make planning dashboards less trustworthy even when repo docs and issue labels are correct
+- the duplicate-issue guard covers open issue identity drift, but Project field completeness needed a focused manual check that can run after targeted project edits
+
+Delivered:
+
+- added `scripts/validate-planning-project-fields.ps1`, which reads open GitHub issues through `gh`, queries Project 2 field values through GraphQL, and verifies the required `Status`, `Estimate`, `Iteration`, `Test`, and `Benchmark` fields
+- kept the script testable through offline `-IssueListJsonPath` fixtures with GraphQL-shaped `projectItems` and `fieldValues` data
+- added script-level Pester coverage for complete Project fields, missing required fields, missing Project 2 items, and offline fixture import
+- updated planning governance and script-test docs so Project field validation is documented beside the duplicate issue guard
+- corrected the live Project 2 item for `ENG-532` / issue `#1180` by setting `Iteration` to `Sprint 125`
+
+Validation:
+
+- `pwsh -NoLogo -NoProfile -Command "Invoke-Pester -Path tests\Cephalon.Tests.Scripts\validate-planning-project-fields.Tests.ps1 -Output Detailed"`
+- `pwsh -NoLogo -NoProfile -File .\scripts\validate-planning-project-fields.ps1`
+- `pwsh -NoLogo -NoProfile -File .\scripts\validate-planning-github-issues.ps1`
+- `git diff --check`
 
 ### ENG-677 Planning GitHub duplicate issue guard
 

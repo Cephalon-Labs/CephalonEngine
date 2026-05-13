@@ -300,6 +300,7 @@ Cephalon already has planning automation:
 
 - `scripts/sync-planning-github.ps1`
 - `scripts/validate-planning-github-issues.ps1`
+- `scripts/validate-planning-project-fields.ps1`
 - `.github/workflows/planning-sync.yml`
 
 That automation helps keep issues, milestones, and project metadata aligned.
@@ -313,6 +314,8 @@ It does not replace human responsibility for:
 - recording validation and implementation notes
 
 Before closing a planning wave or after manual issue/project edits, run `scripts/validate-planning-github-issues.ps1` when live GitHub access is available. The guard reads open GitHub issues through `gh`, compares `ENG-*` ids against `docs/engine-backlog.md`, and fails on duplicate open issues or open duplicate issues for backlog rows that are already `done` / `shipped` at another issue number. It is intentionally a manual planning-drift guard rather than a release gate, so it can also run against an offline `-IssueListJsonPath` fixture in Pester coverage.
+
+After the open-issue guard is clean, run `scripts/validate-planning-project-fields.ps1` when live GitHub access is available. That guard reads open `ENG-*` issues, inspects their GitHub Project 2 item field values through GraphQL, and fails when the tracked item is missing `Status`, `Estimate`, `Iteration`, `Test`, or `Benchmark`. It also supports offline `-IssueListJsonPath` fixtures so the required-field behavior stays covered without network access.
 
 ## Quick checklist
 
