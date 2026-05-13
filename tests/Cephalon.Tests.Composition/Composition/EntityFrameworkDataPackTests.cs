@@ -1082,6 +1082,11 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("operationalSuperiorityPromotionGate=blocked", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityPromotionAllowed=false", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityPromotionPolicy=all-operational-superiority-dimensions-claimed", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionEvidenceContract=cephalon-eventing-operational-superiority-promotion-v1", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionEvidenceContractVersion=1.0.0", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionTarget=eventing-operational-superiority", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionRequiredStatus=claimed", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionDecisionCode=missing-required-dimensions", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityPromotionBlockers=provider-operated-runtime-proof-coverage,choreography-handoff-ownership", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityPromotionBlockerCount=2", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("blockingOperationalSuperiorityDimensions=provider-operated-runtime-proof-coverage,choreography-handoff-ownership", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -4170,6 +4175,11 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("operationalSuperiorityPromotionGate=blocked", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityPromotionAllowed=false", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityPromotionPolicy=all-operational-superiority-dimensions-claimed", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionEvidenceContract=cephalon-eventing-operational-superiority-promotion-v1", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionEvidenceContractVersion=1.0.0", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionTarget=eventing-operational-superiority", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionRequiredStatus=claimed", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionDecisionCode=missing-required-dimensions", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityPromotionBlockers=provider-operated-runtime-proof-coverage", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityPromotionBlockerCount=1", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("blockingOperationalSuperiorityDimensions=provider-operated-runtime-proof-coverage", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -4267,6 +4277,11 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("operationalSuperiorityPromotionGate=allowed", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityPromotionAllowed=true", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityPromotionPolicy=all-operational-superiority-dimensions-claimed", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionEvidenceContract=cephalon-eventing-operational-superiority-promotion-v1", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionEvidenceContractVersion=1.0.0", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionTarget=eventing-operational-superiority", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionRequiredStatus=claimed", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityPromotionDecisionCode=all-required-dimensions-claimed", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityPromotionBlockers=none", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityPromotionBlockerCount=0", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("blockingOperationalSuperiorityDimensions=none", operationalEvidence, StringComparison.Ordinal);
