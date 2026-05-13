@@ -75,6 +75,33 @@ Current focus:
 - treat the component catalog as a two-way adoption map: every hand-authored component doc under `docs/components/*.md` must be linked exactly once from `docs/components/README.md`, so new component pages cannot become orphan docs outside the catalog
 - treat component catalog repo-local links as guarded adoption pointers: every Markdown link in `docs/components/README.md` that points inside the repository must resolve to an existing file before component-doc guidance can ship
 - treat every component page as part of the same guarded docs graph: repo-local Markdown links across `docs/components/*.md` must resolve relative to the page that declares them and stay inside the repository
+- treat top-level hand-authored docs as a guarded docs graph: repo-local Markdown links across `docs/*.md` must resolve relative to the page that declares them, stay inside the repository, and may target either files or directories
+
+### ENG-686 Top-level docs link-target guard
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: documentation graph / planning-governance / documentation coverage
+Quality dimensions: Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1355
+
+Why:
+
+- `ENG-685` guarded component-page local links, but top-level hand-authored docs could still point at moved or deleted local docs/source paths
+- a live top-level docs scan found `docs/engine-backlog.md` links resolving to `docs/docs/components/...` because component links were authored with an extra `docs/` prefix from inside the `docs/` folder
+- top-level docs intentionally link to files, package folders, test folders, and the repository root, so the guard needs to allow existing files or directories while still blocking broken or out-of-repository targets
+
+Delivered:
+
+- corrected the broken `docs/engine-backlog.md` local link targets so component links are relative as `components/...`, getting-started links resolve as `getting-started.md`, and the public-API delta script link resolves through `../scripts/...`
+- added Tooling documentation coverage for every repo-local Markdown link across top-level `docs/*.md`
+- kept top-level docs link targets inside the repository and allowed existing files or directories to match GitHub Markdown behavior for repo folders
+
+Validation:
+
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~DocumentationCoverageTests" --logger "console;verbosity=minimal"`
+- `git diff --check`
 
 ### ENG-685 Component docs link-target guard
 
@@ -9312,17 +9339,17 @@ Why:
 Delivered:
 
 - adopt the convention across the eleven `Cephalon.MultiTenancy.Governance.*` companion / sender packs, each badge mirroring the conformance-matrix row verbatim — every pack carries `M2` `cephalon-managed`:
-    - [`multi-tenancy-governance-aspnetcore.md`](docs/components/multi-tenancy-governance-aspnetcore.md)
-    - [`multi-tenancy-governance-httpdelivery.md`](docs/components/multi-tenancy-governance-httpdelivery.md)
-    - [`multi-tenancy-governance-smtpdelivery.md`](docs/components/multi-tenancy-governance-smtpdelivery.md)
-    - [`multi-tenancy-governance-sendgriddelivery.md`](docs/components/multi-tenancy-governance-sendgriddelivery.md)
-    - [`multi-tenancy-governance-sendgriddelivery-aspnetcore.md`](docs/components/multi-tenancy-governance-sendgriddelivery-aspnetcore.md)
-    - [`multi-tenancy-governance-mailgundelivery.md`](docs/components/multi-tenancy-governance-mailgundelivery.md)
-    - [`multi-tenancy-governance-mailgundelivery-aspnetcore.md`](docs/components/multi-tenancy-governance-mailgundelivery-aspnetcore.md)
-    - [`multi-tenancy-governance-amazonsesdelivery.md`](docs/components/multi-tenancy-governance-amazonsesdelivery.md)
-    - [`multi-tenancy-governance-amazonsesdelivery-aspnetcore.md`](docs/components/multi-tenancy-governance-amazonsesdelivery-aspnetcore.md)
-    - [`multi-tenancy-governance-microsoftgraphdelivery.md`](docs/components/multi-tenancy-governance-microsoftgraphdelivery.md)
-    - [`multi-tenancy-governance-microsoftgraphdelivery-azureidentity.md`](docs/components/multi-tenancy-governance-microsoftgraphdelivery-azureidentity.md)
+    - [`multi-tenancy-governance-aspnetcore.md`](components/multi-tenancy-governance-aspnetcore.md)
+    - [`multi-tenancy-governance-httpdelivery.md`](components/multi-tenancy-governance-httpdelivery.md)
+    - [`multi-tenancy-governance-smtpdelivery.md`](components/multi-tenancy-governance-smtpdelivery.md)
+    - [`multi-tenancy-governance-sendgriddelivery.md`](components/multi-tenancy-governance-sendgriddelivery.md)
+    - [`multi-tenancy-governance-sendgriddelivery-aspnetcore.md`](components/multi-tenancy-governance-sendgriddelivery-aspnetcore.md)
+    - [`multi-tenancy-governance-mailgundelivery.md`](components/multi-tenancy-governance-mailgundelivery.md)
+    - [`multi-tenancy-governance-mailgundelivery-aspnetcore.md`](components/multi-tenancy-governance-mailgundelivery-aspnetcore.md)
+    - [`multi-tenancy-governance-amazonsesdelivery.md`](components/multi-tenancy-governance-amazonsesdelivery.md)
+    - [`multi-tenancy-governance-amazonsesdelivery-aspnetcore.md`](components/multi-tenancy-governance-amazonsesdelivery-aspnetcore.md)
+    - [`multi-tenancy-governance-microsoftgraphdelivery.md`](components/multi-tenancy-governance-microsoftgraphdelivery.md)
+    - [`multi-tenancy-governance-microsoftgraphdelivery-azureidentity.md`](components/multi-tenancy-governance-microsoftgraphdelivery-azureidentity.md)
 - `docs/engine-backlog.md` ENG-387 backlog card; Sprint 125 placement updated
 
 Follow-up later:
@@ -9343,16 +9370,16 @@ Why:
 Delivered:
 
 - adopt the convention across the ten `Cephalon.EventSourcing.*` provider packs, each badge mirroring the conformance-matrix row verbatim — every pack carries `M1` `provider-managed`:
-    - [`event-sourcing-entityframework.md`](docs/components/event-sourcing-entityframework.md)
-    - [`event-sourcing-mongodb.md`](docs/components/event-sourcing-mongodb.md)
-    - [`event-sourcing-redis.md`](docs/components/event-sourcing-redis.md)
-    - [`event-sourcing-neo4j.md`](docs/components/event-sourcing-neo4j.md)
-    - [`event-sourcing-cassandra.md`](docs/components/event-sourcing-cassandra.md)
-    - [`event-sourcing-clickhouse.md`](docs/components/event-sourcing-clickhouse.md)
-    - [`event-sourcing-elasticsearch.md`](docs/components/event-sourcing-elasticsearch.md)
-    - [`event-sourcing-opensearch.md`](docs/components/event-sourcing-opensearch.md)
-    - [`event-sourcing-qdrant.md`](docs/components/event-sourcing-qdrant.md)
-    - [`event-sourcing-nats.md`](docs/components/event-sourcing-nats.md)
+    - [`event-sourcing-entityframework.md`](components/event-sourcing-entityframework.md)
+    - [`event-sourcing-mongodb.md`](components/event-sourcing-mongodb.md)
+    - [`event-sourcing-redis.md`](components/event-sourcing-redis.md)
+    - [`event-sourcing-neo4j.md`](components/event-sourcing-neo4j.md)
+    - [`event-sourcing-cassandra.md`](components/event-sourcing-cassandra.md)
+    - [`event-sourcing-clickhouse.md`](components/event-sourcing-clickhouse.md)
+    - [`event-sourcing-elasticsearch.md`](components/event-sourcing-elasticsearch.md)
+    - [`event-sourcing-opensearch.md`](components/event-sourcing-opensearch.md)
+    - [`event-sourcing-qdrant.md`](components/event-sourcing-qdrant.md)
+    - [`event-sourcing-nats.md`](components/event-sourcing-nats.md)
 - `docs/engine-backlog.md` ENG-386 backlog card; Sprint 125 placement updated
 
 Follow-up later:
@@ -9373,21 +9400,21 @@ Why:
 Delivered:
 
 - adopt the convention across the fifteen `Cephalon.Data.*` provider packs, each badge mirroring the conformance-matrix row verbatim:
-    - [`data-sqlserver.md`](docs/components/data-sqlserver.md) — `M2` `provider-managed`
-    - [`data-postgres.md`](docs/components/data-postgres.md) — `M2` `provider-managed`
-    - [`data-mysql.md`](docs/components/data-mysql.md) — `M2` `provider-managed`
-    - [`data-oracle.md`](docs/components/data-oracle.md) — `M2` `provider-managed`
-    - [`data-mongodb.md`](docs/components/data-mongodb.md) — `M2` `provider-managed`
-    - [`data-entityframework.md`](docs/components/data-entityframework.md) — `M2` `cephalon-managed`
-    - [`data-debezium.md`](docs/components/data-debezium.md) — `M1` `provider-managed`
-    - [`data-redis.md`](docs/components/data-redis.md) — `M1` `provider-managed`
-    - [`data-neo4j.md`](docs/components/data-neo4j.md) — `M1` `provider-managed`
-    - [`data-cassandra.md`](docs/components/data-cassandra.md) — `M1` `provider-managed`
-    - [`data-clickhouse.md`](docs/components/data-clickhouse.md) — `M1` `provider-managed`
-    - [`data-elasticsearch.md`](docs/components/data-elasticsearch.md) — `M1` `provider-managed`
-    - [`data-opensearch.md`](docs/components/data-opensearch.md) — `M1` `provider-managed`
-    - [`data-qdrant.md`](docs/components/data-qdrant.md) — `M1` `provider-managed`
-    - [`data-nats.md`](docs/components/data-nats.md) — `M1` `provider-managed`
+    - [`data-sqlserver.md`](components/data-sqlserver.md) — `M2` `provider-managed`
+    - [`data-postgres.md`](components/data-postgres.md) — `M2` `provider-managed`
+    - [`data-mysql.md`](components/data-mysql.md) — `M2` `provider-managed`
+    - [`data-oracle.md`](components/data-oracle.md) — `M2` `provider-managed`
+    - [`data-mongodb.md`](components/data-mongodb.md) — `M2` `provider-managed`
+    - [`data-entityframework.md`](components/data-entityframework.md) — `M2` `cephalon-managed`
+    - [`data-debezium.md`](components/data-debezium.md) — `M1` `provider-managed`
+    - [`data-redis.md`](components/data-redis.md) — `M1` `provider-managed`
+    - [`data-neo4j.md`](components/data-neo4j.md) — `M1` `provider-managed`
+    - [`data-cassandra.md`](components/data-cassandra.md) — `M1` `provider-managed`
+    - [`data-clickhouse.md`](components/data-clickhouse.md) — `M1` `provider-managed`
+    - [`data-elasticsearch.md`](components/data-elasticsearch.md) — `M1` `provider-managed`
+    - [`data-opensearch.md`](components/data-opensearch.md) — `M1` `provider-managed`
+    - [`data-qdrant.md`](components/data-qdrant.md) — `M1` `provider-managed`
+    - [`data-nats.md`](components/data-nats.md) — `M1` `provider-managed`
 - `docs/engine-backlog.md` ENG-385 backlog card; Sprint 125 placement updated
 
 Follow-up later:
@@ -9408,12 +9435,12 @@ Why:
 Delivered:
 
 - adopt the convention across the six pages, each badge mirroring the audit / matrix row verbatim:
-    - [`behaviors-http.md`](docs/components/behaviors-http.md) — `M2` mixed: `application-managed` + `cephalon-managed`
-    - [`behaviors-messaging.md`](docs/components/behaviors-messaging.md) — `M1` `application-managed`
-    - [`behaviors-patterns.md`](docs/components/behaviors-patterns.md) — `M1` `application-managed` (existing prose mention of "M4 pattern execution layer" is internal architecture-layer terminology, not a maturity audit label, and is preserved verbatim)
-    - [`behaviors-sourcegen.md`](docs/components/behaviors-sourcegen.md) — `M1` `cephalon-managed` (existing prose mention of "M5 compile-time tooling layer" preserved similarly)
-    - [`eventing-wolverine.md`](docs/components/eventing-wolverine.md) — `M3` `provider-managed`
-    - [`eventing-behaviors.md`](docs/components/eventing-behaviors.md) — `M1` `application-managed`
+    - [`behaviors-http.md`](components/behaviors-http.md) — `M2` mixed: `application-managed` + `cephalon-managed`
+    - [`behaviors-messaging.md`](components/behaviors-messaging.md) — `M1` `application-managed`
+    - [`behaviors-patterns.md`](components/behaviors-patterns.md) — `M1` `application-managed` (existing prose mention of "M4 pattern execution layer" is internal architecture-layer terminology, not a maturity audit label, and is preserved verbatim)
+    - [`behaviors-sourcegen.md`](components/behaviors-sourcegen.md) — `M1` `cephalon-managed` (existing prose mention of "M5 compile-time tooling layer" preserved similarly)
+    - [`eventing-wolverine.md`](components/eventing-wolverine.md) — `M3` `provider-managed`
+    - [`eventing-behaviors.md`](components/eventing-behaviors.md) — `M1` `application-managed`
 - `docs/engine-backlog.md` ENG-384 backlog card; Sprint 125 placement updated
 
 Follow-up later:
@@ -9435,15 +9462,15 @@ Why:
 Delivered:
 
 - adopt the convention across the nine entry points named below, each badge mirroring the audit / matrix row verbatim:
-    - [`agentics.md`](docs/components/agentics.md) — `M3` mixed: `application-managed` + `cephalon-managed`
-    - [`behaviors.md`](docs/components/behaviors.md) — `M4` `cephalon-managed`
-    - [`data.md`](docs/components/data.md) — `M3` mixed: `cephalon-managed` + `provider-managed`
-    - [`event-sourcing.md`](docs/components/event-sourcing.md) — `M1` `application-managed`
-    - [`eventing.md`](docs/components/eventing.md) — `M3` mixed: `application-managed` + `cephalon-managed`
-    - [`multi-tenancy.md`](docs/components/multi-tenancy.md) — `M2` `cephalon-managed`
-    - [`multi-tenancy-governance.md`](docs/components/multi-tenancy-governance.md) — `M2` mixed: `cephalon-managed` + `provider-managed`
-    - [`retrieval.md`](docs/components/retrieval.md) — `M3` mixed: `application-managed` + `cephalon-managed`
-    - [`edge.md`](docs/components/edge.md) — `M2` `cephalon-managed`
+    - [`agentics.md`](components/agentics.md) — `M3` mixed: `application-managed` + `cephalon-managed`
+    - [`behaviors.md`](components/behaviors.md) — `M4` `cephalon-managed`
+    - [`data.md`](components/data.md) — `M3` mixed: `cephalon-managed` + `provider-managed`
+    - [`event-sourcing.md`](components/event-sourcing.md) — `M1` `application-managed`
+    - [`eventing.md`](components/eventing.md) — `M3` mixed: `application-managed` + `cephalon-managed`
+    - [`multi-tenancy.md`](components/multi-tenancy.md) — `M2` `cephalon-managed`
+    - [`multi-tenancy-governance.md`](components/multi-tenancy-governance.md) — `M2` mixed: `cephalon-managed` + `provider-managed`
+    - [`retrieval.md`](components/retrieval.md) — `M3` mixed: `application-managed` + `cephalon-managed`
+    - [`edge.md`](components/edge.md) — `M2` `cephalon-managed`
 - `docs/engine-backlog.md` ENG-383 backlog card; Sprint 125 placement updated
 
 Follow-up later:
@@ -9466,15 +9493,15 @@ Why:
 Delivered:
 
 - introduce the per-page maturity-badge header convention in `docs/components/README.md` *Maturity at a glance* via a new *Per-page maturity-badge header convention* sub-section that names the exact markdown shape (`> **Maturity:** ... · **Ownership:** ... — authoritative truth in [\`engine-surface-maturity-audit.md\`](...)`), declares the audit-mirroring discipline ("the badge mirrors the audit's wording verbatim so the two never drift"), and notes the incremental rollout posture
-- adopt the convention across the seven *Core runtime* entry points named in `docs/components/README.md`: [`abstractions.md`](docs/components/abstractions.md) (`M4` `cephalon-managed`), [`engine.md`](docs/components/engine.md) (`M4` `cephalon-managed`), [`aspnetcore.md`](docs/components/aspnetcore.md) (`M4` `cephalon-managed`), [`aspnetcore-graphql.md`](docs/components/aspnetcore-graphql.md) (`M2` `cephalon-managed`), [`aspnetcore-jsonrpc.md`](docs/components/aspnetcore-jsonrpc.md) (`M2` `cephalon-managed`), [`aspnetcore-grpc.md`](docs/components/aspnetcore-grpc.md) (`M2` `cephalon-managed`), [`worker.md`](docs/components/worker.md) (`M4` `cephalon-managed`)
-- additionally adopt the convention in the two component pages that already had a prose "Maturity and ownership" section so the badge convention reads consistently across all pages that surface maturity inline: [`diagnostics.md`](docs/components/diagnostics.md) (`M4` `cephalon-managed`) + [`analyzers.md`](docs/components/analyzers.md) (`M1` `cephalon-managed`); existing prose sections retained — the badge complements rather than replaces them
+- adopt the convention across the seven *Core runtime* entry points named in `docs/components/README.md`: [`abstractions.md`](components/abstractions.md) (`M4` `cephalon-managed`), [`engine.md`](components/engine.md) (`M4` `cephalon-managed`), [`aspnetcore.md`](components/aspnetcore.md) (`M4` `cephalon-managed`), [`aspnetcore-graphql.md`](components/aspnetcore-graphql.md) (`M2` `cephalon-managed`), [`aspnetcore-jsonrpc.md`](components/aspnetcore-jsonrpc.md) (`M2` `cephalon-managed`), [`aspnetcore-grpc.md`](components/aspnetcore-grpc.md) (`M2` `cephalon-managed`), [`worker.md`](components/worker.md) (`M4` `cephalon-managed`)
+- additionally adopt the convention in the two component pages that already had a prose "Maturity and ownership" section so the badge convention reads consistently across all pages that surface maturity inline: [`diagnostics.md`](components/diagnostics.md) (`M4` `cephalon-managed`) + [`analyzers.md`](components/analyzers.md) (`M1` `cephalon-managed`); existing prose sections retained — the badge complements rather than replaces them
 - `docs/engine-backlog.md` ENG-382 backlog card; Sprint 125 placement updated
 
 Follow-up later:
 
 - adopt the convention across the remaining ~95 component pages in batched slices, prioritized by adopter visibility: technology / follow-through packs (Agentics, Eventing, EventSourcing core, Data core, Retrieval, Edge core, MultiTenancy core + Governance) → Behaviors family → provider packs (Data.* + EventSourcing.*) → observability companions → small remaining packs; each batch updates the audit row at the same time if any maturity / ownership change has happened since the last refresh, so the badge and audit never drift
 - when a future slice touches a component page that does not yet carry the badge, prefer adding it in the same slice over deferring; the discipline is the same as the redaction-arc's adoption pattern (`ENG-368` / `ENG-369`)
-- once the badge is on every page, consider promoting *Updated risk #2* from "still asymmetric" to "materially closed" in the next monthly architecture review; the matrix-adoption follow-up named in the May review (`promote maturity labels into ... getting-started flows`) extends to [`docs/getting-started.md`](docs/getting-started.md) and is tracked as a sibling sub-arc
+- once the badge is on every page, consider promoting *Updated risk #2* from "still asymmetric" to "materially closed" in the next monthly architecture review; the matrix-adoption follow-up named in the May review (`promote maturity labels into ... getting-started flows`) extends to [`docs/getting-started.md`](getting-started.md) and is tracked as a sibling sub-arc
 
 ### ENG-381 Pre-declare canonical activity-source / meter names for Cephalon.Agentics + Cephalon.Retrieval
 
@@ -9645,7 +9672,7 @@ Follow-up later:
 
 - when the `v0.1.0-preview` tag is cut, the release manager copies this draft into the GitHub Release body with any final timing edits (e.g. trim the test-flake-watch section if the flake is fixed before tag-time, add the SLSA provenance / Sigstore signature / SBOM bundle URLs once the pipeline produces them)
 - once the first GA release lands post-preview, this file becomes the historical reference for `v0.1.0-preview` shipping; future preview / GA releases get their own `v{x.y.z}-notes.md` siblings under `docs/releases/`
-- consider promoting [`scripts/summarise-public-api-deltas.ps1`](../../scripts/summarise-public-api-deltas.ps1) to consume this draft and emit a top-of-release-notes contract-delta summary; today the artefact is reachable but the release-notes-generation flow doesn't wire it directly
+- consider promoting [`scripts/summarise-public-api-deltas.ps1`](../scripts/summarise-public-api-deltas.ps1) to consume this draft and emit a top-of-release-notes contract-delta summary; today the artefact is reachable but the release-notes-generation flow doesn't wire it directly
 
 ### ENG-403 Direct decision-matrix coverage for `MetadataDrivenAuthorizationEvaluator`
 

@@ -210,6 +210,30 @@ public sealed class DocumentationCoverageTests
     }
 
     [Fact]
+    public void TopLevelDocumentationLocalLinksResolve()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var docsRoot = Path.Combine(repositoryRoot, "docs");
+        var topLevelDocPaths = Directory
+            .EnumerateFiles(docsRoot, "*.md", SearchOption.TopDirectoryOnly)
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.NotEmpty(topLevelDocPaths);
+
+        var totalLocalLinkCount = 0;
+        foreach (var topLevelDocPath in topLevelDocPaths)
+            totalLocalLinkCount += AssertLocalMarkdownLinksResolve(
+                repositoryRoot,
+                topLevelDocPath,
+                $"top-level documentation '{Path.GetFileName(topLevelDocPath)}'",
+                allowDirectoryTargets: true,
+                requireLocalLinks: false);
+
+        Assert.True(totalLocalLinkCount > 0, "Expected top-level documentation to contain at least one repo-local Markdown link.");
+    }
+
+    [Fact]
     public void ObservabilityDependencyProbeDocsMatchRuntimeOwnership()
     {
         var repositoryRoot = GetRepositoryRoot();
@@ -1197,7 +1221,12 @@ public sealed class DocumentationCoverageTests
         return !Uri.TryCreate(target, UriKind.Absolute, out _);
     }
 
-    private static void AssertLocalMarkdownLinksResolve(string repositoryRoot, string markdownPath, string documentDescription)
+    private static int AssertLocalMarkdownLinksResolve(
+        string repositoryRoot,
+        string markdownPath,
+        string documentDescription,
+        bool allowDirectoryTargets = false,
+        bool requireLocalLinks = true)
     {
         var markdownRoot = Path.GetDirectoryName(markdownPath)!;
         var markdown = File.ReadAllText(markdownPath);
@@ -1211,7 +1240,8 @@ public sealed class DocumentationCoverageTests
             .OrderBy(target => target, StringComparer.Ordinal)
             .ToArray();
 
-        Assert.NotEmpty(localLinkTargets);
+        if (requireLocalLinks)
+            Assert.NotEmpty(localLinkTargets);
 
         foreach (var localLinkTarget in localLinkTargets)
         {
@@ -1222,9 +1252,13 @@ public sealed class DocumentationCoverageTests
                 IsPathInsideRepository(repositoryRoot, resolvedPath),
                 $"Expected {documentDescription} link target '{localLinkTarget}' to stay inside the repository but resolved to '{resolvedPath}'.");
             Assert.True(
-                File.Exists(resolvedPath),
-                $"Expected {documentDescription} link target '{localLinkTarget}' to resolve to an existing file at '{resolvedPath}'.");
+                File.Exists(resolvedPath) || (allowDirectoryTargets && Directory.Exists(resolvedPath)),
+                allowDirectoryTargets
+                    ? $"Expected {documentDescription} link target '{localLinkTarget}' to resolve to an existing file or directory at '{resolvedPath}'."
+                    : $"Expected {documentDescription} link target '{localLinkTarget}' to resolve to an existing file at '{resolvedPath}'.");
         }
+
+        return localLinkTargets.Length;
     }
 
     private static bool IsPathInsideRepository(string repositoryRoot, string path)
