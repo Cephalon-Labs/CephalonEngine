@@ -789,6 +789,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
         EventDispatchScheduledDeliveryMetadata.IsScheduledDeliveryProven(state.Metadata);
 
+    private static bool IsDurableRetryQueueProof(EventDispatchRuntimeState state) =>
+        string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.RetryScheduled, StringComparison.OrdinalIgnoreCase) &&
+        EventDispatchDurableRetryQueueMetadata.IsDurableRetryQueueProven(state.Metadata);
+
     private static string FormatObservedAt(DateTimeOffset? observedAtUtc) =>
         observedAtUtc.HasValue
             ? observedAtUtc.Value.ToString("O", CultureInfo.InvariantCulture)
@@ -1226,21 +1230,27 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var managedSubscriptionBindings = topology.HasManagedSubscriptionExecutionBindings ? "present" : "not-present";
         var externalManagedSubscriptionBindings = topology.HasExternalManagedSubscriptionExecutionBindings ? "present" : "not-present";
 
+        using var scope = scopeFactory.CreateScope();
+        var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
+        var durableRetryStates = dispatchRuntimeCatalog?.States
+            .Where(static state =>
+                state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.DurableRetryQueue, out var value) &&
+                string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase))
+            .ToArray() ?? [];
+        var durableRetryProvenCount = durableRetryStates.Count(IsDurableRetryQueueProof);
+        var durableRetryState = SelectBestDispatchProof(
+            durableRetryStates,
+            IsDurableRetryQueueProof);
+
         if (!topology.HasPublishingPath)
         {
             return new DurableRetryQueueProfile(
                 "not-claimed",
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; inProcessRetryPolicy={inProcessRetryPolicy}; inProcessRetryMaxAttempts={inProcessRetryAttempts}; dispatchRuntime={dispatchRuntime}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; retryDurability=none-or-provider-reported; durableRetryQueue=not-claimed; durableRetryQueueSource=not-reported; durableRetryQueueId=not-reported; retryPersistence=not-claimed; retryPersistenceId=not-reported; brokerErrorQueue=not-claimed; brokerErrorQueueId=not-reported; poisonQueueOwnership=not-claimed; poisonQueueId=not-reported; crossNodeRetryCoordination=not-claimed; retryCoordinationId=not-reported; retryLease=not-claimed; retryLeaseId=not-reported; wolverineRequired=false"),
+                    $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; inProcessRetryPolicy={inProcessRetryPolicy}; inProcessRetryMaxAttempts={inProcessRetryAttempts}; dispatchRuntime={dispatchRuntime}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; durableRetryProofSelection=latest-proven-dispatch-state; durableRetryStateCount={durableRetryStates.Length.ToString(CultureInfo.InvariantCulture)}; durableRetryProvenCount={durableRetryProvenCount.ToString(CultureInfo.InvariantCulture)}; retryDurability=none-or-provider-reported; durableRetryQueue=not-claimed; durableRetryQueueSource=not-reported; durableRetryQueueId=not-reported; retryPersistence=not-claimed; retryPersistenceId=not-reported; brokerErrorQueue=not-claimed; brokerErrorQueueId=not-reported; poisonQueueOwnership=not-claimed; poisonQueueId=not-reported; crossNodeRetryCoordination=not-claimed; retryCoordinationId=not-reported; retryLease=not-claimed; retryLeaseId=not-reported; wolverineRequired=false"),
                 "Add a publishing path before claiming durable retry queue evidence.");
         }
-
-        using var scope = scopeFactory.CreateScope();
-        var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
-        var durableRetryState = dispatchRuntimeCatalog?.States.FirstOrDefault(static state =>
-            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.DurableRetryQueue, out var value) &&
-            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
 
         if (durableRetryState is not null)
         {
@@ -1316,7 +1326,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 status,
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"publicationPath=active; inProcessExecution={inProcessExecution}; inProcessRetryPolicy={inProcessRetryPolicy}; inProcessRetryMaxAttempts={inProcessRetryAttempts}; dispatchRuntime={dispatchRuntime}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; retryDurability={retryDurability}; retryScope={retryScope}; durableRetryQueue={durableRetryQueue}; durableRetryQueueSource={source}; durableRetryQueueId={durableRetryQueueId}; retryPersistence={retryPersistence}; retryPersistenceId={retryPersistenceId}; brokerErrorQueue={brokerErrorQueue}; brokerErrorQueueId={brokerErrorQueueId}; poisonQueueOwnership={poisonQueueOwnership}; poisonQueueId={poisonQueueId}; crossNodeRetryCoordination={crossNodeRetryCoordination}; retryCoordinationId={retryCoordinationId}; retryLease={retryLease}; retryLeaseId={retryLeaseId}; outboxId={durableRetryState.OutboxId}; lastOutcome={durableRetryState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                    $"publicationPath=active; inProcessExecution={inProcessExecution}; inProcessRetryPolicy={inProcessRetryPolicy}; inProcessRetryMaxAttempts={inProcessRetryAttempts}; dispatchRuntime={dispatchRuntime}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; durableRetryProofSelection=latest-proven-dispatch-state; durableRetryStateCount={durableRetryStates.Length.ToString(CultureInfo.InvariantCulture)}; durableRetryProvenCount={durableRetryProvenCount.ToString(CultureInfo.InvariantCulture)}; retryDurability={retryDurability}; retryScope={retryScope}; durableRetryQueue={durableRetryQueue}; durableRetryQueueSource={source}; durableRetryQueueId={durableRetryQueueId}; retryPersistence={retryPersistence}; retryPersistenceId={retryPersistenceId}; brokerErrorQueue={brokerErrorQueue}; brokerErrorQueueId={brokerErrorQueueId}; poisonQueueOwnership={poisonQueueOwnership}; poisonQueueId={poisonQueueId}; crossNodeRetryCoordination={crossNodeRetryCoordination}; retryCoordinationId={retryCoordinationId}; retryLease={retryLease}; retryLeaseId={retryLeaseId}; outboxId={durableRetryState.OutboxId}; lastOutcome={durableRetryState.LastOutcome ?? "unknown"}; lastObservedAtUtc={FormatObservedAt(durableRetryState.LastObservedAtUtc)}; wolverineRequired=false"),
                 nextGap);
         }
 
@@ -1324,7 +1334,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "not-claimed",
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"publicationPath=active; inProcessExecution={inProcessExecution}; inProcessRetryPolicy={inProcessRetryPolicy}; inProcessRetryMaxAttempts={inProcessRetryAttempts}; dispatchRuntime={dispatchRuntime}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; retryDurability=none-or-provider-reported; durableRetryQueue=not-claimed; durableRetryQueueSource=not-reported; durableRetryQueueId=not-reported; retryPersistence=not-claimed; retryPersistenceId=not-reported; brokerErrorQueue=not-claimed; brokerErrorQueueId=not-reported; poisonQueueOwnership=not-claimed; poisonQueueId=not-reported; crossNodeRetryCoordination=not-claimed; retryCoordinationId=not-reported; retryLease=not-claimed; retryLeaseId=not-reported; wolverineRequired=false"),
+                $"publicationPath=active; inProcessExecution={inProcessExecution}; inProcessRetryPolicy={inProcessRetryPolicy}; inProcessRetryMaxAttempts={inProcessRetryAttempts}; dispatchRuntime={dispatchRuntime}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; durableRetryProofSelection=latest-proven-dispatch-state; durableRetryStateCount={durableRetryStates.Length.ToString(CultureInfo.InvariantCulture)}; durableRetryProvenCount={durableRetryProvenCount.ToString(CultureInfo.InvariantCulture)}; retryDurability=none-or-provider-reported; durableRetryQueue=not-claimed; durableRetryQueueSource=not-reported; durableRetryQueueId=not-reported; retryPersistence=not-claimed; retryPersistenceId=not-reported; brokerErrorQueue=not-claimed; brokerErrorQueueId=not-reported; poisonQueueOwnership=not-claimed; poisonQueueId=not-reported; crossNodeRetryCoordination=not-claimed; retryCoordinationId=not-reported; retryLease=not-claimed; retryLeaseId=not-reported; wolverineRequired=false"),
             "Add a provider-owned durable retry queue descriptor plus retry persistence, broker error queue, poison queue, cross-node coordination, and lease evidence before claiming durable retry queue ownership.");
     }
 

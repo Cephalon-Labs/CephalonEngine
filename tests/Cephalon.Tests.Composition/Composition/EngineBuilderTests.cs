@@ -2569,6 +2569,92 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingSelectsLatestProvenDurableRetryEvidenceAcrossOutboxesWithoutWolverine()
+    {
+        var olderDurableRetryReport = EventDispatchDurableRetryQueueMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "alpha-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.RetryScheduled,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 10, 0, 0, TimeSpan.Zero),
+                messageId: "evt-alpha-retry-001",
+                attempt: 2,
+                error: "Alpha provider accepted retry into a durable retry queue."),
+            source: "alpha-retry-runtime",
+            durableRetryQueueId: "alpha-durable-retry-queue",
+            retryPersistenceId: "alpha-retry-persistence",
+            brokerErrorQueueId: "alpha-broker-error-queue",
+            poisonQueueId: "alpha-poison-queue",
+            retryCoordinationId: "alpha-retry-coordination",
+            retryLeaseId: "alpha-retry-lease");
+        var newerDurableRetryReport = EventDispatchDurableRetryQueueMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "beta-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.RetryScheduled,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 10, 30, 0, TimeSpan.Zero),
+                messageId: "evt-beta-retry-001",
+                attempt: 2,
+                error: "Beta provider accepted retry into a durable retry queue."),
+            source: "beta-retry-runtime",
+            durableRetryQueueId: "beta-durable-retry-queue",
+            retryPersistenceId: "beta-retry-persistence",
+            brokerErrorQueueId: "beta-broker-error-queue",
+            poisonQueueId: "beta-poison-queue",
+            retryCoordinationId: "beta-retry-coordination",
+            retryLeaseId: "beta-retry-lease");
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventSubscriptionExecutor, DurableRetryProofExecutor>();
+        services.AddSingleton<IEventDispatchRuntimeCatalog>(new TestEventDispatchRuntimeCatalog(
+            CreateDispatchRuntimeState(olderDurableRetryReport),
+            CreateDispatchRuntimeState(newerDurableRetryReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new MultiOutboxEventingTestModule());
+            engine.AddEventing(options =>
+            {
+                options.EnableInProcessSubscriptionExecution = true;
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Durable retry proof events."));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["durable-retry-queue-ownership"].Metadata["status"]);
+        Assert.Contains("durableRetryProofSelection=latest-proven-dispatch-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("durableRetryStateCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("durableRetryProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("durableRetryQueueSource=beta-retry-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("durableRetryQueueId=beta-durable-retry-queue", evidence, StringComparison.Ordinal);
+        Assert.Contains("retryPersistenceId=beta-retry-persistence", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerErrorQueueId=beta-broker-error-queue", evidence, StringComparison.Ordinal);
+        Assert.Contains("poisonQueueId=beta-poison-queue", evidence, StringComparison.Ordinal);
+        Assert.Contains("retryCoordinationId=beta-retry-coordination", evidence, StringComparison.Ordinal);
+        Assert.Contains("retryLeaseId=beta-retry-lease", evidence, StringComparison.Ordinal);
+        Assert.Contains("outboxId=beta-outbox", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=retry-scheduled", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastObservedAtUtc=2026-05-13T10:30:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("durableRetryQueueId=alpha-durable-retry-queue", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AddEventingProjectsContractCatalogProfileEvidenceWithoutWolverine()
     {
         var services = new ServiceCollection();
@@ -5011,6 +5097,26 @@ public sealed class EngineBuilderTests
                 mode: "in-memory",
                 channelIds: ["contracts"],
                 tags: ["test"]));
+        }
+    }
+
+    [EventSubscription(
+        id: "durable-retry-proof",
+        displayName: "Durable Retry Proof",
+        description: "Consumes durable retry proof test publications.",
+        channelId: "contracts",
+        handlerId: "durable-retry-proof-handler",
+        deliveryMode: "direct")]
+    private sealed class DurableRetryProofExecutor : IEventSubscriptionExecutor
+    {
+        public string SubscriptionId => "durable-retry-proof";
+
+        public ValueTask ExecuteAsync(
+            EventSubscriptionExecutionContext context,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return ValueTask.CompletedTask;
         }
     }
 
