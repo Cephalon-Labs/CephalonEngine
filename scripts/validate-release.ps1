@@ -421,24 +421,28 @@ function Assert-EngineCompletionScorecardHardBlockers {
     $eventingPromotionGate = [string](Get-ScorecardRequiredPropertyValue -Object $eventingOperationalSuperiorityEvidence -PropertyName "PromotionGate" -OwnerName "EventingOperationalSuperiorityEvidence")
     $eventingPromotionRequiredStatus = [string](Get-ScorecardRequiredPropertyValue -Object $eventingOperationalSuperiorityEvidence -PropertyName "PromotionRequiredStatus" -OwnerName "EventingOperationalSuperiorityEvidence")
     $eventingPromotionDecisionCode = [string](Get-ScorecardRequiredPropertyValue -Object $eventingOperationalSuperiorityEvidence -PropertyName "PromotionDecisionCode" -OwnerName "EventingOperationalSuperiorityEvidence")
+    $eventingRuntimeConcordanceStatus = [string](Get-ScorecardRequiredPropertyValue -Object $eventingOperationalSuperiorityEvidence -PropertyName "RuntimeConcordanceStatus" -OwnerName "EventingOperationalSuperiorityEvidence")
     $eventingMissingDimensionCount = Get-ScorecardIntegerProperty -Object $eventingOperationalSuperiorityEvidence -PropertyName "MissingDimensionCount"
     $eventingPartialDimensionCount = Get-ScorecardIntegerProperty -Object $eventingOperationalSuperiorityEvidence -PropertyName "PartialDimensionCount"
+    $eventingRuntimeConcordanceMissingTokenCount = Get-ScorecardIntegerProperty -Object $eventingOperationalSuperiorityEvidence -PropertyName "RuntimeConcordanceMissingTokenCount"
     if (-not $eventingPromotionAllowed -or
         $eventingWolverineRequired -or
         $eventingStatus -ne "claimed" -or
         $eventingPromotionGate -ne "allowed" -or
         $eventingPromotionRequiredStatus -ne "claimed" -or
         $eventingPromotionDecisionCode -ne "all-required-dimensions-claimed" -or
+        $eventingRuntimeConcordanceStatus -ne "matched" -or
+        $eventingRuntimeConcordanceMissingTokenCount -gt 0 -or
         $eventingMissingDimensionCount -gt 0 -or
         $eventingPartialDimensionCount -gt 0) {
-        $hardBlockers.Add("eventing operational-superiority promotion: status $eventingStatus; gate $eventingPromotionGate; required $eventingPromotionRequiredStatus; decision $eventingPromotionDecisionCode; promotionAllowed $eventingPromotionAllowed; wolverineRequired $eventingWolverineRequired; partial dimensions $eventingPartialDimensionCount; missing dimensions $eventingMissingDimensionCount")
+        $hardBlockers.Add("eventing operational-superiority promotion: status $eventingStatus; gate $eventingPromotionGate; required $eventingPromotionRequiredStatus; decision $eventingPromotionDecisionCode; promotionAllowed $eventingPromotionAllowed; runtimeConcordance $eventingRuntimeConcordanceStatus; runtimeConcordanceMissingTokens $eventingRuntimeConcordanceMissingTokenCount; wolverineRequired $eventingWolverineRequired; partial dimensions $eventingPartialDimensionCount; missing dimensions $eventingMissingDimensionCount")
     }
 
     if ($hardBlockers.Count -gt 0) {
         throw "Engine completion scorecard has hard release blocker(s): $($hardBlockers -join '; ')."
     }
 
-    Write-Host "Engine completion scorecard hard-blocker gate: no blocked platform gates, no supply-chain blocked items, no public API removals, no active test-coverage gaps or open quarantine entries, and eventing operational-superiority promotion is allowed without Wolverine."
+    Write-Host "Engine completion scorecard hard-blocker gate: no blocked platform gates, no supply-chain blocked items, no public API removals, no active test-coverage gaps or open quarantine entries, and eventing operational-superiority promotion is runtime-concordant without Wolverine."
 }
 
 function Write-EngineCompletionScorecardEvidenceSummary {
@@ -682,6 +686,32 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         -Object $eventingOperationalSuperiorityEvidence `
         -PropertyName "PromotionGate" `
         -OwnerName "EventingOperationalSuperiorityEvidence"
+    $eventingRuntimeConcordanceStatus = Get-ScorecardRequiredPropertyValue `
+        -Object $eventingOperationalSuperiorityEvidence `
+        -PropertyName "RuntimeConcordanceStatus" `
+        -OwnerName "EventingOperationalSuperiorityEvidence"
+    $eventingRuntimeConcordanceSource = Get-ScorecardRequiredPropertyValue `
+        -Object $eventingOperationalSuperiorityEvidence `
+        -PropertyName "RuntimeConcordanceSource" `
+        -OwnerName "EventingOperationalSuperiorityEvidence"
+    $eventingRuntimeConcordanceMatchedTokenCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $eventingOperationalSuperiorityEvidence `
+            -PropertyName "RuntimeConcordanceMatchedTokenCount" `
+            -OwnerName "EventingOperationalSuperiorityEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $eventingRuntimeConcordanceTokenCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $eventingOperationalSuperiorityEvidence `
+            -PropertyName "RuntimeConcordanceTokenCount" `
+            -OwnerName "EventingOperationalSuperiorityEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $eventingRuntimeConcordanceMissingTokenCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $eventingOperationalSuperiorityEvidence `
+            -PropertyName "RuntimeConcordanceMissingTokenCount" `
+            -OwnerName "EventingOperationalSuperiorityEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
 
     if ($null -eq $scorecard.SupplyChainEvidence) {
         throw "Engine completion scorecard JSON is missing SupplyChainEvidence."
@@ -814,7 +844,7 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $dependencyHealthProviderManifestSchemaVersion,
         $dependencyHealthProviderManifestStatus)
 
-    Write-Host ("Eventing operational-superiority evidence: contract {0} {1}; target {2}; status {3}; required {4}; dimensions {5}/{6} covered, partial {7}, missing {8}; coverage {9}%; promotion gate {10}; promotion allowed {11}; decision {12}; Wolverine required {13}." -f `
+    Write-Host ("Eventing operational-superiority evidence: contract {0} {1}; target {2}; status {3}; required {4}; dimensions {5}/{6} covered, partial {7}, missing {8}; coverage {9}%; promotion gate {10}; promotion allowed {11}; decision {12}; runtime concordance {13} ({14}/{15} tokens, missing {16}) from {17}; Wolverine required {18}." -f `
         $eventingPromotionEvidenceContract,
         $eventingPromotionEvidenceContractVersion,
         $eventingPromotionTarget,
@@ -828,6 +858,11 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $eventingPromotionGate,
         $eventingPromotionAllowed,
         $eventingPromotionDecisionCode,
+        $eventingRuntimeConcordanceStatus,
+        $eventingRuntimeConcordanceMatchedTokenCount,
+        $eventingRuntimeConcordanceTokenCount,
+        $eventingRuntimeConcordanceMissingTokenCount,
+        $eventingRuntimeConcordanceSource,
         $eventingWolverineRequired)
 
     Write-Host ("SRE posture: {0} SLIs; target-declared {1}; pending stable baselines {2}; stable baselines {3}; stable baseline rows {4}; stable baseline measurements {5}; pending baseline rows {6}; blockers {7}; pending evidence {8}; guardrail-mapped {9}; pending guardrail coverage {10}; guardrail not-applicable {11}; summary mode {12}; stable baseline manifest {13}." -f `

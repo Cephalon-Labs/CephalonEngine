@@ -255,7 +255,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.21.0"
+        $json.'$schemaVersion' | Should -Be "1.22.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
@@ -269,7 +269,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
         $json.EvidenceSources.Count | Should -Be 14
-        $json.EvidenceSourceReferences.Count | Should -Be 32
+        $json.EvidenceSourceReferences.Count | Should -Be 33
         $json.PlatformGates.Count | Should -Be 12
         $json.QualityDimensions.Count | Should -Be 12
         $json.PackageFamilies.Count | Should -Be 9
@@ -317,6 +317,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.EventingOperationalSuperiorityCoveragePercent | Should -Be 100
         $json.Summary.EventingOperationalSuperiorityPromotionAllowed | Should -BeTrue
         $json.Summary.EventingOperationalSuperiorityWolverineRequired | Should -BeFalse
+        $json.Summary.EventingOperationalSuperiorityRuntimeConcordanceMatched | Should -BeTrue
+        $json.Summary.EventingOperationalSuperiorityRuntimeConcordanceTokenCount | Should -Be 19
+        $json.Summary.EventingOperationalSuperiorityRuntimeConcordanceMissingTokenCount | Should -Be 0
         $json.Summary.SreSliCount | Should -Be 11
         $json.Summary.SreTargetDeclaredCount | Should -Be 11
         $json.Summary.SrePendingStableBaselineCount | Should -Be 1
@@ -346,7 +349,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.PublicApiAdditiveEntryCount | Should -Be 637
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
         $json.Summary.EvidenceSourceCount | Should -Be 14
-        $json.Summary.EvidenceSourceReferenceCount | Should -Be 32
+        $json.Summary.EvidenceSourceReferenceCount | Should -Be 33
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
         $json.Summary.PlatformStatusCounts.partial | Should -Be 8
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
@@ -364,6 +367,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/eventing-operational-superiority-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "docs/components/eventing.md"
         $json.EvidenceSourceReferences.Reference | Should -Contain "docs/project-memory.md"
+        $json.EvidenceSourceReferences.Reference | Should -Contain "src/Cephalon.Eventing/Services/EventingSuperiorityProfileRuntimeSurfaceContributor.cs"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/observability-dependency-health-providers.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/sre-posture-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/sre-stable-baselines.json"
@@ -520,7 +524,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_SMTP_API_URI"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_CDC_POSTGRES_CONNECTION_STRING"
 
-        $json.EventingOperationalSuperiorityEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
+        $json.EventingOperationalSuperiorityEvidence.ManifestSchemaVersion | Should -Be "1.1.0"
         $json.EventingOperationalSuperiorityEvidence.Status | Should -Be "claimed"
         $json.EventingOperationalSuperiorityEvidence.Technology | Should -Be "event-driven-integration"
         $json.EventingOperationalSuperiorityEvidence.SurfaceId | Should -Be "eventing-superiority-profile"
@@ -537,6 +541,13 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.EventingOperationalSuperiorityEvidence.WolverineRequired | Should -BeFalse
         $json.EventingOperationalSuperiorityEvidence.HotPathBindingMode | Should -Be "code-first-publish-subscribe"
         $json.EventingOperationalSuperiorityEvidence.ConfigurationRole | Should -Be "environment-policy-and-provider-selection"
+        $json.EventingOperationalSuperiorityEvidence.RuntimeConcordanceStatus | Should -Be "matched"
+        $json.EventingOperationalSuperiorityEvidence.RuntimeConcordanceSource | Should -Be "src/Cephalon.Eventing/Services/EventingSuperiorityProfileRuntimeSurfaceContributor.cs"
+        $json.EventingOperationalSuperiorityEvidence.RuntimeConcordanceTokenCount | Should -Be 19
+        $json.EventingOperationalSuperiorityEvidence.RuntimeConcordanceMatchedTokenCount | Should -Be 19
+        $json.EventingOperationalSuperiorityEvidence.RuntimeConcordanceMissingTokenCount | Should -Be 0
+        $json.EventingOperationalSuperiorityEvidence.RuntimeConcordanceRequiredTokens | Should -Contain "providerNeutral=true; wolverineRequired=false"
+        $json.EventingOperationalSuperiorityEvidence.RuntimeConcordanceRequiredTokens | Should -Contain "comparisonBaseline=MassTransit,NServiceBus,Wolverine,MediatR"
         $json.EventingOperationalSuperiorityEvidence.PromotionGate | Should -Be "allowed"
         $json.EventingOperationalSuperiorityEvidence.PromotionAllowed | Should -BeTrue
         $json.EventingOperationalSuperiorityEvidence.PromotionPolicy | Should -Be "all-operational-superiority-dimensions-claimed"
@@ -559,6 +570,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.EventingOperationalSuperiorityEvidence.RequiredDimensions.Id | Should -Contain "observability-compliance-and-auditability"
         $json.EventingOperationalSuperiorityEvidence.RequiredDimensions.Id | Should -Contain "testability-and-benchmark-evidence"
         $json.EventingOperationalSuperiorityEvidence.ValidatedReferences.Reference | Should -Contain "scripts/eventing-operational-superiority-support.json"
+        $json.EventingOperationalSuperiorityEvidence.ValidatedReferences.Reference | Should -Contain "src/Cephalon.Eventing/Services/EventingSuperiorityProfileRuntimeSurfaceContributor.cs"
         $json.EventingOperationalSuperiorityEvidence.ValidatedReferences.Reference | Should -Contain "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
 
         $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.10.0"
@@ -1520,6 +1532,43 @@ jobs:
         } | Should -Throw "*Scorecard evidence source reference 'missing-scorecard-source.md'*"
     }
 
+    It "fails when eventing operational-superiority runtime concordance drifts from source" {
+        $fixtureRoot = Join-Path $script:tempRoot "eventing-concordance-fixture"
+        $scriptsRoot = Join-Path $fixtureRoot "scripts"
+        New-Item -ItemType Directory -Path $scriptsRoot -Force | Out-Null
+
+        $manifestPath = Join-Path $scriptsRoot "eventing-operational-superiority-support.json"
+        Copy-Item -LiteralPath (Join-Path $script:repoRoot "scripts\eventing-operational-superiority-support.json") -Destination $manifestPath
+        $manifest = Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 32
+
+        $referencedPaths = [System.Collections.Generic.List[string]]::new()
+        @($manifest.sourceDocs + $manifest.validationProjects + $manifest.validationFiles + @($manifest.runtimeConcordance.source)) |
+            ForEach-Object { $referencedPaths.Add([string]$_) }
+        foreach ($dimension in @($manifest.requiredDimensions)) {
+            @($dimension.sourceDocs + $dimension.validationFiles) |
+                ForEach-Object { $referencedPaths.Add([string]$_) }
+        }
+
+        foreach ($reference in @($referencedPaths | Sort-Object -Unique)) {
+            $path = Join-Path $fixtureRoot $reference
+            New-Item -ItemType Directory -Path (Split-Path -Parent $path) -Force | Out-Null
+            "" | Set-Content -LiteralPath $path -Encoding UTF8
+        }
+
+        $missingToken = "comparisonBaseline=MassTransit,NServiceBus,Wolverine,MediatR"
+        $runtimeTokens = @(
+            [string]$manifest.runtimeConcordance.profileSurfaceToken
+            $manifest.runtimeConcordance.requiredTokens |
+                Where-Object { [string]$_ -ne $missingToken } |
+                ForEach-Object { [string]$_ }
+        )
+        Set-Content -LiteralPath (Join-Path $fixtureRoot $manifest.runtimeConcordance.source) -Value ($runtimeTokens -join [Environment]::NewLine) -Encoding UTF8
+
+        {
+            Convert-EventingOperationalSuperiorityEvidence -ResolvedManifestPath $manifestPath -ResolvedRepoRoot $fixtureRoot
+        } | Should -Throw "*runtimeConcordance source 'src/Cephalon.Eventing/Services/EventingSuperiorityProfileRuntimeSurfaceContributor.cs' is missing required token(s): $missingToken*"
+    }
+
     It "fails when dependency-health provider rows omit their source-derived manifest" {
         $manifestPath = Join-Path $script:tempRoot "provider-integration-support.json"
         $manifestContents = Get-Content -LiteralPath (Join-Path $script:repoRoot "scripts\provider-integration-support.json") -Raw -Encoding UTF8
@@ -1614,6 +1663,8 @@ jobs:
         $releaseValidation | Should -Match "dependency-health providers"
         $releaseValidation | Should -Match "EventingOperationalSuperiorityEvidence"
         $releaseValidation | Should -Match "Eventing operational-superiority evidence"
+        $releaseValidation | Should -Match "RuntimeConcordanceStatus"
+        $releaseValidation | Should -Match "runtime concordance"
         $releaseValidation | Should -Match "Wolverine required"
         $releaseValidation | Should -Match "TestCoverageEvidence"
         $releaseValidation | Should -Match "Test coverage evidence"

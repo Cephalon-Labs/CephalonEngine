@@ -1,5 +1,5 @@
 {
-  "$schemaVersion": "1.0.0",
+  "$schemaVersion": "1.1.0",
   "status": "claimed",
   "summary": "Native Cephalon Eventing operational-superiority promotion contract for release scorecard readback.",
   "technology": "event-driven-integration",
@@ -34,6 +34,31 @@
   "wolverineRequired": false,
   "hotPathBindingMode": "code-first-publish-subscribe",
   "configurationRole": "environment-policy-and-provider-selection",
+  "runtimeConcordance": {
+    "status": "matched",
+    "source": "src/Cephalon.Eventing/Services/EventingSuperiorityProfileRuntimeSurfaceContributor.cs",
+    "profileSurfaceToken": "surfaceId: \"eventing-superiority-profile\"",
+    "requiredTokens": [
+      "id: \"operational-superiority-coverage\"",
+      "requiredOperationalSuperiorityDimensions=",
+      "provider-operated-runtime-proof-coverage",
+      "choreography-handoff-ownership",
+      "durable-remediation-command-audit",
+      "durable-command-journal-replay-cursor",
+      "observability-compliance-and-auditability",
+      "testability-and-benchmark-evidence",
+      "operationalSuperiorityPromotionGate={promotionGate}",
+      "operationalSuperiorityPromotionAllowed={ToMetadataValue(promotionAllowed)}",
+      "operationalSuperiorityPromotionPolicy=all-operational-superiority-dimensions-claimed",
+      "operationalSuperiorityPromotionEvidenceContract=cephalon-eventing-operational-superiority-promotion-v1",
+      "operationalSuperiorityPromotionEvidenceContractVersion=1.0.0",
+      "operationalSuperiorityPromotionTarget=eventing-operational-superiority",
+      "operationalSuperiorityPromotionRequiredStatus=claimed",
+      "operationalSuperiorityPromotionDecisionCode={promotionDecisionCode}",
+      "comparisonBaseline=MassTransit,NServiceBus,Wolverine,MediatR",
+      "providerNeutral=true; wolverineRequired=false"
+    ]
+  },
   "promotionGate": "allowed",
   "promotionAllowed": true,
   "promotionPolicy": "all-operational-superiority-dimensions-claimed",

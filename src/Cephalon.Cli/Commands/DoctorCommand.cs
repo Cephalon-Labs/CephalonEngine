@@ -17,7 +17,7 @@ internal static class DoctorCommand
     private const string DotNetSdkDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/sdk:";
     private const string DotNetAspNetDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/aspnet:";
     private const string TemplatePackCustomHiveEnvironmentVariable = "CEPHALON_DOCTOR_TEMPLATE_HIVE";
-    private const string RequiredScorecardSchemaVersion = "1.21.0";
+    private const string RequiredScorecardSchemaVersion = "1.22.0";
 
     private static readonly string[] ExpectedTemplateShortNames =
     [
@@ -867,6 +867,9 @@ internal static class DoctorCommand
         var eventingOperationalSuperiorityCoveragePercent = GetRequiredScorecardInt(summary, "EventingOperationalSuperiorityCoveragePercent", errors);
         var eventingOperationalSuperiorityPromotionAllowed = GetRequiredScorecardBool(summary, "EventingOperationalSuperiorityPromotionAllowed", errors);
         var eventingOperationalSuperiorityWolverineRequired = GetRequiredScorecardBool(summary, "EventingOperationalSuperiorityWolverineRequired", errors);
+        var eventingOperationalSuperiorityRuntimeConcordanceMatched = GetRequiredScorecardBool(summary, "EventingOperationalSuperiorityRuntimeConcordanceMatched", errors);
+        var eventingOperationalSuperiorityRuntimeConcordanceTokenCount = GetRequiredScorecardInt(summary, "EventingOperationalSuperiorityRuntimeConcordanceTokenCount", errors);
+        var eventingOperationalSuperiorityRuntimeConcordanceMissingTokenCount = GetRequiredScorecardInt(summary, "EventingOperationalSuperiorityRuntimeConcordanceMissingTokenCount", errors);
         var sreSliCount = GetRequiredScorecardInt(summary, "SreSliCount", errors);
         var sreTargetDeclaredCount = GetRequiredScorecardInt(summary, "SreTargetDeclaredCount", errors);
         var srePendingStableBaselineCount = GetRequiredScorecardInt(summary, "SrePendingStableBaselineCount", errors);
@@ -996,6 +999,11 @@ internal static class DoctorCommand
         var evidenceEventingOperationalSuperiorityPromotionDecisionCode = GetRequiredScorecardString(eventingOperationalSuperiorityEvidence, "PromotionDecisionCode", errors, "EventingOperationalSuperiorityEvidence") ?? "unknown";
         var evidenceEventingOperationalSuperiorityWolverineRequired = GetRequiredScorecardBool(eventingOperationalSuperiorityEvidence, "WolverineRequired", errors, "EventingOperationalSuperiorityEvidence");
         var evidenceEventingOperationalSuperiorityHotPathBindingMode = GetRequiredScorecardString(eventingOperationalSuperiorityEvidence, "HotPathBindingMode", errors, "EventingOperationalSuperiorityEvidence") ?? "unknown";
+        var evidenceEventingOperationalSuperiorityRuntimeConcordanceStatus = GetRequiredScorecardString(eventingOperationalSuperiorityEvidence, "RuntimeConcordanceStatus", errors, "EventingOperationalSuperiorityEvidence") ?? "unknown";
+        var evidenceEventingOperationalSuperiorityRuntimeConcordanceSource = GetRequiredScorecardString(eventingOperationalSuperiorityEvidence, "RuntimeConcordanceSource", errors, "EventingOperationalSuperiorityEvidence") ?? "unknown";
+        var evidenceEventingOperationalSuperiorityRuntimeConcordanceTokenCount = GetRequiredScorecardInt(eventingOperationalSuperiorityEvidence, "RuntimeConcordanceTokenCount", errors, "EventingOperationalSuperiorityEvidence");
+        var evidenceEventingOperationalSuperiorityRuntimeConcordanceMatchedTokenCount = GetRequiredScorecardInt(eventingOperationalSuperiorityEvidence, "RuntimeConcordanceMatchedTokenCount", errors, "EventingOperationalSuperiorityEvidence");
+        var evidenceEventingOperationalSuperiorityRuntimeConcordanceMissingTokenCount = GetRequiredScorecardInt(eventingOperationalSuperiorityEvidence, "RuntimeConcordanceMissingTokenCount", errors, "EventingOperationalSuperiorityEvidence");
         var evidenceSreSliCount = GetRequiredScorecardInt(srePostureEvidence, "SliCount", errors, "SrePostureEvidence");
         var evidenceSreTargetDeclaredCount = GetRequiredScorecardInt(srePostureEvidence, "TargetDeclaredCount", errors, "SrePostureEvidence");
         var evidenceSrePendingStableBaselineCount = GetRequiredScorecardInt(srePostureEvidence, "PendingStableBaselineCount", errors, "SrePostureEvidence");
@@ -1129,7 +1137,9 @@ internal static class DoctorCommand
             eventingOperationalSuperiorityMissingDimensionCount != evidenceEventingOperationalSuperiorityMissingDimensionCount ||
             eventingOperationalSuperiorityCoveragePercent != evidenceEventingOperationalSuperiorityCoveragePercent ||
             eventingOperationalSuperiorityPromotionAllowed != evidenceEventingOperationalSuperiorityPromotionAllowed ||
-            eventingOperationalSuperiorityWolverineRequired != evidenceEventingOperationalSuperiorityWolverineRequired)
+            eventingOperationalSuperiorityWolverineRequired != evidenceEventingOperationalSuperiorityWolverineRequired ||
+            eventingOperationalSuperiorityRuntimeConcordanceTokenCount != evidenceEventingOperationalSuperiorityRuntimeConcordanceTokenCount ||
+            eventingOperationalSuperiorityRuntimeConcordanceMissingTokenCount != evidenceEventingOperationalSuperiorityRuntimeConcordanceMissingTokenCount)
         {
             checks.Add(new DoctorCheck(
                 DoctorCheckSeverity.Failure,
@@ -1147,13 +1157,17 @@ internal static class DoctorCommand
             evidenceEventingOperationalSuperiorityPartialDimensionCount != 0 ||
             evidenceEventingOperationalSuperiorityMissingDimensionCount != 0 ||
             evidenceEventingOperationalSuperiorityWolverineRequired ||
-            !string.Equals(evidenceEventingOperationalSuperiorityHotPathBindingMode, "code-first-publish-subscribe", StringComparison.OrdinalIgnoreCase))
+            !string.Equals(evidenceEventingOperationalSuperiorityHotPathBindingMode, "code-first-publish-subscribe", StringComparison.OrdinalIgnoreCase) ||
+            !eventingOperationalSuperiorityRuntimeConcordanceMatched ||
+            !string.Equals(evidenceEventingOperationalSuperiorityRuntimeConcordanceStatus, "matched", StringComparison.OrdinalIgnoreCase) ||
+            evidenceEventingOperationalSuperiorityRuntimeConcordanceMissingTokenCount != 0 ||
+            evidenceEventingOperationalSuperiorityRuntimeConcordanceMatchedTokenCount != evidenceEventingOperationalSuperiorityRuntimeConcordanceTokenCount)
         {
             checks.Add(new DoctorCheck(
                 DoctorCheckSeverity.Failure,
                 "Engine completion scorecard eventing operational superiority",
-                $"Artifact '{resolvedScorecardPath}' has invalid Eventing operational-superiority readback: status {evidenceEventingOperationalSuperiorityStatus}, gate {evidenceEventingOperationalSuperiorityPromotionGate}, promotion allowed {evidenceEventingOperationalSuperiorityPromotionAllowed}, required {evidenceEventingOperationalSuperiorityPromotionRequiredStatus}, decision {evidenceEventingOperationalSuperiorityPromotionDecisionCode}, partial dimensions {evidenceEventingOperationalSuperiorityPartialDimensionCount}, missing dimensions {evidenceEventingOperationalSuperiorityMissingDimensionCount}, Wolverine required {evidenceEventingOperationalSuperiorityWolverineRequired}, hot-path binding {evidenceEventingOperationalSuperiorityHotPathBindingMode}.",
-                "Keep Eventing promotion evidence claimed only when every native operational-superiority dimension is claimed, hot-path publish/subscription remains code-first, and Wolverine stays optional."));
+                $"Artifact '{resolvedScorecardPath}' has invalid Eventing operational-superiority readback: status {evidenceEventingOperationalSuperiorityStatus}, gate {evidenceEventingOperationalSuperiorityPromotionGate}, promotion allowed {evidenceEventingOperationalSuperiorityPromotionAllowed}, required {evidenceEventingOperationalSuperiorityPromotionRequiredStatus}, decision {evidenceEventingOperationalSuperiorityPromotionDecisionCode}, partial dimensions {evidenceEventingOperationalSuperiorityPartialDimensionCount}, missing dimensions {evidenceEventingOperationalSuperiorityMissingDimensionCount}, runtime concordance {evidenceEventingOperationalSuperiorityRuntimeConcordanceStatus}, runtime concordance matched {eventingOperationalSuperiorityRuntimeConcordanceMatched}, runtime concordance missing tokens {evidenceEventingOperationalSuperiorityRuntimeConcordanceMissingTokenCount}, Wolverine required {evidenceEventingOperationalSuperiorityWolverineRequired}, hot-path binding {evidenceEventingOperationalSuperiorityHotPathBindingMode}.",
+                "Keep Eventing promotion evidence claimed only when every native operational-superiority dimension is claimed, hot-path publish/subscription remains code-first, the runtime source matches the release contract, and Wolverine stays optional."));
             return;
         }
 
@@ -1323,7 +1337,7 @@ internal static class DoctorCommand
         checks.Add(new DoctorCheck(
             DoctorCheckSeverity.Pass,
             "Engine completion scorecard eventing operational superiority",
-            $"contract {evidenceEventingOperationalSuperiorityPromotionEvidenceContract} {evidenceEventingOperationalSuperiorityPromotionEvidenceContractVersion}; target {evidenceEventingOperationalSuperiorityPromotionTarget}; status {evidenceEventingOperationalSuperiorityStatus}; required {evidenceEventingOperationalSuperiorityPromotionRequiredStatus}; dimensions {eventingOperationalSuperiorityCoveredDimensionCount}/{eventingOperationalSuperiorityRequiredDimensionCount} covered, partial {eventingOperationalSuperiorityPartialDimensionCount}, missing {eventingOperationalSuperiorityMissingDimensionCount}; coverage {eventingOperationalSuperiorityCoveragePercent}%; promotion gate {evidenceEventingOperationalSuperiorityPromotionGate}; promotion allowed {eventingOperationalSuperiorityPromotionAllowed}; decision {evidenceEventingOperationalSuperiorityPromotionDecisionCode}; hot-path {evidenceEventingOperationalSuperiorityHotPathBindingMode}; Wolverine required {eventingOperationalSuperiorityWolverineRequired}.",
+            $"contract {evidenceEventingOperationalSuperiorityPromotionEvidenceContract} {evidenceEventingOperationalSuperiorityPromotionEvidenceContractVersion}; target {evidenceEventingOperationalSuperiorityPromotionTarget}; status {evidenceEventingOperationalSuperiorityStatus}; required {evidenceEventingOperationalSuperiorityPromotionRequiredStatus}; dimensions {eventingOperationalSuperiorityCoveredDimensionCount}/{eventingOperationalSuperiorityRequiredDimensionCount} covered, partial {eventingOperationalSuperiorityPartialDimensionCount}, missing {eventingOperationalSuperiorityMissingDimensionCount}; coverage {eventingOperationalSuperiorityCoveragePercent}%; promotion gate {evidenceEventingOperationalSuperiorityPromotionGate}; promotion allowed {eventingOperationalSuperiorityPromotionAllowed}; decision {evidenceEventingOperationalSuperiorityPromotionDecisionCode}; runtime concordance {evidenceEventingOperationalSuperiorityRuntimeConcordanceStatus} ({evidenceEventingOperationalSuperiorityRuntimeConcordanceMatchedTokenCount}/{evidenceEventingOperationalSuperiorityRuntimeConcordanceTokenCount} tokens, source {evidenceEventingOperationalSuperiorityRuntimeConcordanceSource}); hot-path {evidenceEventingOperationalSuperiorityHotPathBindingMode}; Wolverine required {eventingOperationalSuperiorityWolverineRequired}.",
             null));
 
         var sreSeverity = srePendingStableBaselineCount > 0

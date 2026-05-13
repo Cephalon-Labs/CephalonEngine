@@ -17,7 +17,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.21.0"
+$Script:SchemaVersion = "1.22.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -2246,6 +2246,72 @@ function Convert-ProviderIntegrationEvidence {
     })
 }
 
+function Convert-SupportManifestSourceConcordance {
+    param(
+        $Concordance,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot,
+        [Parameter(Mandatory = $true)]
+        [string]$OwnerName
+    )
+
+    if ($null -eq $Concordance) {
+        throw "$OwnerName is missing runtimeConcordance."
+    }
+
+    $status = [string](Get-ManifestPropertyValue -Object $Concordance -PropertyName "status" -DefaultValue "")
+    $source = [string](Get-ManifestPropertyValue -Object $Concordance -PropertyName "source" -DefaultValue "")
+    $profileSurfaceToken = [string](Get-ManifestPropertyValue -Object $Concordance -PropertyName "profileSurfaceToken" -DefaultValue "")
+    foreach ($field in @(
+        [pscustomobject]@{ Name = "runtimeConcordance.status"; Value = $status },
+        [pscustomobject]@{ Name = "runtimeConcordance.source"; Value = $source },
+        [pscustomobject]@{ Name = "runtimeConcordance.profileSurfaceToken"; Value = $profileSurfaceToken }
+    )) {
+        if ([string]::IsNullOrWhiteSpace($field.Value)) {
+            throw "$OwnerName is missing $($field.Name)."
+        }
+    }
+
+    if ($status -ne "matched") {
+        throw "$OwnerName runtimeConcordance.status must be 'matched'."
+    }
+
+    $sourceReference = Resolve-SupportManifestPath -DeclaredPath $source -ResolvedRepoRoot $ResolvedRepoRoot -Context "runtimeConcordance.source" -OwnerName $OwnerName -PathType "File"
+    $resolvedSourcePath = Resolve-FullPath -Path $source -BasePath $ResolvedRepoRoot
+    $sourceText = Get-Content -LiteralPath $resolvedSourcePath -Raw -Encoding UTF8
+    $requiredTokens = @(
+        $profileSurfaceToken
+        Get-ManifestPropertyValue -Object $Concordance -PropertyName "requiredTokens" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+
+    if ($requiredTokens.Count -le 1) {
+        throw "$OwnerName runtimeConcordance.requiredTokens must declare at least one token beyond the profile surface token."
+    }
+
+    $missingTokens = @(
+        $requiredTokens |
+            Where-Object { -not $sourceText.Contains($_) }
+    )
+
+    if ($missingTokens.Count -gt 0) {
+        throw "$OwnerName runtimeConcordance source '$($sourceReference.Reference)' is missing required token(s): $([string]::Join(', ', $missingTokens))."
+    }
+
+    return [pscustomobject]([ordered]@{
+        Status              = $status
+        Source              = $sourceReference.Reference
+        ProfileSurfaceToken = $profileSurfaceToken
+        RequiredTokenCount  = $requiredTokens.Count
+        MatchedTokenCount   = $requiredTokens.Count - $missingTokens.Count
+        MissingTokenCount   = $missingTokens.Count
+        RequiredTokens      = $requiredTokens
+        MissingTokens       = $missingTokens
+        ValidatedReferences = @($sourceReference)
+    })
+}
+
 function Convert-EventingOperationalSuperiorityEvidence {
     param(
         [Parameter(Mandatory = $true)]
@@ -2309,6 +2375,11 @@ function Convert-EventingOperationalSuperiorityEvidence {
     if ($validationFileReferences.Count -eq 0) {
         throw "$ownerName must declare at least one validation file."
     }
+
+    $runtimeConcordance = Convert-SupportManifestSourceConcordance `
+        -Concordance (Get-ManifestPropertyValue -Object $manifest -PropertyName "runtimeConcordance" -DefaultValue $null) `
+        -ResolvedRepoRoot $ResolvedRepoRoot `
+        -OwnerName $ownerName
 
     $technology = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "technology" -DefaultValue "")
     $surfaceId = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "surfaceId" -DefaultValue "")
@@ -2508,6 +2579,13 @@ function Convert-EventingOperationalSuperiorityEvidence {
         WolverineRequired                = $wolverineRequired
         HotPathBindingMode               = $hotPathBindingMode
         ConfigurationRole                = $configurationRole
+        RuntimeConcordanceStatus         = $runtimeConcordance.Status
+        RuntimeConcordanceSource         = $runtimeConcordance.Source
+        RuntimeConcordanceTokenCount     = $runtimeConcordance.RequiredTokenCount
+        RuntimeConcordanceMatchedTokenCount = $runtimeConcordance.MatchedTokenCount
+        RuntimeConcordanceMissingTokenCount = $runtimeConcordance.MissingTokenCount
+        RuntimeConcordanceProfileSurfaceToken = $runtimeConcordance.ProfileSurfaceToken
+        RuntimeConcordanceRequiredTokens = $runtimeConcordance.RequiredTokens
         PromotionGate                    = $promotionGate
         PromotionAllowed                 = $declaredPromotionAllowed
         PromotionPolicy                  = $promotionPolicy
@@ -2543,6 +2621,7 @@ function Convert-EventingOperationalSuperiorityEvidence {
             $sourceDocumentReferences
             $validationProjectReferences
             $validationFileReferences
+            $runtimeConcordance.ValidatedReferences
             $dimensionRows | ForEach-Object { $_.ValidatedReferences }
         ) | Sort-Object Reference -Unique
     })
@@ -3719,6 +3798,9 @@ function New-EngineCompletionScorecardReport {
             EventingOperationalSuperiorityCoveragePercent = $eventingOperationalSuperiorityEvidence.CoveragePercent
             EventingOperationalSuperiorityPromotionAllowed = $eventingOperationalSuperiorityEvidence.PromotionAllowed
             EventingOperationalSuperiorityWolverineRequired = $eventingOperationalSuperiorityEvidence.WolverineRequired
+            EventingOperationalSuperiorityRuntimeConcordanceMatched = $eventingOperationalSuperiorityEvidence.RuntimeConcordanceStatus -eq "matched" -and $eventingOperationalSuperiorityEvidence.RuntimeConcordanceMissingTokenCount -eq 0
+            EventingOperationalSuperiorityRuntimeConcordanceTokenCount = $eventingOperationalSuperiorityEvidence.RuntimeConcordanceTokenCount
+            EventingOperationalSuperiorityRuntimeConcordanceMissingTokenCount = $eventingOperationalSuperiorityEvidence.RuntimeConcordanceMissingTokenCount
             SreSliCount = $srePostureEvidence.SliCount
             SreTargetDeclaredCount = $srePostureEvidence.TargetDeclaredCount
             SrePendingStableBaselineCount = $srePostureEvidence.PendingStableBaselineCount
@@ -3816,7 +3898,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Provider integration external-service gates: $($Report.Summary.ProviderIntegrationExternalServiceGateCount)")
     $markdown.Add("- Provider integration default-skipped rows: $($Report.Summary.ProviderIntegrationDefaultSkippedCount)")
     $markdown.Add("- Provider integration runtime contracts: $($Report.Summary.ProviderIntegrationRuntimeContractCount)")
-    $markdown.Add("- Eventing operational-superiority dimensions: $($Report.Summary.EventingOperationalSuperiorityCoveredDimensionCount)/$($Report.Summary.EventingOperationalSuperiorityRequiredDimensionCount) covered, partial $($Report.Summary.EventingOperationalSuperiorityPartialDimensionCount), missing $($Report.Summary.EventingOperationalSuperiorityMissingDimensionCount), coverage $($Report.Summary.EventingOperationalSuperiorityCoveragePercent)%, promotion allowed $($Report.Summary.EventingOperationalSuperiorityPromotionAllowed), Wolverine required $($Report.Summary.EventingOperationalSuperiorityWolverineRequired)")
+    $markdown.Add("- Eventing operational-superiority dimensions: $($Report.Summary.EventingOperationalSuperiorityCoveredDimensionCount)/$($Report.Summary.EventingOperationalSuperiorityRequiredDimensionCount) covered, partial $($Report.Summary.EventingOperationalSuperiorityPartialDimensionCount), missing $($Report.Summary.EventingOperationalSuperiorityMissingDimensionCount), coverage $($Report.Summary.EventingOperationalSuperiorityCoveragePercent)%, promotion allowed $($Report.Summary.EventingOperationalSuperiorityPromotionAllowed), Wolverine required $($Report.Summary.EventingOperationalSuperiorityWolverineRequired), runtime concordance matched $($Report.Summary.EventingOperationalSuperiorityRuntimeConcordanceMatched)")
     $markdown.Add("- SRE SLIs: $($Report.Summary.SreSliCount)")
     $markdown.Add("- SRE target-declared SLIs: $($Report.Summary.SreTargetDeclaredCount)")
     $markdown.Add("- SRE pending stable baselines: $($Report.Summary.SrePendingStableBaselineCount)")
@@ -3921,6 +4003,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Hot-path binding mode: $($Report.EventingOperationalSuperiorityEvidence.HotPathBindingMode)")
     $markdown.Add("- Configuration role: $($Report.EventingOperationalSuperiorityEvidence.ConfigurationRole)")
     $markdown.Add("- Wolverine required: $($Report.EventingOperationalSuperiorityEvidence.WolverineRequired)")
+    $markdown.Add("- Runtime concordance: $($Report.EventingOperationalSuperiorityEvidence.RuntimeConcordanceStatus); source ``$($Report.EventingOperationalSuperiorityEvidence.RuntimeConcordanceSource)``; tokens $($Report.EventingOperationalSuperiorityEvidence.RuntimeConcordanceMatchedTokenCount)/$($Report.EventingOperationalSuperiorityEvidence.RuntimeConcordanceTokenCount) matched; missing $($Report.EventingOperationalSuperiorityEvidence.RuntimeConcordanceMissingTokenCount)")
     $markdown.Add("- Comparison baseline: $([string]::Join(', ', @($Report.EventingOperationalSuperiorityEvidence.ComparisonBaseline)))")
     $markdown.Add("")
     $markdown.Add("| Dimension | Status | Required status | Next requirement |")
