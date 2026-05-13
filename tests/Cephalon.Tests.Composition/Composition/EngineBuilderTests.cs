@@ -2280,10 +2280,16 @@ public sealed class EngineBuilderTests
         var benchmarkProofEntry = Assert.Single(
             benchmarkProofSurface.Entries,
             entry => entry.Id == "eventing.remediation.filter-operator-dashboard-selectors");
+        var aspNetCoreColdStartProofEntry = Assert.Single(
+            benchmarkProofSurface.Entries,
+            entry => entry.Id == "eventing.host-cold-start.aspnetcore-core-operator");
+        var workerColdStartProofEntry = Assert.Single(
+            benchmarkProofSurface.Entries,
+            entry => entry.Id == "eventing.host-cold-start.worker");
         var dimensions = profileSurface.Entries.ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
 
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
-        Assert.Equal(5, benchmarkProofSurface.Entries.Count);
+        Assert.Equal(7, benchmarkProofSurface.Entries.Count);
         Assert.Equal("FilterOperatorDashboardSelectors", benchmarkProofEntry.Metadata["benchmark"]);
         Assert.Equal("Cephalon.Benchmarks.HotPath.EventDispatchRemediationCatalogBenchmarks-report.csv", benchmarkProofEntry.Metadata["benchmarkReport"]);
         Assert.Equal("30000", benchmarkProofEntry.Metadata["maxMeanNanoseconds"]);
@@ -2291,6 +2297,18 @@ public sealed class EngineBuilderTests
         Assert.Equal("guardrail-catalog-mapped", benchmarkProofEntry.Metadata["benchmarkProofMaturity"]);
         Assert.Equal("true", benchmarkProofEntry.Metadata["providerNeutral"]);
         Assert.Equal("false", benchmarkProofEntry.Metadata["wolverineRequired"]);
+        Assert.Equal("BuildStartHandleFirstRequestAspNetCore", aspNetCoreColdStartProofEntry.Metadata["benchmark"]);
+        Assert.Equal("Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv", aspNetCoreColdStartProofEntry.Metadata["benchmarkReport"]);
+        Assert.Equal("cold-start", aspNetCoreColdStartProofEntry.Metadata["guardrailFamily"]);
+        Assert.Equal("800000000", aspNetCoreColdStartProofEntry.Metadata["maxMeanNanoseconds"]);
+        Assert.Equal("30000000", aspNetCoreColdStartProofEntry.Metadata["maxAllocatedBytes"]);
+        Assert.Equal("false", aspNetCoreColdStartProofEntry.Metadata["wolverineRequired"]);
+        Assert.Equal("BuildStartWorkerHost", workerColdStartProofEntry.Metadata["benchmark"]);
+        Assert.Equal("Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv", workerColdStartProofEntry.Metadata["benchmarkReport"]);
+        Assert.Equal("cold-start", workerColdStartProofEntry.Metadata["guardrailFamily"]);
+        Assert.Equal("5000000", workerColdStartProofEntry.Metadata["maxMeanNanoseconds"]);
+        Assert.Equal("500000", workerColdStartProofEntry.Metadata["maxAllocatedBytes"]);
+        Assert.Equal("false", workerColdStartProofEntry.Metadata["wolverineRequired"]);
         var capability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.superiority-profile");
         Assert.Equal("true", capability.Metadata["wolverineOptional"]);
         Assert.Equal("claimed-only-with-runtime-evidence", capability.Metadata["claimPolicy"]);
@@ -2437,11 +2455,13 @@ public sealed class EngineBuilderTests
         Assert.Contains("providerNeutral=true", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("benchmarkProofCatalog=present", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
-        Assert.Contains("guardrailCount=5", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
-        Assert.Contains("guardrailIds=eventing.remediation.filter-summary-by-message-id,eventing.remediation.filter-retention-by-message-id,eventing.remediation.filter-latest-by-correlation-id,eventing.remediation.filter-oldest-by-dispatch-outcome,eventing.remediation.filter-operator-dashboard-selectors", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("guardrailCount=7", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("guardrailIds=eventing.remediation.filter-summary-by-message-id,eventing.remediation.filter-retention-by-message-id,eventing.remediation.filter-latest-by-correlation-id,eventing.remediation.filter-oldest-by-dispatch-outcome,eventing.remediation.filter-operator-dashboard-selectors,eventing.host-cold-start.aspnetcore-core-operator,eventing.host-cold-start.worker", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("benchmarks=FilterSummaryByMessageId,FilterRetentionByMessageId,FilterLatestByCorrelationId,FilterOldestByDispatchOutcome,FilterOperatorDashboardSelectors,BuildStartHandleFirstRequestAspNetCore,BuildStartWorkerHost", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("requiredGuardrailFamilyCount=5", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
-        Assert.Contains("coveredGuardrailFamilies=remediation-filtered-reads", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
-        Assert.Contains("missingGuardrailFamilies=cold-start,broker-dispatch,durable-journal,provider-managed-eventing", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("coveredGuardrailFamilies=cold-start,remediation-filtered-reads", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingGuardrailFamilies=broker-dispatch,durable-journal,provider-managed-eventing", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("activeOutboxBackedPath=false", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("activeGuardrailApplication=catalog-only", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("benchmarkProofMaturity=guardrail-catalog-mapped", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);

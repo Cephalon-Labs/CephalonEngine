@@ -51,7 +51,23 @@ internal sealed class EventingBenchmarkProofCatalog : IEventingBenchmarkProofCat
             Benchmark: "FilterOperatorDashboardSelectors",
             MaxMeanNanoseconds: 30000,
             MaxAllocatedBytes: 512,
-            HotPath: "operator-dashboard-multi-selector")
+            HotPath: "operator-dashboard-multi-selector"),
+        new(
+            Id: "eventing.host-cold-start.aspnetcore-core-operator",
+            Family: "cold-start",
+            ReportFileName: "Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv",
+            Benchmark: "BuildStartHandleFirstRequestAspNetCore",
+            MaxMeanNanoseconds: 800000000,
+            MaxAllocatedBytes: 30000000,
+            HotPath: "aspnetcore-core-operator-cold-start"),
+        new(
+            Id: "eventing.host-cold-start.worker",
+            Family: "cold-start",
+            ReportFileName: "Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv",
+            Benchmark: "BuildStartWorkerHost",
+            MaxMeanNanoseconds: 5000000,
+            MaxAllocatedBytes: 500000,
+            HotPath: "worker-host-cold-start")
     ];
 
     public IReadOnlyList<EventingBenchmarkProofDescriptor> Guardrails => DefaultGuardrails;
