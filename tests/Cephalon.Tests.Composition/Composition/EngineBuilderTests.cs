@@ -2655,6 +2655,100 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingSelectsLatestProvenProviderIdempotencyEvidenceAcrossSubscriptionsWithoutWolverine()
+    {
+        var olderProviderIdempotencyReport = EventSubscriptionProviderIdempotencyMetadata.CreateReport(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "alpha-subscription",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 11, 0, 0, TimeSpan.Zero),
+                messageId: "msg-alpha-idempotency-001",
+                attempt: 1),
+            source: "alpha-idempotency-runtime",
+            providerIdempotencyKey: "alpha-idempotency-key",
+            brokerDeduplicationId: "alpha-broker-deduplication",
+            exactlyOnceProofId: "alpha-exactly-once-proof",
+            durableInboxCommandId: "alpha-durable-inbox-command",
+            genericInboxCommandId: "alpha-generic-inbox-command",
+            idempotencyLeaseId: "alpha-idempotency-lease");
+        var newerProviderIdempotencyReport = EventSubscriptionProviderIdempotencyMetadata.CreateReport(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "beta-subscription",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 11, 30, 0, TimeSpan.Zero),
+                messageId: "msg-beta-idempotency-001",
+                attempt: 1),
+            source: "beta-idempotency-runtime",
+            providerIdempotencyKey: "beta-idempotency-key",
+            brokerDeduplicationId: "beta-broker-deduplication",
+            exactlyOnceProofId: "beta-exactly-once-proof",
+            durableInboxCommandId: "beta-durable-inbox-command",
+            genericInboxCommandId: "beta-generic-inbox-command",
+            idempotencyLeaseId: "beta-idempotency-lease");
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventSubscriptionRuntimeCatalog>(new TestEventSubscriptionRuntimeCatalog(
+            CreateSubscriptionRuntimeState(olderProviderIdempotencyReport),
+            CreateSubscriptionRuntimeState(newerProviderIdempotencyReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Provider idempotency proof events."));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "alpha-subscription",
+                    displayName: "Alpha Subscription",
+                    description: "Older provider idempotency proof subscription.",
+                    channelId: "contracts",
+                    handlerId: "alpha-idempotency-handler",
+                    deliveryMode: "application-service"));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "beta-subscription",
+                    displayName: "Beta Subscription",
+                    description: "Newer provider idempotency proof subscription.",
+                    channelId: "contracts",
+                    handlerId: "beta-idempotency-handler",
+                    deliveryMode: "application-service"));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["idempotency-ownership"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["idempotency-ownership"].Metadata["status"]);
+        Assert.Contains("providerIdempotencyProofSelection=latest-proven-subscription-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerIdempotencyStateCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerIdempotencyProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("messageDeduplication=provider-deduplicated", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerDeduplicationId=beta-broker-deduplication", evidence, StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDeliveryProofId=beta-exactly-once-proof", evidence, StringComparison.Ordinal);
+        Assert.Contains("durableInboxCommandId=beta-durable-inbox-command", evidence, StringComparison.Ordinal);
+        Assert.Contains("genericInboxCommandId=beta-generic-inbox-command", evidence, StringComparison.Ordinal);
+        Assert.Contains("crossNodeIdempotencyLeaseId=beta-idempotency-lease", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerIdempotencySource=beta-idempotency-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerIdempotencyKey=beta-idempotency-key", evidence, StringComparison.Ordinal);
+        Assert.Contains("subscriptionId=beta-subscription", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastObservedAtUtc=2026-05-13T11:30:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("providerIdempotencyKey=alpha-idempotency-key", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AddEventingProjectsContractCatalogProfileEvidenceWithoutWolverine()
     {
         var services = new ServiceCollection();
@@ -5062,6 +5156,23 @@ public sealed class EngineBuilderTests
             FailedCount: string.Equals(report.Outcome, EventDispatchExecutionOutcomes.Failed, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
             RetryScheduledCount: string.Equals(report.Outcome, EventDispatchExecutionOutcomes.RetryScheduled, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
             SkippedCount: string.Equals(report.Outcome, EventDispatchExecutionOutcomes.Skipped, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
+            LastError: report.Error,
+            Metadata: report.Metadata);
+    }
+
+    private static EventSubscriptionRuntimeState CreateSubscriptionRuntimeState(EventSubscriptionExecutionReport report)
+    {
+        return new EventSubscriptionRuntimeState(
+            SubscriptionId: report.SubscriptionId,
+            LastOutcome: report.Outcome,
+            LastObservedAtUtc: report.ObservedAtUtc,
+            LastMessageId: report.MessageId,
+            LastAttempt: report.Attempt,
+            StartedCount: string.Equals(report.Outcome, EventSubscriptionExecutionOutcomes.Started, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
+            SucceededCount: string.Equals(report.Outcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
+            FailedCount: string.Equals(report.Outcome, EventSubscriptionExecutionOutcomes.Failed, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
+            RetryScheduledCount: string.Equals(report.Outcome, EventSubscriptionExecutionOutcomes.RetryScheduled, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
+            SkippedCount: string.Equals(report.Outcome, EventSubscriptionExecutionOutcomes.Skipped, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
             LastError: report.Error,
             Metadata: report.Metadata);
     }

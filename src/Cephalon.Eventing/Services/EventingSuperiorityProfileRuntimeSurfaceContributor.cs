@@ -777,6 +777,17 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             .FirstOrDefault();
     }
 
+    private static EventSubscriptionRuntimeState? SelectBestSubscriptionProof(
+        IEnumerable<EventSubscriptionRuntimeState> states,
+        Func<EventSubscriptionRuntimeState, bool> isProven)
+    {
+        return states
+            .OrderByDescending(isProven)
+            .ThenByDescending(static state => state.LastObservedAtUtc ?? DateTimeOffset.MinValue)
+            .ThenBy(static state => state.SubscriptionId, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
+    }
+
     private static bool IsSuccessfulSerializationExecutionProof(EventDispatchRuntimeState state) =>
         string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
         EventDispatchSerializationExecutionMetadata.IsSerializationExecutionProven(state.Metadata);
@@ -792,6 +803,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private static bool IsDurableRetryQueueProof(EventDispatchRuntimeState state) =>
         string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.RetryScheduled, StringComparison.OrdinalIgnoreCase) &&
         EventDispatchDurableRetryQueueMetadata.IsDurableRetryQueueProven(state.Metadata);
+
+    private static bool IsProviderIdempotencyProof(EventSubscriptionRuntimeState state) =>
+        string.Equals(state.LastOutcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+        EventSubscriptionProviderIdempotencyMetadata.IsProviderIdempotencyProven(state.Metadata);
 
     private static string FormatObservedAt(DateTimeOffset? observedAtUtc) =>
         observedAtUtc.HasValue
@@ -1357,9 +1372,15 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
 
         using var scope = scopeFactory.CreateScope();
         var subscriptionRuntimeCatalog = scope.ServiceProvider.GetService<IEventSubscriptionRuntimeCatalog>();
-        var providerIdempotencyState = subscriptionRuntimeCatalog?.States.FirstOrDefault(static state =>
-            state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.ProviderIdempotency, out var value) &&
-            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+        var providerIdempotencyStates = subscriptionRuntimeCatalog?.States
+            .Where(static state =>
+                state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.ProviderIdempotency, out var value) &&
+                string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase))
+            .ToArray() ?? [];
+        var providerIdempotencyProvenCount = providerIdempotencyStates.Count(IsProviderIdempotencyProof);
+        var providerIdempotencyState = SelectBestSubscriptionProof(
+            providerIdempotencyStates,
+            IsProviderIdempotencyProof);
 
         if (providerIdempotencyState is not null)
         {
@@ -1431,7 +1452,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 status,
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; idempotencyPolicy={idempotencyPolicy}; idempotencyStore={idempotencyStore}; idempotencyScope={idempotencyScope}; idempotencyDurability={idempotencyDurability}; idempotencyKeyShape={idempotencyKeyShape}; idempotencyRetentionMinutes={idempotencyRetentionMinutes}; inboxPath={inboxPath}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; completedExecutionDuplicateSuppression={completedExecutionDuplicateSuppression}; messageDeduplication={messageDeduplication}; brokerDeduplication={brokerDeduplication}; brokerDeduplicationId={brokerDeduplicationId}; exactlyOnceDelivery={exactlyOnceDelivery}; exactlyOnceDeliveryProofId={exactlyOnceProofId}; durableInboxCommandOwnership={durableInboxCommandOwnership}; durableInboxCommandId={durableInboxCommandId}; genericInboxCommandOwnership={genericInboxCommandOwnership}; genericInboxCommandId={genericInboxCommandId}; crossNodeIdempotencyLease={crossNodeIdempotencyLease}; crossNodeIdempotencyLeaseId={crossNodeIdempotencyLeaseId}; providerIdempotency={providerIdempotency}; providerIdempotencySource={providerIdempotencySource}; providerIdempotencyKey={providerIdempotencyKey}; subscriptionId={providerIdempotencyState.SubscriptionId}; lastOutcome={providerIdempotencyState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                    $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; idempotencyPolicy={idempotencyPolicy}; idempotencyStore={idempotencyStore}; idempotencyScope={idempotencyScope}; idempotencyDurability={idempotencyDurability}; idempotencyKeyShape={idempotencyKeyShape}; idempotencyRetentionMinutes={idempotencyRetentionMinutes}; inboxPath={inboxPath}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; providerIdempotencyProofSelection=latest-proven-subscription-state; providerIdempotencyStateCount={providerIdempotencyStates.Length.ToString(CultureInfo.InvariantCulture)}; providerIdempotencyProvenCount={providerIdempotencyProvenCount.ToString(CultureInfo.InvariantCulture)}; completedExecutionDuplicateSuppression={completedExecutionDuplicateSuppression}; messageDeduplication={messageDeduplication}; brokerDeduplication={brokerDeduplication}; brokerDeduplicationId={brokerDeduplicationId}; exactlyOnceDelivery={exactlyOnceDelivery}; exactlyOnceDeliveryProofId={exactlyOnceProofId}; durableInboxCommandOwnership={durableInboxCommandOwnership}; durableInboxCommandId={durableInboxCommandId}; genericInboxCommandOwnership={genericInboxCommandOwnership}; genericInboxCommandId={genericInboxCommandId}; crossNodeIdempotencyLease={crossNodeIdempotencyLease}; crossNodeIdempotencyLeaseId={crossNodeIdempotencyLeaseId}; providerIdempotency={providerIdempotency}; providerIdempotencySource={providerIdempotencySource}; providerIdempotencyKey={providerIdempotencyKey}; subscriptionId={providerIdempotencyState.SubscriptionId}; lastOutcome={providerIdempotencyState.LastOutcome ?? "unknown"}; lastObservedAtUtc={FormatObservedAt(providerIdempotencyState.LastObservedAtUtc)}; wolverineRequired=false"),
                 nextGap);
         }
 
@@ -1444,7 +1465,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             statusWithoutProviderProof,
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; idempotencyPolicy={idempotencyPolicy}; idempotencyStore={idempotencyStore}; idempotencyScope={idempotencyScope}; idempotencyDurability={idempotencyDurability}; idempotencyKeyShape={idempotencyKeyShape}; idempotencyRetentionMinutes={idempotencyRetentionMinutes}; inboxPath={inboxPath}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; completedExecutionDuplicateSuppression={completedExecutionDuplicateSuppression}; messageDeduplication=completed-execution-only; brokerDeduplication=not-claimed; brokerDeduplicationId=not-reported; exactlyOnceDelivery=not-claimed; exactlyOnceDeliveryProofId=not-reported; durableInboxCommandOwnership=not-claimed; durableInboxCommandId=not-reported; genericInboxCommandOwnership=not-claimed; genericInboxCommandId=not-reported; crossNodeIdempotencyLease=not-claimed; crossNodeIdempotencyLeaseId=not-reported; providerIdempotency=not-claimed; providerIdempotencySource=not-reported; providerIdempotencyKey=not-reported; wolverineRequired=false"),
+                $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; idempotencyPolicy={idempotencyPolicy}; idempotencyStore={idempotencyStore}; idempotencyScope={idempotencyScope}; idempotencyDurability={idempotencyDurability}; idempotencyKeyShape={idempotencyKeyShape}; idempotencyRetentionMinutes={idempotencyRetentionMinutes}; inboxPath={inboxPath}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; providerIdempotencyProofSelection=latest-proven-subscription-state; providerIdempotencyStateCount={providerIdempotencyStates.Length.ToString(CultureInfo.InvariantCulture)}; providerIdempotencyProvenCount={providerIdempotencyProvenCount.ToString(CultureInfo.InvariantCulture)}; completedExecutionDuplicateSuppression={completedExecutionDuplicateSuppression}; messageDeduplication=completed-execution-only; brokerDeduplication=not-claimed; brokerDeduplicationId=not-reported; exactlyOnceDelivery=not-claimed; exactlyOnceDeliveryProofId=not-reported; durableInboxCommandOwnership=not-claimed; durableInboxCommandId=not-reported; genericInboxCommandOwnership=not-claimed; genericInboxCommandId=not-reported; crossNodeIdempotencyLease=not-claimed; crossNodeIdempotencyLeaseId=not-reported; providerIdempotency=not-claimed; providerIdempotencySource=not-reported; providerIdempotencyKey=not-reported; wolverineRequired=false"),
             nextGapWithoutProviderProof);
     }
 
