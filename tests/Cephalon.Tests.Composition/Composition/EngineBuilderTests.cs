@@ -2997,6 +2997,130 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingSelectsLatestProvenProcessManagerStateEvidenceAcrossSubscriptionsWithoutWolverine()
+    {
+        var olderProcessManagerReport = EventSubscriptionProcessManagerStateMetadata.CreateReport(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "alpha-subscription",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 14, 0, 0, TimeSpan.Zero),
+                messageId: "msg-alpha-process-manager-001",
+                attempt: 1),
+            source: "alpha-process-manager-runtime",
+            sagaStatePersistenceId: "alpha-saga-state-persistence",
+            sagaCorrelationId: "alpha-saga-correlation",
+            sagaTimeoutSchedulerId: "alpha-saga-timeout-scheduler",
+            compensationWorkflowId: "alpha-compensation-workflow",
+            processManagerConcurrencyId: "alpha-process-manager-concurrency",
+            processManagerRecoveryId: "alpha-process-manager-recovery",
+            providerProcessManagerId: "alpha-provider-process-manager");
+        var newerProcessManagerReport = EventSubscriptionProcessManagerStateMetadata.CreateReport(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "beta-subscription",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 14, 30, 0, TimeSpan.Zero),
+                messageId: "msg-beta-process-manager-001",
+                attempt: 1),
+            source: "beta-process-manager-runtime",
+            sagaStatePersistenceId: "beta-saga-state-persistence",
+            sagaCorrelationId: "beta-saga-correlation",
+            sagaTimeoutSchedulerId: "beta-saga-timeout-scheduler",
+            compensationWorkflowId: "beta-compensation-workflow",
+            processManagerConcurrencyId: "beta-process-manager-concurrency",
+            processManagerRecoveryId: "beta-process-manager-recovery",
+            providerProcessManagerId: "beta-provider-process-manager");
+        var newerPartialProcessManagerReport = new EventSubscriptionExecutionReport(
+            subscriptionId: "gamma-subscription",
+            outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+            observedAtUtc: new DateTimeOffset(2026, 05, 13, 15, 0, 0, TimeSpan.Zero),
+            messageId: "msg-gamma-process-manager-001",
+            attempt: 1,
+            metadata: new Dictionary<string, string>
+            {
+                [EventSubscriptionRuntimeMetadataKeys.ProcessManagerState] = "provider-reported",
+                [EventSubscriptionRuntimeMetadataKeys.ProcessManagerStateSource] = "gamma-process-manager-runtime",
+                [EventSubscriptionRuntimeMetadataKeys.SagaStatePersistence] = "reported"
+            });
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventSubscriptionRuntimeCatalog>(new TestEventSubscriptionRuntimeCatalog(
+            CreateSubscriptionRuntimeState(olderProcessManagerReport),
+            CreateSubscriptionRuntimeState(newerProcessManagerReport),
+            CreateSubscriptionRuntimeState(newerPartialProcessManagerReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Process-manager state proof events."));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "alpha-subscription",
+                    displayName: "Alpha Subscription",
+                    description: "Older process-manager state proof.",
+                    channelId: "contracts",
+                    handlerId: "alpha-process-manager-handler",
+                    deliveryMode: "application-service"));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "beta-subscription",
+                    displayName: "Beta Subscription",
+                    description: "Newer process-manager state proof.",
+                    channelId: "contracts",
+                    handlerId: "beta-process-manager-handler",
+                    deliveryMode: "application-service"));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "gamma-subscription",
+                    displayName: "Gamma Subscription",
+                    description: "Newer partial process-manager state report.",
+                    channelId: "contracts",
+                    handlerId: "gamma-process-manager-handler",
+                    deliveryMode: "application-service"));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["process-manager-state-ownership"].Metadata["status"]);
+        Assert.Contains("processManagerStateProofSelection=latest-proven-subscription-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("processManagerStateCount=3", evidence, StringComparison.Ordinal);
+        Assert.Contains("processManagerStateProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("processManagerStateSource=beta-process-manager-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("sagaStatePersistence=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("sagaStatePersistenceId=beta-saga-state-persistence", evidence, StringComparison.Ordinal);
+        Assert.Contains("sagaCorrelation=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("sagaCorrelationId=beta-saga-correlation", evidence, StringComparison.Ordinal);
+        Assert.Contains("sagaTimeouts=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("sagaTimeoutSchedulerId=beta-saga-timeout-scheduler", evidence, StringComparison.Ordinal);
+        Assert.Contains("compensationWorkflow=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("compensationWorkflowId=beta-compensation-workflow", evidence, StringComparison.Ordinal);
+        Assert.Contains("processManagerConcurrency=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("processManagerConcurrencyId=beta-process-manager-concurrency", evidence, StringComparison.Ordinal);
+        Assert.Contains("processManagerRecovery=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("processManagerRecoveryId=beta-process-manager-recovery", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerProcessManager=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerProcessManagerId=beta-provider-process-manager", evidence, StringComparison.Ordinal);
+        Assert.Contains("subscriptionId=beta-subscription", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastObservedAtUtc=2026-05-13T14:30:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("providerProcessManagerId=alpha-provider-process-manager", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("processManagerStateSource=gamma-process-manager-runtime", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AddEventingProjectsContractCatalogProfileEvidenceWithoutWolverine()
     {
         var services = new ServiceCollection();

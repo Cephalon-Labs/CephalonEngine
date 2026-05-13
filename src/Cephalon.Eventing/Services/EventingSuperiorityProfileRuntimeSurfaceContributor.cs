@@ -816,6 +816,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         string.Equals(state.LastOutcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
         EventSubscriptionOrderingMetadata.IsOrderingProven(state.Metadata);
 
+    private static bool IsProcessManagerStateProof(EventSubscriptionRuntimeState state) =>
+        string.Equals(state.LastOutcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+        EventSubscriptionProcessManagerStateMetadata.IsProcessManagerStateProven(state.Metadata);
+
     private static string FormatObservedAt(DateTimeOffset? observedAtUtc) =>
         observedAtUtc.HasValue
             ? observedAtUtc.Value.ToString("O", CultureInfo.InvariantCulture)
@@ -1717,9 +1721,15 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
 
         using var scope = scopeFactory.CreateScope();
         var subscriptionRuntimeCatalog = scope.ServiceProvider.GetService<IEventSubscriptionRuntimeCatalog>();
-        var processManagerState = subscriptionRuntimeCatalog?.States.FirstOrDefault(static state =>
-            state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.ProcessManagerState, out var value) &&
-            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+        var processManagerStates = subscriptionRuntimeCatalog?.States
+            .Where(static state =>
+                state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.ProcessManagerState, out var value) &&
+                string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase))
+            .ToArray() ?? [];
+        var processManagerProvenCount = processManagerStates.Count(IsProcessManagerStateProof);
+        var processManagerState = SelectBestSubscriptionProof(
+            processManagerStates,
+            IsProcessManagerStateProof);
 
         if (processManagerState is not null)
         {
@@ -1799,7 +1809,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 status,
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"publicationPath={publicationPath}; declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; outboxHandoff={outboxHandoff}; processManagerState={state}; processManagerStateSource={stateSource}; sagaStatePersistence={sagaStatePersistence}; sagaStatePersistenceId={sagaStatePersistenceId}; sagaCorrelation={sagaCorrelation}; sagaCorrelationId={sagaCorrelationId}; sagaTimeouts={sagaTimeouts}; sagaTimeoutSchedulerId={sagaTimeoutSchedulerId}; compensationWorkflow={compensationWorkflow}; compensationWorkflowId={compensationWorkflowId}; processManagerConcurrency={processManagerConcurrency}; processManagerConcurrencyId={processManagerConcurrencyId}; processManagerRecovery={processManagerRecovery}; processManagerRecoveryId={processManagerRecoveryId}; providerProcessManager={providerProcessManager}; providerProcessManagerId={providerProcessManagerId}; subscriptionId={processManagerState.SubscriptionId}; lastOutcome={processManagerState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                    $"publicationPath={publicationPath}; declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; outboxHandoff={outboxHandoff}; processManagerStateProofSelection=latest-proven-subscription-state; processManagerStateCount={processManagerStates.Length.ToString(CultureInfo.InvariantCulture)}; processManagerStateProvenCount={processManagerProvenCount.ToString(CultureInfo.InvariantCulture)}; processManagerState={state}; processManagerStateSource={stateSource}; sagaStatePersistence={sagaStatePersistence}; sagaStatePersistenceId={sagaStatePersistenceId}; sagaCorrelation={sagaCorrelation}; sagaCorrelationId={sagaCorrelationId}; sagaTimeouts={sagaTimeouts}; sagaTimeoutSchedulerId={sagaTimeoutSchedulerId}; compensationWorkflow={compensationWorkflow}; compensationWorkflowId={compensationWorkflowId}; processManagerConcurrency={processManagerConcurrency}; processManagerConcurrencyId={processManagerConcurrencyId}; processManagerRecovery={processManagerRecovery}; processManagerRecoveryId={processManagerRecoveryId}; providerProcessManager={providerProcessManager}; providerProcessManagerId={providerProcessManagerId}; subscriptionId={processManagerState.SubscriptionId}; lastOutcome={processManagerState.LastOutcome ?? "unknown"}; lastObservedAtUtc={FormatObservedAt(processManagerState.LastObservedAtUtc)}; wolverineRequired=false"),
                 nextGap);
         }
 
@@ -1807,7 +1817,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "not-claimed",
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"publicationPath={publicationPath}; declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; outboxHandoff={outboxHandoff}; processManagerState=not-claimed; processManagerStateSource=not-reported; sagaStatePersistence=not-claimed; sagaStatePersistenceId=not-reported; sagaCorrelation=not-claimed; sagaCorrelationId=not-reported; sagaTimeouts=not-claimed; sagaTimeoutSchedulerId=not-reported; compensationWorkflow=not-claimed; compensationWorkflowId=not-reported; processManagerConcurrency=not-claimed; processManagerConcurrencyId=not-reported; processManagerRecovery=not-claimed; processManagerRecoveryId=not-reported; providerProcessManager=not-present; providerProcessManagerId=not-reported; wolverineRequired=false"),
+                $"publicationPath={publicationPath}; declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; outboxHandoff={outboxHandoff}; processManagerStateProofSelection=latest-proven-subscription-state; processManagerStateCount={processManagerStates.Length.ToString(CultureInfo.InvariantCulture)}; processManagerStateProvenCount={processManagerProvenCount.ToString(CultureInfo.InvariantCulture)}; processManagerState=not-claimed; processManagerStateSource=not-reported; sagaStatePersistence=not-claimed; sagaStatePersistenceId=not-reported; sagaCorrelation=not-claimed; sagaCorrelationId=not-reported; sagaTimeouts=not-claimed; sagaTimeoutSchedulerId=not-reported; compensationWorkflow=not-claimed; compensationWorkflowId=not-reported; processManagerConcurrency=not-claimed; processManagerConcurrencyId=not-reported; processManagerRecovery=not-claimed; processManagerRecoveryId=not-reported; providerProcessManager=not-present; providerProcessManagerId=not-reported; wolverineRequired=false"),
             "Add provider-neutral process-manager state proof metadata plus state persistence, correlation, timeout, compensation, concurrency, recovery, and provider process-manager evidence before claiming process-manager state ownership.");
     }
 
