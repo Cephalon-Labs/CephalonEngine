@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -12,6 +14,26 @@ public sealed class DocumentationCoverageTests
     private static readonly Regex FencedCodeBlockPattern = new(
         @"(^|\r?\n)```[\s\S]*?(\r?\n```|$)",
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+    private static readonly Regex MarkdownHeadingPattern = new(
+        @"^\s{0,3}#{1,6}\s+(?<text>.+?)(?:\s+#+\s*)?$",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+
+    private static readonly Regex MarkdownInlineLinkTextPattern = new(
+        @"!?\[(?<text>[^\]]+)\]\([^)]+\)",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+    private static readonly Regex HtmlTagPattern = new(
+        @"<[^>]+>",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+    private static readonly Regex HtmlAnchorPattern = new(
+        @"<a\s+[^>]*(?:id|name)\s*=\s*[""'](?<anchor>[^""']+)[""'][^>]*>",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
+    private static readonly Regex GitHubLineFragmentPattern = new(
+        @"^L(?<start>\d+)(?:-L(?<end>\d+))?$",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
     // Projects that are internal implementation helpers (IsPackable=false) — not shipped as NuGet packages
     // and therefore do not require component documentation.
@@ -1242,7 +1264,7 @@ public sealed class DocumentationCoverageTests
             return false;
 
         if (target.StartsWith('#'))
-            return false;
+            return true;
 
         return !Uri.TryCreate(target, UriKind.Absolute, out _);
     }
@@ -1281,36 +1303,175 @@ public sealed class DocumentationCoverageTests
     {
         var markdownRoot = Path.GetDirectoryName(markdownPath)!;
         var markdown = RemoveMarkdownCode(File.ReadAllText(markdownPath));
-        var localLinkTargets = MarkdownLinkPattern
+        var localLinks = MarkdownLinkPattern
             .Matches(markdown)
             .Where(match => !IsInsideInlineCodeSpan(markdown, match.Index))
             .Select(static match => match.Groups["target"].Value.Trim())
             .Where(IsRepositoryLocalLink)
-            .Select(static target => target.Split('#')[0])
-            .Where(static target => target.Length > 0)
-            .Distinct(StringComparer.Ordinal)
-            .OrderBy(target => target, StringComparer.Ordinal)
+            .Select(ParseLocalMarkdownLink)
+            .GroupBy(static link => link.OriginalTarget, StringComparer.Ordinal)
+            .Select(static group => group.First())
+            .OrderBy(static link => link.OriginalTarget, StringComparer.Ordinal)
             .ToArray();
 
         if (requireLocalLinks)
-            Assert.NotEmpty(localLinkTargets);
+            Assert.NotEmpty(localLinks);
 
-        foreach (var localLinkTarget in localLinkTargets)
+        foreach (var localLink in localLinks)
         {
-            var normalizedTarget = localLinkTarget.Replace('/', Path.DirectorySeparatorChar);
-            var resolvedPath = Path.GetFullPath(Path.Combine(markdownRoot, normalizedTarget));
+            var resolvedPath = ResolveLocalMarkdownLinkPath(markdownRoot, markdownPath, localLink.TargetPath);
 
             Assert.True(
                 IsPathInsideRepository(repositoryRoot, resolvedPath),
-                $"Expected {documentDescription} link target '{localLinkTarget}' to stay inside the repository but resolved to '{resolvedPath}'.");
+                $"Expected {documentDescription} link target '{localLink.OriginalTarget}' to stay inside the repository but resolved to '{resolvedPath}'.");
             Assert.True(
                 File.Exists(resolvedPath) || (allowDirectoryTargets && Directory.Exists(resolvedPath)),
                 allowDirectoryTargets
-                    ? $"Expected {documentDescription} link target '{localLinkTarget}' to resolve to an existing file or directory at '{resolvedPath}'."
-                    : $"Expected {documentDescription} link target '{localLinkTarget}' to resolve to an existing file at '{resolvedPath}'.");
+                    ? $"Expected {documentDescription} link target '{localLink.OriginalTarget}' to resolve to an existing file or directory at '{resolvedPath}'."
+                    : $"Expected {documentDescription} link target '{localLink.OriginalTarget}' to resolve to an existing file at '{resolvedPath}'.");
+
+            AssertLocalMarkdownFragmentResolves(documentDescription, localLink, resolvedPath);
         }
 
-        return localLinkTargets.Length;
+        return localLinks.Length;
+    }
+
+    private static MarkdownLocalLink ParseLocalMarkdownLink(string target)
+    {
+        var normalizedTarget = target.Trim();
+
+        if (normalizedTarget.Length >= 2 &&
+            normalizedTarget[0] == '<' &&
+            normalizedTarget[^1] == '>')
+        {
+            normalizedTarget = normalizedTarget[1..^1];
+        }
+
+        var fragmentSeparatorIndex = normalizedTarget.IndexOf('#', StringComparison.Ordinal);
+        var targetPath = fragmentSeparatorIndex >= 0 ? normalizedTarget[..fragmentSeparatorIndex] : normalizedTarget;
+        var fragment = fragmentSeparatorIndex >= 0 ? normalizedTarget[(fragmentSeparatorIndex + 1)..] : null;
+
+        return new MarkdownLocalLink(
+            target,
+            Uri.UnescapeDataString(targetPath),
+            fragment is null ? null : Uri.UnescapeDataString(fragment));
+    }
+
+    private static string ResolveLocalMarkdownLinkPath(string markdownRoot, string markdownPath, string targetPath)
+    {
+        if (targetPath.Length == 0)
+            return Path.GetFullPath(markdownPath);
+
+        var normalizedTarget = targetPath.Replace('/', Path.DirectorySeparatorChar);
+        return Path.GetFullPath(Path.Combine(markdownRoot, normalizedTarget));
+    }
+
+    private static void AssertLocalMarkdownFragmentResolves(
+        string documentDescription,
+        MarkdownLocalLink localLink,
+        string resolvedPath)
+    {
+        if (string.IsNullOrWhiteSpace(localLink.Fragment))
+            return;
+
+        var normalizedFragment = localLink.Fragment.Trim();
+
+        if (GitHubLineFragmentPattern.IsMatch(normalizedFragment))
+        {
+            AssertGitHubLineFragmentResolves(documentDescription, localLink, resolvedPath, normalizedFragment);
+            return;
+        }
+
+        Assert.True(
+            File.Exists(resolvedPath) &&
+            string.Equals(Path.GetExtension(resolvedPath), ".md", StringComparison.OrdinalIgnoreCase),
+            $"Expected {documentDescription} link target '{localLink.OriginalTarget}' fragment '#{localLink.Fragment}' to point at a Markdown heading anchor or GitHub line fragment, but '{resolvedPath}' is not a Markdown file.");
+
+        var anchors = ReadMarkdownAnchors(resolvedPath);
+        var normalizedAnchorReference = NormalizeMarkdownAnchorReference(normalizedFragment);
+
+        Assert.True(
+            anchors.Contains(normalizedAnchorReference),
+            $"Expected {documentDescription} link target '{localLink.OriginalTarget}' fragment '#{localLink.Fragment}' to match a Markdown heading or explicit HTML anchor in '{resolvedPath}'.");
+    }
+
+    private static void AssertGitHubLineFragmentResolves(
+        string documentDescription,
+        MarkdownLocalLink localLink,
+        string resolvedPath,
+        string normalizedFragment)
+    {
+        Assert.True(
+            File.Exists(resolvedPath),
+            $"Expected {documentDescription} link target '{localLink.OriginalTarget}' line fragment '#{localLink.Fragment}' to point at an existing file.");
+
+        var match = GitHubLineFragmentPattern.Match(normalizedFragment);
+        var startLine = int.Parse(match.Groups["start"].Value, CultureInfo.InvariantCulture);
+        var endLine = match.Groups["end"].Success
+            ? int.Parse(match.Groups["end"].Value, CultureInfo.InvariantCulture)
+            : startLine;
+        var lineCount = File.ReadLines(resolvedPath).Count();
+
+        Assert.True(
+            startLine > 0 && endLine >= startLine && endLine <= lineCount,
+            $"Expected {documentDescription} link target '{localLink.OriginalTarget}' line fragment '#{localLink.Fragment}' to fit within '{resolvedPath}' ({lineCount} line(s)).");
+    }
+
+    private static HashSet<string> ReadMarkdownAnchors(string markdownPath)
+    {
+        var markdown = RemoveMarkdownCode(File.ReadAllText(markdownPath));
+        var anchors = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var duplicateCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (Match match in MarkdownHeadingPattern.Matches(markdown))
+        {
+            if (IsInsideInlineCodeSpan(markdown, match.Index))
+                continue;
+
+            var baseAnchor = CreateGitHubMarkdownHeadingAnchor(match.Groups["text"].Value);
+
+            if (baseAnchor.Length == 0)
+                continue;
+
+            var duplicateCount = duplicateCounts.GetValueOrDefault(baseAnchor);
+            duplicateCounts[baseAnchor] = duplicateCount + 1;
+
+            anchors.Add(duplicateCount == 0 ? baseAnchor : $"{baseAnchor}-{duplicateCount}");
+        }
+
+        foreach (Match match in HtmlAnchorPattern.Matches(markdown))
+            anchors.Add(match.Groups["anchor"].Value.Trim());
+
+        return anchors;
+    }
+
+    private static string CreateGitHubMarkdownHeadingAnchor(string headingText)
+    {
+        var visibleText = MarkdownInlineLinkTextPattern.Replace(headingText, "${text}");
+        visibleText = HtmlTagPattern.Replace(visibleText, string.Empty);
+        visibleText = visibleText.Replace("`", string.Empty, StringComparison.Ordinal);
+        visibleText = visibleText.Trim().ToLowerInvariant();
+
+        var anchor = new StringBuilder(visibleText.Length);
+
+        foreach (var character in visibleText)
+        {
+            if (char.IsLetterOrDigit(character) || character == '_')
+            {
+                anchor.Append(character);
+                continue;
+            }
+
+            if (char.IsWhiteSpace(character) || character == '-')
+                anchor.Append('-');
+        }
+
+        return anchor.ToString().Trim('-');
+    }
+
+    private static string NormalizeMarkdownAnchorReference(string fragment)
+    {
+        return fragment.Trim().ToLowerInvariant();
     }
 
     private static string RemoveMarkdownCode(string markdown)
@@ -1363,6 +1524,11 @@ public sealed class DocumentationCoverageTests
         return normalizedPath.Equals(normalizedRepositoryRoot, StringComparison.OrdinalIgnoreCase) ||
                normalizedPath.StartsWith(normalizedRepositoryRoot + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
     }
+
+    private readonly record struct MarkdownLocalLink(
+        string OriginalTarget,
+        string TargetPath,
+        string? Fragment);
 
     private static DependencyHealthProviderManifestRow[] ReadDependencyHealthProviderManifest(string repositoryRoot)
     {

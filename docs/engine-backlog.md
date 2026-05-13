@@ -77,6 +77,33 @@ Current focus:
 - treat every component page as part of the same guarded docs graph: repo-local Markdown links across `docs/components/*.md` must resolve relative to the page that declares them and stay inside the repository
 - treat top-level hand-authored docs as a guarded docs graph: repo-local Markdown links across `docs/*.md` must resolve relative to the page that declares them, stay inside the repository, and may target either files or directories
 - treat all hand-authored Markdown as a guarded docs graph: repo-local Markdown links outside generated `docs/reference/**` must resolve relative to the declaring file, stay inside the repository, and may target existing files or directories while fenced code blocks and inline code spans are ignored by the guard
+- treat hand-authored Markdown anchor fragments as guarded adoption pointers: same-page `#fragment`, repo-local `file.md#fragment`, and GitHub-style `#Lx` / `#Lx-Ly` line fragments must resolve before docs can claim a stable navigation path
+
+### ENG-688 Hand-authored Markdown anchor-fragment guard
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: documentation graph / planning-governance / documentation coverage
+Quality dimensions: Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1357
+
+Why:
+
+- `ENG-687` guarded repo-local Markdown targets, but fragment anchors such as `#redaction-quick-start` and `#severity-classification` could still point at renamed headings silently
+- hand-authored docs use same-page table-of-contents anchors, cross-doc heading anchors, and occasional source-view line fragments as adoption navigation, so target existence alone is not enough
+- generated `docs/reference/**` stays outside this guard because its anchor surface belongs to the generated API publishing layer
+
+Delivered:
+
+- made Tooling documentation coverage validate same-page and cross-doc Markdown heading fragments across hand-authored Markdown outside generated `docs/reference/**`
+- added deterministic GitHub-style heading-anchor derivation with duplicate heading suffixes, inline-link visible text, explicit HTML anchors, and fenced/inline-code filtering
+- allowed GitHub source-view line fragments only when the referenced file exists and the line or line range fits inside the file
+
+Validation:
+
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~DocumentationCoverageTests" --logger "console;verbosity=minimal"`
+- `git diff --check`
 
 ### ENG-687 Hand-authored Markdown link-target guard
 
