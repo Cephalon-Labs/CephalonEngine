@@ -76,6 +76,33 @@ Current focus:
 - treat component catalog repo-local links as guarded adoption pointers: every Markdown link in `docs/components/README.md` that points inside the repository must resolve to an existing file before component-doc guidance can ship
 - treat every component page as part of the same guarded docs graph: repo-local Markdown links across `docs/components/*.md` must resolve relative to the page that declares them and stay inside the repository
 - treat top-level hand-authored docs as a guarded docs graph: repo-local Markdown links across `docs/*.md` must resolve relative to the page that declares them, stay inside the repository, and may target either files or directories
+- treat all hand-authored Markdown as a guarded docs graph: repo-local Markdown links outside generated `docs/reference/**` must resolve relative to the declaring file, stay inside the repository, and may target existing files or directories while fenced code blocks and inline code spans are ignored by the guard
+
+### ENG-687 Hand-authored Markdown link-target guard
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: documentation graph / planning-governance / documentation coverage
+Quality dimensions: Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1356
+
+Why:
+
+- `ENG-686` guarded top-level `docs/*.md`, but hand-authored Markdown outside that layer still was not checked as one repo graph
+- a repo-wide scan found one apparent broken target in `docs/architecture/design-patterns-reference.md`, but it was a fenced-code false positive from `_components[i](app)` being parsed as `[i](app)`
+- generated `docs/reference/**` should stay outside this hand-authored-doc guard because it is produced from XML/API publishing
+
+Delivered:
+
+- made the local Markdown link guard ignore fenced code blocks and inline code spans before accepting Markdown link syntax
+- added Tooling documentation coverage for hand-authored Markdown across the repository while excluding `docs/reference/**`, `.git`, `bin`, and `obj`
+- required repo-local Markdown targets to resolve relative to the declaring file, stay inside the repository, and point to an existing file or directory
+
+Validation:
+
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~DocumentationCoverageTests" --logger "console;verbosity=minimal"`
+- `git diff --check`
 
 ### ENG-686 Top-level docs link-target guard
 

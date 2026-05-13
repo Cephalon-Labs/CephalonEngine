@@ -9,6 +9,10 @@ public sealed class DocumentationCoverageTests
         @"\[[^\]]+\]\((?<target>[^)]+)\)",
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
+    private static readonly Regex FencedCodeBlockPattern = new(
+        @"(^|\r?\n)```[\s\S]*?(\r?\n```|$)",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
     // Projects that are internal implementation helpers (IsPackable=false) — not shipped as NuGet packages
     // and therefore do not require component documentation.
     private static readonly HashSet<string> NonPackableProjects = new(StringComparer.Ordinal)
@@ -231,6 +235,28 @@ public sealed class DocumentationCoverageTests
                 requireLocalLinks: false);
 
         Assert.True(totalLocalLinkCount > 0, "Expected top-level documentation to contain at least one repo-local Markdown link.");
+    }
+
+    [Fact]
+    public void HandAuthoredMarkdownLocalLinksResolve()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var markdownPaths = EnumerateHandAuthoredMarkdownPaths(repositoryRoot)
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.NotEmpty(markdownPaths);
+
+        var totalLocalLinkCount = 0;
+        foreach (var markdownPath in markdownPaths)
+            totalLocalLinkCount += AssertLocalMarkdownLinksResolve(
+                repositoryRoot,
+                markdownPath,
+                $"hand-authored Markdown '{Path.GetRelativePath(repositoryRoot, markdownPath)}'",
+                allowDirectoryTargets: true,
+                requireLocalLinks: false);
+
+        Assert.True(totalLocalLinkCount > 0, "Expected hand-authored Markdown to contain at least one repo-local Markdown link.");
     }
 
     [Fact]
@@ -1221,6 +1247,31 @@ public sealed class DocumentationCoverageTests
         return !Uri.TryCreate(target, UriKind.Absolute, out _);
     }
 
+    private static IEnumerable<string> EnumerateHandAuthoredMarkdownPaths(string repositoryRoot)
+    {
+        return Directory
+            .EnumerateFiles(repositoryRoot, "*.md", SearchOption.AllDirectories)
+            .Where(path => IsHandAuthoredMarkdownPath(repositoryRoot, path));
+    }
+
+    private static bool IsHandAuthoredMarkdownPath(string repositoryRoot, string markdownPath)
+    {
+        var relativePath = Path.GetRelativePath(repositoryRoot, markdownPath);
+        var segments = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+        if (segments.Any(static segment =>
+                string.Equals(segment, ".git", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(segment, "bin", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(segment, "obj", StringComparison.OrdinalIgnoreCase)))
+        {
+            return false;
+        }
+
+        return !(segments.Length >= 2 &&
+                 string.Equals(segments[0], "docs", StringComparison.OrdinalIgnoreCase) &&
+                 string.Equals(segments[1], "reference", StringComparison.OrdinalIgnoreCase));
+    }
+
     private static int AssertLocalMarkdownLinksResolve(
         string repositoryRoot,
         string markdownPath,
@@ -1229,9 +1280,10 @@ public sealed class DocumentationCoverageTests
         bool requireLocalLinks = true)
     {
         var markdownRoot = Path.GetDirectoryName(markdownPath)!;
-        var markdown = File.ReadAllText(markdownPath);
+        var markdown = RemoveMarkdownCode(File.ReadAllText(markdownPath));
         var localLinkTargets = MarkdownLinkPattern
             .Matches(markdown)
+            .Where(match => !IsInsideInlineCodeSpan(markdown, match.Index))
             .Select(static match => match.Groups["target"].Value.Trim())
             .Where(IsRepositoryLocalLink)
             .Select(static target => target.Split('#')[0])
@@ -1259,6 +1311,48 @@ public sealed class DocumentationCoverageTests
         }
 
         return localLinkTargets.Length;
+    }
+
+    private static string RemoveMarkdownCode(string markdown)
+    {
+        return FencedCodeBlockPattern.Replace(markdown, Environment.NewLine);
+    }
+
+    private static bool IsInsideInlineCodeSpan(string markdown, int index)
+    {
+        var lineStart = markdown.LastIndexOf('\n', Math.Max(0, index - 1));
+        lineStart = lineStart < 0 ? 0 : lineStart + 1;
+
+        var codeSpanDelimiterLength = 0;
+
+        for (var i = lineStart; i < index;)
+        {
+            if (markdown[i] != '`')
+            {
+                i++;
+                continue;
+            }
+
+            if (i > 0 && markdown[i - 1] == '\\')
+            {
+                i++;
+                continue;
+            }
+
+            var delimiterStart = i;
+
+            while (i < index && markdown[i] == '`')
+                i++;
+
+            var delimiterLength = i - delimiterStart;
+
+            if (codeSpanDelimiterLength == 0)
+                codeSpanDelimiterLength = delimiterLength;
+            else if (delimiterLength == codeSpanDelimiterLength)
+                codeSpanDelimiterLength = 0;
+        }
+
+        return codeSpanDelimiterLength != 0;
     }
 
     private static bool IsPathInsideRepository(string repositoryRoot, string path)
