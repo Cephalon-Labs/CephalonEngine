@@ -14,6 +14,7 @@
 5. [Messaging and Communication Patterns](#5-messaging-and-communication-patterns)
 6. [Resilience and Observability](#6-resilience-and-observability)
 7. [AI and Agent Architecture Patterns](#7-ai-and-agent-architecture-patterns)
+8. [Framework Engine Design Patterns (Architecture-as-Configuration)](#8-framework-engine-design-patterns-architecture-as-configuration)
 
 ---
 
@@ -1370,6 +1371,112 @@ Action: respond("Service S has elevated error rates (4%) since deploy d-1234.")
 
 ---
 
+## 8. Framework Engine Design Patterns (Architecture-as-Configuration)
+
+The patterns in sections 1-7 carry the engine across the deployment-topology, composition, framework-design, messaging, resilience, and AI/agent axes. The patterns in this section are different: they describe the *architectural commitments specific to engines that ship as NuGet packages where consumers swap architecture, transport, topology, or hosting through configuration and composition — without rewriting application code*. This is Cephalon's design north star, and it forces a small set of load-bearing patterns that survive 10+ year evolution.
+
+**Core principle:** A consumer running on Cephalon should be able to change from monolith to microservice, REST to gRPC, in-process eventing to Kafka or Wolverine, ASP.NET Core to Worker or Aspire, by adjusting engine-owned composition and projected surfaces. Application code does not move. This stays true only when the engine treats certain patterns as load-bearing.
+
+### 8.1 Descriptor-First Ports and Adapters
+
+**Core Idea:** A "port" in this engine context is a *typed capability descriptor* (a record or value contract), not an interface bound to a specific transport. Adapters self-register against descriptors through engine discovery, not through hand-wired DI calls into consumer code. The descriptor survives transport churn (REST → gRPC → QUIC → next-thing) because the contract is wire-independent.
+
+**Key principles:**
+- ports are records / immutable value contracts, not service-style interfaces with behavior
+- adapter selection happens at composition time through descriptor matching
+- a port's wire form (HTTP route, gRPC method, message envelope) is a *projection* of the descriptor, not the descriptor itself
+- consumer code references the port descriptor; the wire-form binding is engine-owned
+
+**Sources:** Cockburn's original Hexagonal Architecture essay; Vernon, *Implementing DDD*; Tune, *Architecture Modernization* (2024).
+
+**Applying to CephalonEngine:** Already shipped through `ModuleDescriptor`, `BehaviorTopologyDescriptor`, `RestEndpointRuntimeDescriptor`, `CdcCaptureDescriptor`, `CellRouteDescriptor`, `EventChannelDescriptor`, `AgentToolDescriptor`, and the rest of the descriptor catalog. Adapters under `Cephalon.AspNetCore`, `Cephalon.AspNetCore.Grpc`, `Cephalon.AspNetCore.JsonRpc`, and `Cephalon.AspNetCore.GraphQL` project the same descriptor families onto different wire forms without consumer code knowing which transport is active.
+
+### 8.2 Strategy + Plug-Point Hosting via Options
+
+**Core Idea:** Each architectural axis (eventing, persistence, transport, observability, resilience) exposes a *named strategy slot* resolved from configuration at composition time. Strategy selection is a configuration concern; strategy execution is a code concern. Cwalina/Abrams *Framework Design Guidelines* — long-lived frameworks expose **policy via options objects**, not virtual methods, because options evolve additively across decades while virtual methods become immovable versioning contracts.
+
+**Key principles:**
+- one configuration section per architectural axis (`Engine:Messaging`, `Engine:Resilience`, `Engine:Features`, `Engine:Migration:StranglerFig`, `Engine:Cells:TrafficAutomation`, ...)
+- selected strategies are surfaced through typed `IOptions<TFeatureBinding>` resolved against `Microsoft.Extensions.Options`
+- new strategies arrive as new option fields, not new virtual hooks; old strategies stay available for backward compatibility
+- code-first registration (`engine.AddWolverineEventing()`) is an *opt-in shortcut*; configuration-first selection is the canonical path
+
+**Applying to CephalonEngine:** Already shipped — `Engine:Resilience` (`Retry` / `Timeout` / `CircuitBreaker` / `Bulkhead` / `RateLimiting`), `Engine:Features`, `Engine:Migration:StranglerFig`, `Engine:Cells:TrafficAutomation`, `Engine:BackendForFrontend:Bindings`, `Engine:Messaging` are all named strategy slots resolved through option types and bound through composition. The eventing baseline keeps Wolverine an explicit opt-in rather than a default, exactly because option-resolved selection survives provider churn that mandatory inheritance would not.
+
+### 8.3 Capability Negotiation and Conformance Manifests
+
+**Core Idea:** Each adapter declares a manifest of supported semantics (ordering, exactly-once, transactional outbox, max payload, durability class, idempotency posture, partition affinity). The composition root rejects incompatible wirings at build time rather than letting silent capability erosion ship to production. Ford et al. *Building Evolutionary Architectures* (2nd ed., 2023) calls these "fitness functions at the seam".
+
+**Key principles:**
+- every adapter / provider / companion pack declares a capability manifest in machine-readable form (capability ids, conformance levels, gaps)
+- composition validates the requested architectural shape against the capability manifests of selected adapters
+- incompatible wirings fail loudly at build / startup, not at the first failed message
+- capability manifests are versioned alongside the adapter, so capability evolution is auditable
+
+**Applying to CephalonEngine:** Partially shipped. Capabilities such as `eventing.publish`, `behaviors.saga-choreography.runtime-catalog`, `tenancy.invitation.delivery-retry-queue`, plus the `eventing-superiority-profile` runtime surface, already publish capability truth. Two gaps remain:
+1. **Explicit compatibility rejection at composition time is less consistently enforced** than capability *publication*. The composition root reads capabilities but does not always *refuse* an inconsistent wiring (e.g. selecting an eventing strategy whose adapter does not declare durable outbox while the app profile asserts it). Promoting capability negotiation from publication to enforcement is a tractable engine-owned slice.
+2. The conformance matrix (`docs/conformance-matrix.md`) consolidates capability truth across packages but is not yet a build-time gate — it is a docs / audit artifact. Wiring the matrix into the release-validation lane (`scripts/validate-release.ps1`) would close that loop.
+
+### 8.4 Composition Root with Pure DI
+
+**Core Idea:** One composition root per host, no service-locator leakage, registrations expressed as data (descriptors + selected strategies), not as scattered `.AddX()` calls inside consumer code. Mark Seemann *Dependency Injection Principles, Practices, and Patterns* (2019) is the canonical reference. Monolith → microservice transitions then become "re-run the builder against a different topology descriptor", not "edit every call site".
+
+**Key principles:**
+- the engine owns the composition root through an engine-owned builder
+- consumer code never resolves services through `IServiceProvider.GetService<T>()` at runtime; resolution happens at composition time through descriptors
+- the builder is a deterministic function of `(blueprint + profile + configuration + module set)` → composed service graph
+- topology changes mean editing configuration / profile selections; consumer code is unaffected
+
+**Applying to CephalonEngine:** Already shipped through `EngineServiceCollectionExtensions.AddCephalon(...)`, `EngineWebApplicationBuilderExtensions.AddCephalon(...)`, and `WorkerHostApplicationBuilderExtensions.AddCephalon(...)`. The engine's builder accepts modules, blueprints, technology profiles, and configuration, then produces a fully composed service graph. The composition is reproducible: two hosts with the same inputs produce the same wiring.
+
+### 8.5 Introspection-as-Contract (Surface Snapshots)
+
+**Core Idea:** The engine publishes its current composition as a versioned, machine-readable artifact. Operators, dashboards, tests, AI agents, and future-you all read the same reflective surface to understand what the engine actually does at runtime. Apply Parnas's information-hiding principle to *runtime topology*: the topology is information that has a single authoritative reflective interface.
+
+**Key principles:**
+- runtime catalogs (`IRuntime*Catalog`) are *read models*, not lookup primitives; consumer code does not bind to them at request time
+- introspection routes (`/engine/*`) and snapshot keys (`snapshot.*`) project the same truth in three layers: HTTP route, snapshot key, typed catalog interface
+- the introspection surface is a versioned contract; breaking changes are documented and gated like any public API
+- documentation, dashboards, tests, and AI tooling all read the introspection surface rather than scraping logs
+
+**Applying to CephalonEngine:** Already shipped through extensive `/engine/*` routes (manifest, snapshot, capabilities, modules, packages, technologies, transports, dependencies, rate-limiting, behavior-resilience, technology-surfaces, knowledge-indexes, agent-tool-runs, event-dispatches, CDC captures, cell traffic automations, durable executions, saga choreographies, strangler-fig, backend-for-frontend, features, ...), plus `RuntimeIntrospectionSnapshot` and the corresponding typed catalog interfaces. The [`runtime-contract-index.md`](runtime-contract-index.md) and [`conformance-matrix.md`](conformance-matrix.md) docs are the consolidated reads.
+
+### 8.6 Patterns to Avoid
+
+These patterns look attractive in the short term but break the "consumer swaps architecture without code edits" invariant over long horizons.
+
+**Service Locator (`IServiceProvider.GetService<T>()` inside consumer code).** Tempts consumers to bypass composition; bakes "the engine knows everything" assumption into every call site — fatal for microservice topology where containers are partitioned. Seemann, *Dependency Injection Principles, Practices, and Patterns*, chapter 5.2 is the durable reference. Cephalon's runtime catalogs (`IRuntime*Catalog`) are *read models*, not lookup primitives — keep them that way.
+
+**Ambient Context (`AsyncLocal<T>`-propagated capability state).** Hides composition, breaks across process / transport boundaries, makes monolith → microservice splits silently fail. Acceptable only for diagnostic correlation (trace context, tenant id propagated for logging), never for capability resolution. Cephalon uses `AsyncLocal` exclusively for diagnostic / correlation flows; capability decisions stay in typed composition.
+
+**Engine Base Classes for Non-DSL Paths.** Cwalina, *Framework Design Guidelines*: inheritance is a *versioning contract*. Each `protected virtual` method becomes immovable for a decade. Prefer descriptor + delegate over base classes for any path that is not an authoring DSL. Cephalon already follows this in most surfaces — `RestBehaviorModuleBase` is opt-in DSL surface, not mandatory inheritance for behavior authoring; modules implement an interface and provide descriptors, not derive from a base class.
+
+### 8.7 Source-Generator-First Registration (2026 Convention)
+
+**Core Idea:** ASP.NET Core minimal APIs, Aspire 13, EF Core 10+, and `Microsoft.Extensions.AI` all moved to generator-emitted registration over 2024–2026. The pattern pairs naturally with M0–M4 maturity labels per adapter and a published conformance matrix — the same shape that Dapr, Steeltoe, and MassTransit 9 are crystallizing around. With `.NET 11 Preview 4`'s runtime-async-as-BCL-default removing state-machine reflection on top of the existing AOT direction, the generator-first path compounds significantly.
+
+**Key principles:**
+- `Add{Group}` entry points are source-generator-emitted from descriptors rather than hand-written reflection / scanning loops
+- registrations are visible to the IDE at design time; navigation works on registration sites
+- reflection cost at startup drops to near zero; AOT / trim / single-file claims become easier to keep truthful
+- generators consume the same descriptor catalog that runtime introspection projects, so design-time and runtime stay aligned
+
+**Applying to CephalonEngine:** Partially shipped — `Cephalon.Behaviors.SourceGen`, `Cephalon.Engine.SourceGen`, and scaffolding generators already exist. The remaining direction is making each `Add{Group}` entry point generator-emitted so reflection cost disappears and IDE-visible composition improves. Pairs with the existing M0–M4 maturity audit and the conformance matrix.
+
+### 8.8 The Config-vs-Code Tradeoff Line
+
+**Core Idea:** Configuration-driven composition is a powerful tool but degrades into a "stringly-typed swamp" if pushed too far. The rule of thumb is: **config selects strategies; code composes them**. The manifest layer should remain declarative *selection* (which provider, which transport, which feature flag); a typed builder does the actual wiring.
+
+**Configuration-driven composition becomes harmful when:**
+- the configuration grammar grows into a second, untyped programming language (the "YAML-as-code" smell)
+- error messages reference YAML / JSON paths instead of types
+- refactoring tools (rename, find-references, type-driven IDE navigation) cannot follow the wiring
+- a logical change requires editing multiple unrelated configuration sections to stay coherent
+
+**Applying to CephalonEngine:** The engine's existing posture is already on the right side of this line — `Engine:*` configuration selects strategies; the engine's typed builder composes them; runtime catalogs project the result. When a new architectural axis is added (a new feature pack, a new provider family), the question to ask is: "is this selection or wiring?" Selection belongs in `Engine:*`. Wiring belongs in code, expressed through typed descriptors and builder methods.
+
+---
+
 ## Summary: How It All Fits Together in CephalonEngine
 
 ```
@@ -1417,5 +1524,6 @@ Action: respond("Service S has elevated error rates (4%) since deploy d-1234.")
 - **Resilience:** Outbox + Inbox + DLQ + Competing Consumers
 - **Observability:** OpenTelemetry (logs + metrics + traces + health checks)
 - **AI / Agent:** RAG + Tool Calling + ReAct loop + Multi-Agent Orchestration over a host-agnostic `IChatClient` (`Cephalon.Agentics` owns run-state, idempotency, approval, audit; AI framework companion owns the agent loop)
+- **Engine architecture-as-configuration:** Descriptor-first ports + Strategy/options plug-points + Capability negotiation + Composition root + Introspection-as-contract — the load-bearing patterns that let consumers swap architecture, transport, topology, or hosting through engine-owned composition without rewriting application code
 
-Every pattern reinforces the others. The modular monolith gives you deployment simplicity. Clean architecture gives you testability. The plugin model gives you extensibility. CQRS gives you scalability. The event-driven approach gives you loose coupling. OpenTelemetry gives you visibility into all of it. And the AI / agent patterns plug into the same observability and resilience substrate so an agent-loop run is operator-introspectable on the same surface as a REST request or an event-dispatch handoff.
+Every pattern reinforces the others. The modular monolith gives you deployment simplicity. Clean architecture gives you testability. The plugin model gives you extensibility. CQRS gives you scalability. The event-driven approach gives you loose coupling. OpenTelemetry gives you visibility into all of it. The AI / agent patterns plug into the same observability and resilience substrate so an agent-loop run is operator-introspectable on the same surface as a REST request or an event-dispatch handoff. And the engine architecture-as-configuration patterns keep all of the above swappable — consumers change architecture by adjusting selection and composition, not by rewriting their code.
