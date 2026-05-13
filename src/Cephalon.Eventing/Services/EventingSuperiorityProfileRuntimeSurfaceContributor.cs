@@ -852,6 +852,25 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         string.Equals(state.LastOutcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
         EventSubscriptionBrokerInboundConsumptionMetadata.IsBrokerConsumed(state.Metadata);
 
+    private static bool HasTenantCorrelationContextDispatchMetadata(IReadOnlyDictionary<string, string> metadata) =>
+        metadata.ContainsKey(EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation) ||
+        metadata.ContainsKey(EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders) ||
+        metadata.ContainsKey(EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistence) ||
+        metadata.ContainsKey(EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff);
+
+    private static bool IsTenantCorrelationContextDispatchProof(EventDispatchRuntimeState state) =>
+        string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+        HasMetadataValue(state.Metadata, EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation, "dispatch-report-metadata") &&
+        HasMetadataValue(state.Metadata, EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders, "projected") &&
+        EventDispatchProviderContextPersistenceMetadata.IsPersisted(state.Metadata) &&
+        EventDispatchCrossNodeContextHandoffMetadata.IsHandoffProven(state.Metadata) &&
+        IsDownstreamDeliveryCompletionProof(state);
+
+    private static bool IsConsumerContextExtractionProof(EventSubscriptionRuntimeState state) =>
+        string.Equals(state.LastOutcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+        HasMetadataValue(state.Metadata, EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtraction, "extracted") &&
+        HasMetadata(state.Metadata, EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderNames);
+
     private static bool IsDurableRetryQueueProof(EventDispatchRuntimeState state) =>
         string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.RetryScheduled, StringComparison.OrdinalIgnoreCase) &&
         EventDispatchDurableRetryQueueMetadata.IsDurableRetryQueueProven(state.Metadata);
@@ -1124,24 +1143,35 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var outboxContextHandoff = hasOutboxContextHandoff
             ? headerValidationPolicyCount > 0 ? "staged-headers" : "staged-policy-metadata"
             : "not-claimed";
-        var hasDispatchReportContextMetadata = hasOutboxContextHandoff && dispatchRuntimeCatalog?.States.Any(static state =>
-            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation, out var value) &&
-            string.Equals(value, "dispatch-report-metadata", StringComparison.OrdinalIgnoreCase)) == true;
-        var hasProviderBrokerContextHeaderProjection = hasDispatchReportContextMetadata && dispatchRuntimeCatalog?.States.Any(static state =>
-            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders, out var value) &&
-            string.Equals(value, "projected", StringComparison.OrdinalIgnoreCase)) == true;
-        var hasProviderSideContextPersistence = hasProviderBrokerContextHeaderProjection && dispatchRuntimeCatalog?.States.Any(static state =>
-            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistence, out var value) &&
-            string.Equals(value, "dispatch-store-persisted", StringComparison.OrdinalIgnoreCase)) == true;
-        var hasCrossNodeContextHandoff = dispatchRuntimeCatalog?.States.Any(static state =>
-            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff, out var value) &&
-            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase)) == true;
-        var hasDownstreamDeliveryCompletion = dispatchRuntimeCatalog?.States.Any(static state =>
-            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletion, out var value) &&
-            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase)) == true;
-        var hasConsumerContextExtraction = subscriptionRuntimeCatalog?.States.Any(static state =>
-            state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtraction, out var value) &&
-            string.Equals(value, "extracted", StringComparison.OrdinalIgnoreCase)) == true;
+        var dispatchStates = dispatchRuntimeCatalog?.States ?? [];
+        var subscriptionStates = subscriptionRuntimeCatalog?.States ?? [];
+        var contextDispatchStates = dispatchStates
+            .Where(static state => HasTenantCorrelationContextDispatchMetadata(state.Metadata))
+            .ToArray();
+        var consumerContextStates = subscriptionStates
+            .Where(static state => state.Metadata.ContainsKey(EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtraction))
+            .ToArray();
+        var contextDispatchProvenCount = contextDispatchStates.Count(IsTenantCorrelationContextDispatchProof);
+        var consumerContextProvenCount = consumerContextStates.Count(IsConsumerContextExtractionProof);
+        var contextDispatchState = SelectBestDispatchProof(
+            contextDispatchStates,
+            IsTenantCorrelationContextDispatchProof);
+        var consumerContextState = SelectBestSubscriptionProof(
+            consumerContextStates,
+            IsConsumerContextExtractionProof);
+        var hasDispatchReportContextMetadata = hasOutboxContextHandoff && contextDispatchStates.Any(static state =>
+            HasMetadataValue(state.Metadata, EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation, "dispatch-report-metadata"));
+        var hasProviderBrokerContextHeaderProjection = hasDispatchReportContextMetadata && contextDispatchStates.Any(static state =>
+            HasMetadataValue(state.Metadata, EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders, "projected"));
+        var hasProviderSideContextPersistence = hasProviderBrokerContextHeaderProjection && contextDispatchStates.Any(static state =>
+            EventDispatchProviderContextPersistenceMetadata.IsPersisted(state.Metadata));
+        var hasCrossNodeContextHandoff = contextDispatchStates.Any(static state =>
+            EventDispatchCrossNodeContextHandoffMetadata.IsHandoffProven(state.Metadata));
+        var hasDownstreamDeliveryCompletion = contextDispatchStates.Any(static state =>
+            EventDispatchDeliveryCompletionMetadata.IsCompleted(state.Metadata));
+        var hasExactlyOnceDelivery = contextDispatchStates.Any(static state =>
+            EventDispatchExactlyOnceDeliveryProofMetadata.IsProviderProven(state.Metadata));
+        var hasConsumerContextExtraction = consumerContextStates.Any(IsConsumerContextExtractionProof);
         var durableDispatchContextPropagation = hasDispatchReportContextMetadata
             ? "dispatch-report-metadata"
             : hasOutboxContextHandoff && topology.HasDispatchStore
@@ -1153,14 +1183,150 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var consumerContextExtraction = hasConsumerContextExtraction ? "extracted" : "not-claimed";
         var crossNodeContextHandoff = hasCrossNodeContextHandoff ? "provider-reported" : "not-claimed";
         var downstreamDeliveryCompletion = hasDownstreamDeliveryCompletion ? "provider-reported" : "not-claimed";
+        var exactlyOnceDelivery = hasExactlyOnceDelivery ? "provider-proven" : "not-claimed";
         var executablePropagation = hasInProcessContextExecution ? "in-process-direct" : "not-claimed";
         var executableValidation = hasPublisherContextValidation ? "publisher-enforced" : "not-claimed";
-        var status = policyCount > 0 ? "partial" : "not-claimed";
+        var hasCompleteContextDispatchProof = contextDispatchState is not null &&
+            IsTenantCorrelationContextDispatchProof(contextDispatchState);
+        var hasCompleteConsumerContextProof = consumerContextState is not null &&
+            IsConsumerContextExtractionProof(consumerContextState);
+        var status = policyCount > 0 && hasCompleteContextDispatchProof && hasCompleteConsumerContextProof
+            ? "claimed"
+            : policyCount > 0 ? "partial" : "not-claimed";
+
+        var providerBrokerContextHeaderProjection = "not-reported";
+        var providerBrokerContextHeaderCount = "not-reported";
+        var providerBrokerContextHeaderNames = "not-reported";
+        var providerSideContextPersistenceSource = "not-reported";
+        var providerSideContextPersistenceHeaderCount = "not-reported";
+        var providerSideContextPersistenceHeaderNames = "not-reported";
+        var crossNodeContextHandoffSource = "not-reported";
+        var crossNodeContextHandoffProducerNodeId = "not-reported";
+        var crossNodeContextHandoffConsumerNodeId = "not-reported";
+        var crossNodeContextHandoffHeaderCount = "not-reported";
+        var crossNodeContextHandoffHeaderNames = "not-reported";
+        var downstreamDeliveryCompletionSource = "not-reported";
+        var providerDeliveryReceiptId = "not-reported";
+        var subscriberAcknowledgementId = "not-reported";
+        var destinationCommitId = "not-reported";
+        var exactlyOnceDeliveryProofId = "not-reported";
+        var exactlyOnceDeliveryStrategy = "not-reported";
+        var contextDispatchOutboxId = "not-reported";
+        var contextDispatchLastOutcome = "not-reported";
+        var contextDispatchLastObservedAtUtc = "not-reported";
+        var consumerContextExtractionSource = "not-reported";
+        var consumerContextHeaderCount = "not-reported";
+        var consumerContextHeaderNames = "not-reported";
+        var consumerContextSubscriptionId = "not-reported";
+        var consumerContextLastOutcome = "not-reported";
+        var consumerContextLastObservedAtUtc = "not-reported";
+
+        if (contextDispatchState is not null)
+        {
+            var metadata = contextDispatchState.Metadata;
+            providerBrokerContextHeaderProjection = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderProjection,
+                "not-reported");
+            providerBrokerContextHeaderCount = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderCount,
+                "not-reported");
+            providerBrokerContextHeaderNames = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderNames,
+                "not-reported");
+            providerSideContextPersistenceSource = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceSource,
+                "not-reported");
+            providerSideContextPersistenceHeaderCount = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderCount,
+                "not-reported");
+            providerSideContextPersistenceHeaderNames = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderNames,
+                "not-reported");
+            crossNodeContextHandoffSource = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffSource,
+                "not-reported");
+            crossNodeContextHandoffProducerNodeId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffProducerNodeId,
+                "not-reported");
+            crossNodeContextHandoffConsumerNodeId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffConsumerNodeId,
+                "not-reported");
+            crossNodeContextHandoffHeaderCount = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffHeaderCount,
+                "not-reported");
+            crossNodeContextHandoffHeaderNames = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffHeaderNames,
+                "not-reported");
+            downstreamDeliveryCompletionSource = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletionSource,
+                "not-reported");
+            providerDeliveryReceiptId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ProviderDeliveryReceiptId,
+                "not-reported");
+            subscriberAcknowledgementId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.SubscriberAcknowledgementId,
+                "not-reported");
+            destinationCommitId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.DestinationCommitId,
+                "not-reported");
+            exactlyOnceDeliveryProofId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryProofId,
+                "not-reported");
+            exactlyOnceDeliveryStrategy = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryStrategy,
+                "not-reported");
+            contextDispatchOutboxId = contextDispatchState.OutboxId;
+            contextDispatchLastOutcome = contextDispatchState.LastOutcome ?? "unknown";
+            contextDispatchLastObservedAtUtc = FormatObservedAt(contextDispatchState.LastObservedAtUtc);
+        }
+
+        if (consumerContextState is not null)
+        {
+            var metadata = consumerContextState.Metadata;
+            consumerContextExtractionSource = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtractionSource,
+                "not-reported");
+            consumerContextHeaderCount = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderCount,
+                "not-reported");
+            consumerContextHeaderNames = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderNames,
+                "not-reported");
+            consumerContextSubscriptionId = consumerContextState.SubscriptionId;
+            consumerContextLastOutcome = consumerContextState.LastOutcome ?? "unknown";
+            consumerContextLastObservedAtUtc = FormatObservedAt(consumerContextState.LastObservedAtUtc);
+        }
 
         var evidence = string.Create(
             CultureInfo.InvariantCulture,
-            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; inProcessExecution={inProcessExecution}; operatorCorrelationMetadata=metadata-only; eventContextPolicyCatalog={eventContextPolicyCatalog}; contextPolicyCount={policyCount.ToString(CultureInfo.InvariantCulture)}; tenantPolicyCount={tenantPolicyCount.ToString(CultureInfo.InvariantCulture)}; correlationPolicyCount={correlationPolicyCount.ToString(CultureInfo.InvariantCulture)}; causationPolicyCount={causationPolicyCount.ToString(CultureInfo.InvariantCulture)}; baggagePolicyCount={baggagePolicyCount.ToString(CultureInfo.InvariantCulture)}; headerValidationPolicyCount={headerValidationPolicyCount.ToString(CultureInfo.InvariantCulture)}; declaredHeaderCount={declaredHeaderCount.ToString(CultureInfo.InvariantCulture)}; tenantContextPropagation={tenantContextPropagation}; correlationContextPropagation={correlationContextPropagation}; causationIdPropagation={causationIdPropagation}; baggagePropagation={baggagePropagation}; messageHeaderPolicy={messageHeaderPolicy}; outboxContextHandoff={outboxContextHandoff}; durableDispatchContextPropagation={durableDispatchContextPropagation}; dispatchReportContextMetadata={dispatchReportContextMetadata}; providerBrokerContextHeaders={providerBrokerContextHeaders}; providerSideContextPersistence={providerSideContextPersistence}; consumerContextExtraction={consumerContextExtraction}; crossNodeContextHandoff={crossNodeContextHandoff}; downstreamDeliveryCompletion={downstreamDeliveryCompletion}; executablePropagation={executablePropagation}; executableValidation={executableValidation}; wolverineRequired=false");
-        var nextGap = hasCrossNodeContextHandoff && hasDownstreamDeliveryCompletion
+            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; inProcessExecution={inProcessExecution}; operatorCorrelationMetadata=metadata-only; eventContextPolicyCatalog={eventContextPolicyCatalog}; contextPolicyCount={policyCount.ToString(CultureInfo.InvariantCulture)}; tenantPolicyCount={tenantPolicyCount.ToString(CultureInfo.InvariantCulture)}; correlationPolicyCount={correlationPolicyCount.ToString(CultureInfo.InvariantCulture)}; causationPolicyCount={causationPolicyCount.ToString(CultureInfo.InvariantCulture)}; baggagePolicyCount={baggagePolicyCount.ToString(CultureInfo.InvariantCulture)}; headerValidationPolicyCount={headerValidationPolicyCount.ToString(CultureInfo.InvariantCulture)}; declaredHeaderCount={declaredHeaderCount.ToString(CultureInfo.InvariantCulture)}; tenantContextPropagation={tenantContextPropagation}; correlationContextPropagation={correlationContextPropagation}; causationIdPropagation={causationIdPropagation}; baggagePropagation={baggagePropagation}; messageHeaderPolicy={messageHeaderPolicy}; outboxContextHandoff={outboxContextHandoff}; contextDispatchProofSelection=latest-proven-dispatch-state; contextDispatchStateCount={contextDispatchStates.Length.ToString(CultureInfo.InvariantCulture)}; contextDispatchProvenCount={contextDispatchProvenCount.ToString(CultureInfo.InvariantCulture)}; consumerContextProofSelection=latest-proven-subscription-state; consumerContextStateCount={consumerContextStates.Length.ToString(CultureInfo.InvariantCulture)}; consumerContextProvenCount={consumerContextProvenCount.ToString(CultureInfo.InvariantCulture)}; durableDispatchContextPropagation={durableDispatchContextPropagation}; dispatchReportContextMetadata={dispatchReportContextMetadata}; providerBrokerContextHeaders={providerBrokerContextHeaders}; providerBrokerContextHeaderProjection={providerBrokerContextHeaderProjection}; providerBrokerContextHeaderCount={providerBrokerContextHeaderCount}; providerBrokerContextHeaderNames={providerBrokerContextHeaderNames}; providerSideContextPersistence={providerSideContextPersistence}; providerSideContextPersistenceSource={providerSideContextPersistenceSource}; providerSideContextPersistenceHeaderCount={providerSideContextPersistenceHeaderCount}; providerSideContextPersistenceHeaderNames={providerSideContextPersistenceHeaderNames}; consumerContextExtraction={consumerContextExtraction}; consumerContextExtractionSource={consumerContextExtractionSource}; consumerContextHeaderCount={consumerContextHeaderCount}; consumerContextHeaderNames={consumerContextHeaderNames}; crossNodeContextHandoff={crossNodeContextHandoff}; crossNodeContextHandoffSource={crossNodeContextHandoffSource}; crossNodeContextHandoffProducerNodeId={crossNodeContextHandoffProducerNodeId}; crossNodeContextHandoffConsumerNodeId={crossNodeContextHandoffConsumerNodeId}; crossNodeContextHandoffHeaderCount={crossNodeContextHandoffHeaderCount}; crossNodeContextHandoffHeaderNames={crossNodeContextHandoffHeaderNames}; downstreamDeliveryCompletion={downstreamDeliveryCompletion}; downstreamDeliveryCompletionSource={downstreamDeliveryCompletionSource}; providerDeliveryReceiptId={providerDeliveryReceiptId}; subscriberAcknowledgementId={subscriberAcknowledgementId}; destinationCommitId={destinationCommitId}; exactlyOnceDelivery={exactlyOnceDelivery}; exactlyOnceDeliveryProofId={exactlyOnceDeliveryProofId}; exactlyOnceDeliveryStrategy={exactlyOnceDeliveryStrategy}; contextDispatchOutboxId={contextDispatchOutboxId}; contextDispatchLastOutcome={contextDispatchLastOutcome}; contextDispatchLastObservedAtUtc={contextDispatchLastObservedAtUtc}; consumerContextSubscriptionId={consumerContextSubscriptionId}; consumerContextLastOutcome={consumerContextLastOutcome}; consumerContextLastObservedAtUtc={consumerContextLastObservedAtUtc}; executablePropagation={executablePropagation}; executableValidation={executableValidation}; wolverineRequired=false");
+        var nextGap = status == "claimed"
+            ? "Add provider-specific context handoff adapters and compliance tests for each broker/provider before declaring provider-family parity."
+            : hasCompleteContextDispatchProof
+            ? "Attach successful consumer context extraction runtime proof to the same provider handoff before claiming full tenant and correlation ownership."
+            : hasCrossNodeContextHandoff && hasDownstreamDeliveryCompletion && hasExactlyOnceDelivery
+            ? "Attach successful consumer context extraction proof beside the provider handoff before claiming full tenant and correlation ownership."
+            : hasCrossNodeContextHandoff && hasDownstreamDeliveryCompletion
             ? "Attach subscriber acknowledgement, destination commit, and exactly-once proof before claiming full tenant and correlation ownership."
             : hasCrossNodeContextHandoff
             ? "Attach downstream delivery completion, provider receipts, subscriber acknowledgement, and destination commit proof before claiming full tenant and correlation ownership."

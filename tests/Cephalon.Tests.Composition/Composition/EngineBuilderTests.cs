@@ -2513,6 +2513,217 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingSelectsLatestProvenTenantContextEvidenceAcrossDispatchAndSubscriptionsWithoutWolverine()
+    {
+        static Dictionary<string, string> CreateConsumerContextMetadata(string prefix)
+        {
+            var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            EventConsumerContextExtractor.ApplyMetadata(
+                metadata,
+                new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    [EventContextHeaderNames.TenantId] = $"tenant-{prefix}",
+                    [EventContextHeaderNames.CorrelationId] = $"corr-{prefix}",
+                    [EventContextHeaderNames.CausationId] = $"cause-{prefix}",
+                    [EventContextHeaderNames.Baggage] = $"tier={prefix}",
+                    [EventContextHeaderNames.MessageId] = $"msg-{prefix}"
+                });
+
+            return metadata;
+        }
+
+        static EventDispatchExecutionReport CreateContextDispatchReport(
+            string prefix,
+            DateTimeOffset observedAtUtc,
+            Dictionary<string, string> consumerContextMetadata,
+            bool completeProof)
+        {
+            var providerHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                [EventContextHeaderNames.TenantId] = $"tenant-{prefix}",
+                [EventContextHeaderNames.CorrelationId] = $"corr-{prefix}",
+                [EventContextHeaderNames.CausationId] = $"cause-{prefix}",
+                [EventContextHeaderNames.Baggage] = $"tier={prefix}",
+                [EventContextHeaderNames.MessageId] = $"msg-{prefix}"
+            };
+            var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                [EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation] = "dispatch-report-metadata",
+                [EventDispatchRuntimeMetadataKeys.DispatchContextMetadata] = "reported",
+                [EventDispatchRuntimeMetadataKeys.DispatchContextHeaderCount] = providerHeaders.Count.ToString(CultureInfo.InvariantCulture),
+                [EventDispatchRuntimeMetadataKeys.DispatchContextMetadataCount] = "4"
+            };
+            EventDispatchProviderBrokerContextHeaders.ApplyReportMetadata(metadata, providerHeaders);
+
+            var report = new EventDispatchExecutionReport(
+                outboxId: $"{prefix}-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Succeeded,
+                observedAtUtc: observedAtUtc,
+                messageId: $"evt-{prefix}-context-001",
+                attempt: 1,
+                metadata: metadata);
+            report = EventDispatchProviderContextPersistenceMetadata.CreateReport(
+                report,
+                source: $"{prefix}-context-store");
+            report = EventDispatchCrossNodeContextHandoffMetadata.CreateReport(
+                report,
+                consumerContextMetadata,
+                source: $"{prefix}-context-runtime",
+                producerNodeId: $"{prefix}-producer-node",
+                consumerNodeId: $"{prefix}-consumer-node");
+
+            return completeProof
+                ? EventDispatchExactlyOnceDeliveryProofMetadata.CreateReport(
+                    report,
+                    source: $"{prefix}-delivery-runtime",
+                    providerReceiptId: $"{prefix}-provider-receipt",
+                    subscriberAcknowledgementId: $"{prefix}-subscriber-ack",
+                    destinationCommitId: $"{prefix}-destination-commit",
+                    exactlyOnceProofId: $"{prefix}-exactly-once-proof",
+                    strategy: $"{prefix}-transactional-context")
+                : EventDispatchDeliveryCompletionMetadata.CreateReport(
+                    report,
+                    source: $"{prefix}-delivery-runtime",
+                    providerReceiptId: $"{prefix}-provider-receipt");
+        }
+
+        var alphaConsumerContext = CreateConsumerContextMetadata("alpha");
+        var betaConsumerContext = CreateConsumerContextMetadata("beta");
+        var gammaConsumerContext = CreateConsumerContextMetadata("gamma");
+        var olderContextReport = CreateContextDispatchReport(
+            "alpha",
+            new DateTimeOffset(2026, 05, 13, 9, 0, 0, TimeSpan.Zero),
+            alphaConsumerContext,
+            completeProof: true);
+        var newerContextReport = CreateContextDispatchReport(
+            "beta",
+            new DateTimeOffset(2026, 05, 13, 9, 30, 0, TimeSpan.Zero),
+            betaConsumerContext,
+            completeProof: true);
+        var newerPartialContextReport = CreateContextDispatchReport(
+            "gamma",
+            new DateTimeOffset(2026, 05, 13, 9, 45, 0, TimeSpan.Zero),
+            gammaConsumerContext,
+            completeProof: false);
+        var services = new ServiceCollection();
+        services.AddSingleton<IOutbox>(new EventingProofSelectionOutbox("alpha-outbox"));
+        services.AddSingleton<IEventDispatchRuntimeCatalog>(new TestEventDispatchRuntimeCatalog(
+            CreateDispatchRuntimeState(olderContextReport),
+            CreateDispatchRuntimeState(newerContextReport),
+            CreateDispatchRuntimeState(newerPartialContextReport)));
+        services.AddSingleton<IEventSubscriptionRuntimeCatalog>(new TestEventSubscriptionRuntimeCatalog(
+            CreateSubscriptionRuntimeState(new EventSubscriptionExecutionReport(
+                subscriptionId: "alpha-subscription",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 8, 50, 0, TimeSpan.Zero),
+                messageId: "msg-alpha-context-001",
+                attempt: 1,
+                metadata: alphaConsumerContext)),
+            CreateSubscriptionRuntimeState(new EventSubscriptionExecutionReport(
+                subscriptionId: "beta-subscription",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 9, 25, 0, TimeSpan.Zero),
+                messageId: "msg-beta-context-001",
+                attempt: 1,
+                metadata: betaConsumerContext)),
+            CreateSubscriptionRuntimeState(new EventSubscriptionExecutionReport(
+                subscriptionId: "gamma-subscription",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 9, 40, 0, TimeSpan.Zero),
+                messageId: "msg-gamma-context-001",
+                attempt: 1,
+                metadata: new Dictionary<string, string>
+                {
+                    [EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtraction] = "not-claimed",
+                    [EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtractionSource] = "message-id-only"
+                }))));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new MultiOutboxEventingTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Tenant and correlation context proof events."));
+                options.ContextPolicies.Add(new EventContextPolicyDescriptor(
+                    id: "platform-context",
+                    displayName: "Platform Context",
+                    description: "Platform-owned context proof policy.",
+                    runtimeKind: "code-first",
+                    declaresTenantContext: true,
+                    declaresCorrelationId: true,
+                    declaresCausationId: true,
+                    declaresBaggage: true,
+                    validatesMessageHeaders: true,
+                    headerNames:
+                    [
+                        EventContextHeaderNames.TenantId,
+                        EventContextHeaderNames.CorrelationId,
+                        EventContextHeaderNames.CausationId,
+                        EventContextHeaderNames.Baggage
+                    ]));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["status"]);
+        Assert.Contains("contextDispatchProofSelection=latest-proven-dispatch-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("contextDispatchStateCount=3", evidence, StringComparison.Ordinal);
+        Assert.Contains("contextDispatchProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerContextProofSelection=latest-proven-subscription-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerContextStateCount=3", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerContextProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("durableDispatchContextPropagation=dispatch-report-metadata", evidence, StringComparison.Ordinal);
+        Assert.Contains("dispatchReportContextMetadata=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerBrokerContextHeaders=projected", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerBrokerContextHeaderProjection=cephalon-context-headers", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerSideContextPersistence=dispatch-store-persisted", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerSideContextPersistenceSource=beta-context-store", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerContextExtraction=extracted", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerContextExtractionSource=event-publication-context-headers", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerContextHeaderCount=5", evidence, StringComparison.Ordinal);
+        Assert.Contains("crossNodeContextHandoff=provider-reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("crossNodeContextHandoffSource=beta-context-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("crossNodeContextHandoffProducerNodeId=beta-producer-node", evidence, StringComparison.Ordinal);
+        Assert.Contains("crossNodeContextHandoffConsumerNodeId=beta-consumer-node", evidence, StringComparison.Ordinal);
+        Assert.Contains("downstreamDeliveryCompletion=provider-reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("downstreamDeliveryCompletionSource=beta-delivery-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerDeliveryReceiptId=beta-provider-receipt", evidence, StringComparison.Ordinal);
+        Assert.Contains("subscriberAcknowledgementId=beta-subscriber-ack", evidence, StringComparison.Ordinal);
+        Assert.Contains("destinationCommitId=beta-destination-commit", evidence, StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDelivery=provider-proven", evidence, StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDeliveryProofId=beta-exactly-once-proof", evidence, StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDeliveryStrategy=beta-transactional-context", evidence, StringComparison.Ordinal);
+        Assert.Contains("contextDispatchOutboxId=beta-outbox", evidence, StringComparison.Ordinal);
+        Assert.Contains("contextDispatchLastOutcome=succeeded", evidence, StringComparison.Ordinal);
+        Assert.Contains("contextDispatchLastObservedAtUtc=2026-05-13T09:30:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerContextSubscriptionId=beta-subscription", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerContextLastOutcome=succeeded", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerContextLastObservedAtUtc=2026-05-13T09:25:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("providerSideContextPersistenceSource=alpha-context-store", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("exactlyOnceDeliveryProofId=alpha-exactly-once-proof", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("contextDispatchOutboxId=gamma-outbox", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("consumerContextSubscriptionId=gamma-subscription", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AddEventingSelectsLatestProvenBrokerTopologyEvidenceAcrossOutboxesWithoutWolverine()
     {
         var olderBrokerTopologyReport = EventDispatchBrokerTopologyMetadata.CreateReport(
