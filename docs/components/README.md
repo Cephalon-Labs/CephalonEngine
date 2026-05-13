@@ -28,7 +28,7 @@ Each component page surfaces a one-line maturity badge directly under the `# <Pa
 
 When a package surface has mixed ownership (for example `Cephalon.Behaviors.Http`'s `mixed: application-managed + cephalon-managed`), the badge mirrors the audit's wording verbatim so the two never drift. When the audit changes a maturity label or ownership mode, the matching component page is updated in the same slice — never trail the audit.
 
-The convention is being rolled out incrementally; component pages without the badge today still defer to the audit row as the source of truth. Pages with prose-style "Maturity and ownership" sections keep those sections (the badge complements rather than replaces them).
+Every shipped source-project component page now carries this badge. Tooling coverage fails if a shipped `src/Cephalon.*` project has a component page without a maturity label, ownership label, and authoritative `engine-surface-maturity-audit.md` back-pointer. Pages with prose-style "Maturity and ownership" sections keep those sections; the badge is the required first-scan contract and those sections provide deeper adoption context.
 
 
 ## Core runtime
@@ -162,7 +162,7 @@ The convention is being rolled out incrementally; component pages without the ba
 - [Cephalon.Cli](cli.md)
 - [Cephalon.ReferenceDocs](reference-docs.md)
 
-The dependency-health provider family is guarded by [`scripts/observability-dependency-health-providers.json`](../../scripts/observability-dependency-health-providers.json). Tooling coverage checks that the eighteen `Cephalon.Observability.*Dependencies` rows still match the source project, component doc, configuration section, hosting extension, hosted probe, and diagnostics convention before the family can claim coherent `M2` / `provider-managed` coverage. The hosting test suite now also runs a deterministic all-provider managed-probe live proof, and the scorecard publisher checks `ProviderIntegrationEvidence` dependency-health rows against the same manifest so release readback cannot drift from the component-doc family shape. SMTP invitation delivery is also in the provider-integration live-proof manifest now: `SmtpDeliveryProviderIntegrationTests` dispatches through the real governance sender into a live relay and verifies the accepted message through a relay API before the row counts as live evidence.
+The dependency-health provider family is guarded by [`scripts/observability-dependency-health-providers.json`](../../scripts/observability-dependency-health-providers.json). Tooling coverage checks that the eighteen `Cephalon.Observability.*Dependencies` rows still match the source project, component doc, configuration section, hosting extension, hosted probe, and diagnostics convention before the family can claim coherent `M2` / `provider-managed` coverage. The hosting test suite now also runs a deterministic all-provider managed-probe live proof, and the scorecard publisher plus `cephalon doctor --scorecard` read `ProviderIntegrationEvidence.DependencyHealthProviderManifest` from scorecard schema `1.23.0` so release readback cannot drift from the component-doc family shape. SMTP invitation delivery is also in the provider-integration live-proof manifest now: `SmtpDeliveryProviderIntegrationTests` dispatches through the real governance sender into a live relay and verifies the accepted message through a relay API before the row counts as live evidence.
 
 ## Additional repo surfaces
 

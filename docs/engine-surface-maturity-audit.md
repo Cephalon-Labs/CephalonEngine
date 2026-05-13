@@ -1,6 +1,6 @@
 # Engine Surface Maturity Audit
 
-Surface maturity in this document reflects the repository state as of `May 5, 2026` (post-`ENG-371` Cephalon.Eventing OTel adapter activity emission and post-`ENG-402` Cephalon.Retrieval OTel adapter activity emission, with redaction-emission count now at seven sites including the new Eventing in-process publication-dispatch site).
+Surface maturity in this document reflects the repository state as of `May 13, 2026` (after the Sprint 125 Eventing operational-superiority evidence stream, scorecard schema `1.23.0`, and the component maturity-badge completion guard).
 
 ## Why this document exists
 

@@ -122,11 +122,36 @@ public sealed class DocumentationCoverageTests
 
             var componentDocContents = File.ReadAllText(componentDocPath);
             Assert.Contains(projectName!, componentDocContents, StringComparison.Ordinal);
+            Assert.Contains("> **Maturity:** `", componentDocContents, StringComparison.Ordinal);
+            Assert.Contains("**Ownership:**", componentDocContents, StringComparison.Ordinal);
+            Assert.Contains(
+                "authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)",
+                componentDocContents,
+                StringComparison.Ordinal);
             Assert.Contains(
                 $"[{projectName}]({componentDocFileName})",
                 componentCatalog,
                 StringComparison.Ordinal);
         }
+    }
+
+    [Fact]
+    public void ComponentMaturityBadgesAndAuditBaselineStayCurrent()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var componentCatalog = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "components", "README.md"));
+        var maturityAudit = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-surface-maturity-audit.md"));
+        var backlog = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-backlog.md"));
+
+        Assert.Equal(
+            ReadDocumentBaselineDate(backlog, "Backlog status in this document reflects the repository state as of"),
+            ReadDocumentBaselineDate(maturityAudit, "Surface maturity in this document reflects the repository state as of"));
+        Assert.Contains("Every shipped source-project component page now carries this badge.", componentCatalog, StringComparison.Ordinal);
+        Assert.DoesNotContain("being rolled out incrementally", componentCatalog, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Tooling coverage fails if a shipped `src/Cephalon.*` project has a component page without a maturity label", componentCatalog, StringComparison.Ordinal);
+        Assert.Contains("ProviderIntegrationEvidence.DependencyHealthProviderManifest", componentCatalog, StringComparison.Ordinal);
+        Assert.Contains("scorecard schema `1.23.0`", componentCatalog, StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor --scorecard", componentCatalog, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -491,6 +516,7 @@ public sealed class DocumentationCoverageTests
         var repositoryRoot = GetRepositoryRoot();
         var expectedSchemaVersion = ReadScorecardSchemaVersion(repositoryRoot);
         var scorecard = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-completion-scorecard.md"));
+        var componentCatalog = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "components", "README.md"));
         var roadmap = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-roadmap.md"));
         var projectMemory = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "project-memory.md"));
         var planningGovernance = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "planning-governance.md"));
@@ -514,6 +540,10 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("pending-baseline blocker evidence rows", scorecard, StringComparison.Ordinal);
         Assert.Contains("signed-release dry-run status/proof/blocker", scorecard, StringComparison.Ordinal);
         Assert.Contains("test coverage counts from `TestCoverageEvidence`", scorecard, StringComparison.Ordinal);
+        Assert.Contains($"scorecard schema `{expectedSchemaVersion}`", componentCatalog, StringComparison.Ordinal);
+        Assert.Contains("ProviderIntegrationEvidence", componentCatalog, StringComparison.Ordinal);
+        Assert.Contains("ProviderIntegrationEvidence.DependencyHealthProviderManifest", componentCatalog, StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor --scorecard", componentCatalog, StringComparison.Ordinal);
         Assert.Contains($"scorecard schema `{expectedSchemaVersion}`", roadmap, StringComparison.Ordinal);
         Assert.Contains("SupplyChainEvidence.SignedReleaseDryRun", roadmap, StringComparison.Ordinal);
         Assert.Contains("signed-release dry-run", roadmap, StringComparison.Ordinal);
@@ -1066,6 +1096,21 @@ public sealed class DocumentationCoverageTests
         Assert.True(endIndex > startIndex, "Expected publish-engine-completion-scorecard.ps1 schema version to be quoted.");
 
         return script[startIndex..endIndex];
+    }
+
+    private static string ReadDocumentBaselineDate(string document, string prefix)
+    {
+        var marker = prefix + " `";
+        var markerIndex = document.IndexOf(marker, StringComparison.Ordinal);
+
+        Assert.True(markerIndex >= 0, $"Expected document to declare baseline date with prefix '{prefix}'.");
+
+        var startIndex = markerIndex + marker.Length;
+        var endIndex = document.IndexOf('`', startIndex);
+
+        Assert.True(endIndex > startIndex, $"Expected document baseline date after prefix '{prefix}' to be quoted.");
+
+        return document[startIndex..endIndex];
     }
 
     private static DependencyHealthProviderManifestRow[] ReadDependencyHealthProviderManifest(string repositoryRoot)

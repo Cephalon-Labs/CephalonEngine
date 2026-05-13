@@ -70,6 +70,34 @@ Current focus:
 - treat open GitHub issue drift as a planning-quality risk: `scripts/validate-planning-github-issues.ps1` now checks open `ENG-*` issues against backlog truth, detects duplicate open issue numbers for the same ENG id, and detects stale open duplicates for backlog rows that are already `done` or `shipped` at another issue number
 - treat missing GitHub Project 2 planning fields as a planning-quality risk: `scripts/validate-planning-project-fields.ps1` now verifies open `ENG-*` issue project items have populated `Status`, `Estimate`, `Iteration`, `Test`, and `Benchmark`, and the first live run corrected the missing `Iteration` field on `ENG-532` / issue `#1180`
 - treat signed-release dry-run dispatch proof as scorecard readback, not prose-only release context: `SupplyChainEvidence.SignedReleaseDryRun` now records the dry-run status, partial proof state, current `dispatch-identity-actions-disabled` blocker, required `-RequireRunCreated` command, output path, and required report fields while `ENG-532` remains open until an Actions-enabled release-manager identity creates the workflow run
+- treat component-page maturity badges as a completed adoption contract: every shipped source-project component page now carries a maturity label, ownership label, and `engine-surface-maturity-audit.md` back-pointer, and Tooling coverage blocks any new shipped component page from skipping that first-scan truth
+
+### ENG-681 Component maturity badge completion guard
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: component-docs / planning-governance / documentation coverage
+Quality dimensions: Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1350
+
+Why:
+
+- component docs are the map before source, but the catalog still described maturity badges as an incremental rollout even though current shipped component pages already carry badges
+- `docs/engine-surface-maturity-audit.md` still had an older baseline date while backlog, roadmap, and project memory had moved to the May 13 Sprint 125 truth
+- component-catalog provider-integration prose named scorecard readback loosely; it needed the same schema/readback guard posture now used for roadmap, CLI, package, and project-memory scorecard prose
+
+Delivered:
+
+- refreshed `docs/components/README.md` so maturity badges are required for every shipped source-project component page
+- aligned the maturity-audit baseline date with the current backlog baseline and named the Sprint 125 scorecard/component-badge context
+- updated the component catalog provider-integration paragraph to name scorecard schema `1.23.0`, `ProviderIntegrationEvidence.DependencyHealthProviderManifest`, and `cephalon doctor --scorecard`
+- extended Tooling documentation coverage so every shipped source project component doc must carry the maturity badge, ownership label, and audit back-pointer, while the audit baseline must match the backlog baseline
+
+Validation:
+
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~DocumentationCoverageTests" --logger "console;verbosity=minimal"`
+- `git diff --check`
 
 ### ENG-680 Roadmap scorecard contract drift guard
 
