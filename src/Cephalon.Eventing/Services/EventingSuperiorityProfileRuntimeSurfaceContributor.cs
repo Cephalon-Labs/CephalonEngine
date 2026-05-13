@@ -505,21 +505,27 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             ? EventPublicationRoutingPolicy.GetAutoChannelId(options)
             : "not-configured";
 
+        using var scope = scopeFactory.CreateScope();
+        var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
+        var partitionStates = dispatchRuntimeCatalog?.States
+            .Where(static state =>
+                state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnership, out var value) &&
+                string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase))
+            .ToArray() ?? [];
+        var partitionProvenCount = partitionStates.Count(IsProviderPartitionProof);
+        var partitionState = SelectBestDispatchProof(
+            partitionStates,
+            IsProviderPartitionProof);
+
         if (!topology.HasPublishingPath)
         {
             return new ProviderPartitionProfile(
                 "not-claimed",
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"publicationPath={publicationPath}; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; providerPartitionOwnership=not-claimed; providerPartitionOwnershipSource=not-reported; partitionAssignment=not-claimed; partitionAssignmentId=not-reported; partitionAffinity=not-claimed; partitionAffinityId=not-reported; partitionRebalancing=not-claimed; partitionRebalancingId=not-reported; partitionOrderingGuarantee=not-claimed; partitionOrderingGuaranteeId=not-reported; providerOwnedPartitioning=not-present; providerPartitioningId=not-reported; wolverineRequired=false"),
+                    $"publicationPath={publicationPath}; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; providerPartitionProofSelection=latest-proven-dispatch-state; providerPartitionStateCount={partitionStates.Length.ToString(CultureInfo.InvariantCulture)}; providerPartitionProvenCount={partitionProvenCount.ToString(CultureInfo.InvariantCulture)}; providerPartitionOwnership=not-claimed; providerPartitionOwnershipSource=not-reported; partitionAssignment=not-claimed; partitionAssignmentId=not-reported; partitionAffinity=not-claimed; partitionAffinityId=not-reported; partitionRebalancing=not-claimed; partitionRebalancingId=not-reported; partitionOrderingGuarantee=not-claimed; partitionOrderingGuaranteeId=not-reported; providerOwnedPartitioning=not-present; providerPartitioningId=not-reported; wolverineRequired=false"),
                 "Add a publishing path plus provider-owned partition proof before claiming provider partition ownership.");
         }
-
-        using var scope = scopeFactory.CreateScope();
-        var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
-        var partitionState = dispatchRuntimeCatalog?.States.FirstOrDefault(static state =>
-            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnership, out var value) &&
-            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
 
         if (partitionState is not null)
         {
@@ -583,7 +589,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 status,
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"publicationPath=active; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; providerPartitionOwnership={providerPartitionOwnership}; providerPartitionOwnershipSource={source}; partitionAssignment={partitionAssignment}; partitionAssignmentId={partitionAssignmentId}; partitionAffinity={partitionAffinity}; partitionAffinityId={partitionAffinityId}; partitionRebalancing={partitionRebalancing}; partitionRebalancingId={partitionRebalancingId}; partitionOrderingGuarantee={partitionOrderingGuarantee}; partitionOrderingGuaranteeId={partitionOrderingGuaranteeId}; providerOwnedPartitioning={providerOwnedPartitioning}; providerPartitioningId={providerPartitioningId}; outboxId={partitionState.OutboxId}; lastOutcome={partitionState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                    $"publicationPath=active; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; providerPartitionProofSelection=latest-proven-dispatch-state; providerPartitionStateCount={partitionStates.Length.ToString(CultureInfo.InvariantCulture)}; providerPartitionProvenCount={partitionProvenCount.ToString(CultureInfo.InvariantCulture)}; providerPartitionOwnership={providerPartitionOwnership}; providerPartitionOwnershipSource={source}; partitionAssignment={partitionAssignment}; partitionAssignmentId={partitionAssignmentId}; partitionAffinity={partitionAffinity}; partitionAffinityId={partitionAffinityId}; partitionRebalancing={partitionRebalancing}; partitionRebalancingId={partitionRebalancingId}; partitionOrderingGuarantee={partitionOrderingGuarantee}; partitionOrderingGuaranteeId={partitionOrderingGuaranteeId}; providerOwnedPartitioning={providerOwnedPartitioning}; providerPartitioningId={providerPartitioningId}; outboxId={partitionState.OutboxId}; lastOutcome={partitionState.LastOutcome ?? "unknown"}; lastObservedAtUtc={FormatObservedAt(partitionState.LastObservedAtUtc)}; wolverineRequired=false"),
                 nextGap);
         }
 
@@ -591,7 +597,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "not-claimed",
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"publicationPath=active; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; providerPartitionOwnership=not-claimed; providerPartitionOwnershipSource=not-reported; partitionAssignment=not-claimed; partitionAssignmentId=not-reported; partitionAffinity=not-claimed; partitionAffinityId=not-reported; partitionRebalancing=not-claimed; partitionRebalancingId=not-reported; partitionOrderingGuarantee=not-claimed; partitionOrderingGuaranteeId=not-reported; providerOwnedPartitioning=not-present; providerPartitioningId=not-reported; wolverineRequired=false"),
+                $"publicationPath=active; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; providerPartitionProofSelection=latest-proven-dispatch-state; providerPartitionStateCount={partitionStates.Length.ToString(CultureInfo.InvariantCulture)}; providerPartitionProvenCount={partitionProvenCount.ToString(CultureInfo.InvariantCulture)}; providerPartitionOwnership=not-claimed; providerPartitionOwnershipSource=not-reported; partitionAssignment=not-claimed; partitionAssignmentId=not-reported; partitionAffinity=not-claimed; partitionAffinityId=not-reported; partitionRebalancing=not-claimed; partitionRebalancingId=not-reported; partitionOrderingGuarantee=not-claimed; partitionOrderingGuaranteeId=not-reported; providerOwnedPartitioning=not-present; providerPartitioningId=not-reported; wolverineRequired=false"),
             "Add a provider-owned partition descriptor plus assignment, affinity, rebalancing, and ordering evidence before claiming provider partition ownership.");
     }
 
@@ -809,6 +815,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private static bool IsBrokerTopologyProof(EventDispatchRuntimeState state) =>
         string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
         EventDispatchBrokerTopologyMetadata.IsTopologyMaterialized(state.Metadata);
+
+    private static bool IsProviderPartitionProof(EventDispatchRuntimeState state) =>
+        string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+        EventDispatchProviderPartitionMetadata.IsPartitionOwnershipProven(state.Metadata);
 
     private static bool IsDurableRetryQueueProof(EventDispatchRuntimeState state) =>
         string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.RetryScheduled, StringComparison.OrdinalIgnoreCase) &&

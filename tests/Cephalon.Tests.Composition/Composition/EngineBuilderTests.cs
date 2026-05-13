@@ -2510,6 +2510,106 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingSelectsLatestProvenProviderPartitionEvidenceAcrossOutboxesWithoutWolverine()
+    {
+        var olderProviderPartitionReport = EventDispatchProviderPartitionMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "alpha-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 6, 10, 0, TimeSpan.Zero),
+                messageId: "evt-alpha-partition-001",
+                attempt: 1),
+            source: "alpha-partition-runtime",
+            partitionAssignmentId: "alpha-partition-assignment",
+            partitionAffinityId: "alpha-partition-affinity",
+            partitionRebalancingId: "alpha-partition-rebalancing",
+            partitionOrderingGuaranteeId: "alpha-partition-ordering",
+            providerPartitioningId: "alpha-provider-partitioning");
+        var newerProviderPartitionReport = EventDispatchProviderPartitionMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "beta-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 6, 40, 0, TimeSpan.Zero),
+                messageId: "evt-beta-partition-001",
+                attempt: 1),
+            source: "beta-partition-runtime",
+            partitionAssignmentId: "beta-partition-assignment",
+            partitionAffinityId: "beta-partition-affinity",
+            partitionRebalancingId: "beta-partition-rebalancing",
+            partitionOrderingGuaranteeId: "beta-partition-ordering",
+            providerPartitioningId: "beta-provider-partitioning");
+        var newerPartialProviderPartitionReport = new EventDispatchExecutionReport(
+            outboxId: "gamma-outbox",
+            channelId: "contracts",
+            outcome: EventDispatchExecutionOutcomes.Succeeded,
+            observedAtUtc: new DateTimeOffset(2026, 05, 13, 6, 50, 0, TimeSpan.Zero),
+            messageId: "evt-gamma-partition-001",
+            attempt: 1,
+            metadata: new Dictionary<string, string>
+            {
+                [EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnership] = "provider-reported",
+                [EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnershipSource] = "gamma-partition-runtime",
+                [EventDispatchRuntimeMetadataKeys.PartitionAssignment] = "reported"
+            });
+        var services = new ServiceCollection();
+        services.AddSingleton<IOutbox>(new EventingProofSelectionOutbox("alpha-outbox"));
+        services.AddSingleton<IEventDispatchRuntimeCatalog>(new TestEventDispatchRuntimeCatalog(
+            CreateDispatchRuntimeState(olderProviderPartitionReport),
+            CreateDispatchRuntimeState(newerProviderPartitionReport),
+            CreateDispatchRuntimeState(newerPartialProviderPartitionReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new MultiOutboxEventingTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Provider partition proof events."));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["provider-partition-ownership"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["provider-partition-ownership"].Metadata["status"]);
+        Assert.Contains("providerPartitionProofSelection=latest-proven-dispatch-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerPartitionStateCount=3", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerPartitionProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerPartitionOwnershipSource=beta-partition-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("partitionAssignment=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("partitionAssignmentId=beta-partition-assignment", evidence, StringComparison.Ordinal);
+        Assert.Contains("partitionAffinity=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("partitionAffinityId=beta-partition-affinity", evidence, StringComparison.Ordinal);
+        Assert.Contains("partitionRebalancing=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("partitionRebalancingId=beta-partition-rebalancing", evidence, StringComparison.Ordinal);
+        Assert.Contains("partitionOrderingGuarantee=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("partitionOrderingGuaranteeId=beta-partition-ordering", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerOwnedPartitioning=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerPartitioningId=beta-provider-partitioning", evidence, StringComparison.Ordinal);
+        Assert.Contains("outboxId=beta-outbox", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastObservedAtUtc=2026-05-13T06:40:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("providerPartitioningId=alpha-provider-partitioning", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("providerPartitionOwnershipSource=gamma-partition-runtime", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AddEventingSelectsLatestProvenWireContractEvidenceAcrossOutboxesWithoutWolverine()
     {
         var olderWireContractReport = EventDispatchWireContractMetadata.CreateReport(
