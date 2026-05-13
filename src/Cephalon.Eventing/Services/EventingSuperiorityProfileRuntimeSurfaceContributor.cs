@@ -16,7 +16,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private const string ReferenceFrameworks = "MassTransit,NServiceBus,Wolverine,MediatR";
     private const string ClaimPolicy = "claimed-only-with-runtime-evidence";
     private const string RemediationFilteredReadBenchmarks = "FilterSummaryByMessageId,FilterRetentionByMessageId,FilterLatestByCorrelationId,FilterOldestByDispatchOutcome,FilterOperatorDashboardSelectors";
-    private const string NativeEventingRuntimeSurfaces = "event-channels,event-subscriptions,event-publishers,event-dispatches,event-dispatch-remediations,event-dispatch-remediation-commands,event-dispatch-runtimes,eventing-superiority-profile";
+    private const string NativeEventingRuntimeSurfaces = "event-channels,event-subscriptions,event-publishers,event-dispatches,event-dispatch-remediations,event-dispatch-remediation-commands,event-dispatch-runtimes,eventing-benchmark-proofs,eventing-superiority-profile";
     private const string BehaviorEventingRuntimeSurfaceContributorTypeName = "Cephalon.Eventing.Behaviors.Services.BehaviorEventingRuntimeSurfaceContributor";
     private const string EventingSagaChoreographyPublisherTypeName = "Cephalon.Eventing.Behaviors.Services.EventingSagaChoreographyPublisher";
 
@@ -55,6 +55,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var durableCommandJournalReplayEvidence = ResolveDurableCommandJournalReplayEvidence(commandJournalDescriptor);
         var durableCommandJournalReplayNextGap = ResolveDurableCommandJournalReplayNextGap(commandJournalDescriptor);
         var observabilityCompliance = ResolveObservabilityComplianceProfile(commandJournalDescriptor);
+        var testabilityBenchmark = ResolveTestabilityBenchmarkProfile();
 
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
@@ -321,10 +322,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "testability-and-benchmark-evidence",
                     displayName: "Testability And Benchmark Evidence",
                     description: "Requires every promoted capability to carry focused tests, docs, and later benchmark evidence.",
-                    status: "partial",
-                    evidence: $"composition and hosting tests prove current runtime surfaces; remediation filtered-read guardrails now cover {RemediationFilteredReadBenchmarks}; broader native and provider-managed eventing benchmarks remain later gates.",
+                    status: testabilityBenchmark.Status,
+                    evidence: testabilityBenchmark.Evidence,
                     advantage: "Cephalon separates tested runtime truth from aspirational roadmap items.",
-                    nextGap: "Promote repeatable cold-start, broker dispatch, durable journal, and provider-managed eventing benchmarks.")
+                    nextGap: testabilityBenchmark.NextGap)
             ]);
     }
 
@@ -2323,6 +2324,55 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return new ObservabilityComplianceProfile(status, evidence, nextGap);
     }
 
+    private TestabilityBenchmarkProfile ResolveTestabilityBenchmarkProfile()
+    {
+        using var scope = scopeFactory.CreateScope();
+        var proofCatalog = scope.ServiceProvider.GetService<IEventingBenchmarkProofCatalog>();
+        var guardrails = proofCatalog?.Guardrails ?? [];
+        var requiredFamilies = EventingBenchmarkProofCatalog.RequiredGuardrailFamilies
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var coveredFamilies = guardrails
+            .Select(static guardrail => guardrail.Family)
+            .Distinct(StringComparer.Ordinal)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+        var missingFamilies = requiredFamilies
+            .Except(coveredFamilies, StringComparer.Ordinal)
+            .ToArray();
+        var proofCatalogState = proofCatalog is null ? "not-present" : "present";
+        var status = guardrails.Count == 0
+            ? "not-claimed"
+            : missingFamilies.Length == 0 ? "claimed" : "partial";
+        var activeGuardrailApplication = topology.HasOutboxPublishingPath
+            ? "outbox-backed-remediation"
+            : "catalog-only";
+        var guardrailIds = guardrails.Count == 0
+            ? "none"
+            : string.Join(',', guardrails.Select(static guardrail => guardrail.Id));
+        var benchmarks = guardrails.Count == 0
+            ? "none"
+            : string.Join(',', guardrails.Select(static guardrail => guardrail.Benchmark));
+        var benchmarkReports = guardrails.Count == 0
+            ? "none"
+            : string.Join(',', guardrails.Select(static guardrail => guardrail.ReportFileName).Distinct(StringComparer.Ordinal));
+        var maxMeanNanoseconds = guardrails.Count == 0
+            ? "none"
+            : string.Join(',', guardrails.Select(static guardrail => guardrail.MaxMeanNanoseconds.ToString(CultureInfo.InvariantCulture)));
+        var maxAllocatedBytes = guardrails.Count == 0
+            ? "none"
+            : string.Join(',', guardrails.Select(static guardrail => guardrail.MaxAllocatedBytes.ToString(CultureInfo.InvariantCulture)));
+        var coveredFamilyList = coveredFamilies.Length == 0 ? "none" : string.Join(',', coveredFamilies);
+        var missingFamilyList = missingFamilies.Length == 0 ? "none" : string.Join(',', missingFamilies);
+        var evidence = string.Create(
+            CultureInfo.InvariantCulture,
+            $"benchmarkProofCatalog={proofCatalogState}; guardrailCatalog={EventingBenchmarkProofCatalog.GuardrailCatalogReference}; guardrailCount={guardrails.Count.ToString(CultureInfo.InvariantCulture)}; guardrailIds={guardrailIds}; benchmarks={benchmarks}; benchmarkReports={benchmarkReports}; maxMeanNanoseconds={maxMeanNanoseconds}; maxAllocatedBytes={maxAllocatedBytes}; requiredGuardrailFamilies={EventingBenchmarkProofCatalog.RequiredGuardrailFamilies}; requiredGuardrailFamilyCount={requiredFamilies.Length.ToString(CultureInfo.InvariantCulture)}; coveredGuardrailFamilies={coveredFamilyList}; missingGuardrailFamilies={missingFamilyList}; activeOutboxBackedPath={(topology.HasOutboxPublishingPath ? "true" : "false")}; activeGuardrailApplication={activeGuardrailApplication}; focusedProofPolicy=focused-tests-docs-and-runtime-surface-required-per-promoted-claim; benchmarkProofMaturity=guardrail-catalog-mapped; providerNeutral=true; wolverineRequired=false");
+        var nextGap = missingFamilies.Length == 0
+            ? "Attach release-scorecard readback to every promoted Eventing benchmark guardrail."
+            : $"Promote repeatable benchmark guardrails for {missingFamilyList} before claiming full testability and benchmark evidence.";
+
+        return new TestabilityBenchmarkProfile(status, evidence, nextGap);
+    }
+
     private static TechnologyRuntimeEntry CreateEntry(
         string id,
         string displayName,
@@ -2385,4 +2435,6 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record BrokerDeadLetterReplayProfile(string Status, string Evidence, string NextGap);
 
     private sealed record ObservabilityComplianceProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record TestabilityBenchmarkProfile(string Status, string Evidence, string NextGap);
 }

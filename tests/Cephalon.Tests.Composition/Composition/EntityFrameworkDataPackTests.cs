@@ -945,9 +945,13 @@ public sealed class EntityFrameworkDataPackTests
         var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
 
-        Assert.Equal(6, eventingSurfaces.Count);
+        Assert.Equal(7, eventingSurfaces.Count);
         var outboxSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "outbox-producers");
         var outboxEntry = Assert.Single(outboxSurface.Entries);
+        var benchmarkProofSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-benchmark-proofs");
+        var benchmarkProofEntry = Assert.Single(
+            benchmarkProofSurface.Entries,
+            entry => entry.Id == "eventing.remediation.filter-summary-by-message-id");
         var publishSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-publishers");
         var publisherEntry = Assert.Single(publishSurface.Entries);
         var dispatchSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
@@ -958,6 +962,12 @@ public sealed class EntityFrameworkDataPackTests
         var durableAuditEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "durable-remediation-command-audit");
         var durableReplayCursorEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "durable-command-journal-replay-cursor");
         var brokerReplayOwnershipEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "broker-dead-letter-replay-ownership");
+        var testabilityEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "testability-and-benchmark-evidence");
+        Assert.Equal("FilterSummaryByMessageId", benchmarkProofEntry.Metadata["benchmark"]);
+        Assert.Equal("8000", benchmarkProofEntry.Metadata["maxMeanNanoseconds"]);
+        Assert.Equal("512", benchmarkProofEntry.Metadata["maxAllocatedBytes"]);
+        Assert.Equal("true", benchmarkProofEntry.Metadata["providerNeutral"]);
+        Assert.Equal("false", benchmarkProofEntry.Metadata["wolverineRequired"]);
         Assert.Equal("entity-framework-outbox", outboxEntry.Id);
         Assert.Equal("entity-framework", outboxEntry.Metadata["provider"]);
         Assert.Equal("transactional-table", outboxEntry.Metadata["mode"]);
@@ -1006,6 +1016,14 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("brokerReplay=not-claimed", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("providerOwnedBrokerPath=not-present", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("partial", testabilityEntry.Metadata["status"]);
+        Assert.Contains("benchmarkProofCatalog=present", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("guardrailCount=5", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("activeOutboxBackedPath=true", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("activeGuardrailApplication=outbox-backed-remediation", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("coveredGuardrailFamilies=remediation-filtered-reads", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingGuardrailFamilies=cold-start,broker-dispatch,durable-journal,provider-managed-eventing", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["runtimeState"] == "available");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["dispatchStore"] == "available");
@@ -1059,7 +1077,7 @@ public sealed class EntityFrameworkDataPackTests
         var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
 
-        Assert.Equal(4, eventingSurfaces.Count);
+        Assert.Equal(5, eventingSurfaces.Count);
         var inboxSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "inbox-stores");
         var inboxEntry = Assert.Single(inboxSurface.Entries);
         var subscriptionSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");

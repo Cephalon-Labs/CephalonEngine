@@ -2184,8 +2184,16 @@ public sealed class EngineBuilderTests
         Assert.Contains(eventingConvention.Events, entry => entry.Id == 4200 && entry.Name == "EventPublicationStaged");
         Assert.Contains(eventingConvention.Events, entry => entry.Id == 4204 && entry.Name == "EventSubscriptionRetryScheduled");
         Assert.Contains(eventingConvention.Events, entry => entry.Id == 4209 && entry.Name == "EventPublicationDispatchRetryScheduled");
-        Assert.Equal(6, technologySurfaces.Surfaces.Count);
+        Assert.Equal(7, technologySurfaces.Surfaces.Count);
         Assert.Single(technologySurfaces.GetByTechnology("agentic-workloads"));
+        var benchmarkProofSurface = Assert.Single(
+            technologySurfaces.GetByTechnology("event-driven-integration"),
+            surface => surface.SurfaceId == "eventing-benchmark-proofs");
+        var benchmarkProofEntry = Assert.Single(
+            benchmarkProofSurface.Entries,
+            entry => entry.Id == "eventing.remediation.filter-operator-dashboard-selectors");
+        Assert.Equal("guardrail-catalog-mapped", benchmarkProofEntry.Metadata["benchmarkProofMaturity"]);
+        Assert.Equal("false", benchmarkProofEntry.Metadata["wolverineRequired"]);
         Assert.Contains(
             technologySurfaces.GetByTechnology("event-driven-integration")
                 .Single(surface => surface.SurfaceId == "event-channels")
@@ -2217,7 +2225,7 @@ public sealed class EngineBuilderTests
                     entry.Metadata["lastError"] == "Transient projection failure");
         Assert.Same(runtime.Manifest, snapshot.Manifest);
         Assert.Equal(RuntimeStatus.Created, snapshot.Status.Status);
-        Assert.Equal(6, snapshot.TechnologySurfaces.Count);
+        Assert.Equal(7, snapshot.TechnologySurfaces.Count);
         Assert.Contains(
             snapshot.TechnologySurfaces.Single(surface => surface.TechnologyId == "knowledge-retrieval").Entries,
             entry => entry.Id == "runbooks" &&
@@ -2268,9 +2276,21 @@ public sealed class EngineBuilderTests
 
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
         var profileSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile");
+        var benchmarkProofSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-benchmark-proofs");
+        var benchmarkProofEntry = Assert.Single(
+            benchmarkProofSurface.Entries,
+            entry => entry.Id == "eventing.remediation.filter-operator-dashboard-selectors");
         var dimensions = profileSurface.Entries.ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
 
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        Assert.Equal(5, benchmarkProofSurface.Entries.Count);
+        Assert.Equal("FilterOperatorDashboardSelectors", benchmarkProofEntry.Metadata["benchmark"]);
+        Assert.Equal("Cephalon.Benchmarks.HotPath.EventDispatchRemediationCatalogBenchmarks-report.csv", benchmarkProofEntry.Metadata["benchmarkReport"]);
+        Assert.Equal("30000", benchmarkProofEntry.Metadata["maxMeanNanoseconds"]);
+        Assert.Equal("512", benchmarkProofEntry.Metadata["maxAllocatedBytes"]);
+        Assert.Equal("guardrail-catalog-mapped", benchmarkProofEntry.Metadata["benchmarkProofMaturity"]);
+        Assert.Equal("true", benchmarkProofEntry.Metadata["providerNeutral"]);
+        Assert.Equal("false", benchmarkProofEntry.Metadata["wolverineRequired"]);
         var capability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.superiority-profile");
         Assert.Equal("true", capability.Metadata["wolverineOptional"]);
         Assert.Equal("claimed-only-with-runtime-evidence", capability.Metadata["claimPolicy"]);
@@ -2301,6 +2321,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
         Assert.Equal("claimed", dimensions["observability-compliance-and-auditability"].Metadata["status"]);
+        Assert.Equal("partial", dimensions["testability-and-benchmark-evidence"].Metadata["status"]);
         Assert.Equal("MassTransit,NServiceBus,Wolverine,MediatR", dimensions["native-wolverine-free-baseline"].Metadata["referenceFrameworks"]);
         Assert.Contains("Wolverine remains optional", dimensions["native-wolverine-free-baseline"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("EnableInProcessSubscriptionExecution=true", dimensions["mediator-style-in-process-low-ceremony"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -2415,6 +2436,16 @@ public sealed class EngineBuilderTests
         Assert.Contains("commandAuditJournal=not-active", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("providerNeutral=true", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("benchmarkProofCatalog=present", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("guardrailCount=5", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("guardrailIds=eventing.remediation.filter-summary-by-message-id,eventing.remediation.filter-retention-by-message-id,eventing.remediation.filter-latest-by-correlation-id,eventing.remediation.filter-oldest-by-dispatch-outcome,eventing.remediation.filter-operator-dashboard-selectors", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("requiredGuardrailFamilyCount=5", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("coveredGuardrailFamilies=remediation-filtered-reads", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingGuardrailFamilies=cold-start,broker-dispatch,durable-journal,provider-managed-eventing", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("activeOutboxBackedPath=false", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("activeGuardrailApplication=catalog-only", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("benchmarkProofMaturity=guardrail-catalog-mapped", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

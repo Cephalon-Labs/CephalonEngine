@@ -105,6 +105,8 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         services.TryAddSingleton(options);
         services.TryAddSingleton(new EventSubscriptionExecutionPipelineDescriptor(subscriptionExecutionMiddlewareCount));
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, EventingDiagnosticsConventionContributor>());
+        services.TryAddSingleton<IEventingBenchmarkProofCatalog, EventingBenchmarkProofCatalog>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingBenchmarkProofRuntimeSurfaceContributor>());
         services.TryAddSingleton<IEventChannelCatalog, EventChannelCatalog>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingRuntimeSurfaceContributor>());
         services.TryAddSingleton<IEventContractCatalog, EventContractCatalog>();
