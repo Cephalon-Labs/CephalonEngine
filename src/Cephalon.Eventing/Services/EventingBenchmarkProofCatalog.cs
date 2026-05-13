@@ -8,7 +8,7 @@ internal interface IEventingBenchmarkProofCatalog
 internal sealed class EventingBenchmarkProofCatalog : IEventingBenchmarkProofCatalog
 {
     public const string GuardrailCatalogReference = "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json";
-    public const string RequiredGuardrailFamilies = "remediation-filtered-reads,cold-start,broker-dispatch,durable-journal,provider-managed-eventing";
+    public const string RequiredGuardrailFamilies = "remediation-filtered-reads,cold-start,broker-dispatch,durable-journal,provider-managed-eventing,provider-operated-eventing";
 
     private static readonly IReadOnlyList<EventingBenchmarkProofDescriptor> DefaultGuardrails =
     [
@@ -91,7 +91,15 @@ internal sealed class EventingBenchmarkProofCatalog : IEventingBenchmarkProofCat
             Benchmark: "ReportProviderManagedEventingProofs",
             MaxMeanNanoseconds: 20000,
             MaxAllocatedBytes: 65536,
-            HotPath: "provider-managed-dispatch-subscription-proof-report")
+            HotPath: "provider-managed-dispatch-subscription-proof-report"),
+        new(
+            Id: "eventing.provider-operated.report-aggregate-runtime-proofs",
+            Family: "provider-operated-eventing",
+            ReportFileName: "Cephalon.Benchmarks.HotPath.EventProviderOperatedEventingBenchmarks-report.csv",
+            Benchmark: "ReportProviderOperatedEventingProofs",
+            MaxMeanNanoseconds: 50000,
+            MaxAllocatedBytes: 131072,
+            HotPath: "provider-operated-aggregate-proof-report")
     ];
 
     public IReadOnlyList<EventingBenchmarkProofDescriptor> Guardrails => DefaultGuardrails;

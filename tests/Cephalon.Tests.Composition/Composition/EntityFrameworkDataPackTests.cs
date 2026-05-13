@@ -964,6 +964,9 @@ public sealed class EntityFrameworkDataPackTests
         var providerManagedProofEntry = Assert.Single(
             benchmarkProofSurface.Entries,
             entry => entry.Id == "eventing.provider-managed.report-runtime-proofs");
+        var providerOperatedProofEntry = Assert.Single(
+            benchmarkProofSurface.Entries,
+            entry => entry.Id == "eventing.provider-operated.report-aggregate-runtime-proofs");
         var publishSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-publishers");
         var publisherEntry = Assert.Single(publishSurface.Entries);
         var dispatchSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
@@ -1004,6 +1007,12 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("20000", providerManagedProofEntry.Metadata["maxMeanNanoseconds"]);
         Assert.Equal("65536", providerManagedProofEntry.Metadata["maxAllocatedBytes"]);
         Assert.Equal("false", providerManagedProofEntry.Metadata["wolverineRequired"]);
+        Assert.Equal("ReportProviderOperatedEventingProofs", providerOperatedProofEntry.Metadata["benchmark"]);
+        Assert.Equal("provider-operated-eventing", providerOperatedProofEntry.Metadata["guardrailFamily"]);
+        Assert.Equal("Cephalon.Benchmarks.HotPath.EventProviderOperatedEventingBenchmarks-report.csv", providerOperatedProofEntry.Metadata["benchmarkReport"]);
+        Assert.Equal("50000", providerOperatedProofEntry.Metadata["maxMeanNanoseconds"]);
+        Assert.Equal("131072", providerOperatedProofEntry.Metadata["maxAllocatedBytes"]);
+        Assert.Equal("false", providerOperatedProofEntry.Metadata["wolverineRequired"]);
         Assert.Equal("entity-framework-outbox", outboxEntry.Id);
         Assert.Equal("entity-framework", outboxEntry.Metadata["provider"]);
         Assert.Equal("transactional-table", outboxEntry.Metadata["mode"]);
@@ -1054,10 +1063,10 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("wolverineRequired=false", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("claimed", testabilityEntry.Metadata["status"]);
         Assert.Contains("benchmarkProofCatalog=present", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
-        Assert.Contains("guardrailCount=10", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("guardrailCount=11", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("activeOutboxBackedPath=true", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("activeGuardrailApplication=outbox-backed-remediation", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
-        Assert.Contains("coveredGuardrailFamilies=broker-dispatch,cold-start,durable-journal,provider-managed-eventing,remediation-filtered-reads", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("coveredGuardrailFamilies=broker-dispatch,cold-start,durable-journal,provider-managed-eventing,provider-operated-eventing,remediation-filtered-reads", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("missingGuardrailFamilies=none", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");

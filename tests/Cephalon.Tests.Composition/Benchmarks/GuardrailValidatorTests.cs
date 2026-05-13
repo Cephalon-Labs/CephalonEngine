@@ -15,7 +15,7 @@ public sealed class GuardrailValidatorTests
             "performance-guardrails.json"));
 
         Assert.Equal("1.0", catalog.Version);
-        Assert.Equal(39, catalog.Entries.Count);
+        Assert.Equal(40, catalog.Entries.Count);
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifestWithStrictTrustPolicy");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildPhase8RuntimeManifest");
@@ -45,6 +45,7 @@ public sealed class GuardrailValidatorTests
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ReportProjectedBrokerDispatches");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "RecordAndReadDurableJournal");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ReportProviderManagedEventingProofs");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ReportProviderOperatedEventingProofs");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchBehavior");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "EvaluateRbacAllow");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "EvaluateRbacDeny");
@@ -154,6 +155,22 @@ ComposeEngine,11.50 μs,24.00 KB
         try
         {
             Assert.True(await benchmark.ReportProviderManagedEventingProofs() > 0);
+        }
+        finally
+        {
+            benchmark.Cleanup();
+        }
+    }
+
+    [Fact]
+    public async Task EventProviderOperatedEventingBenchmarksExerciseProviderOperatedProofPathUsedByGuardrails()
+    {
+        var benchmark = new EventProviderOperatedEventingBenchmarks();
+        await benchmark.Setup();
+
+        try
+        {
+            Assert.True(await benchmark.ReportProviderOperatedEventingProofs() > 0);
         }
         finally
         {

@@ -205,6 +205,13 @@
       "notes": "Native provider-managed Eventing proof should record provider-reported dispatch and subscription evidence, read dispatch/subscription runtime catalogs, and stay below 20 us and under roughly 64 KB allocated per provider-managed proof operation without requiring Wolverine."
     },
     {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.EventProviderOperatedEventingBenchmarks-report.csv",
+      "benchmark": "ReportProviderOperatedEventingProofs",
+      "maxMeanNanoseconds": 50000,
+      "maxAllocatedBytes": 131072,
+      "notes": "Native provider-operated Eventing proof should record provider-reported delivery, broker replay, scheduling, durable retry, wire-contract, context, and subscription evidence, read the aggregate runtime profile, and stay below 50 us and under roughly 128 KB allocated per provider-operated proof operation without requiring Wolverine."
+    },
+    {
       "reportFileName": "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
       "benchmark": "DispatchBehavior",
       "maxMeanNanoseconds": 10000,
