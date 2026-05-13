@@ -2363,6 +2363,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("not-claimed", dimensions["subscription-ordering-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["process-manager-state-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["provider-managed-runtime-proof-coverage"].Metadata["status"]);
+        Assert.Equal("not-claimed", dimensions["provider-operated-runtime-proof-coverage"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["choreography-handoff-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
@@ -2473,6 +2474,15 @@ public sealed class EngineBuilderTests
         Assert.Contains("missingProofDimensionCount=8", dimensions["provider-managed-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("benchmarkFamily=provider-managed-eventing", dimensions["provider-managed-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["provider-managed-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("requiredOperationalProofDimensionCount=6", dimensions["provider-operated-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("coveredOperationalProofDimensions=none", dimensions["provider-operated-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("coveredOperationalProofDimensionCount=0", dimensions["provider-operated-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partialOperationalProofDimensions=none", dimensions["provider-operated-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingOperationalProofDimensions=provider-managed-runtime-proof-coverage,broker-dead-letter-replay-ownership,scheduled-and-delayed-delivery-ownership,durable-retry-queue-ownership,serialization-and-contract-versioning-ownership,tenant-and-correlation-context-ownership", dimensions["provider-operated-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingOperationalProofDimensionCount=6", dimensions["provider-operated-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("runtimeProofClass=provider-operated", dimensions["provider-operated-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("choreographyHandoffProof=separate-dimension", dimensions["provider-operated-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["provider-operated-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("choreographyCatalog=not-present", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("publicationStateCatalog=not-present", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("eventingBridge=not-active", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -4102,6 +4112,266 @@ public sealed class EngineBuilderTests
         Assert.Contains("proofSource=eventing-superiority-profile", evidence, StringComparison.Ordinal);
         Assert.Contains("benchmarkFamily=provider-managed-eventing", evidence, StringComparison.Ordinal);
         Assert.Contains("failureAndSchedulerProofs=separate-dimensions", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AddEventingClaimsProviderOperatedRuntimeProofCoverageWhenOperationalProofDimensionsArePresentWithoutWolverine()
+    {
+        static Dictionary<string, string> CreateConsumerContextMetadata()
+        {
+            var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            EventConsumerContextExtractor.ApplyMetadata(
+                metadata,
+                new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    [EventContextHeaderNames.TenantId] = "tenant-operated",
+                    [EventContextHeaderNames.CorrelationId] = "corr-operated",
+                    [EventContextHeaderNames.CausationId] = "cause-operated",
+                    [EventContextHeaderNames.Baggage] = "tier=operated",
+                    [EventContextHeaderNames.MessageId] = "msg-operated"
+                });
+
+            return metadata;
+        }
+
+        var consumerContextMetadata = CreateConsumerContextMetadata();
+        var providerHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            [EventContextHeaderNames.TenantId] = "tenant-operated",
+            [EventContextHeaderNames.CorrelationId] = "corr-operated",
+            [EventContextHeaderNames.CausationId] = "cause-operated",
+            [EventContextHeaderNames.Baggage] = "tier=operated",
+            [EventContextHeaderNames.MessageId] = "msg-operated"
+        };
+        var contextMetadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            [EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation] = "dispatch-report-metadata",
+            [EventDispatchRuntimeMetadataKeys.DispatchContextMetadata] = "reported",
+            [EventDispatchRuntimeMetadataKeys.DispatchContextHeaderCount] = providerHeaders.Count.ToString(CultureInfo.InvariantCulture),
+            [EventDispatchRuntimeMetadataKeys.DispatchContextMetadataCount] = "4"
+        };
+        EventDispatchProviderBrokerContextHeaders.ApplyReportMetadata(contextMetadata, providerHeaders);
+        var successfulDispatchReport = new EventDispatchExecutionReport(
+            outboxId: "operated-outbox",
+            channelId: "contracts",
+            outcome: EventDispatchExecutionOutcomes.Succeeded,
+            observedAtUtc: new DateTimeOffset(2026, 05, 13, 17, 0, 0, TimeSpan.Zero),
+            messageId: "evt-provider-operated-001",
+            attempt: 1,
+            metadata: contextMetadata);
+        successfulDispatchReport = EventDispatchProviderContextPersistenceMetadata.CreateReport(
+            successfulDispatchReport,
+            source: "operated-context-store");
+        successfulDispatchReport = EventDispatchCrossNodeContextHandoffMetadata.CreateReport(
+            successfulDispatchReport,
+            consumerContextMetadata,
+            source: "operated-context-runtime",
+            producerNodeId: "operated-producer-node",
+            consumerNodeId: "operated-consumer-node");
+        successfulDispatchReport = EventDispatchExactlyOnceDeliveryProofMetadata.CreateReport(
+            EventDispatchProviderPartitionMetadata.CreateReport(
+                EventDispatchBrokerTopologyMetadata.CreateReport(
+                    successfulDispatchReport,
+                    source: "operated-topology-runtime",
+                    exchangeProvisioningId: "operated-exchange-provisioning",
+                    queueProvisioningId: "operated-queue-provisioning",
+                    topicProvisioningId: "operated-topic-provisioning",
+                    partitionProvisioningId: "operated-topology-partition",
+                    topologyVerificationId: "operated-topology-verification",
+                    providerTopologyId: "operated-provider-topology"),
+                source: "operated-partition-runtime",
+                partitionAssignmentId: "operated-partition-assignment",
+                partitionAffinityId: "operated-partition-affinity",
+                partitionRebalancingId: "operated-partition-rebalancing",
+                partitionOrderingGuaranteeId: "operated-partition-ordering",
+                providerPartitioningId: "operated-provider-partitioning"),
+            source: "operated-delivery-runtime",
+            providerReceiptId: "operated-provider-receipt",
+            subscriberAcknowledgementId: "operated-subscriber-ack",
+            destinationCommitId: "operated-destination-commit",
+            exactlyOnceProofId: "operated-exactly-once-proof",
+            strategy: "operated-transactional-ack");
+        successfulDispatchReport = EventDispatchScheduledDeliveryMetadata.CreateReport(
+            successfulDispatchReport,
+            source: "operated-schedule-runtime",
+            durableScheduledDeliveryId: "operated-durable-schedule",
+            providerDelayQueueId: "operated-provider-delay",
+            brokerScheduledDeliveryId: "operated-broker-schedule",
+            scheduleCoordinationId: "operated-schedule-coordination",
+            scheduleRecoveryId: "operated-schedule-recovery");
+        successfulDispatchReport = EventDispatchWireContractMetadata.CreateReport(
+            successfulDispatchReport,
+            source: "operated-wire-runtime",
+            payloadSerializationExecutionId: "operated-payload-serialization",
+            wireEnvelopeSchemaExecutionId: "operated-wire-envelope-schema",
+            schemaLookupExecutionId: "operated-schema-lookup",
+            contractVersionNegotiationExecutionId: "operated-contract-version-negotiation",
+            upcasterExecutionId: "operated-upcaster-execution",
+            compatibilityValidationExecutionId: "operated-compatibility-validation",
+            providerSerializationId: "operated-provider-serialization",
+            wireContractProofId: "operated-wire-contract-proof");
+        var retryReport = EventDispatchDurableRetryQueueMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "retry-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.RetryScheduled,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 17, 5, 0, TimeSpan.Zero),
+                messageId: "evt-provider-operated-retry-001",
+                attempt: 2,
+                error: "Provider accepted retry into a durable retry queue."),
+            source: "operated-retry-runtime",
+            durableRetryQueueId: "operated-durable-retry-queue",
+            retryPersistenceId: "operated-retry-persistence",
+            brokerErrorQueueId: "operated-broker-error-queue",
+            poisonQueueId: "operated-poison-queue",
+            retryCoordinationId: "operated-retry-coordination",
+            retryLeaseId: "operated-retry-lease");
+        var deadLetterReport = EventDispatchBrokerDeadLetterReplayMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "dead-letter-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Failed,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 17, 10, 0, TimeSpan.Zero),
+                messageId: "evt-provider-operated-dead-letter-001",
+                attempt: 3,
+                error: "Provider moved the event into a broker dead-letter queue."),
+            source: "operated-dlq-runtime",
+            brokerDeadLetterQueueId: "operated-broker-dead-letter-queue",
+            brokerReplayActionCatalogId: "operated-broker-replay-actions",
+            brokerReplayCursorId: "operated-broker-replay-cursor",
+            brokerPurgeQuarantineId: "operated-broker-purge-quarantine",
+            providerProofId: "operated-dlq-proof");
+        var subscriptionReport = EventSubscriptionProcessManagerStateMetadata.CreateReport(
+            EventSubscriptionOrderingMetadata.CreateReport(
+                EventSubscriptionConcurrencyMetadata.CreateReport(
+                    EventSubscriptionProviderIdempotencyMetadata.CreateReport(
+                        EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(
+                            new EventSubscriptionExecutionReport(
+                                subscriptionId: "operated-subscription",
+                                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                                observedAtUtc: new DateTimeOffset(2026, 05, 13, 17, 15, 0, TimeSpan.Zero),
+                                messageId: "evt-provider-operated-001",
+                                attempt: 1,
+                                metadata: consumerContextMetadata),
+                            source: "operated-inbound-runtime",
+                            consumerLoopId: "operated-consumer-loop",
+                            acknowledgementId: "operated-inbound-ack",
+                            leaseId: "operated-consumer-lease",
+                            retryPolicy: "operated-bounded-retry",
+                            poisonMessageHandling: "operated-dead-letter",
+                            offsetCheckpointId: "operated-offset-checkpoint"),
+                        source: "operated-idempotency-runtime",
+                        providerIdempotencyKey: "operated-subscription:evt-provider-operated-001",
+                        brokerDeduplicationId: "operated-broker-dedup",
+                        exactlyOnceProofId: "operated-consumer-exactly-once",
+                        durableInboxCommandId: "operated-durable-inbox-command",
+                        genericInboxCommandId: "operated-generic-inbox-command",
+                        idempotencyLeaseId: "operated-idempotency-lease"),
+                    source: "operated-concurrency-runtime",
+                    perSubscriptionConcurrencyLimit: 16,
+                    consumerPrefetchCount: 64,
+                    backpressureStrategy: "operated-bounded-channel",
+                    providerConcurrencyId: "operated-provider-concurrency",
+                    consumerLeaseId: "operated-concurrency-lease",
+                    workStealingId: "operated-work-stealing",
+                    distributedWorkSharingId: "operated-distributed-sharing"),
+                source: "operated-ordering-runtime",
+                handlerOrderingGuaranteeId: "operated-handler-ordering",
+                localFanOutOrderingId: "operated-local-ordering",
+                perKeyOrderingKey: "operated-key",
+                partitionOrderingId: "operated-partition-ordering",
+                causalOrderingId: "operated-causal-ordering",
+                replayOrderingCursorId: "operated-replay-ordering",
+                crossNodeOrderingId: "operated-cross-node-ordering",
+                providerOrderingId: "operated-provider-ordering"),
+            source: "operated-process-manager-runtime",
+            sagaStatePersistenceId: "operated-saga-state",
+            sagaCorrelationId: "operated-saga-correlation",
+            sagaTimeoutSchedulerId: "operated-timeout-scheduler",
+            compensationWorkflowId: "operated-compensation",
+            processManagerConcurrencyId: "operated-process-concurrency",
+            processManagerRecoveryId: "operated-process-recovery",
+            providerProcessManagerId: "operated-provider-process-manager");
+        var services = new ServiceCollection();
+        services.AddSingleton<IOutbox>(new EventingProofSelectionOutbox("operated-outbox"));
+        services.AddSingleton<IEventDispatchRuntimeCatalog>(new TestEventDispatchRuntimeCatalog(
+            CreateDispatchRuntimeState(successfulDispatchReport),
+            CreateDispatchRuntimeState(retryReport),
+            CreateDispatchRuntimeState(deadLetterReport)));
+        services.AddSingleton<IEventSubscriptionRuntimeCatalog>(new TestEventSubscriptionRuntimeCatalog(
+            CreateSubscriptionRuntimeState(subscriptionReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new MultiOutboxEventingTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Provider-operated proof events."));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "operated-subscription",
+                    displayName: "Operated Subscription",
+                    description: "Provider-operated proof subscription.",
+                    channelId: "contracts",
+                    handlerId: "operated-provider-managed-handler",
+                    deliveryMode: "broker-consumer"));
+                options.ContextPolicies.Add(new EventContextPolicyDescriptor(
+                    id: "operated-context",
+                    displayName: "Operated Context",
+                    description: "Provider-operated context proof policy.",
+                    runtimeKind: "code-first",
+                    declaresTenantContext: true,
+                    declaresCorrelationId: true,
+                    declaresCausationId: true,
+                    declaresBaggage: true,
+                    validatesMessageHeaders: true,
+                    headerNames:
+                    [
+                        EventContextHeaderNames.TenantId,
+                        EventContextHeaderNames.CorrelationId,
+                        EventContextHeaderNames.CausationId,
+                        EventContextHeaderNames.Baggage
+                    ]));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["provider-operated-runtime-proof-coverage"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["provider-managed-runtime-proof-coverage"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["broker-dead-letter-replay-ownership"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["durable-retry-queue-ownership"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["provider-operated-runtime-proof-coverage"].Metadata["status"]);
+        Assert.Contains("requiredOperationalProofDimensionCount=6", evidence, StringComparison.Ordinal);
+        Assert.Contains("coveredOperationalProofDimensionCount=6", evidence, StringComparison.Ordinal);
+        Assert.Contains("coveredOperationalProofDimensions=provider-managed-runtime-proof-coverage,broker-dead-letter-replay-ownership,scheduled-and-delayed-delivery-ownership,durable-retry-queue-ownership,serialization-and-contract-versioning-ownership,tenant-and-correlation-context-ownership", evidence, StringComparison.Ordinal);
+        Assert.Contains("partialOperationalProofDimensions=none", evidence, StringComparison.Ordinal);
+        Assert.Contains("partialOperationalProofDimensionCount=0", evidence, StringComparison.Ordinal);
+        Assert.Contains("missingOperationalProofDimensions=none", evidence, StringComparison.Ordinal);
+        Assert.Contains("missingOperationalProofDimensionCount=0", evidence, StringComparison.Ordinal);
+        Assert.Contains("proofSource=eventing-superiority-profile", evidence, StringComparison.Ordinal);
+        Assert.Contains("runtimeProofClass=provider-operated", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerManagedCoreCoverage=provider-managed-runtime-proof-coverage", evidence, StringComparison.Ordinal);
+        Assert.Contains("choreographyHandoffProof=separate-dimension", evidence, StringComparison.Ordinal);
+        Assert.Contains("commandJournalProof=separate-dimension", evidence, StringComparison.Ordinal);
+        Assert.Contains("benchmarkProof=separate-dimension", evidence, StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
     }
 

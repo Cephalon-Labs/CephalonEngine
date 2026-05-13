@@ -50,12 +50,19 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             subscriptionConcurrency,
             subscriptionOrdering,
             processManagerState);
+        var brokerDeadLetterReplay = ResolveBrokerDeadLetterReplayProfile();
+        var providerOperatedRuntimeProofCoverage = ResolveProviderOperatedRuntimeProofCoverageProfile(
+            providerManagedRuntimeProofCoverage,
+            brokerDeadLetterReplay,
+            serializationVersioning,
+            tenantCorrelation,
+            scheduledDelivery,
+            durableRetryQueue);
         var choreographyHandoff = ResolveChoreographyHandoffEvidence();
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
             : $"benchmark guardrails exist for {RemediationFilteredReadBenchmarks}; no outbox-backed command path is active.";
-        var brokerDeadLetterReplay = ResolveBrokerDeadLetterReplayProfile();
         var commandJournalDescriptor = ResolveCommandJournalDescriptor();
         var durableCommandJournalStatus = ResolveDurableCommandJournalStatus(commandJournalDescriptor);
         var durableCommandJournalEvidence = ResolveDurableCommandJournalEvidence(commandJournalDescriptor);
@@ -195,6 +202,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     evidence: providerManagedRuntimeProofCoverage.Evidence,
                     advantage: "Operators can tell whether Cephalon has provider-managed proof across topology, partitioning, delivery completion, inbound consumption, idempotency, concurrency, ordering, and process-manager state from one runtime entry instead of stitching together external bus-specific dashboards.",
                     nextGap: providerManagedRuntimeProofCoverage.NextGap),
+                CreateEntry(
+                    id: "provider-operated-runtime-proof-coverage",
+                    displayName: "Provider-operated Runtime Proof Coverage",
+                    description: "Summarizes whether the active runtime has complete provider-operated resilience, wire-contract, and context proof coverage without requiring Wolverine.",
+                    status: providerOperatedRuntimeProofCoverage.Status,
+                    evidence: providerOperatedRuntimeProofCoverage.Evidence,
+                    advantage: "Operators can tell whether Cephalon has bus-grade proof across core provider-managed delivery, broker replay, scheduling, durable retry, wire contracts, and context propagation from one runtime entry instead of stitching together several bus-specific dashboards.",
+                    nextGap: providerOperatedRuntimeProofCoverage.NextGap),
                 CreateEntry(
                     id: "choreography-handoff-ownership",
                     displayName: "Choreography Handoff Ownership",
@@ -2170,6 +2185,50 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private static string FormatDimensionList(string[] dimensions) =>
         dimensions.Length == 0 ? "none" : string.Join(',', dimensions);
 
+    private static ProviderOperatedRuntimeProofCoverageProfile ResolveProviderOperatedRuntimeProofCoverageProfile(
+        ProviderManagedRuntimeProofCoverageProfile providerManagedRuntimeProofCoverage,
+        BrokerDeadLetterReplayProfile brokerDeadLetterReplay,
+        SerializationVersioningProfile serializationVersioning,
+        TenantCorrelationProfile tenantCorrelation,
+        ScheduledDeliveryProfile scheduledDelivery,
+        DurableRetryQueueProfile durableRetryQueue)
+    {
+        (string Id, string Status)[] requiredDimensions =
+        [
+            ("provider-managed-runtime-proof-coverage", providerManagedRuntimeProofCoverage.Status),
+            ("broker-dead-letter-replay-ownership", brokerDeadLetterReplay.Status),
+            ("scheduled-and-delayed-delivery-ownership", scheduledDelivery.Status),
+            ("durable-retry-queue-ownership", durableRetryQueue.Status),
+            ("serialization-and-contract-versioning-ownership", serializationVersioning.Status),
+            ("tenant-and-correlation-context-ownership", tenantCorrelation.Status)
+        ];
+        var coveredDimensions = requiredDimensions
+            .Where(static dimension => string.Equals(dimension.Status, "claimed", StringComparison.OrdinalIgnoreCase))
+            .Select(static dimension => dimension.Id)
+            .ToArray();
+        var partialDimensions = requiredDimensions
+            .Where(static dimension => string.Equals(dimension.Status, "partial", StringComparison.OrdinalIgnoreCase))
+            .Select(static dimension => dimension.Id)
+            .ToArray();
+        var missingDimensions = requiredDimensions
+            .Where(static dimension => !string.Equals(dimension.Status, "claimed", StringComparison.OrdinalIgnoreCase))
+            .Select(static dimension => dimension.Id)
+            .ToArray();
+        var status = missingDimensions.Length == 0
+            ? "claimed"
+            : coveredDimensions.Length == 0 ? "not-claimed" : "partial";
+        var nextGap = status == "claimed"
+            ? "Keep the aggregate provider-operated proof covered by provider integration, fault, scheduler, wire-contract, and context propagation evidence while Wolverine remains optional."
+            : "Complete the missing provider-operated resilience, wire-contract, and context proof dimensions before claiming aggregate provider-operated runtime proof coverage.";
+
+        return new ProviderOperatedRuntimeProofCoverageProfile(
+            status,
+            string.Create(
+                CultureInfo.InvariantCulture,
+                $"requiredOperationalProofDimensions={string.Join(',', requiredDimensions.Select(static dimension => dimension.Id))}; requiredOperationalProofDimensionCount={requiredDimensions.Length.ToString(CultureInfo.InvariantCulture)}; coveredOperationalProofDimensions={FormatDimensionList(coveredDimensions)}; coveredOperationalProofDimensionCount={coveredDimensions.Length.ToString(CultureInfo.InvariantCulture)}; partialOperationalProofDimensions={FormatDimensionList(partialDimensions)}; partialOperationalProofDimensionCount={partialDimensions.Length.ToString(CultureInfo.InvariantCulture)}; missingOperationalProofDimensions={FormatDimensionList(missingDimensions)}; missingOperationalProofDimensionCount={missingDimensions.Length.ToString(CultureInfo.InvariantCulture)}; proofSource=eventing-superiority-profile; runtimeProofClass=provider-operated; providerManagedCoreCoverage=provider-managed-runtime-proof-coverage; choreographyHandoffProof=separate-dimension; commandJournalProof=separate-dimension; benchmarkProof=separate-dimension; providerNeutral=true; wolverineRequired=false"),
+            nextGap);
+    }
+
     private BrokerDeadLetterReplayProfile ResolveBrokerDeadLetterReplayProfile()
     {
         var dispatchStoreDeadLetterIntent = topology.HasDispatchStore ? "available" : "not-active";
@@ -2501,6 +2560,8 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record ProcessManagerStateProfile(string Status, string Evidence, string NextGap);
 
     private sealed record ProviderManagedRuntimeProofCoverageProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record ProviderOperatedRuntimeProofCoverageProfile(string Status, string Evidence, string NextGap);
 
     private sealed record BrokerDeadLetterReplayProfile(string Status, string Evidence, string NextGap);
 
