@@ -697,7 +697,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $aspNetCoreColdStartBaseline.Measurements.GuardrailMaxAllocatedBytes | Should -Be 30000000
         $requestAllocationBaseline.Measurements.AllocatedBytes | Should -Contain 27914.24
 
-        $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.4.0"
+        $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.5.0"
         $json.SupplyChainEvidence.Status | Should -Be "workflow-ready-external-policy-pending"
         $json.SupplyChainEvidence.ReleaseWorkflow | Should -Be ".github/workflows/publish-release.yml"
         $json.SupplyChainEvidence.SourceDocuments | Should -Contain "docs/package-publishing.md"
@@ -734,8 +734,11 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredStatus | Should -Be "submitted"
         $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredRunCreated | Should -BeTrue
         $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredRunUrl | Should -BeTrue
-        $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredReportFieldCount | Should -Be 5
+        $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredReportFieldCount | Should -Be 9
         $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredReportFields | Should -Contain "RunUrl"
+        $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredReportFields | Should -Contain "DispatchActor"
+        $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredReportFields | Should -Contain "DispatchIdentityStatus"
+        $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredReportFields | Should -Contain "RequiredReleaseManagerAction"
         $json.SupplyChainEvidence.BlockedCount | Should -Be 0
         $json.SupplyChainEvidence.EvidenceItems.Id | Should -Contain "nuget-vulnerability-audit"
         $json.SupplyChainEvidence.EvidenceItems.Id | Should -Contain "cyclonedx-sbom-per-package"

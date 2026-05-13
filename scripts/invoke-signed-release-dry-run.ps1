@@ -117,6 +117,53 @@ function Resolve-SignedReleaseDryRunBlockerClass {
     return "dispatch-failed"
 }
 
+function Resolve-SignedReleaseDryRunRequiredAction {
+    param(
+        [AllowNull()]
+        [string]$Status,
+        [AllowNull()]
+        [string]$BlockerClass,
+        [AllowNull()]
+        [string]$DispatchActor
+    )
+
+    $actor = if ([string]::IsNullOrWhiteSpace($DispatchActor)) { "the dispatching GitHub identity" } else { "dispatch identity '$DispatchActor'" }
+
+    switch ($BlockerClass) {
+        "dispatch-identity-actions-disabled" {
+            return "Enable GitHub Actions for $actor or rerun the probe with an Actions-enabled release-manager identity."
+        }
+        "dispatch-token-permission-denied" {
+            return "Rerun the probe with a release-manager token that can dispatch workflows for the repository."
+        }
+        "repository-actions-disabled" {
+            return "Enable repository Actions permissions for the repository before rerunning the signed-release dry-run probe."
+        }
+        "workflow-inactive" {
+            return "Activate the Publish Release workflow before rerunning the signed-release dry-run probe."
+        }
+        "workflow-not-found" {
+            return "Restore the Publish Release workflow at .github/workflows/publish-release.yml before rerunning the signed-release dry-run probe."
+        }
+        "workflow-dispatch-not-enabled" {
+            return "Restore workflow_dispatch support on the Publish Release workflow before rerunning the signed-release dry-run probe."
+        }
+        "workflow-not-found-or-inaccessible" {
+            return "Verify the workflow name, repository, and release-manager workflow permissions before rerunning the signed-release dry-run probe."
+        }
+        { -not [string]::IsNullOrWhiteSpace($_) } {
+            return "Resolve blocker '$BlockerClass' before rerunning the signed-release dry-run probe with -RequireRunCreated."
+        }
+        default {
+            if ($Status -eq "submitted") {
+                return "Attach the generated report, workflow RunUrl, and artifact summary to release-readiness evidence."
+            }
+
+            return "Run pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated with an Actions-enabled release-manager identity before claiming signed-release proof."
+        }
+    }
+}
+
 function Get-SignedReleaseWorkflow {
     param(
         [Parameter(Mandatory = $true)]
@@ -176,6 +223,7 @@ function Invoke-SignedReleaseDryRunReadiness {
 
     $workflowListResult = Invoke-GitHubCli -Arguments @("api", "repos/$Repository/actions/workflows") -GitHubCliInvoker $GitHubCliInvoker
     $permissionsResult = Invoke-GitHubCli -Arguments @("api", "repos/$Repository/actions/permissions") -GitHubCliInvoker $GitHubCliInvoker
+    $identityResult = Invoke-GitHubCli -Arguments @("api", "user", "--jq", ".login") -GitHubCliInvoker $GitHubCliInvoker
 
     $workflow = $null
     $workflowId = $null
@@ -187,6 +235,13 @@ function Invoke-SignedReleaseDryRunReadiness {
     $status = "ready"
     $blockerClass = $null
     $summary = "Publish Release dry-run dispatch prerequisites are ready."
+    $dispatchActor = $null
+    $dispatchIdentityStatus = "unresolved"
+
+    if ($identityResult.ExitCode -eq 0 -and -not [string]::IsNullOrWhiteSpace($identityResult.Output)) {
+        $dispatchActor = $identityResult.Output
+        $dispatchIdentityStatus = "resolved"
+    }
 
     if ($workflowListResult.ExitCode -ne 0) {
         $status = "blocked"
@@ -241,6 +296,7 @@ function Invoke-SignedReleaseDryRunReadiness {
     $runHeadSha = $null
     $runCreatedAtUtc = $null
     $runLookupStatus = "not-run"
+    $dispatchCommand = "gh workflow run `"$WorkflowName`" --repo $Repository --ref $Ref -f dry_run=true"
 
     if ($status -eq "ready" -and -not $SkipDispatch) {
         $dispatchAttempted = $true
@@ -305,12 +361,21 @@ function Invoke-SignedReleaseDryRunReadiness {
         $summary = "Publish Release dry-run dispatch prerequisites are ready; dispatch was skipped by request."
     }
 
+    $requiredReleaseManagerAction = Resolve-SignedReleaseDryRunRequiredAction `
+        -Status $status `
+        -BlockerClass $blockerClass `
+        -DispatchActor $dispatchActor
+
     $report = [pscustomobject]([ordered]@{
-        '$schemaVersion' = "1.0.0"
+        '$schemaVersion' = "1.1.0"
         Status = $status
         BlockerClass = $blockerClass
         Summary = $summary
         Repository = $Repository
+        DispatchActor = $dispatchActor
+        DispatchIdentityStatus = $dispatchIdentityStatus
+        DispatchCommand = $dispatchCommand
+        RequiredReleaseManagerAction = $requiredReleaseManagerAction
         WorkflowName = $WorkflowName
         WorkflowId = $workflowId
         WorkflowPath = $workflowPath

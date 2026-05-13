@@ -1,5 +1,5 @@
 {
-  "$schemaVersion": "1.4.0",
+  "$schemaVersion": "1.5.0",
   "status": "workflow-ready-external-policy-pending",
   "summary": "Tag-triggered package release provenance is wired in GitHub Actions, while nuget.org-side trusted-publishing policy, prefix reservation, and the publishing account secret remain external release-manager prerequisites before the first real tag push.",
   "releaseWorkflow": ".github/workflows/publish-release.yml",
@@ -83,13 +83,17 @@
     "requiredRunUrl": true,
     "sourceDocument": "docs/package-publishing.md",
     "sourceToken": "Status = submitted",
-    "summary": "The signed-release dry-run proof remains partial until an Actions-enabled release-manager identity dispatches the Publish Release workflow with dry_run=true and the generated report records a workflow run URL.",
+    "summary": "The signed-release dry-run proof remains partial until an Actions-enabled release-manager identity dispatches the Publish Release workflow with dry_run=true and the generated report records a workflow run URL, dispatch actor, identity-resolution status, dispatch command, and required release-manager action.",
     "requiredReportFields": [
       "Status",
       "BlockerClass",
+      "DispatchActor",
+      "DispatchIdentityStatus",
+      "DispatchCommand",
       "DispatchAttempted",
       "RunCreated",
-      "RunUrl"
+      "RunUrl",
+      "RequiredReleaseManagerAction"
     ]
   },
   "evidenceItems": [

@@ -77,14 +77,23 @@ Describe "invoke-signed-release-dry-run.ps1" {
                 return New-FakeGhResult -ExitCode 0 -Output (New-ActionsPermissionsJson)
             }
 
+            if ($command -eq "api user --jq .login") {
+                return New-FakeGhResult -ExitCode 0 -Output "Cephalon-Neza"
+            }
+
             return New-FakeGhResult -ExitCode 1 -Output "Unexpected command: $command"
         }
 
         $result = Invoke-SignedReleaseDryRunReadiness -OutputPath $script:tempRoot -SkipDispatch -GitHubCliInvoker $invoker
 
         Test-Path -LiteralPath $result.JsonPath -PathType Leaf | Should -BeTrue
+        $result.Report.'$schemaVersion' | Should -Be "1.1.0"
         $result.Report.Status | Should -Be "ready"
         $result.Report.BlockerClass | Should -BeNullOrEmpty
+        $result.Report.DispatchActor | Should -Be "Cephalon-Neza"
+        $result.Report.DispatchIdentityStatus | Should -Be "resolved"
+        $result.Report.DispatchCommand | Should -Be 'gh workflow run "Publish Release" --repo Cephalon-Labs/CephalonEngine --ref master -f dry_run=true'
+        $result.Report.RequiredReleaseManagerAction | Should -Match "RequireRunCreated"
         $result.Report.WorkflowActive | Should -BeTrue
         $result.Report.RepositoryActionsEnabled | Should -BeTrue
         $result.Report.DispatchAttempted | Should -BeFalse
@@ -104,6 +113,10 @@ Describe "invoke-signed-release-dry-run.ps1" {
                 return New-FakeGhResult -ExitCode 0 -Output (New-ActionsPermissionsJson)
             }
 
+            if ($command -eq "api user --jq .login") {
+                return New-FakeGhResult -ExitCode 0 -Output "Cephalon-Neza"
+            }
+
             if ($command -eq "workflow run Publish Release --repo Cephalon-Labs/CephalonEngine --ref master -f dry_run=true") {
                 return New-FakeGhResult `
                     -ExitCode 1 `
@@ -117,6 +130,9 @@ Describe "invoke-signed-release-dry-run.ps1" {
 
         $result.Report.Status | Should -Be "blocked"
         $result.Report.BlockerClass | Should -Be "dispatch-identity-actions-disabled"
+        $result.Report.DispatchActor | Should -Be "Cephalon-Neza"
+        $result.Report.DispatchIdentityStatus | Should -Be "resolved"
+        $result.Report.RequiredReleaseManagerAction | Should -Be "Enable GitHub Actions for dispatch identity 'Cephalon-Neza' or rerun the probe with an Actions-enabled release-manager identity."
         $result.Report.DispatchAttempted | Should -BeTrue
         $result.Report.DispatchExitCode | Should -Be 1
         $result.Report.RunCreated | Should -BeFalse
@@ -150,6 +166,10 @@ Describe "invoke-signed-release-dry-run.ps1" {
                 return New-FakeGhResult -ExitCode 0 -Output (New-ActionsPermissionsJson)
             }
 
+            if ($command -eq "api user --jq .login") {
+                return New-FakeGhResult -ExitCode 0 -Output "Cephalon-Neza"
+            }
+
             if ($command -eq "workflow run Publish Release --repo Cephalon-Labs/CephalonEngine --ref master -f dry_run=true") {
                 return New-FakeGhResult -ExitCode 0 -Output ""
             }
@@ -170,6 +190,7 @@ Describe "invoke-signed-release-dry-run.ps1" {
         $result.Report.RunLookupStatus | Should -Be "found"
         $result.Report.RunId | Should -Be "123456789"
         $result.Report.RunUrl | Should -Be "https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/123456789"
+        $result.Report.RequiredReleaseManagerAction | Should -Match "Attach the generated report"
     }
 
     It "fails when RequireRunCreated is set and the dispatch remains blocked" {
@@ -183,6 +204,10 @@ Describe "invoke-signed-release-dry-run.ps1" {
 
             if ($command -eq "api repos/Cephalon-Labs/CephalonEngine/actions/permissions") {
                 return New-FakeGhResult -ExitCode 0 -Output (New-ActionsPermissionsJson)
+            }
+
+            if ($command -eq "api user --jq .login") {
+                return New-FakeGhResult -ExitCode 0 -Output "Cephalon-Neza"
             }
 
             if ($command -eq "workflow run Publish Release --repo Cephalon-Labs/CephalonEngine --ref master -f dry_run=true") {
@@ -202,5 +227,7 @@ Describe "invoke-signed-release-dry-run.ps1" {
         Test-Path -LiteralPath $jsonPath -PathType Leaf | Should -BeTrue
         $report = Get-Content -LiteralPath $jsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
         $report.BlockerClass | Should -Be "dispatch-identity-actions-disabled"
+        $report.DispatchActor | Should -Be "Cephalon-Neza"
+        $report.RequiredReleaseManagerAction | Should -Match "Actions-enabled release-manager identity"
     }
 }
