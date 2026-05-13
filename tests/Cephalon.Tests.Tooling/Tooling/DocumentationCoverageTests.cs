@@ -189,32 +189,24 @@ public sealed class DocumentationCoverageTests
     {
         var repositoryRoot = GetRepositoryRoot();
         var componentCatalogPath = Path.Combine(repositoryRoot, "docs", "components", "README.md");
-        var componentCatalogRoot = Path.GetDirectoryName(componentCatalogPath)!;
-        var componentCatalog = File.ReadAllText(componentCatalogPath);
-        var localLinkTargets = MarkdownLinkPattern
-            .Matches(componentCatalog)
-            .Select(static match => match.Groups["target"].Value.Trim())
-            .Where(IsRepositoryLocalLink)
-            .Select(static target => target.Split('#')[0])
-            .Where(static target => target.Length > 0)
-            .Distinct(StringComparer.Ordinal)
-            .OrderBy(target => target, StringComparer.Ordinal)
+
+        AssertLocalMarkdownLinksResolve(repositoryRoot, componentCatalogPath, "component catalog");
+    }
+
+    [Fact]
+    public void ComponentDocumentLocalLinksResolve()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var componentDocsRoot = Path.Combine(repositoryRoot, "docs", "components");
+        var componentDocPaths = Directory
+            .EnumerateFiles(componentDocsRoot, "*.md", SearchOption.TopDirectoryOnly)
+            .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
 
-        Assert.NotEmpty(localLinkTargets);
+        Assert.NotEmpty(componentDocPaths);
 
-        foreach (var localLinkTarget in localLinkTargets)
-        {
-            var normalizedTarget = localLinkTarget.Replace('/', Path.DirectorySeparatorChar);
-            var resolvedPath = Path.GetFullPath(Path.Combine(componentCatalogRoot, normalizedTarget));
-
-            Assert.True(
-                IsPathInsideRepository(repositoryRoot, resolvedPath),
-                $"Expected component catalog link target '{localLinkTarget}' to stay inside the repository but resolved to '{resolvedPath}'.");
-            Assert.True(
-                File.Exists(resolvedPath),
-                $"Expected component catalog link target '{localLinkTarget}' to resolve to an existing file at '{resolvedPath}'.");
-        }
+        foreach (var componentDocPath in componentDocPaths)
+            AssertLocalMarkdownLinksResolve(repositoryRoot, componentDocPath, $"component document '{Path.GetFileName(componentDocPath)}'");
     }
 
     [Fact]
@@ -1203,6 +1195,36 @@ public sealed class DocumentationCoverageTests
             return false;
 
         return !Uri.TryCreate(target, UriKind.Absolute, out _);
+    }
+
+    private static void AssertLocalMarkdownLinksResolve(string repositoryRoot, string markdownPath, string documentDescription)
+    {
+        var markdownRoot = Path.GetDirectoryName(markdownPath)!;
+        var markdown = File.ReadAllText(markdownPath);
+        var localLinkTargets = MarkdownLinkPattern
+            .Matches(markdown)
+            .Select(static match => match.Groups["target"].Value.Trim())
+            .Where(IsRepositoryLocalLink)
+            .Select(static target => target.Split('#')[0])
+            .Where(static target => target.Length > 0)
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(target => target, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.NotEmpty(localLinkTargets);
+
+        foreach (var localLinkTarget in localLinkTargets)
+        {
+            var normalizedTarget = localLinkTarget.Replace('/', Path.DirectorySeparatorChar);
+            var resolvedPath = Path.GetFullPath(Path.Combine(markdownRoot, normalizedTarget));
+
+            Assert.True(
+                IsPathInsideRepository(repositoryRoot, resolvedPath),
+                $"Expected {documentDescription} link target '{localLinkTarget}' to stay inside the repository but resolved to '{resolvedPath}'.");
+            Assert.True(
+                File.Exists(resolvedPath),
+                $"Expected {documentDescription} link target '{localLinkTarget}' to resolve to an existing file at '{resolvedPath}'.");
+        }
     }
 
     private static bool IsPathInsideRepository(string repositoryRoot, string path)

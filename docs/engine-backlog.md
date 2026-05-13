@@ -74,6 +74,33 @@ Current focus:
 - treat the component catalog as a unique source-project map: every shipped `src/Cephalon.*` project must appear exactly once in `docs/components/README.md`, so future family re-grouping cannot leave duplicate component links behind
 - treat the component catalog as a two-way adoption map: every hand-authored component doc under `docs/components/*.md` must be linked exactly once from `docs/components/README.md`, so new component pages cannot become orphan docs outside the catalog
 - treat component catalog repo-local links as guarded adoption pointers: every Markdown link in `docs/components/README.md` that points inside the repository must resolve to an existing file before component-doc guidance can ship
+- treat every component page as part of the same guarded docs graph: repo-local Markdown links across `docs/components/*.md` must resolve relative to the page that declares them and stay inside the repository
+
+### ENG-685 Component docs link-target guard
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: component-docs / planning-governance / documentation coverage
+Quality dimensions: Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1354
+
+Why:
+
+- `ENG-684` guarded repo-local links in the component catalog, but individual component pages could still point at moved or deleted repo-local docs/source files
+- component pages are the package-level adoption contract after developers drill down from `docs/components/README.md`
+- the current graph has hundreds of valid local links; locking that state avoids a quiet regression later
+
+Delivered:
+
+- documented that repo-local Markdown links in both the component catalog and component pages must resolve to existing files
+- refactored the catalog local-link guard into a shared Tooling helper
+- added Tooling documentation coverage that resolves every repo-local Markdown link across `docs/components/*.md` relative to the page that declares it and requires the target to stay inside the repository
+
+Validation:
+
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~DocumentationCoverageTests" --logger "console;verbosity=minimal"`
+- `git diff --check`
 
 ### ENG-684 Component catalog link-target guard
 
