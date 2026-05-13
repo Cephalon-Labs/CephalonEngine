@@ -2869,6 +2869,134 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingSelectsLatestProvenSubscriptionOrderingEvidenceAcrossSubscriptionsWithoutWolverine()
+    {
+        var olderOrderingReport = EventSubscriptionOrderingMetadata.CreateReport(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "alpha-subscription",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 13, 0, 0, TimeSpan.Zero),
+                messageId: "msg-alpha-ordering-001",
+                attempt: 1),
+            source: "alpha-ordering-runtime",
+            handlerOrderingGuaranteeId: "alpha-handler-ordering",
+            localFanOutOrderingId: "alpha-local-fanout-ordering",
+            perKeyOrderingKey: "alpha-ordering-key",
+            partitionOrderingId: "alpha-partition-ordering",
+            causalOrderingId: "alpha-causal-ordering",
+            replayOrderingCursorId: "alpha-replay-ordering-cursor",
+            crossNodeOrderingId: "alpha-cross-node-ordering",
+            providerOrderingId: "alpha-provider-ordering");
+        var newerOrderingReport = EventSubscriptionOrderingMetadata.CreateReport(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "beta-subscription",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 13, 30, 0, TimeSpan.Zero),
+                messageId: "msg-beta-ordering-001",
+                attempt: 1),
+            source: "beta-ordering-runtime",
+            handlerOrderingGuaranteeId: "beta-handler-ordering",
+            localFanOutOrderingId: "beta-local-fanout-ordering",
+            perKeyOrderingKey: "beta-ordering-key",
+            partitionOrderingId: "beta-partition-ordering",
+            causalOrderingId: "beta-causal-ordering",
+            replayOrderingCursorId: "beta-replay-ordering-cursor",
+            crossNodeOrderingId: "beta-cross-node-ordering",
+            providerOrderingId: "beta-provider-ordering");
+        var newerPartialOrderingReport = new EventSubscriptionExecutionReport(
+            subscriptionId: "gamma-subscription",
+            outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+            observedAtUtc: new DateTimeOffset(2026, 05, 13, 14, 0, 0, TimeSpan.Zero),
+            messageId: "msg-gamma-ordering-001",
+            attempt: 1,
+            metadata: new Dictionary<string, string>
+            {
+                [EventSubscriptionRuntimeMetadataKeys.SubscriptionOrdering] = "provider-reported",
+                [EventSubscriptionRuntimeMetadataKeys.SubscriptionOrderingSource] = "gamma-ordering-runtime",
+                [EventSubscriptionRuntimeMetadataKeys.HandlerOrderingGuarantee] = "reported"
+            });
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventSubscriptionRuntimeCatalog>(new TestEventSubscriptionRuntimeCatalog(
+            CreateSubscriptionRuntimeState(olderOrderingReport),
+            CreateSubscriptionRuntimeState(newerOrderingReport),
+            CreateSubscriptionRuntimeState(newerPartialOrderingReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Subscription ordering proof events."));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "alpha-subscription",
+                    displayName: "Alpha Subscription",
+                    description: "Older subscription ordering proof.",
+                    channelId: "contracts",
+                    handlerId: "alpha-ordering-handler",
+                    deliveryMode: "application-service"));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "beta-subscription",
+                    displayName: "Beta Subscription",
+                    description: "Newer subscription ordering proof.",
+                    channelId: "contracts",
+                    handlerId: "beta-ordering-handler",
+                    deliveryMode: "application-service"));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "gamma-subscription",
+                    displayName: "Gamma Subscription",
+                    description: "Newer partial subscription ordering report.",
+                    channelId: "contracts",
+                    handlerId: "gamma-ordering-handler",
+                    deliveryMode: "application-service"));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["subscription-ordering-ownership"].Metadata["status"]);
+        Assert.Contains("subscriptionOrderingProofSelection=latest-proven-subscription-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("subscriptionOrderingStateCount=3", evidence, StringComparison.Ordinal);
+        Assert.Contains("subscriptionOrderingProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("subscriptionOrderingSource=beta-ordering-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("handlerOrderingGuarantee=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("handlerOrderingGuaranteeId=beta-handler-ordering", evidence, StringComparison.Ordinal);
+        Assert.Contains("localFanOutOrdering=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("localFanOutOrderingId=beta-local-fanout-ordering", evidence, StringComparison.Ordinal);
+        Assert.Contains("perKeyOrdering=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("perKeyOrderingKey=beta-ordering-key", evidence, StringComparison.Ordinal);
+        Assert.Contains("partitionOrdering=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("partitionOrderingId=beta-partition-ordering", evidence, StringComparison.Ordinal);
+        Assert.Contains("causalOrdering=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("causalOrderingId=beta-causal-ordering", evidence, StringComparison.Ordinal);
+        Assert.Contains("replayOrdering=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("replayOrderingCursorId=beta-replay-ordering-cursor", evidence, StringComparison.Ordinal);
+        Assert.Contains("crossNodeOrdering=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("crossNodeOrderingId=beta-cross-node-ordering", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerOrdering=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerOrderingId=beta-provider-ordering", evidence, StringComparison.Ordinal);
+        Assert.Contains("subscriptionId=beta-subscription", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastObservedAtUtc=2026-05-13T13:30:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("providerOrderingId=alpha-provider-ordering", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("subscriptionOrderingSource=gamma-ordering-runtime", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AddEventingProjectsContractCatalogProfileEvidenceWithoutWolverine()
     {
         var services = new ServiceCollection();

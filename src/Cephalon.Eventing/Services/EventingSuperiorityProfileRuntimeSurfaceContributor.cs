@@ -812,6 +812,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         string.Equals(state.LastOutcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
         EventSubscriptionConcurrencyMetadata.IsConcurrencyProven(state.Metadata);
 
+    private static bool IsSubscriptionOrderingProof(EventSubscriptionRuntimeState state) =>
+        string.Equals(state.LastOutcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+        EventSubscriptionOrderingMetadata.IsOrderingProven(state.Metadata);
+
     private static string FormatObservedAt(DateTimeOffset? observedAtUtc) =>
         observedAtUtc.HasValue
             ? observedAtUtc.Value.ToString("O", CultureInfo.InvariantCulture)
@@ -1593,9 +1597,15 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
 
         using var scope = scopeFactory.CreateScope();
         var subscriptionRuntimeCatalog = scope.ServiceProvider.GetService<IEventSubscriptionRuntimeCatalog>();
-        var orderingState = subscriptionRuntimeCatalog?.States.FirstOrDefault(static state =>
-            state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.SubscriptionOrdering, out var value) &&
-            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+        var orderingStates = subscriptionRuntimeCatalog?.States
+            .Where(static state =>
+                state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.SubscriptionOrdering, out var value) &&
+                string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase))
+            .ToArray() ?? [];
+        var orderingProvenCount = orderingStates.Count(IsSubscriptionOrderingProof);
+        var orderingState = SelectBestSubscriptionProof(
+            orderingStates,
+            IsSubscriptionOrderingProof);
 
         if (orderingState is not null)
         {
@@ -1683,7 +1693,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 status,
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionOrdering={subscriptionOrdering}; subscriptionOrderingSource={subscriptionOrderingSource}; handlerOrderingGuarantee={handlerOrderingGuarantee}; handlerOrderingGuaranteeId={handlerOrderingGuaranteeId}; localFanOutOrdering={localFanOutOrdering}; localFanOutOrderingId={localFanOutOrderingId}; perKeyOrdering={perKeyOrdering}; perKeyOrderingKey={perKeyOrderingKey}; partitionOrdering={partitionOrdering}; partitionOrderingId={partitionOrderingId}; causalOrdering={causalOrdering}; causalOrderingId={causalOrderingId}; replayOrdering={replayOrdering}; replayOrderingCursorId={replayOrderingCursorId}; crossNodeOrdering={crossNodeOrdering}; crossNodeOrderingId={crossNodeOrderingId}; providerOrdering={providerOrdering}; providerOrderingId={providerOrderingId}; subscriptionId={orderingState.SubscriptionId}; lastOutcome={orderingState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                    $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionOrderingProofSelection=latest-proven-subscription-state; subscriptionOrderingStateCount={orderingStates.Length.ToString(CultureInfo.InvariantCulture)}; subscriptionOrderingProvenCount={orderingProvenCount.ToString(CultureInfo.InvariantCulture)}; subscriptionOrdering={subscriptionOrdering}; subscriptionOrderingSource={subscriptionOrderingSource}; handlerOrderingGuarantee={handlerOrderingGuarantee}; handlerOrderingGuaranteeId={handlerOrderingGuaranteeId}; localFanOutOrdering={localFanOutOrdering}; localFanOutOrderingId={localFanOutOrderingId}; perKeyOrdering={perKeyOrdering}; perKeyOrderingKey={perKeyOrderingKey}; partitionOrdering={partitionOrdering}; partitionOrderingId={partitionOrderingId}; causalOrdering={causalOrdering}; causalOrderingId={causalOrderingId}; replayOrdering={replayOrdering}; replayOrderingCursorId={replayOrderingCursorId}; crossNodeOrdering={crossNodeOrdering}; crossNodeOrderingId={crossNodeOrderingId}; providerOrdering={providerOrdering}; providerOrderingId={providerOrderingId}; subscriptionId={orderingState.SubscriptionId}; lastOutcome={orderingState.LastOutcome ?? "unknown"}; lastObservedAtUtc={FormatObservedAt(orderingState.LastObservedAtUtc)}; wolverineRequired=false"),
                 nextGap);
         }
 
@@ -1691,7 +1701,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "not-claimed",
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionOrdering=not-claimed; subscriptionOrderingSource=not-reported; handlerOrderingGuarantee=not-claimed; handlerOrderingGuaranteeId=not-reported; localFanOutOrdering=not-claimed; localFanOutOrderingId=not-reported; perKeyOrdering=not-claimed; perKeyOrderingKey=not-reported; partitionOrdering=not-claimed; partitionOrderingId=not-reported; causalOrdering=not-claimed; causalOrderingId=not-reported; replayOrdering=not-claimed; replayOrderingCursorId=not-reported; crossNodeOrdering=not-claimed; crossNodeOrderingId=not-reported; providerOrdering=not-present; providerOrderingId=not-reported; wolverineRequired=false"),
+                $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionOrderingProofSelection=latest-proven-subscription-state; subscriptionOrderingStateCount={orderingStates.Length.ToString(CultureInfo.InvariantCulture)}; subscriptionOrderingProvenCount={orderingProvenCount.ToString(CultureInfo.InvariantCulture)}; subscriptionOrdering=not-claimed; subscriptionOrderingSource=not-reported; handlerOrderingGuarantee=not-claimed; handlerOrderingGuaranteeId=not-reported; localFanOutOrdering=not-claimed; localFanOutOrderingId=not-reported; perKeyOrdering=not-claimed; perKeyOrderingKey=not-reported; partitionOrdering=not-claimed; partitionOrderingId=not-reported; causalOrdering=not-claimed; causalOrderingId=not-reported; replayOrdering=not-claimed; replayOrderingCursorId=not-reported; crossNodeOrdering=not-claimed; crossNodeOrderingId=not-reported; providerOrdering=not-present; providerOrderingId=not-reported; wolverineRequired=false"),
             "Add provider-neutral subscription ordering proof metadata plus local, per-key, partition, causal, replay, cross-node, and provider ordering evidence before claiming subscription ordering ownership.");
     }
 
