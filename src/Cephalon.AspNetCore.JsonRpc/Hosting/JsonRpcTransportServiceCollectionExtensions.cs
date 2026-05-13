@@ -27,6 +27,7 @@ public static class JsonRpcTransportServiceCollectionExtensions
                 serviceProvider.GetService<RuntimeManifest>()));
         services.TryAddSingleton<JsonRpcDirectModuleCircuitBreakerState>();
         services.TryAddSingleton<JsonRpcDirectModuleBulkheadState>();
+        services.TryAddSingleton<JsonRpcDirectModuleTimeoutState>();
         services.TryAddTransient<JsonRpcDirectModuleResilienceFilter>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, JsonRpcTransportRouteMapper>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, JsonRpcDirectModuleResilienceRuntimeContributor>());
