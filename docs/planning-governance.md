@@ -132,6 +132,20 @@ Cadence rules:
 
 When the review month rolls over, the new review's recommendations supersede the previous month's recommendations only where they are explicitly addressed; otherwise, treat the previous recommendations as still open follow-through.
 
+## Long-range horizon alignment
+
+[`long-range-direction.md`](long-range-direction.md) is the planning frame for multi-year and multi-decade engine decisions. It does not replace the roadmap, but roadmap phase changes should now state how they preserve the horizon commitments.
+
+Use this review whenever a phase plan is added, retired, or materially re-scoped:
+
+- map the change to the nearest horizon it primarily affects: near term (`3-5 years`), mid term (`5-10 years`), far term (`10-20 years`), or very far term (`20-30+ years`)
+- confirm the change keeps the core host-agnostic, additive, introspectable, and reversible
+- confirm the change does not turn a preview/runtime/deployment-mode readiness lane into a shipping support claim without the matching validation and docs
+- confirm the change uses companion packs, generated surfaces, or host adapters for technology bets whose lifetime is shorter than the engine's expected lifetime
+- update [`engine-roadmap.md`](engine-roadmap.md), [`engine-backlog.md`](engine-backlog.md), [`project-memory.md`](project-memory.md), and the active architecture-review follow-up tracker when the review finds a real phase-plan drift
+
+The `ENG-644` review on `May 13, 2026` found the current roadmap still aligned with the long-range frame: phase 7 and release-readiness work cover the near-term adoption and shipping-floor posture, phase 8 through phase 13 cover mid-term modular/runtime primitives, the runtime-contract/index/scorecard/eventing-superiority surfaces cover far-term machine-readable framework consumption, and the monthly architecture-review plus planning-governance loop keeps the very-far-term repository-archeology commitment visible. No phase-plan rewrite was needed; future phase changes should cite the affected horizon explicitly instead of appending unanchored roadmap prose.
+
 ## Conformance matrix maintenance
 
 [`docs/conformance-matrix.md`](conformance-matrix.md) is the consolidated per-package adoption-truth read across maturity, ownership, runtime routes, snapshot keys, and catalog interfaces. It is a navigation page, not a new source of truth: it consolidates [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`runtime-contract-index.md`](runtime-contract-index.md), and the per-package component docs.

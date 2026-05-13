@@ -453,6 +453,19 @@ The project board now tracks both delivered work and upcoming work through expli
 - require future roadmap items in that lane to state how the Cephalon-native shape is expected to outperform the reference instead of merely matching it
 - treat intentional metadata-only or catalog-only work as valid only when docs, planning, and runtime surfaces label it honestly
 
+## Long-range horizon alignment checkpoint
+
+`ENG-644` reviewed this roadmap against [`long-range-direction.md`](long-range-direction.md) on `May 13, 2026` before the Sprint 126 planning round.
+
+The current phase plan still aligns with the long-range planning frame:
+
+- near term (`3-5 years`): phase 7, the release-readiness scorecard, `.NET 11` readiness, package publishing, supply-chain, SRE, adoption smoke, and deployment-mode validation keep the shipping floor deliberate and externally adoptable
+- mid term (`5-10 years`): phase 8 through phase 13 keep app-model, behavior, provider, eventing, resilience, migration, edge, cell, CDC, and governance capabilities additive through configuration, generated surfaces, and companion packs rather than core-only bets
+- far term (`10-20 years`): runtime-contract indexes, `/engine/*` readbacks, `snapshot.*`, generated scorecard evidence, provider-integration manifests, deployment-mode evidence, and eventing superiority profiles keep the engine consumable by future operators and AI agents without relying on unstructured prose
+- very far term (`20-30+ years`): project memory, monthly architecture reviews, planning governance, immutable `ENG-*` ids, and commit/card references keep repository archaeology cheap enough for future contributors to evolve the engine without re-litigating hidden decisions
+
+No phase-plan rewrite is required from this checkpoint. Future phase additions or retirements should cite the horizon they affect and use the build-now / leave-a-hook / defer / companion-pack decision boundaries from `long-range-direction.md`.
+
 ## Phase 0: Foundation shipped
 
 Status: substantially complete

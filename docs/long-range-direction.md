@@ -118,6 +118,19 @@ The following table records, in compressed form, how each forecast layer transla
 | Far (10–20 y)             | Distributed-by-default placement                     | cell-based architecture, traffic automation, edge, durable execution remain host-agnostic                                                                                    |
 | Very far (20–30+ y)       | Unknown substrates, agent contributors, archaeology  | small, additive, introspectable, well-documented core; reversible decisions; repository archaeology stays cheap                                                              |
 
+### Roadmap alignment checkpoint
+
+The `ENG-644` planning-governance review on `May 13, 2026` checked the current [`engine-roadmap.md`](engine-roadmap.md) phase plan against these horizons.
+
+Result:
+
+- near-term commitments are covered by the phase 7 external-adoption/release-readiness lane, `.NET 11` readiness, package publishing, supply-chain, SRE, and deployment-mode validation work while `net10.0` remains the shipping floor
+- mid-term commitments are covered by phase 8 through phase 13: app-model/config primitives, behavior topology, provider/data/eventing surfaces, resilience, migration, edge/cell/CDC, and governance companions stay additive rather than core-sprawling
+- far-term commitments are covered by runtime-contract/index surfaces, generated catalog/readback artifacts, the engine-completion scorecard, eventing superiority profile, and machine-readable provider/deployment-mode evidence that future AI operators can consume without scraping prose
+- very-far-term commitments are covered by the monthly architecture-review cadence, project memory, planning governance, immutable `ENG-*` ids, and commit/card references that keep repository archaeology cheap
+
+No phase-plan rewrite is required from this review. Future roadmap changes should name the affected horizon and explain whether the change is a build-now primitive, a small hook, or a deferred technology bet.
+
 ## Decision boundaries
 
 When a contributor (human or AI) is unsure whether a piece of long-range work belongs in the engine *now*, the following decision boundaries apply:
