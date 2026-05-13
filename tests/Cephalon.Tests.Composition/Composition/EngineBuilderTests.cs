@@ -2300,6 +2300,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("not-claimed", dimensions["choreography-handoff-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["observability-compliance-and-auditability"].Metadata["status"]);
         Assert.Equal("MassTransit,NServiceBus,Wolverine,MediatR", dimensions["native-wolverine-free-baseline"].Metadata["referenceFrameworks"]);
         Assert.Contains("Wolverine remains optional", dimensions["native-wolverine-free-baseline"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("EnableInProcessSubscriptionExecution=true", dimensions["mediator-style-in-process-low-ceremony"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -2403,6 +2404,17 @@ public sealed class EngineBuilderTests
         Assert.Contains("handoffDurability=not-active", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("processManagerState=not-claimed", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("diagnosticsConvention=present", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("diagnosticsSource=Cephalon.Eventing", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventIdRange=4200-4210", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventCount=11", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("activitySource=Cephalon.Eventing", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("meter=Cephalon.Eventing", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("publicationDispatchActivity=eventing.publication.dispatch", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("publicationDispatchCounter=cephalon.eventing.publications", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("commandAuditJournal=not-active", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerNeutral=true", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["observability-compliance-and-auditability"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

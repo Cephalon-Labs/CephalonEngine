@@ -3301,6 +3301,25 @@ public sealed class EntityFrameworkDataPackTests
                 technologySurfaces.GetByTechnology("event-driven-integration"),
                 surface => surface.SurfaceId == "event-dispatch-remediation-commands");
             var commandCatalogEntry = Assert.Single(commandSurface.Entries, entry => entry.Id == "event-dispatch-remediation-commands");
+            var observabilityEntry = Assert.Single(
+                technologySurfaces.GetByTechnology("event-driven-integration")
+                    .Single(surface => surface.SurfaceId == "eventing-superiority-profile")
+                    .Entries,
+                entry => entry.Id == "observability-compliance-and-auditability");
+            var observabilityEvidence = observabilityEntry.Metadata["runtimeEvidence"];
+
+            Assert.Equal("claimed", observabilityEntry.Metadata["status"]);
+            Assert.Contains("diagnosticsConvention=present", observabilityEvidence, StringComparison.Ordinal);
+            Assert.Contains("eventIdRange=4200-4210", observabilityEvidence, StringComparison.Ordinal);
+            Assert.Contains("eventCount=11", observabilityEvidence, StringComparison.Ordinal);
+            Assert.Contains("activitySource=Cephalon.Eventing", observabilityEvidence, StringComparison.Ordinal);
+            Assert.Contains("meter=Cephalon.Eventing", observabilityEvidence, StringComparison.Ordinal);
+            Assert.Contains("commandAuditJournal=durable-cross-node", observabilityEvidence, StringComparison.Ordinal);
+            Assert.Contains("commandAuditDurability=durable", observabilityEvidence, StringComparison.Ordinal);
+            Assert.Contains("commandAuditScope=cross-node", observabilityEvidence, StringComparison.Ordinal);
+            Assert.Contains("commandAuditReplayCursor=durable", observabilityEvidence, StringComparison.Ordinal);
+            Assert.Contains("providerNeutral=true", observabilityEvidence, StringComparison.Ordinal);
+            Assert.Contains("wolverineRequired=false", observabilityEvidence, StringComparison.Ordinal);
             Assert.Equal("1", commandCatalogEntry.Metadata["summaryReservedCount"]);
             Assert.Equal("true", commandCatalogEntry.Metadata["summaryHasInDoubtCommands"]);
             Assert.Equal("cmd-journal-002-reserved", commandCatalogEntry.Metadata["summaryOldestReservedCommandId"]);

@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Technologies;
+using Cephalon.Engine.Diagnostics;
 using Cephalon.Eventing.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
@@ -15,6 +16,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private const string ReferenceFrameworks = "MassTransit,NServiceBus,Wolverine,MediatR";
     private const string ClaimPolicy = "claimed-only-with-runtime-evidence";
     private const string RemediationFilteredReadBenchmarks = "FilterSummaryByMessageId,FilterRetentionByMessageId,FilterLatestByCorrelationId,FilterOldestByDispatchOutcome,FilterOperatorDashboardSelectors";
+    private const string NativeEventingRuntimeSurfaces = "event-channels,event-subscriptions,event-publishers,event-dispatches,event-dispatch-remediations,event-dispatch-remediation-commands,event-dispatch-runtimes,eventing-superiority-profile";
     private const string BehaviorEventingRuntimeSurfaceContributorTypeName = "Cephalon.Eventing.Behaviors.Services.BehaviorEventingRuntimeSurfaceContributor";
     private const string EventingSagaChoreographyPublisherTypeName = "Cephalon.Eventing.Behaviors.Services.EventingSagaChoreographyPublisher";
 
@@ -52,6 +54,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var durableCommandJournalReplayStatus = ResolveDurableCommandJournalReplayStatus(commandJournalDescriptor);
         var durableCommandJournalReplayEvidence = ResolveDurableCommandJournalReplayEvidence(commandJournalDescriptor);
         var durableCommandJournalReplayNextGap = ResolveDurableCommandJournalReplayNextGap(commandJournalDescriptor);
+        var observabilityCompliance = ResolveObservabilityComplianceProfile(commandJournalDescriptor);
 
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
@@ -310,10 +313,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "observability-compliance-and-auditability",
                     displayName: "Observability Compliance And Auditability",
                     description: "Publishes stable diagnostics, redaction-aware activity tags, runtime states, and claim maturity for review.",
-                    status: "claimed",
-                    evidence: "Cephalon.Eventing diagnostics convention; eventing publication activity tags; runtime metadata; claim statuses.",
+                    status: observabilityCompliance.Status,
+                    evidence: observabilityCompliance.Evidence,
                     advantage: "Audit and operations teams can see what is supported, partial, or unclaimed without reading provider internals.",
-                    nextGap: "Attach benchmark results and release-scorecard evidence to each promoted claim."),
+                    nextGap: observabilityCompliance.NextGap),
                 CreateEntry(
                     id: "testability-and-benchmark-evidence",
                     displayName: "Testability And Benchmark Evidence",
@@ -2280,6 +2283,46 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             : "Implement IEventDispatchRemediationCommandReplayCursorCatalog in a durable provider before claiming command-journal replay cursor support.";
     }
 
+    private ObservabilityComplianceProfile ResolveObservabilityComplianceProfile(EventDispatchRemediationCommandJournalDescriptor? commandJournalDescriptor)
+    {
+        using var scope = scopeFactory.CreateScope();
+        var diagnosticsCatalog = scope.ServiceProvider.GetService<IRuntimeDiagnosticsCatalog>();
+        var conventions = diagnosticsCatalog?.GetBySource(EventingDiagnostics.ActivitySourceName);
+        var convention = conventions is { Count: > 0 } ? conventions[0] : null;
+        var conventionState = convention is null ? "not-present" : "present";
+        var minimumEventId = convention?.MinimumEventId?.ToString(CultureInfo.InvariantCulture) ?? "not-reported";
+        var maximumEventId = convention?.MaximumEventId?.ToString(CultureInfo.InvariantCulture) ?? "not-reported";
+        var eventIdRange = convention is null ? "not-reported" : $"{minimumEventId}-{maximumEventId}";
+        var eventCount = convention?.Events.Count ?? 0;
+        var informationEventCount = convention?.Events.Count(static definition => definition.Severity == DiagnosticSeverity.Information) ?? 0;
+        var warningEventCount = convention?.Events.Count(static definition => definition.Severity == DiagnosticSeverity.Warning) ?? 0;
+        var errorEventCount = convention?.Events.Count(static definition => definition.Severity == DiagnosticSeverity.Error) ?? 0;
+        var loggerCategoryPrefix = convention?.LoggerCategoryPrefix ?? "not-reported";
+        var commandAuditJournal = commandJournalDescriptor is null
+            ? "not-active"
+            : IsDurableCrossNodeAudit(commandJournalDescriptor) ? "durable-cross-node" : "process-local";
+        var commandAuditDurability = commandJournalDescriptor?.Durability ?? "not-active";
+        var commandAuditScope = commandJournalDescriptor?.Scope ?? "not-active";
+        var commandAuditReplayCursor = commandJournalDescriptor is null
+            ? "not-active"
+            : commandJournalDescriptor.DurableReplayCursor ? "durable" : "not-claimed";
+        var diagnosticsConventionComplete = convention is not null &&
+            string.Equals(convention.Source, EventingDiagnostics.ActivitySourceName, StringComparison.Ordinal) &&
+            string.Equals(convention.LoggerCategoryPrefix, EventingDiagnostics.ActivitySourceName, StringComparison.Ordinal) &&
+            (convention.MinimumEventId ?? int.MaxValue) <= EventingDiagnosticsConventions.PublicationStaged.Id &&
+            (convention.MaximumEventId ?? int.MinValue) >= EventingDiagnosticsConventions.PublicationDispatchSkipped.Id &&
+            eventCount >= EventingDiagnosticsConventions.Convention.Events.Count;
+        var status = diagnosticsConventionComplete ? "claimed" : "partial";
+        var evidence = string.Create(
+            CultureInfo.InvariantCulture,
+            $"diagnosticsConvention={conventionState}; diagnosticsSource={EventingDiagnostics.ActivitySourceName}; loggerCategoryPrefix={loggerCategoryPrefix}; eventIdRange={eventIdRange}; eventCount={eventCount.ToString(CultureInfo.InvariantCulture)}; informationEventCount={informationEventCount.ToString(CultureInfo.InvariantCulture)}; warningEventCount={warningEventCount.ToString(CultureInfo.InvariantCulture)}; errorEventCount={errorEventCount.ToString(CultureInfo.InvariantCulture)}; activitySource={EventingDiagnostics.ActivitySourceName}; meter={EventingDiagnostics.MeterName}; publicationDispatchActivity={EventingDiagnostics.PublicationDispatchActivityName}; publicationDispatchCounter={EventingDiagnostics.PublicationDispatchCounterName}; redactionAwareActivityTags=cephalon-prefix; runtimeSurfaces={NativeEventingRuntimeSurfaces}; commandAuditJournal={commandAuditJournal}; commandAuditDurability={commandAuditDurability}; commandAuditScope={commandAuditScope}; commandAuditReplayCursor={commandAuditReplayCursor}; claimPolicy={ClaimPolicy}; providerNeutral=true; wolverineRequired=false");
+        var nextGap = diagnosticsConventionComplete
+            ? "Attach release-scorecard benchmark evidence to each promoted observability, compliance, and auditability claim."
+            : "Register the Eventing diagnostics convention before claiming native observability, compliance, and auditability evidence.";
+
+        return new ObservabilityComplianceProfile(status, evidence, nextGap);
+    }
+
     private static TechnologyRuntimeEntry CreateEntry(
         string id,
         string displayName,
@@ -2340,4 +2383,6 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record ProcessManagerStateProfile(string Status, string Evidence, string NextGap);
 
     private sealed record BrokerDeadLetterReplayProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record ObservabilityComplianceProfile(string Status, string Evidence, string NextGap);
 }
