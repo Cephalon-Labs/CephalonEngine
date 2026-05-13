@@ -139,6 +139,57 @@ Describe "invoke-signed-release-dry-run.ps1" {
         $result.Report.DispatchOutput | Should -Match "Actions has been disabled for this user"
     }
 
+    It "keeps generated report fields aligned with the supply-chain support contract" {
+        $invoker = {
+            param([string[]]$Arguments)
+
+            $command = $Arguments -join " "
+            if ($command -eq "api repos/Cephalon-Labs/CephalonEngine/actions/workflows") {
+                return New-FakeGhResult -ExitCode 0 -Output (New-WorkflowListJson)
+            }
+
+            if ($command -eq "api repos/Cephalon-Labs/CephalonEngine/actions/permissions") {
+                return New-FakeGhResult -ExitCode 0 -Output (New-ActionsPermissionsJson)
+            }
+
+            if ($command -eq "api user --jq .login") {
+                return New-FakeGhResult -ExitCode 0 -Output "Cephalon-Neza"
+            }
+
+            if ($command -eq "workflow run Publish Release --repo Cephalon-Labs/CephalonEngine --ref master -f dry_run=true") {
+                return New-FakeGhResult `
+                    -ExitCode 1 `
+                    -Output "could not create workflow dispatch event: HTTP 422: Actions has been disabled for this user."
+            }
+
+            return New-FakeGhResult -ExitCode 1 -Output "Unexpected command: $command"
+        }
+
+        $result = Invoke-SignedReleaseDryRunReadiness -OutputPath $script:tempRoot -GitHubCliInvoker $invoker
+
+        $supportManifestPath = Join-Path $script:repoRoot "scripts\supply-chain-release-support.json"
+        $supportManifest = Get-Content -LiteralPath $supportManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 32
+        $supportManifest.'$schemaVersion' | Should -Be "1.5.0"
+
+        $requiredFields = @($supportManifest.signedReleaseDryRun.requiredReportFields)
+        $requiredFields.Count | Should -BeGreaterThan 0
+        $requiredFields | Should -Contain "DispatchActor"
+        $requiredFields | Should -Contain "DispatchIdentityStatus"
+        $requiredFields | Should -Contain "DispatchCommand"
+        $requiredFields | Should -Contain "RequiredReleaseManagerAction"
+
+        $reportPropertyNames = @($result.Report.PSObject.Properties.Name)
+        foreach ($requiredField in $requiredFields) {
+            $reportPropertyNames | Should -Contain $requiredField
+        }
+
+        $persistedReport = Get-Content -LiteralPath $result.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
+        $persistedPropertyNames = @($persistedReport.PSObject.Properties.Name)
+        foreach ($requiredField in $requiredFields) {
+            $persistedPropertyNames | Should -Contain $requiredField
+        }
+    }
+
     It "records the workflow run when a dry-run dispatch succeeds" {
         $runList = @(
             @{
