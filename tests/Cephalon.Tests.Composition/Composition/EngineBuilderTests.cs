@@ -2378,6 +2378,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
         Assert.Equal("claimed", dimensions["observability-compliance-and-auditability"].Metadata["status"]);
         Assert.Equal("claimed", dimensions["testability-and-benchmark-evidence"].Metadata["status"]);
+        Assert.Equal("partial", dimensions["operational-superiority-coverage"].Metadata["status"]);
         Assert.Equal("MassTransit,NServiceBus,Wolverine,MediatR", dimensions["native-wolverine-free-baseline"].Metadata["referenceFrameworks"]);
         Assert.Contains("Wolverine remains optional", dimensions["native-wolverine-free-baseline"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("EnableInProcessSubscriptionExecution=true", dimensions["mediator-style-in-process-low-ceremony"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -2525,6 +2526,14 @@ public sealed class EngineBuilderTests
         Assert.Contains("activeGuardrailApplication=catalog-only", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("benchmarkProofMaturity=guardrail-catalog-mapped", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["testability-and-benchmark-evidence"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("requiredOperationalSuperiorityDimensionCount=6", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("coveredOperationalSuperiorityDimensions=observability-compliance-and-auditability,testability-and-benchmark-evidence", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("coveredOperationalSuperiorityDimensionCount=2", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partialOperationalSuperiorityDimensions=none", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingOperationalSuperiorityDimensions=provider-operated-runtime-proof-coverage,choreography-handoff-ownership,durable-remediation-command-audit,durable-command-journal-replay-cursor", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingOperationalSuperiorityDimensionCount=4", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("comparisonBaseline=MassTransit,NServiceBus,Wolverine,MediatR", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]
@@ -4361,6 +4370,7 @@ public sealed class EngineBuilderTests
             .Entries
             .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
         var evidence = dimensions["provider-operated-runtime-proof-coverage"].Metadata["runtimeEvidence"];
+        var operationalEvidence = dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"];
 
         Assert.Equal("claimed", dimensions["provider-managed-runtime-proof-coverage"].Metadata["status"]);
         Assert.Equal("claimed", dimensions["broker-dead-letter-replay-ownership"].Metadata["status"]);
@@ -4383,6 +4393,15 @@ public sealed class EngineBuilderTests
         Assert.Contains("choreographyHandoffProof=separate-dimension", evidence, StringComparison.Ordinal);
         Assert.Contains("commandJournalProof=separate-dimension", evidence, StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.Equal("partial", dimensions["operational-superiority-coverage"].Metadata["status"]);
+        Assert.Contains("coveredOperationalSuperiorityDimensions=provider-operated-runtime-proof-coverage,observability-compliance-and-auditability,testability-and-benchmark-evidence", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("coveredOperationalSuperiorityDimensionCount=3", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("missingOperationalSuperiorityDimensions=choreography-handoff-ownership,durable-remediation-command-audit,durable-command-journal-replay-cursor", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("missingOperationalSuperiorityDimensionCount=3", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("providerOperatedRuntimeProof=provider-operated-runtime-proof-coverage", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("commandJournalAuditProof=durable-remediation-command-audit", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("commandJournalReplayProof=durable-command-journal-replay-cursor", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", operationalEvidence, StringComparison.Ordinal);
     }
 
     [Fact]

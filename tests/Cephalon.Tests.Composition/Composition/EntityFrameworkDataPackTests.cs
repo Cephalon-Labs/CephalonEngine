@@ -978,6 +978,7 @@ public sealed class EntityFrameworkDataPackTests
         var durableReplayCursorEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "durable-command-journal-replay-cursor");
         var brokerReplayOwnershipEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "broker-dead-letter-replay-ownership");
         var testabilityEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "testability-and-benchmark-evidence");
+        var operationalSuperiorityEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "operational-superiority-coverage");
         Assert.Equal("FilterSummaryByMessageId", benchmarkProofEntry.Metadata["benchmark"]);
         Assert.Equal("8000", benchmarkProofEntry.Metadata["maxMeanNanoseconds"]);
         Assert.Equal("512", benchmarkProofEntry.Metadata["maxAllocatedBytes"]);
@@ -1069,6 +1070,12 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("coveredGuardrailFamilies=broker-dispatch,cold-start,durable-journal,provider-managed-eventing,provider-operated-eventing,remediation-filtered-reads", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("missingGuardrailFamilies=none", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("partial", operationalSuperiorityEntry.Metadata["status"]);
+        Assert.Contains("coveredOperationalSuperiorityDimensions=durable-remediation-command-audit,durable-command-journal-replay-cursor,observability-compliance-and-auditability,testability-and-benchmark-evidence", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("coveredOperationalSuperiorityDimensionCount=4", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingOperationalSuperiorityDimensions=provider-operated-runtime-proof-coverage,choreography-handoff-ownership", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingOperationalSuperiorityDimensionCount=2", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["runtimeState"] == "available");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["dispatchStore"] == "available");
@@ -4122,6 +4129,11 @@ public sealed class EntityFrameworkDataPackTests
                 .Single(surface => surface.SurfaceId == "eventing-superiority-profile")
                 .Entries,
             entry => entry.Id == "choreography-handoff-ownership");
+        var operationalSuperiorityEntry = Assert.Single(
+            technologyRuntimeCatalog.GetByTechnology("event-driven-integration")
+                .Single(surface => surface.SurfaceId == "eventing-superiority-profile")
+                .Entries,
+            entry => entry.Id == "operational-superiority-coverage");
         Assert.Equal("claimed", choreographyHandoffEntry.Metadata["status"]);
         Assert.Contains("choreographyCatalog=present", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("publicationStateCatalog=present", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -4133,6 +4145,13 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("publicationStateId=not-reported", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("processManagerState=not-claimed", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("partial", operationalSuperiorityEntry.Metadata["status"]);
+        Assert.Contains("coveredOperationalSuperiorityDimensions=choreography-handoff-ownership,durable-remediation-command-audit,durable-command-journal-replay-cursor,observability-compliance-and-auditability,testability-and-benchmark-evidence", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("coveredOperationalSuperiorityDimensionCount=5", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingOperationalSuperiorityDimensions=provider-operated-runtime-proof-coverage", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingOperationalSuperiorityDimensionCount=1", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("choreographyHandoffProof=choreography-handoff-ownership", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

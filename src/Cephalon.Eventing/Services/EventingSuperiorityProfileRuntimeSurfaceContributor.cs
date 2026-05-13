@@ -72,6 +72,13 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var durableCommandJournalReplayNextGap = ResolveDurableCommandJournalReplayNextGap(commandJournalDescriptor);
         var observabilityCompliance = ResolveObservabilityComplianceProfile(commandJournalDescriptor);
         var testabilityBenchmark = ResolveTestabilityBenchmarkProfile();
+        var operationalSuperiorityCoverage = ResolveOperationalSuperiorityCoverageProfile(
+            providerOperatedRuntimeProofCoverage,
+            choreographyHandoff,
+            durableCommandJournalStatus,
+            durableCommandJournalReplayStatus,
+            observabilityCompliance,
+            testabilityBenchmark);
 
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
@@ -357,7 +364,15 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     status: testabilityBenchmark.Status,
                     evidence: testabilityBenchmark.Evidence,
                     advantage: "Cephalon separates tested runtime truth from aspirational roadmap items.",
-                    nextGap: testabilityBenchmark.NextGap)
+                    nextGap: testabilityBenchmark.NextGap),
+                CreateEntry(
+                    id: "operational-superiority-coverage",
+                    displayName: "Operational Superiority Coverage",
+                    description: "Summarizes whether native Cephalon Eventing has complete provider-operated, choreography, audit, observability, and benchmark proof without requiring Wolverine.",
+                    status: operationalSuperiorityCoverage.Status,
+                    evidence: operationalSuperiorityCoverage.Evidence,
+                    advantage: "Operators get one Cephalon-owned answer for bus-grade operational readiness instead of stitching together Wolverine, MassTransit, NServiceBus, MediatR, broker-console, and benchmark evidence by hand.",
+                    nextGap: operationalSuperiorityCoverage.NextGap)
             ]);
     }
 
@@ -2500,6 +2515,50 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return new TestabilityBenchmarkProfile(status, evidence, nextGap);
     }
 
+    private static OperationalSuperiorityCoverageProfile ResolveOperationalSuperiorityCoverageProfile(
+        ProviderOperatedRuntimeProofCoverageProfile providerOperatedRuntimeProofCoverage,
+        ChoreographyHandoffProfile choreographyHandoff,
+        string durableCommandJournalStatus,
+        string durableCommandJournalReplayStatus,
+        ObservabilityComplianceProfile observabilityCompliance,
+        TestabilityBenchmarkProfile testabilityBenchmark)
+    {
+        (string Id, string Status)[] requiredDimensions =
+        [
+            ("provider-operated-runtime-proof-coverage", providerOperatedRuntimeProofCoverage.Status),
+            ("choreography-handoff-ownership", choreographyHandoff.Status),
+            ("durable-remediation-command-audit", durableCommandJournalStatus),
+            ("durable-command-journal-replay-cursor", durableCommandJournalReplayStatus),
+            ("observability-compliance-and-auditability", observabilityCompliance.Status),
+            ("testability-and-benchmark-evidence", testabilityBenchmark.Status)
+        ];
+        var coveredDimensions = requiredDimensions
+            .Where(static dimension => string.Equals(dimension.Status, "claimed", StringComparison.OrdinalIgnoreCase))
+            .Select(static dimension => dimension.Id)
+            .ToArray();
+        var partialDimensions = requiredDimensions
+            .Where(static dimension => string.Equals(dimension.Status, "partial", StringComparison.OrdinalIgnoreCase))
+            .Select(static dimension => dimension.Id)
+            .ToArray();
+        var missingDimensions = requiredDimensions
+            .Where(static dimension => !string.Equals(dimension.Status, "claimed", StringComparison.OrdinalIgnoreCase))
+            .Select(static dimension => dimension.Id)
+            .ToArray();
+        var status = missingDimensions.Length == 0
+            ? "claimed"
+            : coveredDimensions.Length == 0 ? "not-claimed" : "partial";
+        var nextGap = status == "claimed"
+            ? "Keep provider-operated proof, choreography handoff, durable command audit, replay cursor, observability, and benchmark evidence covered together while Wolverine remains optional."
+            : "Complete the missing native operational proof dimensions before claiming full Eventing operational superiority coverage.";
+
+        return new OperationalSuperiorityCoverageProfile(
+            status,
+            string.Create(
+                CultureInfo.InvariantCulture,
+                $"requiredOperationalSuperiorityDimensions={string.Join(',', requiredDimensions.Select(static dimension => dimension.Id))}; requiredOperationalSuperiorityDimensionCount={requiredDimensions.Length.ToString(CultureInfo.InvariantCulture)}; coveredOperationalSuperiorityDimensions={FormatDimensionList(coveredDimensions)}; coveredOperationalSuperiorityDimensionCount={coveredDimensions.Length.ToString(CultureInfo.InvariantCulture)}; partialOperationalSuperiorityDimensions={FormatDimensionList(partialDimensions)}; partialOperationalSuperiorityDimensionCount={partialDimensions.Length.ToString(CultureInfo.InvariantCulture)}; missingOperationalSuperiorityDimensions={FormatDimensionList(missingDimensions)}; missingOperationalSuperiorityDimensionCount={missingDimensions.Length.ToString(CultureInfo.InvariantCulture)}; proofSource=eventing-superiority-profile; providerOperatedRuntimeProof=provider-operated-runtime-proof-coverage; choreographyHandoffProof=choreography-handoff-ownership; commandJournalAuditProof=durable-remediation-command-audit; commandJournalReplayProof=durable-command-journal-replay-cursor; observabilityProof=observability-compliance-and-auditability; benchmarkProof=testability-and-benchmark-evidence; comparisonBaseline=MassTransit,NServiceBus,Wolverine,MediatR; providerNeutral=true; wolverineRequired=false"),
+            nextGap);
+    }
+
     private static TechnologyRuntimeEntry CreateEntry(
         string id,
         string displayName,
@@ -2568,4 +2627,6 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record ObservabilityComplianceProfile(string Status, string Evidence, string NextGap);
 
     private sealed record TestabilityBenchmarkProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record OperationalSuperiorityCoverageProfile(string Status, string Evidence, string NextGap);
 }
