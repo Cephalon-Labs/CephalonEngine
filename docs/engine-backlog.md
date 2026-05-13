@@ -68,6 +68,34 @@ Current focus:
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
 - treat the event-dispatch remediation command-result filtered read path as benchmark-governed: `EventDispatchRemediationCatalogBenchmarks` now covers native Wolverine-free filtered summary, retention, latest, oldest, and compact dashboard selectors, and `scripts/validate-release.ps1` includes that benchmark class in the default guardrail lane
 
+### ENG-676 architecture-review scorecard checkpoint refresh
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: release-readiness / documentation governance / scorecard contract
+Quality dimensions: Auditability, Maintainability, Compatibility, Usability
+GitHub issue: #1344
+
+Why:
+
+- the live May architecture-review follow-up tracker still described the scorecard checkpoint as schema `1.20.0` after the emitter had moved to schema `1.22.0`
+- that checkpoint was missing the current Eventing operational-superiority runtime-concordance and clean public API baseline readbacks
+- architecture-review follow-ups are hand-authored contract docs, so stale scorecard wording can mislead release managers even when generated artifacts are correct
+
+Delivered:
+
+- refreshed `docs/architecture-review-2026-05-followups.md` so the current scorecard checkpoint names schema `1.22.0`, `ENG-673`, `ENG-674`, `ENG-675`, Eventing runtime concordance, Wolverine optionality, and the `104` / `0` / `0` / `0` public API readback
+- removed stale schema-specific wording from the ASP.NET Core route-delegate checkpoint and kept that paragraph tied to generated scorecard readback instead of a historical schema number
+- added focused Pester coverage that reads `$Script:SchemaVersion` from `scripts/publish-engine-completion-scorecard.ps1` and verifies the architecture-review checkpoint names the current schema and current scorecard contract
+- updated roadmap and project memory so the docs-as-contract closeout is traceable from planning truth
+
+Validation:
+
+- `pwsh -NoLogo -NoProfile -Command "Invoke-Pester -Path tests\Cephalon.Tests.Scripts\publish-engine-completion-scorecard.Tests.ps1 -Output Detailed"`
+- `pwsh -NoLogo -NoProfile -File .\scripts\publish-engine-completion-scorecard.ps1`
+- `dotnet run --project .\src\Cephalon.Cli\Cephalon.Cli.csproj -c Release --no-restore -- doctor --scorecard .\artifacts\engine-completion-scorecard-release\engine-completion-scorecard.json`
+
 ### ENG-675 public API additive baseline promotion
 
 Status: done

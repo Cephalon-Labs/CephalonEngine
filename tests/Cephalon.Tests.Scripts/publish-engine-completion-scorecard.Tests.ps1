@@ -1646,6 +1646,30 @@ jobs:
         } | Should -Throw "*Test coverage roadmap layered project reference '../tests/Cephalon.Tests.ProviderIntegration.Missing'*"
     }
 
+    It "keeps the architecture-review scorecard checkpoint aligned with the current scorecard contract" {
+        $emitter = Get-Content -LiteralPath $script:scriptPath -Raw -Encoding UTF8
+        $schemaMatch = [regex]::Match($emitter, '\$Script:SchemaVersion\s*=\s*"(?<version>[^"]+)"')
+        $schemaMatch.Success | Should -BeTrue
+
+        $currentSchemaVersion = $schemaMatch.Groups['version'].Value
+        $followups = Get-Content -LiteralPath (Join-Path $script:repoRoot "docs\architecture-review-2026-05-followups.md") -Raw -Encoding UTF8
+        $checkpointMatch = [regex]::Match($followups, '(?ms)^> Current scorecard checkpoint.*?(?=\r?\n\r?\n>)')
+        $checkpointMatch.Success | Should -BeTrue
+
+        $checkpoint = $checkpointMatch.Value
+        $checkpoint | Should -Match ([regex]::Escape("schema ``$currentSchemaVersion"))
+        $checkpoint | Should -Match "ENG-673"
+        $checkpoint | Should -Match "ENG-674"
+        $checkpoint | Should -Match "ENG-675"
+        $checkpoint | Should -Match "Eventing operational-superiority"
+        $checkpoint | Should -Match "runtime concordance ``matched``"
+        $checkpoint | Should -Match "wolverineRequired=false"
+        $checkpoint | Should -Match "19 of 19 tokens"
+        $checkpoint | Should -Match "``104`` baselines / ``0`` pending packages / ``0`` additions / ``0`` removals"
+        $checkpoint | Should -Match "cephalon doctor --scorecard"
+        $checkpoint | Should -Not -Match "schema ``1\.20\.0``"
+    }
+
     It "keeps release validation wired to the scorecard artifact" {
         $releaseValidation = Get-Content -LiteralPath (Join-Path $script:repoRoot "scripts\validate-release.ps1") -Raw -Encoding UTF8
 
