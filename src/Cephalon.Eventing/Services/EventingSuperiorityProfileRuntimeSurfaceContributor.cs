@@ -390,21 +390,27 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             ? EventPublicationRoutingPolicy.GetAutoChannelId(options)
             : "not-configured";
 
+        using var scope = scopeFactory.CreateScope();
+        var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
+        var brokerTopologyStates = dispatchRuntimeCatalog?.States
+            .Where(static state =>
+                state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterialization, out var value) &&
+                string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase))
+            .ToArray() ?? [];
+        var brokerTopologyProvenCount = brokerTopologyStates.Count(IsBrokerTopologyMaterializedProof);
+        var topologyState = SelectBestDispatchProof(
+            brokerTopologyStates,
+            IsBrokerTopologyMaterializedProof);
+
         if (!topology.HasPublishingPath)
         {
             return new BrokerTopologyProfile(
                 "not-claimed",
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"publicationPath={publicationPath}; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; brokerTopologyMaterialization=not-claimed; brokerTopologyMaterializationSource=not-reported; exchangeProvisioning=not-claimed; exchangeProvisioningId=not-reported; queueProvisioning=not-claimed; queueProvisioningId=not-reported; topicProvisioning=not-claimed; topicProvisioningId=not-reported; partitionProvisioning=not-claimed; partitionProvisioningId=not-reported; topologyVerification=not-claimed; topologyVerificationId=not-reported; providerOwnedTopology=not-present; providerTopologyId=not-reported; wolverineRequired=false"),
+                    $"publicationPath={publicationPath}; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; brokerTopologyProofSelection=latest-proven-dispatch-state; brokerTopologyStateCount={brokerTopologyStates.Length.ToString(CultureInfo.InvariantCulture)}; brokerTopologyProvenCount={brokerTopologyProvenCount.ToString(CultureInfo.InvariantCulture)}; brokerTopologyMaterialization=not-claimed; brokerTopologyMaterializationSource=not-reported; exchangeProvisioning=not-claimed; exchangeProvisioningId=not-reported; queueProvisioning=not-claimed; queueProvisioningId=not-reported; topicProvisioning=not-claimed; topicProvisioningId=not-reported; partitionProvisioning=not-claimed; partitionProvisioningId=not-reported; topologyVerification=not-claimed; topologyVerificationId=not-reported; providerOwnedTopology=not-present; providerTopologyId=not-reported; wolverineRequired=false"),
                 "Add a publishing path plus provider-owned broker topology proof before claiming topology materialization.");
         }
-
-        using var scope = scopeFactory.CreateScope();
-        var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
-        var topologyState = dispatchRuntimeCatalog?.States.FirstOrDefault(static state =>
-            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterialization, out var value) &&
-            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
 
         if (topologyState is not null)
         {
@@ -476,7 +482,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 status,
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"publicationPath=active; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; brokerTopologyMaterialization={brokerTopologyMaterialization}; brokerTopologyMaterializationSource={source}; exchangeProvisioning={exchangeProvisioning}; exchangeProvisioningId={exchangeProvisioningId}; queueProvisioning={queueProvisioning}; queueProvisioningId={queueProvisioningId}; topicProvisioning={topicProvisioning}; topicProvisioningId={topicProvisioningId}; partitionProvisioning={partitionProvisioning}; partitionProvisioningId={partitionProvisioningId}; topologyVerification={topologyVerification}; topologyVerificationId={topologyVerificationId}; providerOwnedTopology={providerOwnedTopology}; providerTopologyId={providerTopologyId}; outboxId={topologyState.OutboxId}; lastOutcome={topologyState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                    $"publicationPath=active; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; brokerTopologyProofSelection=latest-proven-dispatch-state; brokerTopologyStateCount={brokerTopologyStates.Length.ToString(CultureInfo.InvariantCulture)}; brokerTopologyProvenCount={brokerTopologyProvenCount.ToString(CultureInfo.InvariantCulture)}; brokerTopologyMaterialization={brokerTopologyMaterialization}; brokerTopologyMaterializationSource={source}; exchangeProvisioning={exchangeProvisioning}; exchangeProvisioningId={exchangeProvisioningId}; queueProvisioning={queueProvisioning}; queueProvisioningId={queueProvisioningId}; topicProvisioning={topicProvisioning}; topicProvisioningId={topicProvisioningId}; partitionProvisioning={partitionProvisioning}; partitionProvisioningId={partitionProvisioningId}; topologyVerification={topologyVerification}; topologyVerificationId={topologyVerificationId}; providerOwnedTopology={providerOwnedTopology}; providerTopologyId={providerTopologyId}; outboxId={topologyState.OutboxId}; lastOutcome={topologyState.LastOutcome ?? "unknown"}; lastObservedAtUtc={FormatObservedAt(topologyState.LastObservedAtUtc)}; wolverineRequired=false"),
                 nextGap);
         }
 
@@ -484,7 +490,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "not-claimed",
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"publicationPath=active; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; brokerTopologyMaterialization=not-claimed; brokerTopologyMaterializationSource=not-reported; exchangeProvisioning=not-claimed; exchangeProvisioningId=not-reported; queueProvisioning=not-claimed; queueProvisioningId=not-reported; topicProvisioning=not-claimed; topicProvisioningId=not-reported; partitionProvisioning=not-claimed; partitionProvisioningId=not-reported; topologyVerification=not-claimed; topologyVerificationId=not-reported; providerOwnedTopology=not-present; providerTopologyId=not-reported; wolverineRequired=false"),
+                $"publicationPath=active; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; brokerTopologyProofSelection=latest-proven-dispatch-state; brokerTopologyStateCount={brokerTopologyStates.Length.ToString(CultureInfo.InvariantCulture)}; brokerTopologyProvenCount={brokerTopologyProvenCount.ToString(CultureInfo.InvariantCulture)}; brokerTopologyMaterialization=not-claimed; brokerTopologyMaterializationSource=not-reported; exchangeProvisioning=not-claimed; exchangeProvisioningId=not-reported; queueProvisioning=not-claimed; queueProvisioningId=not-reported; topicProvisioning=not-claimed; topicProvisioningId=not-reported; partitionProvisioning=not-claimed; partitionProvisioningId=not-reported; topologyVerification=not-claimed; topologyVerificationId=not-reported; providerOwnedTopology=not-present; providerTopologyId=not-reported; wolverineRequired=false"),
             "Add a provider-owned broker topology descriptor plus exchange, queue, topic, partition, and verification evidence before claiming topology materialization.");
     }
 
@@ -829,6 +835,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private static bool IsBrokerInboundConsumptionProof(EventSubscriptionRuntimeState state) =>
         string.Equals(state.LastOutcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
         EventSubscriptionBrokerInboundConsumptionMetadata.IsBrokerConsumed(state.Metadata);
+
+    private static bool IsBrokerTopologyMaterializedProof(EventDispatchRuntimeState state) =>
+        string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+        EventDispatchBrokerTopologyMetadata.IsTopologyMaterialized(state.Metadata);
 
     private static string FormatObservedAt(DateTimeOffset? observedAtUtc) =>
         observedAtUtc.HasValue
