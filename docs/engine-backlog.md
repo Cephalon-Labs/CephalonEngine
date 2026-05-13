@@ -79,6 +79,33 @@ Current focus:
 - treat all hand-authored Markdown as a guarded docs graph: repo-local Markdown links outside generated `docs/reference/**` must resolve relative to the declaring file, stay inside the repository, and may target existing files or directories while fenced code blocks and inline code spans are ignored by the guard
 - treat hand-authored Markdown anchor fragments as guarded adoption pointers: same-page `#fragment`, repo-local `file.md#fragment`, and GitHub-style `#Lx` / `#Lx-Ly` line fragments must resolve before docs can claim a stable navigation path
 - treat generated reference docs as a guarded generated API navigation layer: repo-local links across `docs/reference/**/*.md` must resolve inside `docs/reference`, and browser-view query links such as `browse.html?assembly=...` must resolve to the generated browser file while hand-authored docs remain the primary human contract
+- treat `docs/reference/reference-manifest.json` as the generated API bundle map: required browser/index/manifest assets must exist, assembly page files must be manifest-owned, namespace/type/member anchor ids must resolve in those pages, and orphan generated Markdown pages must fail Tooling coverage before hosted reference docs can drift
+
+### ENG-690 Generated reference docs manifest bundle guard
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: reference-docs / documentation graph / documentation coverage
+Quality dimensions: Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1359
+
+Why:
+
+- `ENG-689` guarded Markdown navigation links in generated reference docs, but the JSON manifest that drives `browse.html` and hosted docs could still point at missing files or stale anchor ids
+- the checked-in generated bundle has required non-Markdown assets (`browse.html`, `reference-browser.css`, `reference-browser.js`, `reference-manifest.json`) that are not owned by the Markdown-link guard
+- generated assembly pages should be owned by the manifest, so stale orphan pages should not survive beside a regenerated manifest
+
+Delivered:
+
+- added Tooling documentation coverage for `docs/reference/reference-manifest.json` schema, timestamp, required bundle assets, and assembly file targets
+- required namespace, type, and member manifest entries to point at existing generated Markdown pages and resolve their `AnchorId` values against generated Markdown anchors
+- required checked-in generated Markdown pages to match the union of fixed index pages plus manifest-owned assembly pages, blocking orphan generated pages
+
+Validation:
+
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~DocumentationCoverageTests" --logger "console;verbosity=minimal"`
+- `git diff --check`
 
 ### ENG-689 Generated reference docs navigation guard
 

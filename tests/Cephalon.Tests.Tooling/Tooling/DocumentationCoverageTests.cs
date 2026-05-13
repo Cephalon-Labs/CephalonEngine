@@ -305,6 +305,100 @@ public sealed class DocumentationCoverageTests
     }
 
     [Fact]
+    public void GeneratedReferenceDocumentationManifestTargetsResolve()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var referenceDocsRoot = Path.Combine(repositoryRoot, "docs", "reference");
+        var manifestPath = Path.Combine(referenceDocsRoot, "reference-manifest.json");
+
+        Assert.True(File.Exists(manifestPath), "Expected generated reference documentation to include reference-manifest.json.");
+
+        using var manifestDocument = JsonDocument.Parse(File.ReadAllText(manifestPath));
+        var manifest = manifestDocument.RootElement;
+        Assert.Equal(2, ReadRequiredJsonInt32(manifest, "SchemaVersion", "reference manifest"));
+        Assert.True(
+            DateTimeOffset.TryParse(
+                ReadRequiredJsonString(manifest, "GeneratedAtUtc", "reference manifest"),
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal,
+                out _),
+            "Expected reference manifest GeneratedAtUtc to be a valid timestamp.");
+
+        var requiredBundleFiles = new[]
+        {
+            "README.md",
+            "index.md",
+            "namespaces.md",
+            "types.md",
+            "members.md",
+            "browse.html",
+            "reference-browser.css",
+            "reference-browser.js",
+            "reference-manifest.json"
+        };
+
+        foreach (var requiredBundleFile in requiredBundleFiles)
+            AssertReferenceBundleFileExists(referenceDocsRoot, requiredBundleFile, "required generated reference bundle file");
+
+        var assemblies = manifest.GetProperty("Assemblies").EnumerateArray().ToArray();
+        Assert.NotEmpty(assemblies);
+
+        var assemblyFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var assemblyNamespaceCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        var assemblyTypeCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var assembly in assemblies)
+        {
+            var assemblyName = ReadRequiredJsonString(assembly, "AssemblyName", "reference manifest assembly");
+            var fileName = ReadRequiredJsonString(assembly, "FileName", $"reference manifest assembly '{assemblyName}'");
+
+            Assert.True(
+                assemblyFiles.Add(fileName),
+                $"Expected reference manifest assembly file '{fileName}' to be listed once.");
+            AssertReferenceBundleFileExists(referenceDocsRoot, fileName, $"reference manifest assembly '{assemblyName}'");
+            assemblyNamespaceCounts[assemblyName] = ReadRequiredJsonInt32(assembly, "NamespaceCount", $"reference manifest assembly '{assemblyName}'");
+            assemblyTypeCounts[assemblyName] = ReadRequiredJsonInt32(assembly, "TypeCount", $"reference manifest assembly '{assemblyName}'");
+        }
+
+        var namespaceEntries = manifest.GetProperty("Namespaces").EnumerateArray().ToArray();
+        var typeEntries = manifest.GetProperty("Types").EnumerateArray().ToArray();
+        var memberEntries = manifest.GetProperty("Members").EnumerateArray().ToArray();
+
+        Assert.NotEmpty(namespaceEntries);
+        Assert.NotEmpty(typeEntries);
+        Assert.NotEmpty(memberEntries);
+
+        AssertManifestEntryCountsMatchAssemblies("namespace", namespaceEntries, assemblyNamespaceCounts);
+        AssertManifestEntryCountsMatchAssemblies("type", typeEntries, assemblyTypeCounts);
+
+        var anchorCache = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+        AssertReferenceManifestAnchorsResolve(referenceDocsRoot, namespaceEntries, assemblyFiles, anchorCache, "namespace");
+        AssertReferenceManifestAnchorsResolve(referenceDocsRoot, typeEntries, assemblyFiles, anchorCache, "type");
+        AssertReferenceManifestAnchorsResolve(referenceDocsRoot, memberEntries, assemblyFiles, anchorCache, "member");
+
+        var expectedMarkdownFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "README.md",
+            "index.md",
+            "namespaces.md",
+            "types.md",
+            "members.md"
+        };
+
+        foreach (var assemblyFile in assemblyFiles)
+            expectedMarkdownFiles.Add(assemblyFile);
+
+        var actualMarkdownFiles = EnumerateReferenceMarkdownPaths(referenceDocsRoot)
+            .Select(Path.GetFileName)
+            .OfType<string>()
+            .ToArray();
+
+        Assert.Equal(
+            expectedMarkdownFiles.OrderBy(fileName => fileName, StringComparer.OrdinalIgnoreCase),
+            actualMarkdownFiles.OrderBy(fileName => fileName, StringComparer.OrdinalIgnoreCase));
+    }
+
+    [Fact]
     public void ObservabilityDependencyProbeDocsMatchRuntimeOwnership()
     {
         var repositoryRoot = GetRepositoryRoot();
@@ -1302,6 +1396,99 @@ public sealed class DocumentationCoverageTests
     private static IEnumerable<string> EnumerateReferenceMarkdownPaths(string referenceDocsRoot)
     {
         return Directory.EnumerateFiles(referenceDocsRoot, "*.md", SearchOption.AllDirectories);
+    }
+
+    private static string AssertReferenceBundleFileExists(string referenceDocsRoot, string fileName, string description)
+    {
+        Assert.False(string.IsNullOrWhiteSpace(fileName), $"Expected {description} to declare a non-empty file name.");
+        Assert.False(Path.IsPathFullyQualified(fileName), $"Expected {description} '{fileName}' to be relative to docs/reference.");
+
+        var resolvedPath = Path.GetFullPath(Path.Combine(referenceDocsRoot, fileName.Replace('/', Path.DirectorySeparatorChar)));
+        Assert.True(
+            IsPathInsideDirectory(referenceDocsRoot, resolvedPath),
+            $"Expected {description} '{fileName}' to stay inside docs/reference but resolved to '{resolvedPath}'.");
+        Assert.True(
+            File.Exists(resolvedPath),
+            $"Expected {description} '{fileName}' to resolve to an existing generated reference-doc file at '{resolvedPath}'.");
+
+        return resolvedPath;
+    }
+
+    private static void AssertReferenceManifestAnchorsResolve(
+        string referenceDocsRoot,
+        IReadOnlyCollection<JsonElement> entries,
+        IReadOnlySet<string> assemblyFiles,
+        Dictionary<string, HashSet<string>> anchorCache,
+        string entryDescription)
+    {
+        foreach (var entry in entries)
+        {
+            var fileName = ReadRequiredJsonString(entry, "FileName", $"reference manifest {entryDescription}");
+            var anchorId = ReadRequiredJsonString(entry, "AnchorId", $"reference manifest {entryDescription}");
+
+            Assert.Contains(fileName, assemblyFiles);
+            var resolvedPath = AssertReferenceBundleFileExists(referenceDocsRoot, fileName, $"reference manifest {entryDescription}");
+            var anchors = ReadCachedMarkdownAnchors(resolvedPath, anchorCache);
+
+            Assert.True(
+                anchors.Contains(anchorId),
+                $"Expected reference manifest {entryDescription} anchor '{anchorId}' in '{fileName}' to resolve to a generated Markdown anchor.");
+        }
+    }
+
+    private static void AssertManifestEntryCountsMatchAssemblies(
+        string entryDescription,
+        IReadOnlyCollection<JsonElement> entries,
+        IReadOnlyDictionary<string, int> expectedCounts)
+    {
+        var actualCounts = entries
+            .Select(entry => ReadRequiredJsonString(entry, "AssemblyName", $"reference manifest {entryDescription}"))
+            .GroupBy(assemblyName => assemblyName, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.Count(), StringComparer.OrdinalIgnoreCase);
+
+        foreach (var expectedCount in expectedCounts)
+        {
+            actualCounts.TryGetValue(expectedCount.Key, out var actualCount);
+            Assert.Equal(expectedCount.Value, actualCount);
+        }
+
+        foreach (var actualCount in actualCounts)
+            Assert.Contains(actualCount.Key, expectedCounts.Keys);
+    }
+
+    private static HashSet<string> ReadCachedMarkdownAnchors(
+        string markdownPath,
+        Dictionary<string, HashSet<string>> anchorCache)
+    {
+        if (!anchorCache.TryGetValue(markdownPath, out var anchors))
+        {
+            anchors = ReadMarkdownAnchors(markdownPath);
+            anchorCache[markdownPath] = anchors;
+        }
+
+        return anchors;
+    }
+
+    private static string ReadRequiredJsonString(JsonElement element, string propertyName, string description)
+    {
+        Assert.True(
+            element.TryGetProperty(propertyName, out var property),
+            $"Expected {description} to contain a '{propertyName}' property.");
+        Assert.Equal(JsonValueKind.String, property.ValueKind);
+
+        var value = property.GetString();
+        Assert.False(string.IsNullOrWhiteSpace(value), $"Expected {description} '{propertyName}' to be non-empty.");
+        return value!;
+    }
+
+    private static int ReadRequiredJsonInt32(JsonElement element, string propertyName, string description)
+    {
+        Assert.True(
+            element.TryGetProperty(propertyName, out var property),
+            $"Expected {description} to contain a '{propertyName}' property.");
+        Assert.Equal(JsonValueKind.Number, property.ValueKind);
+
+        return property.GetInt32();
     }
 
     private static bool IsHandAuthoredMarkdownPath(string repositoryRoot, string markdownPath)
