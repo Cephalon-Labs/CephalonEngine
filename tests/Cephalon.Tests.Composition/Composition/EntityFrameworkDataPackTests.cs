@@ -1078,6 +1078,11 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("missingOperationalSuperiorityDimensionCount=2", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityCoveragePercent=67", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityComplete=false", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityReadiness=blocked", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("blockingOperationalSuperiorityDimensions=provider-operated-runtime-proof-coverage,choreography-handoff-ownership", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("blockingOperationalSuperiorityDimensionStatuses=provider-operated-runtime-proof-coverage:not-claimed,choreography-handoff-ownership:not-claimed", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("nextOperationalSuperiorityRequirements=provider-operated-runtime-proof-coverage:complete-provider-operated-runtime-proof-coverage,choreography-handoff-ownership:activate-eventing-behavior-bridge-with-outbox-handoff", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("nextOperationalSuperiorityRequirementCount=2", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["runtimeState"] == "available");
@@ -4156,6 +4161,11 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("missingOperationalSuperiorityDimensionCount=1", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityCoveragePercent=83", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityComplete=false", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityReadiness=blocked", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("blockingOperationalSuperiorityDimensions=provider-operated-runtime-proof-coverage", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("blockingOperationalSuperiorityDimensionStatuses=provider-operated-runtime-proof-coverage:not-claimed", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("nextOperationalSuperiorityRequirements=provider-operated-runtime-proof-coverage:complete-provider-operated-runtime-proof-coverage", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("nextOperationalSuperiorityRequirementCount=1", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("choreographyHandoffProof=choreography-handoff-ownership", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", operationalSuperiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
@@ -4243,6 +4253,11 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("missingOperationalSuperiorityDimensionCount=0", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityCoveragePercent=100", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityComplete=true", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityReadiness=complete", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("blockingOperationalSuperiorityDimensions=none", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("blockingOperationalSuperiorityDimensionStatuses=none", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("nextOperationalSuperiorityRequirements=none", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("nextOperationalSuperiorityRequirementCount=0", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("comparisonBaseline=MassTransit,NServiceBus,Wolverine,MediatR", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("providerNeutral=true", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", operationalEvidence, StringComparison.Ordinal);

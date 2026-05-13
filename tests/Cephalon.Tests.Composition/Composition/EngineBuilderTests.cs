@@ -2535,6 +2535,11 @@ public sealed class EngineBuilderTests
         Assert.Contains("missingOperationalSuperiorityDimensionCount=4", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityCoveragePercent=33", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityComplete=false", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityReadiness=blocked", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("blockingOperationalSuperiorityDimensions=provider-operated-runtime-proof-coverage,choreography-handoff-ownership,durable-remediation-command-audit,durable-command-journal-replay-cursor", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("blockingOperationalSuperiorityDimensionStatuses=provider-operated-runtime-proof-coverage:not-claimed,choreography-handoff-ownership:not-claimed,durable-remediation-command-audit:not-claimed,durable-command-journal-replay-cursor:not-claimed", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("nextOperationalSuperiorityRequirements=provider-operated-runtime-proof-coverage:complete-provider-operated-runtime-proof-coverage,choreography-handoff-ownership:activate-eventing-behavior-bridge-with-outbox-handoff,durable-remediation-command-audit:activate-durable-cross-node-remediation-command-journal,durable-command-journal-replay-cursor:provide-durable-remediation-command-replay-cursor", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("nextOperationalSuperiorityRequirementCount=4", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("comparisonBaseline=MassTransit,NServiceBus,Wolverine,MediatR", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["operational-superiority-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
@@ -4404,6 +4409,11 @@ public sealed class EngineBuilderTests
         Assert.Contains("missingOperationalSuperiorityDimensionCount=3", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityCoveragePercent=50", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("operationalSuperiorityComplete=false", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("operationalSuperiorityReadiness=blocked", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("blockingOperationalSuperiorityDimensions=choreography-handoff-ownership,durable-remediation-command-audit,durable-command-journal-replay-cursor", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("blockingOperationalSuperiorityDimensionStatuses=choreography-handoff-ownership:not-claimed,durable-remediation-command-audit:not-claimed,durable-command-journal-replay-cursor:not-claimed", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("nextOperationalSuperiorityRequirements=choreography-handoff-ownership:activate-eventing-behavior-bridge-with-outbox-handoff,durable-remediation-command-audit:activate-durable-cross-node-remediation-command-journal,durable-command-journal-replay-cursor:provide-durable-remediation-command-replay-cursor", operationalEvidence, StringComparison.Ordinal);
+        Assert.Contains("nextOperationalSuperiorityRequirementCount=3", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("providerOperatedRuntimeProof=provider-operated-runtime-proof-coverage", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("commandJournalAuditProof=durable-remediation-command-audit", operationalEvidence, StringComparison.Ordinal);
         Assert.Contains("commandJournalReplayProof=durable-command-journal-replay-cursor", operationalEvidence, StringComparison.Ordinal);
