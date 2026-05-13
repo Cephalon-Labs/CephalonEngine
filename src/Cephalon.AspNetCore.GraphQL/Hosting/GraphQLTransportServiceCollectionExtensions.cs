@@ -1,5 +1,8 @@
 using Cephalon.AspNetCore.GraphQL.Routing;
+using Cephalon.AspNetCore.GraphQL.Resilience;
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.Abstractions.Technologies;
+using Cephalon.Engine.Manifest;
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Types;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +32,11 @@ public static class GraphQLTransportServiceCollectionExtensions
         }
 
         registration.MarkTransportRegistered();
+        services.TryAddSingleton(serviceProvider =>
+            GraphQLExecutionResilienceOptions.FromManifest(
+                serviceProvider.GetService<RuntimeManifest>()));
+        services.TryAddSingleton<GraphQLExecutionResilienceStateRegistry>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, GraphQLExecutionResilienceRuntimeContributor>());
         registration.Initialize(services.AddGraphQLServer());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, GraphQLTransportRouteMapper>());
         return services;
@@ -227,6 +235,7 @@ internal sealed class GraphQLTransportRegistration
     public void Initialize(IRequestExecutorBuilder builder)
     {
         this.builder = builder ?? throw new ArgumentNullException(nameof(builder));
+        builder.ConfigureSchema(schema => schema.Use(GraphQLExecutionResilienceMiddleware.Create));
         builder.AddQueryType(descriptor =>
         {
             descriptor.Name("Query");

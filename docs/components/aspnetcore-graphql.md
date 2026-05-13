@@ -10,17 +10,21 @@
 - module marker contract for GraphQL-capable Cephalon modules
 - shared query, mutation, and subscription root contribution helpers for module `ConfigureServices(...)`
 - separate built-in GraphQL HTTP, schema, GraphQL-over-SSE, and GraphQL-over-WebSocket endpoint mapping under the ASP.NET Core transport surface
+- config-driven execution resilience for built-in GraphQL query, mutation, and subscription root fields
 
 ## Main surfaces
 
 - `Hosting/GraphQLTransportServiceCollectionExtensions.cs`
 - `Modules/IGraphQLModule.cs`
+- `Resilience/GraphQLExecutionResilienceMiddleware.cs`
+- `Resilience/GraphQLExecutionResilienceRuntimeContributor.cs`
 - `Routing/GraphQLTransportRouteMapper.cs`
 
 ## Source structure
 
 - `Hosting`
 - `Modules`
+- `Resilience`
 - `Routing`
 
 ## How it fits
@@ -43,6 +47,16 @@ document at `/graphql/schema`, GraphQL-over-SSE at `/graphql-sse`, and GraphQL-o
 `/graphql-ws`. Those routes also participate in the same ASP.NET Core rate-limiting catalog, so
 `/engine/rate-limiting` can describe them truthfully as request-response, long-lived stream, or
 long-lived connection surfaces instead of flattening them into one generic GraphQL label.
+
+Built-in GraphQL query, mutation, and subscription root fields also participate in the engine-owned
+`Engine:Resilience` contract. When `Timeout`, `CircuitBreaker`, or `Bulkhead` is configured, the
+adapter registers a Hot Chocolate field middleware that enforces the selected policy without
+Wolverine, consumer field middleware, or package-specific project code. Rejections stay
+GraphQL-native through `errors[].extensions` metadata with stable Cephalon codes:
+`graphql_execution_timeout`, `graphql_circuit_breaker_open`, and `graphql_bulkhead_rejected`.
+The live posture is introspectable through `/engine/technology-surfaces/graphql` as
+`graphql-execution-resilience`, including policy source, operation scope, live circuit state,
+bulkhead counters, and `wolverineRequired=false` / `consumerCodeRequired=false`.
 
 The hosting coverage now also proves those routes through real protocol behavior: custom schema
 prefixes resolve SDL downloads correctly, the SSE route produces `text/event-stream`, and the
