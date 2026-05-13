@@ -2569,6 +2569,85 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingSelectsLatestProvenDownstreamDeliveryCompletionEvidenceAcrossOutboxesWithoutWolverine()
+    {
+        var olderExactlyOnceReport = EventDispatchExactlyOnceDeliveryProofMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "alpha-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 10, 0, 0, TimeSpan.Zero),
+                messageId: "evt-alpha-delivery-001",
+                attempt: 1),
+            source: "alpha-delivery-runtime",
+            providerReceiptId: "alpha-provider-receipt",
+            subscriberAcknowledgementId: "alpha-subscriber-ack",
+            destinationCommitId: "alpha-destination-commit",
+            exactlyOnceProofId: "alpha-exactly-once-proof",
+            strategy: "alpha-provider-deduplication-and-commit");
+        var newerExactlyOnceReport = EventDispatchExactlyOnceDeliveryProofMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "beta-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 10, 30, 0, TimeSpan.Zero),
+                messageId: "evt-beta-delivery-001",
+                attempt: 1),
+            source: "beta-delivery-runtime",
+            providerReceiptId: "beta-provider-receipt",
+            subscriberAcknowledgementId: "beta-subscriber-ack",
+            destinationCommitId: "beta-destination-commit",
+            exactlyOnceProofId: "beta-exactly-once-proof",
+            strategy: "beta-provider-deduplication-and-commit");
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventDispatchRuntimeCatalog>(new TestEventDispatchRuntimeCatalog(
+            CreateDispatchRuntimeState(olderExactlyOnceReport),
+            CreateDispatchRuntimeState(newerExactlyOnceReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new MultiOutboxEventingTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Downstream delivery completion proof events."));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["downstream-delivery-completion-ownership"].Metadata["status"]);
+        Assert.Contains("downstreamDeliveryProofSelection=latest-proven-dispatch-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("downstreamDeliveryStateCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("downstreamDeliveryProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("downstreamDeliveryCompletionSource=beta-delivery-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerDeliveryReceiptId=beta-provider-receipt", evidence, StringComparison.Ordinal);
+        Assert.Contains("subscriberAcknowledgementId=beta-subscriber-ack", evidence, StringComparison.Ordinal);
+        Assert.Contains("destinationCommitId=beta-destination-commit", evidence, StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDeliveryProofId=beta-exactly-once-proof", evidence, StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDeliveryStrategy=beta-provider-deduplication-and-commit", evidence, StringComparison.Ordinal);
+        Assert.Contains("outboxId=beta-outbox", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastObservedAtUtc=2026-05-13T10:30:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("exactlyOnceDeliveryProofId=alpha-exactly-once-proof", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AddEventingProjectsContractCatalogProfileEvidenceWithoutWolverine()
     {
         var services = new ServiceCollection();

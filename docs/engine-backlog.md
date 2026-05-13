@@ -1488,6 +1488,32 @@ Validation:
 - `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter "FullyQualifiedName~AddEventingSelectsLatestProvenScheduledDeliveryEvidenceAcrossOutboxesWithoutWolverine"`
 - `git diff --check`
 
+### ENG-647 Eventing downstream-delivery completion proof summary readback
+
+Status: done
+Iteration: Sprint 125
+Area: eventing / runtime truth / Wolverine optionality
+Quality dimensions: Auditability, Reliability, Data Integrity, Maintainability, Compatibility, Operability
+
+Why:
+
+- after `ENG-623`, `downstream-delivery-completion-ownership` could claim complete provider exactly-once delivery proof from successful dispatch metadata, but a multi-outbox runtime still depended on `IEventDispatchRuntimeCatalog.States` ordering when multiple providers reported delivery completion
+- operator readback should not depend on catalog ordering or an alphabetically earlier outbox when multiple providers report provider delivery receipt, subscriber acknowledgement, destination commit, and exactly-once delivery proof
+- the native eventing lane must keep Wolverine optional while proving downstream delivery completion truth without making hot-path publish/subscribe binding string-config driven
+
+Delivered:
+
+- changed `EventingSuperiorityProfileRuntimeSurfaceContributor` to evaluate downstream-delivery-completion dispatch states across the full runtime catalog
+- added runtime evidence keys `downstreamDeliveryProofSelection=latest-proven-dispatch-state`, `downstreamDeliveryStateCount`, `downstreamDeliveryProvenCount`, and the selected proof's `outboxId`, `lastOutcome`, and `lastObservedAtUtc`
+- selected proof by complete successful `EventDispatchExactlyOnceDeliveryProofMetadata` first, newest `LastObservedAtUtc` second, and deterministic outbox id third, so older outboxes cannot accidentally define the current operator-facing downstream-delivery-completion claim
+- added composition coverage proving two Wolverine-free outboxes report complete exactly-once delivery proof and the profile selects the newer proof while retaining proof counts and `wolverineRequired=false`
+- updated Eventing component docs, roadmap, backlog, and project memory so source and the hand-authored contract stay aligned
+
+Validation:
+
+- `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter "FullyQualifiedName~AddEventingSelectsLatestProvenDownstreamDeliveryCompletionEvidenceAcrossOutboxesWithoutWolverine"`
+- `git diff --check`
+
 ### ENG-529 Mark ASP.NET Core operator route AOT boundary
 
 Status: done
@@ -17660,6 +17686,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-602 Eventing scheduled and delayed delivery ownership profile evidence (shipped, issue #1256): `eventing-superiority-profile` now exposes `scheduled-and-delayed-delivery-ownership`, keeps bounded process-local publication scheduling `partial` only when enabled, and separates local delayed acceptance from durable scheduled delivery, provider delay queues, broker scheduled delivery, cross-node coordination, and schedule recovery
 - ENG-632 Eventing scheduled delivery proof evidence (shipped, issue #1286): `EventDispatchScheduledDeliveryMetadata` now records provider-reported scheduled/delayed delivery ownership only from successful dispatch reports with durable scheduled delivery, provider delay queue, broker scheduled delivery, cross-node schedule coordination, and schedule recovery proof, and lets `scheduled-and-delayed-delivery-ownership` become claimed only from that complete proof set
 - ENG-646 Eventing scheduled-delivery proof summary readback (shipped, issue #1306): `eventing-superiority-profile` now counts provider scheduled-delivery runtime proof states across all dispatch paths, selects complete successful proof by newest `LastObservedAtUtc` before deterministic outbox-id tie-break, and exposes the selected timestamp/counts while keeping Wolverine optional
+- ENG-647 Eventing downstream-delivery completion proof summary readback (shipped): `eventing-superiority-profile` now counts provider-reported downstream-delivery completion runtime proof states across all dispatch paths, selects complete successful `EventDispatchExactlyOnceDeliveryProofMetadata` proof by newest `LastObservedAtUtc` before deterministic outbox-id tie-break, and exposes the selected `outboxId`/`lastObservedAtUtc`/counts while keeping Wolverine optional
 - ENG-603 Eventing durable retry queue ownership profile evidence (shipped, issue #1257): `eventing-superiority-profile` now exposes `durable-retry-queue-ownership`, separates bounded in-process retry plus dispatch/provider retry observations from durable retry evidence, and was extended by ENG-625 so the dimension becomes claimed only from complete live provider-reported durable retry proof
 - ENG-604 Eventing idempotency ownership profile evidence (shipped, issue #1258): `eventing-superiority-profile` now exposes `idempotency-ownership`, reports process-local or inbox-backed completed-execution duplicate suppression as `partial` only when enabled, and was extended by ENG-626 so the dimension becomes claimed only from complete live provider-reported subscription idempotency proof
 - ENG-605 Eventing subscription concurrency ownership profile evidence (shipped, issue #1259): `eventing-superiority-profile` now exposes `subscription-concurrency-ownership`, keeps per-subscription concurrency limits, parallel handler execution, consumer prefetch, backpressure, provider concurrency, consumer leases, work stealing, and distributed work sharing `not-claimed` until a provider/runtime supplies complete live `EventSubscriptionConcurrencyMetadata` proof, and separates declared subscriptions, direct in-process execution, code-first middleware, hosted bindings, and optional provider bindings from concurrency/backpressure evidence
@@ -17921,6 +17948,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-644 Planning-governance horizon alignment review: `long-range-direction.md`, `engine-roadmap.md`, and `planning-governance.md` now record that the current roadmap phase plan still maps to near / mid / far / very-far horizons, and future phase changes must cite the affected horizon instead of appending unanchored roadmap prose. Quality dimensions: Maintainability + Auditability + Flexibility + Compatibility (shipped)
 - ENG-645 Eventing wire-contract proof summary readback: `eventing-superiority-profile` now counts serialization-execution and wire-contract runtime proof states across all dispatch paths, selects complete successful proof by newest `LastObservedAtUtc` before deterministic outbox-id tie-break, and exposes the selected timestamps/counts while keeping Wolverine optional. Quality dimensions: Auditability + Reliability + Data Integrity + Maintainability + Compatibility + Operability (shipped)
 - ENG-646 Eventing scheduled-delivery proof summary readback: `eventing-superiority-profile` now counts provider scheduled-delivery runtime proof states across all dispatch paths, selects complete successful proof by newest `LastObservedAtUtc` before deterministic outbox-id tie-break, and exposes the selected timestamp/counts while keeping Wolverine optional. Quality dimensions: Auditability + Reliability + Data Integrity + Maintainability + Compatibility + Operability (shipped, issue #1306)
+- ENG-647 Eventing downstream-delivery completion proof summary readback: `eventing-superiority-profile` now counts provider-reported downstream-delivery completion runtime proof states across all dispatch paths, selects complete successful `EventDispatchExactlyOnceDeliveryProofMetadata` proof by newest `LastObservedAtUtc` before deterministic outbox-id tie-break, and exposes the selected timestamp/counts while keeping Wolverine optional. Quality dimensions: Auditability + Reliability + Data Integrity + Maintainability + Compatibility + Operability (shipped)
 - ENG-414 Log tenth scheduled-task pass in project-memory.md (shipped)
 - ENG-415 Close Evidence-in-code drift for the new 3 M1 emission-site files (Agentics + Retrieval + Worker) (shipped)
 - ENG-416 Close conformance-matrix MultiTenancy.Governance route-projection drift (shipped)

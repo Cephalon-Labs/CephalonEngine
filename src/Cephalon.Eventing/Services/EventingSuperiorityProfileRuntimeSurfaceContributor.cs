@@ -591,21 +591,31 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
 
     private DownstreamDeliveryCompletionProfile ResolveDownstreamDeliveryCompletionProfile()
     {
-        if (!topology.HasPublishingPath)
+        using var scope = scopeFactory.CreateScope();
+        var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
+        var downstreamDeliveryStates = dispatchRuntimeCatalog?.States
+            .Where(static state =>
+                state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletion, out var value) &&
+                string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase))
+            .ToArray() ?? [];
+        var downstreamDeliveryProvenCount = downstreamDeliveryStates.Count(IsSuccessfulDownstreamDeliveryCompletionProof);
+        var completedState = SelectBestDispatchProof(
+            downstreamDeliveryStates,
+            IsSuccessfulDownstreamDeliveryCompletionProof);
+
+        if (completedState is null && !topology.HasPublishingPath)
         {
             return new DownstreamDeliveryCompletionProfile(
                 "not-claimed",
-                "no publication path is active; downstreamDeliveryCompletion=not-claimed; providerDeliveryReceipt=not-present; subscriberAcknowledgement=not-claimed; destinationCommit=not-claimed; exactlyOnceDelivery=not-claimed; wolverineRequired=false",
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"publicationPath=not-active; downstreamDeliveryProofSelection=latest-proven-dispatch-state; downstreamDeliveryStateCount={downstreamDeliveryStates.Length.ToString(CultureInfo.InvariantCulture)}; downstreamDeliveryProvenCount={downstreamDeliveryProvenCount.ToString(CultureInfo.InvariantCulture)}; downstreamDeliveryCompletion=not-claimed; providerDeliveryReceipt=not-present; subscriberAcknowledgement=not-claimed; destinationCommit=not-claimed; exactlyOnceDelivery=not-claimed; wolverineRequired=false"),
                 "Add a publishing path before claiming downstream delivery completion evidence.");
         }
 
-        using var scope = scopeFactory.CreateScope();
-        var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
-        var completedState = dispatchRuntimeCatalog?.States.FirstOrDefault(static state =>
-            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletion, out var value) &&
-            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
         var handoff = topology.HasOutboxPublishingPath ? "outbox-accepted" : "direct-or-provider-publisher";
         var dispatchRuntime = topology.HasDispatchRuntimeContributors ? "reported" : "not-reported";
+        var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
         if (completedState is not null)
         {
             var metadata = completedState.Metadata;
@@ -666,7 +676,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 status,
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"publicationPath=active; handoff={handoff}; dispatchRuntime={dispatchRuntime}; downstreamDeliveryCompletion=provider-reported; downstreamDeliveryCompletionSource={source}; providerDeliveryReceipt={providerReceipt}; providerDeliveryReceiptId={receiptId}; subscriberAcknowledgement={subscriberAcknowledgement}; subscriberAcknowledgementId={subscriberAcknowledgementId}; destinationCommit={destinationCommit}; destinationCommitId={destinationCommitId}; exactlyOnceDelivery={exactlyOnceDelivery}; exactlyOnceDeliverySource={exactlyOnceDeliverySource}; exactlyOnceDeliveryProofId={exactlyOnceDeliveryProofId}; exactlyOnceDeliveryStrategy={exactlyOnceDeliveryStrategy}; wolverineRequired=false"),
+                    $"publicationPath={publicationPath}; handoff={handoff}; dispatchRuntime={dispatchRuntime}; downstreamDeliveryProofSelection=latest-proven-dispatch-state; downstreamDeliveryStateCount={downstreamDeliveryStates.Length.ToString(CultureInfo.InvariantCulture)}; downstreamDeliveryProvenCount={downstreamDeliveryProvenCount.ToString(CultureInfo.InvariantCulture)}; downstreamDeliveryCompletion=provider-reported; downstreamDeliveryCompletionSource={source}; providerDeliveryReceipt={providerReceipt}; providerDeliveryReceiptId={receiptId}; subscriberAcknowledgement={subscriberAcknowledgement}; subscriberAcknowledgementId={subscriberAcknowledgementId}; destinationCommit={destinationCommit}; destinationCommitId={destinationCommitId}; exactlyOnceDelivery={exactlyOnceDelivery}; exactlyOnceDeliverySource={exactlyOnceDeliverySource}; exactlyOnceDeliveryProofId={exactlyOnceDeliveryProofId}; exactlyOnceDeliveryStrategy={exactlyOnceDeliveryStrategy}; outboxId={completedState.OutboxId}; lastOutcome={completedState.LastOutcome ?? "unknown"}; lastObservedAtUtc={FormatObservedAt(completedState.LastObservedAtUtc)}; wolverineRequired=false"),
                 nextGap);
         }
 
@@ -674,7 +684,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "not-claimed",
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"publicationPath=active; handoff={handoff}; dispatchRuntime={dispatchRuntime}; downstreamDeliveryCompletion=not-claimed; providerDeliveryReceipt=not-present; subscriberAcknowledgement=not-claimed; destinationCommit=not-claimed; exactlyOnceDelivery=not-claimed; wolverineRequired=false"),
+                $"publicationPath={publicationPath}; handoff={handoff}; dispatchRuntime={dispatchRuntime}; downstreamDeliveryProofSelection=latest-proven-dispatch-state; downstreamDeliveryStateCount={downstreamDeliveryStates.Length.ToString(CultureInfo.InvariantCulture)}; downstreamDeliveryProvenCount={downstreamDeliveryProvenCount.ToString(CultureInfo.InvariantCulture)}; downstreamDeliveryCompletion=not-claimed; providerDeliveryReceipt=not-present; subscriberAcknowledgement=not-claimed; destinationCommit=not-claimed; exactlyOnceDelivery=not-claimed; wolverineRequired=false"),
             "Add a provider-owned delivery completion descriptor plus acknowledgement, receipt, and completion-evidence catalog before claiming downstream delivery completion.");
     }
 
@@ -788,6 +798,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private static bool IsSuccessfulScheduledDeliveryProof(EventDispatchRuntimeState state) =>
         string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
         EventDispatchScheduledDeliveryMetadata.IsScheduledDeliveryProven(state.Metadata);
+
+    private static bool IsSuccessfulDownstreamDeliveryCompletionProof(EventDispatchRuntimeState state) =>
+        string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+        EventDispatchExactlyOnceDeliveryProofMetadata.IsProviderProven(state.Metadata);
 
     private static string FormatObservedAt(DateTimeOffset? observedAtUtc) =>
         observedAtUtc.HasValue
