@@ -183,5 +183,6 @@ The browser UI can switch between type search and member search, while the JSON 
 - regenerate `docs/reference/` after changing public API docs
 - keep the checked-in `docs/reference/` bundle aligned with the current generator output; the reference-doc test suite now treats bundle drift as a failure and expects `pwsh ./scripts/publish-reference-docs.ps1` to be the repair path
 - keep `docs/reference/reference-manifest.json` aligned with the checked-in bundle: Tooling coverage validates required browser/index/manifest assets, manifest-owned assembly pages, namespace/type/member anchor ids, assembly namespace/type counts, and orphan generated Markdown pages before hosted reference docs can be considered stable
+- keep `docs/reference/browse.html` aligned with its local browser bundle: Tooling coverage resolves local `href` and `src` targets inside `docs/reference` so the hosted browser shell cannot silently lose its CSS, JavaScript, manifest, or index links
 - keep `artifacts/reference-docs-release/` as pipeline output, not as hand-edited source content
 - keep the generator, publish script, and generated output aligned with the current solution layout

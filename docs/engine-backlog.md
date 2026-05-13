@@ -80,6 +80,33 @@ Current focus:
 - treat hand-authored Markdown anchor fragments as guarded adoption pointers: same-page `#fragment`, repo-local `file.md#fragment`, and GitHub-style `#Lx` / `#Lx-Ly` line fragments must resolve before docs can claim a stable navigation path
 - treat generated reference docs as a guarded generated API navigation layer: repo-local links across `docs/reference/**/*.md` must resolve inside `docs/reference`, and browser-view query links such as `browse.html?assembly=...` must resolve to the generated browser file while hand-authored docs remain the primary human contract
 - treat `docs/reference/reference-manifest.json` as the generated API bundle map: required browser/index/manifest assets must exist, assembly page files must be manifest-owned, namespace/type/member anchor ids must resolve in those pages, and orphan generated Markdown pages must fail Tooling coverage before hosted reference docs can drift
+- treat `docs/reference/browse.html` as the hosted reference-doc browser entry point: local `href` and `src` references must resolve inside `docs/reference` to existing generated bundle files so CSS, JavaScript, index links, and manifest links cannot drift after regeneration
+
+### ENG-691 Generated reference docs browser asset guard
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: reference-docs / documentation graph / documentation coverage
+Quality dimensions: Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1360
+
+Why:
+
+- `ENG-690` guarded manifest-owned bundle files, but `docs/reference/browse.html` can still ship broken `href` or `src` references if the browser shell changes
+- hosted reference docs default to `browse.html`, so missing CSS, JavaScript, manifest, or index links break the first operator/developer entry point even when Markdown pages and manifest anchors are valid
+- external, `data:`, `javascript:`, and hash-only browser references should stay outside the filesystem guard, while generated local bundle references must stay inside `docs/reference`
+
+Delivered:
+
+- added Tooling documentation coverage for local `href` and `src` targets in `docs/reference/browse.html`
+- required browser UI local targets to resolve inside `docs/reference` and point at existing generated files after query/fragment normalization
+- asserted that the hosted browser entry keeps the core local bundle links for `README.md`, `reference-manifest.json`, `reference-browser.css`, and `reference-browser.js`
+
+Validation:
+
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~DocumentationCoverageTests" --logger "console;verbosity=minimal"`
+- `git diff --check`
 
 ### ENG-690 Generated reference docs manifest bundle guard
 

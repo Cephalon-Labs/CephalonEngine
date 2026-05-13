@@ -31,6 +31,10 @@ public sealed class DocumentationCoverageTests
         @"<a\s+[^>]*(?:id|name)\s*=\s*[""'](?<anchor>[^""']+)[""'][^>]*>",
         RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
+    private static readonly Regex HtmlReferenceAttributePattern = new(
+        @"\b(?:href|src)\s*=\s*[""'](?<target>[^""']+)[""']",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
     private static readonly Regex GitHubLineFragmentPattern = new(
         @"^L(?<start>\d+)(?:-L(?<end>\d+))?$",
         RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
@@ -396,6 +400,49 @@ public sealed class DocumentationCoverageTests
         Assert.Equal(
             expectedMarkdownFiles.OrderBy(fileName => fileName, StringComparer.OrdinalIgnoreCase),
             actualMarkdownFiles.OrderBy(fileName => fileName, StringComparer.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void GeneratedReferenceDocumentationBrowserLocalAssetsResolve()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var referenceDocsRoot = Path.Combine(repositoryRoot, "docs", "reference");
+        var browserPath = Path.Combine(referenceDocsRoot, "browse.html");
+
+        Assert.True(File.Exists(browserPath), "Expected generated reference documentation to include browse.html.");
+
+        var browserHtml = File.ReadAllText(browserPath);
+        var localReferences = HtmlReferenceAttributePattern
+            .Matches(browserHtml)
+            .Select(static match => match.Groups["target"].Value.Trim())
+            .Where(IsRepositoryLocalBrowserReference)
+            .Select(ParseLocalMarkdownLink)
+            .GroupBy(static link => link.OriginalTarget, StringComparer.Ordinal)
+            .Select(static group => group.First())
+            .OrderBy(static link => link.OriginalTarget, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.NotEmpty(localReferences);
+
+        var localReferenceTargets = localReferences
+            .Select(static link => link.TargetPath)
+            .ToArray();
+        Assert.Contains("README.md", localReferenceTargets);
+        Assert.Contains("reference-manifest.json", localReferenceTargets);
+        Assert.Contains("reference-browser.css", localReferenceTargets);
+        Assert.Contains("reference-browser.js", localReferenceTargets);
+
+        foreach (var localReference in localReferences)
+        {
+            var resolvedPath = ResolveLocalMarkdownLinkPath(referenceDocsRoot, browserPath, localReference.TargetPath);
+
+            Assert.True(
+                IsPathInsideDirectory(referenceDocsRoot, resolvedPath),
+                $"Expected generated reference browser target '{localReference.OriginalTarget}' to stay inside docs/reference but resolved to '{resolvedPath}'.");
+            Assert.True(
+                File.Exists(resolvedPath),
+                $"Expected generated reference browser target '{localReference.OriginalTarget}' to resolve to an existing generated reference-doc file at '{resolvedPath}'.");
+        }
     }
 
     [Fact]
@@ -1384,6 +1431,13 @@ public sealed class DocumentationCoverageTests
             return true;
 
         return !Uri.TryCreate(target, UriKind.Absolute, out _);
+    }
+
+    private static bool IsRepositoryLocalBrowserReference(string target)
+    {
+        return !string.IsNullOrWhiteSpace(target) &&
+               !target.StartsWith('#') &&
+               IsRepositoryLocalLink(target);
     }
 
     private static IEnumerable<string> EnumerateHandAuthoredMarkdownPaths(string repositoryRoot)
