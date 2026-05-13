@@ -20,6 +20,7 @@ using Cephalon.Abstractions.AppModel.Scaffolding;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Localization;
+using Cephalon.Abstractions.Modules;
 using Cephalon.Edge.Registration;
 using Cephalon.Edge.Services;
 using Cephalon.Eventing.Registration;
@@ -2402,6 +2403,90 @@ public sealed class EngineBuilderTests
         Assert.Contains("handoffDurability=not-active", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("processManagerState=not-claimed", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AddEventingSelectsLatestProvenWireContractEvidenceAcrossOutboxesWithoutWolverine()
+    {
+        var olderWireContractReport = EventDispatchWireContractMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "alpha-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 7, 0, 0, TimeSpan.Zero),
+                messageId: "evt-alpha-001",
+                attempt: 1),
+            source: "alpha-wire-runtime",
+            payloadSerializationExecutionId: "alpha-payload-serialization",
+            wireEnvelopeSchemaExecutionId: "alpha-wire-envelope-schema",
+            schemaLookupExecutionId: "alpha-schema-lookup",
+            contractVersionNegotiationExecutionId: "alpha-contract-version-negotiation",
+            upcasterExecutionId: "alpha-upcaster-execution",
+            compatibilityValidationExecutionId: "alpha-compatibility-validation",
+            providerSerializationId: "alpha-provider-serialization",
+            wireContractProofId: "alpha-wire-contract-proof");
+        var newerWireContractReport = EventDispatchWireContractMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "beta-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 8, 30, 0, TimeSpan.Zero),
+                messageId: "evt-beta-001",
+                attempt: 1),
+            source: "beta-wire-runtime",
+            payloadSerializationExecutionId: "beta-payload-serialization",
+            wireEnvelopeSchemaExecutionId: "beta-wire-envelope-schema",
+            schemaLookupExecutionId: "beta-schema-lookup",
+            contractVersionNegotiationExecutionId: "beta-contract-version-negotiation",
+            upcasterExecutionId: "beta-upcaster-execution",
+            compatibilityValidationExecutionId: "beta-compatibility-validation",
+            providerSerializationId: "beta-provider-serialization",
+            wireContractProofId: "beta-wire-contract-proof");
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventDispatchRuntimeCatalog>(new TestEventDispatchRuntimeCatalog(
+            CreateDispatchRuntimeState(olderWireContractReport),
+            CreateDispatchRuntimeState(newerWireContractReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new MultiOutboxEventingTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Wire-contract proof events."));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["status"]);
+        Assert.Contains("runtimeProofSelection=latest-proven-dispatch-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("serializationExecutionStateCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("serializationExecutionProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("wireContractStateCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("wireContractProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("serializationExecutionOutboxId=beta-outbox", evidence, StringComparison.Ordinal);
+        Assert.Contains("serializationExecutionLastObservedAtUtc=2026-05-13T08:30:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wireContractOutboxId=beta-outbox", evidence, StringComparison.Ordinal);
+        Assert.Contains("wireContractOwnershipSource=beta-wire-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("wireContractProofId=beta-wire-contract-proof", evidence, StringComparison.Ordinal);
+        Assert.Contains("wireContractLastObservedAtUtc=2026-05-13T08:30:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("wireContractProofId=alpha-wire-contract-proof", evidence, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -4795,6 +4880,58 @@ public sealed class EngineBuilderTests
                     ["executor"] = nameof(CountingAgentToolExecutor),
                     ["observedAttempt"] = context.Attempt.ToString(CultureInfo.InvariantCulture)
                 }));
+        }
+    }
+
+    private static EventDispatchRuntimeState CreateDispatchRuntimeState(EventDispatchExecutionReport report)
+    {
+        return new EventDispatchRuntimeState(
+            OutboxId: report.OutboxId,
+            LastChannelId: report.ChannelId,
+            LastOutcome: report.Outcome,
+            LastObservedAtUtc: report.ObservedAtUtc,
+            LastMessageId: report.MessageId,
+            LastAttempt: report.Attempt,
+            StartedCount: 0,
+            SucceededCount: string.Equals(report.Outcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
+            FailedCount: string.Equals(report.Outcome, EventDispatchExecutionOutcomes.Failed, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
+            RetryScheduledCount: string.Equals(report.Outcome, EventDispatchExecutionOutcomes.RetryScheduled, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
+            SkippedCount: string.Equals(report.Outcome, EventDispatchExecutionOutcomes.Skipped, StringComparison.OrdinalIgnoreCase) ? 1 : 0,
+            LastError: report.Error,
+            Metadata: report.Metadata);
+    }
+
+    private sealed class MultiOutboxEventingTestModule : ModuleBase, IOutboxContributor
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "multi-outbox-eventing-tests",
+            displayName: "Multi Outbox Eventing Tests",
+            description: "Registers multiple outboxes for eventing runtime proof-selection tests.",
+            tags: ["eventing", "outbox", "tests"],
+            version: "1.0.0");
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public void RegisterOutboxes(IOutboxRegistry outboxes)
+        {
+            outboxes.Add(new OutboxDescriptor(
+                id: "alpha-outbox",
+                displayName: "Alpha Outbox",
+                description: "Older wire-contract proof outbox.",
+                sourceModuleId: Descriptor.Id,
+                provider: "test",
+                mode: "in-memory",
+                channelIds: ["contracts"],
+                tags: ["test"]));
+            outboxes.Add(new OutboxDescriptor(
+                id: "beta-outbox",
+                displayName: "Beta Outbox",
+                description: "Newer wire-contract proof outbox.",
+                sourceModuleId: Descriptor.Id,
+                provider: "test",
+                mode: "in-memory",
+                channelIds: ["contracts"],
+                tags: ["test"]));
         }
     }
 

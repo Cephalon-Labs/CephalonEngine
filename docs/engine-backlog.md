@@ -1435,6 +1435,32 @@ Validation:
 - `rg -n "ENG-644|Long-range horizon alignment|planning-governance horizon" docs/long-range-direction.md docs/engine-roadmap.md docs/planning-governance.md docs/architecture-review-2026-05-followups.md docs/engine-backlog.md docs/project-memory.md`
 - `git diff --check`
 
+### ENG-645 Eventing wire-contract proof summary readback
+
+Status: done
+Iteration: Sprint 125
+Area: eventing / runtime truth / Wolverine optionality
+Quality dimensions: Auditability, Reliability, Data Integrity, Maintainability, Compatibility, Operability
+
+Why:
+
+- after `ENG-634`, `serialization-and-contract-versioning-ownership` could claim complete executable wire-contract proof from live dispatch metadata, but a multi-outbox runtime still needed explicit proof counts and deterministic latest-proof selection
+- operator readback should not depend on `IEventDispatchRuntimeCatalog.States` ordering or an alphabetically earlier outbox when multiple providers report complete proof
+- the native eventing lane must keep Wolverine optional while proving that Cephalon-owned runtime truth can be richer and more precise than a single provider adapter claim
+
+Delivered:
+
+- changed `EventingSuperiorityProfileRuntimeSurfaceContributor` to evaluate serialization-execution and wire-contract dispatch states independently across the full runtime catalog
+- added runtime evidence keys `runtimeProofSelection=latest-proven-dispatch-state`, `serializationExecutionStateCount`, `serializationExecutionProvenCount`, `wireContractStateCount`, `wireContractProvenCount`, `serializationExecutionLastObservedAtUtc`, and `wireContractLastObservedAtUtc`
+- selected proof by complete successful proof first, newest `LastObservedAtUtc` second, and deterministic outbox id third, so older outboxes cannot accidentally define the current operator-facing serialization claim
+- added composition coverage proving two Wolverine-free outboxes report complete wire-contract proof and the profile selects the newer proof while retaining proof counts and `wolverineRequired=false`
+- updated Eventing component docs, roadmap, backlog, and project memory so source and the hand-authored contract stay aligned
+
+Validation:
+
+- `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter "FullyQualifiedName~AddEventingSelectsLatestProvenWireContractEvidenceAcrossOutboxesWithoutWolverine"`
+- `git diff --check`
+
 ### ENG-529 Mark ASP.NET Core operator route AOT boundary
 
 Status: done
@@ -17865,6 +17891,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-642 Add GraphQL Query, Mutation, and Subscription execution resilience runtime enforcement: `Cephalon.AspNetCore.GraphQL` now enforces configured timeout, circuit-breaker, and bulkhead policy from `Engine:Resilience` for built-in Query, Mutation, and Subscription root fields, reports `graphql-execution-resilience` through `/engine/technology-surfaces/graphql`, and keeps GraphQL-native error metadata without Wolverine or consumer field-middleware code. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability + Performance + Auditability (shipped)
 - ENG-643 Refresh .NET 11 Preview 4 readiness truth: official Microsoft sources now show `.NET 11 Preview 4` / SDK `11.0.100-preview.4.26230.115` plus the `dotnet/core` `preview4` release-notes folder; Cephalon keeps `.NET 11` as a current `partial` assessment lane while shipping on `net10.0`. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
 - ENG-644 Planning-governance horizon alignment review: `long-range-direction.md`, `engine-roadmap.md`, and `planning-governance.md` now record that the current roadmap phase plan still maps to near / mid / far / very-far horizons, and future phase changes must cite the affected horizon instead of appending unanchored roadmap prose. Quality dimensions: Maintainability + Auditability + Flexibility + Compatibility (shipped)
+- ENG-645 Eventing wire-contract proof summary readback: `eventing-superiority-profile` now counts serialization-execution and wire-contract runtime proof states across all dispatch paths, selects complete successful proof by newest `LastObservedAtUtc` before deterministic outbox-id tie-break, and exposes the selected timestamps/counts while keeping Wolverine optional. Quality dimensions: Auditability + Reliability + Data Integrity + Maintainability + Compatibility + Operability (shipped)
 - ENG-414 Log tenth scheduled-task pass in project-memory.md (shipped)
 - ENG-415 Close Evidence-in-code drift for the new 3 M1 emission-site files (Agentics + Retrieval + Worker) (shipped)
 - ENG-416 Close conformance-matrix MultiTenancy.Governance route-projection drift (shipped)
