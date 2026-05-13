@@ -67,7 +67,31 @@ internal sealed class EventingBenchmarkProofCatalog : IEventingBenchmarkProofCat
             Benchmark: "BuildStartWorkerHost",
             MaxMeanNanoseconds: 5000000,
             MaxAllocatedBytes: 500000,
-            HotPath: "worker-host-cold-start")
+            HotPath: "worker-host-cold-start"),
+        new(
+            Id: "eventing.event-journal.append-single-event",
+            Family: "durable-journal",
+            ReportFileName: "Cephalon.Benchmarks.HotPath.EventSourcingBenchmarks-report.csv",
+            Benchmark: "AppendSingleEvent",
+            MaxMeanNanoseconds: 10000,
+            MaxAllocatedBytes: 10000,
+            HotPath: "event-journal-single-append"),
+        new(
+            Id: "eventing.event-journal.read-stream",
+            Family: "durable-journal",
+            ReportFileName: "Cephalon.Benchmarks.HotPath.EventSourcingBenchmarks-report.csv",
+            Benchmark: "ReadStream",
+            MaxMeanNanoseconds: 50000,
+            MaxAllocatedBytes: 20000,
+            HotPath: "event-journal-stream-read"),
+        new(
+            Id: "eventing.event-journal.get-stream-version",
+            Family: "durable-journal",
+            ReportFileName: "Cephalon.Benchmarks.HotPath.EventSourcingBenchmarks-report.csv",
+            Benchmark: "GetStreamVersion",
+            MaxMeanNanoseconds: 5000,
+            MaxAllocatedBytes: 5000,
+            HotPath: "event-journal-version-lookup")
     ];
 
     public IReadOnlyList<EventingBenchmarkProofDescriptor> Guardrails => DefaultGuardrails;

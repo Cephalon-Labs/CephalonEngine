@@ -1027,11 +1027,11 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("wolverineRequired=false", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("partial", testabilityEntry.Metadata["status"]);
         Assert.Contains("benchmarkProofCatalog=present", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
-        Assert.Contains("guardrailCount=7", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("guardrailCount=10", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("activeOutboxBackedPath=true", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("activeGuardrailApplication=outbox-backed-remediation", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
-        Assert.Contains("coveredGuardrailFamilies=cold-start,remediation-filtered-reads", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
-        Assert.Contains("missingGuardrailFamilies=broker-dispatch,durable-journal,provider-managed-eventing", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("coveredGuardrailFamilies=cold-start,durable-journal,remediation-filtered-reads", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingGuardrailFamilies=broker-dispatch,provider-managed-eventing", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", testabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["runtimeState"] == "available");
