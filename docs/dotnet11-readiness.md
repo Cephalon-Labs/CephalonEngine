@@ -10,17 +10,18 @@ This guide records the current Cephalon truth for future-framework assessment wi
 - `.NET 11` is currently a readiness lane, not a default-target migration
 - trim, Native AOT, and single-file support remain explicit global `not-claimed` support statements tracked through [Deployment-mode support](deployment-mode-support.md) and `scripts/deployment-mode-support.json`; package-scoped claims such as `Cephalon.Diagnostics` single-file support are narrower manifest entries and do not change the global support rows, and `publishProbePolicy` now makes the representative `singleFile` publish probe release-blocking without promoting global single-file support
 
-As of `May 9, 2026`, Microsoft has:
+As of `May 13, 2026`, Microsoft has:
 
 - shipped `.NET 11 Preview 1` on `February 10, 2026`
 - shipped `.NET 11 Preview 2` on `March 10, 2026`
 - shipped `.NET 11 Preview 3` on `April 14, 2026`
-- published `11.0.100-preview.3.26207.106` as the current SDK on the `.NET 11` download page
-- not yet announced `Preview 4`; the official `dotnet/core` release-notes folder still contains only `preview1`, `preview2`, and `preview3`. Microsoft's monthly preview cadence implies the next preview is most likely to land on or near the second Tuesday of `May 2026` (May 12, 2026), but Cephalon should keep that as an expectation, not a commitment, until the official `devblogs.microsoft.com/dotnet` post, the `.NET 11` download page, and the `dotnet/core/release-notes/11.0/preview/` folder all publish that build
+- shipped `.NET 11 Preview 4` on `May 12, 2026`
+- published `11.0.100-preview.4.26230.115` as the current SDK on the `.NET 11` download page
+- published the official `dotnet/core` `release-notes/11.0/preview/preview4` folder. The Microsoft Learn overview still states that it was last updated for Preview 3, so current-build identity should be read from the `.NET 11` download page plus `dotnet/core` release notes until Learn catches up
 - kept `.NET 10` in active LTS support through `November 14, 2028`
 - kept the official `.NET 11` final-release target on `November 2026`
 
-When the next preview lands, refresh this anchor again rather than letting the dated section drift into multi-month staleness; the readiness lane is most useful when the dated truth is recent. The May 9 refresh removes the current release-scorecard `needs-refresh` warning for the `.NET 11` gate, but it does not promote a `.NET 11` support baseline.
+When Preview 5, an RC, or GA lands, refresh this anchor again rather than letting the dated section drift into multi-month staleness; the readiness lane is most useful when the dated truth is recent. The May 13 refresh keeps the release-scorecard `.NET 11` gate as a current `partial` readiness lane, but it does not promote a `.NET 11` support baseline.
 
 Official sources:
 
@@ -30,6 +31,7 @@ Official sources:
 - [What's new in .NET 11 (Microsoft Learn)](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/overview)
 - [.NET 11 download page](https://dotnet.microsoft.com/en-us/download/dotnet/11.0)
 - [.NET 11 release-notes folder (`dotnet/core`)](https://github.com/dotnet/core/tree/main/release-notes/11.0/preview/)
+- [.NET 11 Preview 4 release-notes folder (`dotnet/core`)](https://github.com/dotnet/core/tree/main/release-notes/11.0/preview/preview4)
 - [.NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy)
 - [`actions/setup-dotnet` version-channel guidance](https://github.com/actions/setup-dotnet)
 
@@ -134,9 +136,9 @@ The machine-readable contract exists so future support claims cannot drift away 
 
 ## Next likely follow-through
 
-After this readiness baseline, the next framework-focused work should be deliberate and explicit:
+After this Preview 4 readiness refresh, the next framework-focused work should be deliberate and explicit:
 
-- analyzer drift review as new `.NET 11` previews and RCs arrive
+- analyzer drift review as Preview 5, RCs, and GA arrive
 - package-surface review for Microsoft and ecosystem package compatibility under `.NET 11`
 - truthful deployment-mode validation before any trim / AOT / single-file claims are added on top of the shipped support-contract manifest
 - the shipped `scripts/validate-deployment-mode-claims.ps1` harness is the machine-checkable proof gate for trim/AOT/single-file support claims; until it reports `claim-truthful` for an intentionally promoted support set, the global support contract stays `not-claimed`. Its emitted report now includes `PublishProbePolicy`, `PublishProbeGate`, and a lock-file-backed transitive-hazard audit subset; the current gate is release-blocking for representative `singleFile` publish only and does not promote support by itself. See [Deployment-mode support](deployment-mode-support.md) for the harness scope and emitted inventory artifact.

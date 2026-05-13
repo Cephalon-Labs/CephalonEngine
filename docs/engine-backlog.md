@@ -1382,6 +1382,33 @@ Validation:
 - `pwsh ./scripts/measure-ci-flake-rate.ps1 -AllowUnavailable` confirmed the remaining SRE flake-rate baseline is still not promotable because the canonical repository reports zero matching completed Actions runs
 - scorecard publishing and focused script/tooling tests were refreshed in this slice
 
+### ENG-643 Refresh .NET 11 Preview 4 readiness truth
+
+Status: done
+Iteration: Sprint 125
+Area: release-readiness / framework readiness
+Quality dimensions: Compatibility, Auditability, Maintainability, Usability
+
+Why:
+
+- `.NET 11 Preview 4` is version-sensitive official-source truth that changed after the May 9 `ENG-530` refresh
+- current docs and planning still named Preview 3 / no `preview4` release-notes folder as the active readiness anchor
+- Cephalon must keep current framework assessment separate from any baseline migration so the engine continues shipping on `net10.0`
+
+Delivered:
+
+- rechecked official Microsoft sources on May 13, 2026
+- confirmed the `.NET 11` download page now lists Preview 4 / SDK `11.0.100-preview.4.26230.115` with latest release date May 12, 2026
+- confirmed `dotnet/core` now has the `release-notes/11.0/preview/preview4` folder while Microsoft Learn still says the overview was last updated for Preview 3
+- refreshed `docs/dotnet11-readiness.md`, project memory, the May architecture follow-up tracker, the engine-completion scorecard, roadmap, and backlog so `.NET 11` remains a current `partial` assessment lane rather than a stale Preview 3 anchor
+- preserved the `net10.0` shipping floor, the `global.json` SDK 10 pin, and the intentional `netstandard2.0` exceptions for the template pack, analyzer meta-package, and source-generator surfaces
+
+Validation:
+
+- `pwsh ./scripts/validate-dotnet-readiness.ps1 -Configuration Release -SkipBuild -SkipTests -SkipReferenceDocs -SkipPackages`
+- stale current-truth search for Preview 3 / missing Preview 4 claims across the touched docs
+- `git diff --check`
+
 ### ENG-529 Mark ASP.NET Core operator route AOT boundary
 
 Status: done
@@ -17810,6 +17837,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-640 Add JSON-RPC direct-module resilience runtime enforcement: `Cephalon.AspNetCore.JsonRpc` now enforces configured direct-module timeout, circuit-breaker, and bulkhead policy from `Engine:Resilience`, reports `json-rpc-direct-module-resilience` through `/engine/technology-surfaces/json-rpc`, and keeps JSON-RPC-native `503` / `429` envelopes without Wolverine or consumer endpoint filter code. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability + Performance + Auditability (shipped)
 - ENG-641 Add direct SSE/WebSocket module resilience runtime enforcement: `Cephalon.AspNetCore` now enforces configured direct-module timeout, circuit-breaker, and bulkhead policy from `Engine:Resilience` for `IServerSentEventsModule` and `IWebSocketModule`, reports `sse-direct-module-resilience` plus `websocket-direct-module-resilience`, and keeps streaming-native error payloads without Wolverine or consumer endpoint filter code. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability + Performance + Auditability (shipped)
 - ENG-642 Add GraphQL Query, Mutation, and Subscription execution resilience runtime enforcement: `Cephalon.AspNetCore.GraphQL` now enforces configured timeout, circuit-breaker, and bulkhead policy from `Engine:Resilience` for built-in Query, Mutation, and Subscription root fields, reports `graphql-execution-resilience` through `/engine/technology-surfaces/graphql`, and keeps GraphQL-native error metadata without Wolverine or consumer field-middleware code. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability + Performance + Auditability (shipped)
+- ENG-643 Refresh .NET 11 Preview 4 readiness truth: official Microsoft sources now show `.NET 11 Preview 4` / SDK `11.0.100-preview.4.26230.115` plus the `dotnet/core` `preview4` release-notes folder; Cephalon keeps `.NET 11` as a current `partial` assessment lane while shipping on `net10.0`. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
 - ENG-414 Log tenth scheduled-task pass in project-memory.md (shipped)
 - ENG-415 Close Evidence-in-code drift for the new 3 M1 emission-site files (Agentics + Retrieval + Worker) (shipped)
 - ENG-416 Close conformance-matrix MultiTenancy.Governance route-projection drift (shipped)
@@ -18431,6 +18459,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-640 JSON-RPC direct-module resilience runtime enforcement: `Cephalon.AspNetCore.JsonRpc` now applies configured direct-module timeout, circuit-breaker, and bulkhead policy from `Engine:Resilience` to direct `IJsonRpcModule` endpoints, preserving JSON-RPC-native `-32053` / `-32029` envelopes plus live `json-rpc-direct-module-resilience` metadata without Wolverine or consumer endpoint filter code — **Shipped** · targeted hosting tests 10/10
 - ENG-641 direct SSE and WebSocket module resilience runtime enforcement: `Cephalon.AspNetCore` now applies configured direct-module timeout, circuit-breaker, and bulkhead policy from `Engine:Resilience` to direct `IServerSentEventsModule` and `IWebSocketModule` endpoints, preserving SSE `event: error` payloads, WebSocket text error frames, and live `sse-direct-module-resilience` / `websocket-direct-module-resilience` metadata without Wolverine or consumer endpoint filter code — **Shipped** · targeted hosting tests 7/7
 - ENG-642 GraphQL Query, Mutation, and Subscription execution resilience runtime enforcement: `Cephalon.AspNetCore.GraphQL` now applies configured timeout, circuit-breaker, and bulkhead policy from `Engine:Resilience` to built-in Query, Mutation, and Subscription root fields, preserving GraphQL-native `errors[].extensions` metadata plus live `graphql-execution-resilience` metadata without Wolverine or consumer field-middleware code — **Shipped** · targeted hosting tests 6/6
+- ENG-643 .NET 11 Preview 4 readiness truth: `.NET 11` official-source truth now names Preview 4 / SDK `11.0.100-preview.4.26230.115` and `dotnet/core` `preview4` release notes; the repo keeps `net10.0` as the shipping floor and leaves `.NET 11` as a refreshed assessment lane — **Shipped** · readiness docs validation
 - ENG-101 phase 12 strangler-fig migration policy and progress baseline: `Cephalon.Abstractions` now exposes `IStranglerFigMigrationRuntimeCatalog` plus `StranglerFigMigrationRuntimeDescriptor`, `Cephalon.Engine` now binds deterministic `Engine:Migration:StranglerFig` default plus per-route overlays into `snapshot.StranglerFigRoutePolicies`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/runtime` plus `/engine/strangler-fig/runtime/{routeId}` while host-level cutover remains later — **Shipped** · composition tests 4/4 + hosting tests 1/1 + package-surface tests 153/153
 - ENG-102 phase 12 ASP.NET Core strangler-fig cutover runtime: `Cephalon.AspNetCore` now derives host cutover execution from `IStranglerFigMigrationRuntimeCatalog`, exposes `/engine/strangler-fig/cutover` plus `/engine/strangler-fig/cutover/resolve`, rewrites rooted local targets in-process, redirects or proxies absolute HTTP or HTTPS targets through `Engine:Migration:StranglerFig:AspNetCore`, and rejects unsupported selected endpoints truthfully with `502` while broader provider-specific ingress or edge automation remains later — **Shipped** · hosting tests 5/5 + composition tests 4/4 + package-surface tests 153/153
 - ENG-131 phase 13 CDC execution ownership binding baseline: `Cephalon.Abstractions` now exposes `CdcCaptureExecutionBindingDescriptor`, `CdcCaptureDescriptor` plus `CdcCaptureRuntimeState` now carry `ExecutionBinding`, `Cephalon.Data` now resolves authored/requested/effective ownership deterministically while rejecting ambiguous competing runtime claims and scoping the shared pump to captures effectively owned by `data-cdc-capture-pump`, and `Cephalon.AspNetCore` now exposes `/engine/cdc-captures/execution-runtimes/{executionRuntimeId}` plus `/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}` so capture-first and runtime-first CDC ownership views stay on the same truth — **Shipped** · GitHub issue `#556` · composition tests 12/12 + hosting tests 1/1 + tooling tests 171/171 + reference docs publish script
