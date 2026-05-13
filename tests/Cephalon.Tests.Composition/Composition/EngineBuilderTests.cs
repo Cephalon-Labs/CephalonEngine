@@ -2406,6 +2406,110 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingSelectsLatestProvenBrokerTopologyEvidenceAcrossOutboxesWithoutWolverine()
+    {
+        var olderBrokerTopologyReport = EventDispatchBrokerTopologyMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "alpha-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 6, 0, 0, TimeSpan.Zero),
+                messageId: "evt-alpha-topology-001",
+                attempt: 1),
+            source: "alpha-topology-runtime",
+            exchangeProvisioningId: "alpha-exchange-provisioning",
+            queueProvisioningId: "alpha-queue-provisioning",
+            topicProvisioningId: "alpha-topic-provisioning",
+            partitionProvisioningId: "alpha-partition-provisioning",
+            topologyVerificationId: "alpha-topology-verification",
+            providerTopologyId: "alpha-provider-topology");
+        var newerBrokerTopologyReport = EventDispatchBrokerTopologyMetadata.CreateReport(
+            new EventDispatchExecutionReport(
+                outboxId: "beta-outbox",
+                channelId: "contracts",
+                outcome: EventDispatchExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 6, 30, 0, TimeSpan.Zero),
+                messageId: "evt-beta-topology-001",
+                attempt: 1),
+            source: "beta-topology-runtime",
+            exchangeProvisioningId: "beta-exchange-provisioning",
+            queueProvisioningId: "beta-queue-provisioning",
+            topicProvisioningId: "beta-topic-provisioning",
+            partitionProvisioningId: "beta-partition-provisioning",
+            topologyVerificationId: "beta-topology-verification",
+            providerTopologyId: "beta-provider-topology");
+        var newerPartialBrokerTopologyReport = new EventDispatchExecutionReport(
+            outboxId: "gamma-outbox",
+            channelId: "contracts",
+            outcome: EventDispatchExecutionOutcomes.Succeeded,
+            observedAtUtc: new DateTimeOffset(2026, 05, 13, 6, 45, 0, TimeSpan.Zero),
+            messageId: "evt-gamma-topology-001",
+            attempt: 1,
+            metadata: new Dictionary<string, string>
+            {
+                [EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterialization] = "provider-reported",
+                [EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterializationSource] = "gamma-topology-runtime",
+                [EventDispatchRuntimeMetadataKeys.ExchangeProvisioning] = "reported"
+            });
+        var services = new ServiceCollection();
+        services.AddSingleton<IOutbox>(new EventingProofSelectionOutbox("alpha-outbox"));
+        services.AddSingleton<IEventDispatchRuntimeCatalog>(new TestEventDispatchRuntimeCatalog(
+            CreateDispatchRuntimeState(olderBrokerTopologyReport),
+            CreateDispatchRuntimeState(newerBrokerTopologyReport),
+            CreateDispatchRuntimeState(newerPartialBrokerTopologyReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new MultiOutboxEventingTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Broker topology proof events."));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["broker-topology-materialization-ownership"].Metadata["status"]);
+        Assert.Contains("brokerTopologyProofSelection=latest-proven-dispatch-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerTopologyStateCount=3", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerTopologyProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerTopologyMaterializationSource=beta-topology-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("exchangeProvisioning=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("exchangeProvisioningId=beta-exchange-provisioning", evidence, StringComparison.Ordinal);
+        Assert.Contains("queueProvisioning=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("queueProvisioningId=beta-queue-provisioning", evidence, StringComparison.Ordinal);
+        Assert.Contains("topicProvisioning=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("topicProvisioningId=beta-topic-provisioning", evidence, StringComparison.Ordinal);
+        Assert.Contains("partitionProvisioning=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("partitionProvisioningId=beta-partition-provisioning", evidence, StringComparison.Ordinal);
+        Assert.Contains("topologyVerification=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("topologyVerificationId=beta-topology-verification", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerOwnedTopology=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerTopologyId=beta-provider-topology", evidence, StringComparison.Ordinal);
+        Assert.Contains("outboxId=beta-outbox", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastObservedAtUtc=2026-05-13T06:30:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("providerTopologyId=alpha-provider-topology", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("brokerTopologyMaterializationSource=gamma-topology-runtime", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AddEventingSelectsLatestProvenWireContractEvidenceAcrossOutboxesWithoutWolverine()
     {
         var olderWireContractReport = EventDispatchWireContractMetadata.CreateReport(
@@ -5580,6 +5684,16 @@ public sealed class EngineBuilderTests
                 mode: "in-memory",
                 channelIds: ["contracts"],
                 tags: ["test"]));
+        }
+    }
+
+    private sealed class EventingProofSelectionOutbox(string outboxId) : IOutbox
+    {
+        public string OutboxId { get; } = outboxId;
+
+        public ValueTask EnqueueAsync(OutboxMessage message, CancellationToken cancellationToken = default)
+        {
+            return ValueTask.CompletedTask;
         }
     }
 
