@@ -802,6 +802,39 @@ public sealed class DocumentationCoverageTests
     }
 
     [Fact]
+    public void PackagePublishingDocsStayAlignedWithSignedReleaseDryRunReportContract()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var packagePublishing = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "package-publishing.md"));
+        using var supplyChainManifest = JsonDocument.Parse(File.ReadAllText(Path.Combine(
+            repositoryRoot,
+            "scripts",
+            "supply-chain-release-support.json")));
+
+        var root = supplyChainManifest.RootElement;
+        Assert.Equal("1.5.0", ReadRequiredJsonString(root, "$schemaVersion", "supply-chain release support manifest"));
+        Assert.True(
+            root.TryGetProperty("signedReleaseDryRun", out var signedReleaseDryRun),
+            "Expected supply-chain release support manifest to define signedReleaseDryRun.");
+        Assert.True(
+            signedReleaseDryRun.TryGetProperty("requiredReportFields", out var requiredReportFields),
+            "Expected signedReleaseDryRun to define requiredReportFields.");
+
+        var requiredFields = requiredReportFields
+            .EnumerateArray()
+            .Select(field => field.GetString())
+            .Where(field => !string.IsNullOrWhiteSpace(field))
+            .Select(field => field!)
+            .ToArray();
+        Assert.NotEmpty(requiredFields);
+
+        foreach (var requiredField in requiredFields)
+        {
+            Assert.Contains(requiredField, packagePublishing, StringComparison.Ordinal);
+        }
+    }
+
+    [Fact]
     public void CompletionScorecardDocsStayAlignedWithDoctorSummary()
     {
         var repositoryRoot = GetRepositoryRoot();
