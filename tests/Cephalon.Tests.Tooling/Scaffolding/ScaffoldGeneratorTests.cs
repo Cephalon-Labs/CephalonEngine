@@ -641,6 +641,79 @@ public sealed class ScaffoldGeneratorTests
     }
 
     [Fact]
+    public void GenerateMicroserviceScaffoldWithMultipleTransportsAndHttpDependencyHealth()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "Microservice",
+            transports: ["RestApi", "JsonRpc", "Grpc"]));
+
+        var runtime = builder.Build();
+        var scaffold = ScaffoldGenerator.Generate(
+            runtime.Manifest.AppProfile,
+            new ScaffoldRequest(
+                appName: "Acme.Payments",
+                modules: ["Platform"],
+                features: ["Overview"],
+                cephalonPackageVersion: "9.1.0-preview"));
+
+        var hostProject = Assert.Single(scaffold.Projects, project => project.Name == "Acme.Payments.Service");
+        Assert.Contains("Cephalon.AspNetCore.JsonRpc", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.AspNetCore.Grpc", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Observability.HttpDependencies", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+
+        var moduleProject = Assert.Single(scaffold.Projects, project => project.Name == "Acme.Payments.Modules.Platform");
+        Assert.Contains("Cephalon.Behaviors.Http", moduleProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Behaviors.SourceGen", moduleProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.AspNetCore.JsonRpc", moduleProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.AspNetCore.Grpc", moduleProject.Packages, StringComparer.OrdinalIgnoreCase);
+
+        var hostProgram = Assert.Single(scaffold.Files, file => file.Path == "src/Acme.Payments.Service/Program.cs");
+        Assert.Contains("using Cephalon.AspNetCore.JsonRpc.Hosting;", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("using Cephalon.AspNetCore.Grpc.Hosting;", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("using Cephalon.Observability.HttpDependencies.Hosting;", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("builder.AddJsonRpcTransport();", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("builder.AddGrpcTransport();", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("builder.Services.AddCephalonHttpDependencyHealth(builder.Configuration);", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("behaviors.AddHttpBehaviorBindings();", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("app.MapCephalon();", hostProgram.Contents, StringComparison.Ordinal);
+
+        var appModelSettings = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "src/Acme.Payments.Service/Configurations/AddEngine.AppModel.json");
+        Assert.Contains("\"Blueprint\": \"microservice\"", appModelSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"rest-api\"", appModelSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"json-rpc\"", appModelSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"grpc\"", appModelSettings.Contents, StringComparison.Ordinal);
+
+        var observabilitySettings = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "src/Acme.Payments.Service/Configurations/AddEngine.Observability.json");
+        Assert.Contains("\"DependencyHealth\"", observabilitySettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"Http\"", observabilitySettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"RefreshIntervalSeconds\"", observabilitySettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"Dependencies\"", observabilitySettings.Contents, StringComparison.Ordinal);
+
+        var moduleFile = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "src/Acme.Payments.Modules.Platform/PlatformModule.cs");
+        Assert.Contains("RestBehaviorModuleBase", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("IJsonRpcModule", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("IGrpcModule", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("MapJsonRpcEndpoints", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("MapGrpcEndpoints", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("DiscoveryService.DiscoveryServiceBase", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("GeneratedTransportStatusComposer", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"platform.status.get\"", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"microservice\"", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"multi-transport\"", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"observable\"", moduleFile.Contents, StringComparison.Ordinal);
+
+        var packageProps = Assert.Single(scaffold.Files, file => file.Path == "Directory.Packages.props");
+        Assert.Contains("Cephalon.Observability.HttpDependencies", packageProps.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void GenerateKeepsGenericModulesWhenRestApiTransportIsNotSelected()
     {
         var builder = new EngineBuilder(new ServiceCollection());

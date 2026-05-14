@@ -41,10 +41,7 @@ public sealed class DocumentationCoverageTests
 
     // Projects that are internal implementation helpers (IsPackable=false) — not shipped as NuGet packages
     // and therefore do not require component documentation.
-    private static readonly HashSet<string> NonPackableProjects = new(StringComparer.Ordinal)
-    {
-        "Cephalon.Observability.DependencyHealth.Core"
-    };
+    private static readonly HashSet<string> NonPackableProjects = new(StringComparer.Ordinal);
 
     // Projects whose doc filename does not follow the default convention
     // (strip "Cephalon." prefix, replace "." with "-", lowercase, append ".md").
@@ -94,6 +91,7 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Observability.CassandraDependencies"] = "observability-cassandra-dependencies.md",
             ["Cephalon.Observability.ClickHouseDependencies"] = "observability-clickhouse-dependencies.md",
             ["Cephalon.Observability.ConsulDependencies"] = "observability-consul-dependencies.md",
+            ["Cephalon.Observability.DependencyHealth.Core"] = "observability-dependency-health-core.md",
             ["Cephalon.Observability.ElasticsearchDependencies"] = "observability-elasticsearch-dependencies.md",
             ["Cephalon.Observability.GrafanaCloud"] = "observability-grafana-cloud.md",
             ["Cephalon.Observability.HttpDependencies"] = "observability-http-dependencies.md",
@@ -965,6 +963,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validate-template-pack-adoption.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-modular-monolith-adoption.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-vertical-slice-eventing-adoption.ps1", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("validate-microservice-multi-transport-adoption.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-out-of-tree-package-adoption.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("container-image-publishing.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-container-image.ps1", gettingStarted, StringComparison.Ordinal);
@@ -991,6 +990,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validate-template-pack-adoption.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-modular-monolith-adoption.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-vertical-slice-eventing-adoption.ps1", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("validate-microservice-multi-transport-adoption.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-out-of-tree-package-adoption.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/kustomization.yaml", rootReadme, StringComparison.Ordinal);
         Assert.Contains(".cephalon/packages/README.md", cliComponentDoc, StringComparison.Ordinal);
@@ -998,6 +998,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validate-template-pack-adoption.ps1", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("validate-modular-monolith-adoption.ps1", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("validate-vertical-slice-eventing-adoption.ps1", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("validate-microservice-multi-transport-adoption.ps1", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("validate-out-of-tree-package-adoption.ps1", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/kustomization.yaml", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains(".cephalon/packages/README.md", cliPackageReadme, StringComparison.Ordinal);
@@ -1005,6 +1006,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validate-template-pack-adoption.ps1", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("validate-modular-monolith-adoption.ps1", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("validate-vertical-slice-eventing-adoption.ps1", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("validate-microservice-multi-transport-adoption.ps1", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("validate-out-of-tree-package-adoption.ps1", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/namespace.yaml", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains(".cephalon/packages/README.md", templatePackReadme, StringComparison.Ordinal);
@@ -1012,6 +1014,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validate-template-pack-adoption.ps1", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("validate-modular-monolith-adoption.ps1", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("validate-vertical-slice-eventing-adoption.ps1", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("validate-microservice-multi-transport-adoption.ps1", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("validate-out-of-tree-package-adoption.ps1", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes/deployment.yaml", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-kubernetes.ps1", gettingStarted, StringComparison.Ordinal);
@@ -1297,6 +1300,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validate-generated-app-adoption.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-modular-monolith-adoption.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-vertical-slice-eventing-adoption.ps1", operations, StringComparison.Ordinal);
+        Assert.Contains("validate-microservice-multi-transport-adoption.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-out-of-tree-package-adoption.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-container-image.ps1", operations, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-windows-service.ps1", operations, StringComparison.Ordinal);
@@ -1316,6 +1320,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validate-container-runtime.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-modular-monolith-adoption.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-vertical-slice-eventing-adoption.ps1", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("validate-microservice-multi-transport-adoption.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-out-of-tree-package-adoption.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-container-image.ps1", rootReadme, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-windows-service.ps1", rootReadme, StringComparison.Ordinal);

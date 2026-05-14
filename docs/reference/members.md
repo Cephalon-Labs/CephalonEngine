@@ -7077,6 +7077,9 @@ Browse the published API surface by public member.
 - [Deny](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-authorizationdecision-deny-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-authorization-authorizationmode-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AuthorizationDecision` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Deny&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Creates a denied authorization decision.
   - `AuthorizationDecision Deny(string policyId, string reason, IReadOnlyList<AuthorizationMode> modes, IReadOnlyDictionary<string, string> metadata)`
+- [Dependencies](cephalon-observability-dependencyhealth-core.md#member-p-cephalon-observability-dependencyhealth-core-configuration-dependencyhealthoptionsbase-1-dependencies): `Properties` on `DependencyHealthOptionsBase<TDefinition>` in `Cephalon.Observability.DependencyHealth.Core.Configuration` (`Cephalon.Observability.DependencyHealth.Core`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Observability.DependencyHealth.Core&namespace=Cephalon.Observability.DependencyHealth.Core.Configuration&scope=members)
+  - Gets or sets the configured dependencies.
+  - `IReadOnlyList<TDefinition> Dependencies { get; set; }`
 - [Dependencies](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-dependencies): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Dependencies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the package-to-package dependencies declared by the package manifest.
   - `IReadOnlyList<PackageDependencyManifest> Dependencies { get; set; }`
@@ -7961,6 +7964,9 @@ Browse the published API surface by public member.
   - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-displayname): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
   - Gets or sets the operator-facing connector name.
+  - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-observability-dependencyhealth-core.md#member-p-cephalon-observability-dependencyhealth-core-configuration-dependencydefinitionbase-displayname): `Properties` on `DependencyDefinitionBase` in `Cephalon.Observability.DependencyHealth.Core.Configuration` (`Cephalon.Observability.DependencyHealth.Core`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Observability.DependencyHealth.Core&namespace=Cephalon.Observability.DependencyHealth.Core.Configuration&scope=members)
+  - Gets or sets the human-readable dependency name.
   - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-displayname): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The human-readable dependency name.
@@ -14081,6 +14087,9 @@ Browse the published API surface by public member.
   - `string Id { get; set; }`
 - [Id](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-id): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=Id&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
   - Gets or sets the stable execution-runtime identifier for the managed connector.
+  - `string Id { get; set; }`
+- [Id](cephalon-observability-dependencyhealth-core.md#member-p-cephalon-observability-dependencyhealth-core-configuration-dependencydefinitionbase-id): `Properties` on `DependencyDefinitionBase` in `Cephalon.Observability.DependencyHealth.Core.Configuration` (`Cephalon.Observability.DependencyHealth.Core`) [Browse](browse.html?q=Id&assembly=Cephalon.Observability.DependencyHealth.Core&namespace=Cephalon.Observability.DependencyHealth.Core.Configuration&scope=members)
+  - Gets or sets the stable dependency identifier.
   - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-id): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The stable dependency identifier.
@@ -24009,6 +24018,9 @@ Browse the published API surface by public member.
 - [ReferenceDocsSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-referencedocssurface-ctor-system-boolean-system-boolean-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Constructors` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ReferenceDocsSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Describes the operator-facing HTTP surface for hosted Cephalon reference documentation.
   - `ReferenceDocsSurface(bool Enabled, bool Available, string RoutePrefix, string DefaultDocument, string DefaultDocumentPath, string ReadmePath, string BrowserPath, string NamespaceIndexPath, string TypeIndexPath, string MemberIndexPath, string ManifestPath)`
+- [RefreshIntervalSeconds](cephalon-observability-dependencyhealth-core.md#member-p-cephalon-observability-dependencyhealth-core-configuration-dependencyhealthoptionsbase-1-refreshintervalseconds): `Properties` on `DependencyHealthOptionsBase<TDefinition>` in `Cephalon.Observability.DependencyHealth.Core.Configuration` (`Cephalon.Observability.DependencyHealth.Core`) [Browse](browse.html?q=RefreshIntervalSeconds&assembly=Cephalon.Observability.DependencyHealth.Core&namespace=Cephalon.Observability.DependencyHealth.Core.Configuration&scope=members)
+  - Gets or sets the interval in seconds between background refresh attempts.
+  - `int RefreshIntervalSeconds { get; set; }`
 - [Region](cephalon-observability-alibabacloud.md#member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-region): `Properties` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=Region&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
   - Gets or sets the Alibaba Cloud region to stamp onto exported resources when one should be explicit.
   - `string Region { get; set; }`
@@ -24789,6 +24801,9 @@ Browse the published API surface by public member.
 - [RequireCephalonAuthorizationAttribute](cephalon-identity-aspnetcore.md#member-m-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-ctor-system-string): `Constructors` on `RequireCephalonAuthorizationAttribute` in `Cephalon.Identity.AspNetCore.Transports.Rest` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=RequireCephalonAuthorizationAttribute&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest&scope=members)
   - Requires a Cephalon authorization decision before an ASP.NET Core controller or action can execute.
   - `RequireCephalonAuthorizationAttribute(string policyId)`
+- [Required](cephalon-observability-dependencyhealth-core.md#member-p-cephalon-observability-dependencyhealth-core-configuration-dependencydefinitionbase-required): `Properties` on `DependencyDefinitionBase` in `Cephalon.Observability.DependencyHealth.Core.Configuration` (`Cephalon.Observability.DependencyHealth.Core`) [Browse](browse.html?q=Required&assembly=Cephalon.Observability.DependencyHealth.Core&namespace=Cephalon.Observability.DependencyHealth.Core.Configuration&scope=members)
+  - Gets or sets a value indicating whether this dependency is required for readiness.
+  - `bool Required { get; set; }`
 - [Required](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-required): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Required&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - Whether the dependency is required for readiness.
   - `bool Required { get; set; }`
@@ -29864,6 +29879,9 @@ Browse the published API surface by public member.
   - `TimeSpan? Timeout { get; }`
 - [TimeoutSeconds](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-timeoutseconds): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
   - Gets or sets the maximum time allowed for the Amazon SES SDK request.
+  - `int TimeoutSeconds { get; set; }`
+- [TimeoutSeconds](cephalon-observability-dependencyhealth-core.md#member-p-cephalon-observability-dependencyhealth-core-configuration-dependencydefinitionbase-timeoutseconds): `Properties` on `DependencyDefinitionBase` in `Cephalon.Observability.DependencyHealth.Core.Configuration` (`Cephalon.Observability.DependencyHealth.Core`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.Observability.DependencyHealth.Core&namespace=Cephalon.Observability.DependencyHealth.Core.Configuration&scope=members)
+  - Gets or sets the per-probe timeout in seconds.
   - `int TimeoutSeconds { get; set; }`
 - [TimeoutSeconds](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-timeoutseconds): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
   - Gets or sets the maximum time allowed for the HTTP delivery request.

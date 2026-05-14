@@ -82,6 +82,40 @@ Current focus:
 - treat `docs/reference/reference-manifest.json` as the generated API bundle map: required browser/index/manifest assets must exist, assembly page files must be manifest-owned, namespace/type/member anchor ids must resolve in those pages, and orphan generated Markdown pages must fail Tooling coverage before hosted reference docs can drift
 - treat `docs/reference/browse.html` as the hosted reference-doc browser entry point: local `href` and `src` references must resolve inside `docs/reference` to existing generated bundle files so CSS, JavaScript, index links, and manifest links cannot drift after regeneration
 
+### ENG-702 Microservice REST/JSON-RPC/gRPC adoption report
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: release-readiness / adoption smoke / microservice / transports / observability
+Quality dimensions: Usability, Reliability, Availability, Auditability, Compatibility, Maintainability, Flexibility
+GitHub issue: #1378
+
+Why:
+
+- the microservice multi-transport golden use case was planned in the adoption-smoke map, but it needed an executable replay proving one generated business boundary across REST, JSON-RPC, and gRPC
+- generated microservice hosts should opt into companion transport and dependency-health packages through scaffolded configuration and package references instead of requiring consumer projects to hand-edit host startup
+- scorecard, release validation, and `cephalon doctor --scorecard` should count the microservice lane as execution-ready only after it declares the same per-use-case execution-report contract as the other replayable adoption paths
+
+Delivered:
+
+- added `scripts/validate-microservice-multi-transport-adoption.ps1` to publish a temporary package feed including `Cephalon.AspNetCore.JsonRpc`, `Cephalon.AspNetCore.Grpc`, `Cephalon.Observability.HttpDependencies`, and `Cephalon.Observability.DependencyHealth.Core`, install `Cephalon.Cli`, scaffold `Microservice` with `RestApi`, `JsonRpc`, and `Grpc`, run the generated host over HTTP/1.1 and HTTP/2, and call REST, JSON-RPC, and gRPC endpoints from outside the repository
+- generated microservice scaffolds now add `Cephalon.Observability.HttpDependencies`, wire `AddCephalonHttpDependencyHealth(...)`, emit explicit HTTP dependency-health config, and generate modules that implement `IJsonRpcModule` plus `IGrpcModule` alongside the REST behavior profile
+- promoted `Cephalon.Observability.DependencyHealth.Core` from implementation-only to an intended packable support package so out-of-repo dependency-health companion restores close over local NuGet artifacts
+- `scripts/adoption-smoke-support.json` is schema `1.7.0` and promotes `microservice-multi-transport-operations` to `execution-report-ready` with `artifacts/adoption-smoke/microservice-multi-transport-adoption.json` as the default report
+- scorecard and doctor readback stay on scorecard schema `1.25.0` while adoption counts move to seven total golden use cases, six execution-ready lanes, and six per-use-case execution reports
+- getting-started, operations, app-model, compatibility, CLI/package docs, template-pack docs, component docs, scorecard docs, roadmap, backlog, and project memory now name the microservice report path and readback contract without promoting the SaaS tenant governance lane
+
+Validation:
+
+- PowerShell AST parse for `scripts/validate-microservice-multi-transport-adoption.ps1`
+- `pwsh ./scripts/validate-microservice-multi-transport-adoption.ps1 -TimeoutSeconds 180`
+- focused scaffolding, package-surface, reference-doc, documentation, scorecard, doctor, and adoption-asset tests
+- `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode singleFile -OutputPath artifacts/deployment-mode-claims-release`
+- `dotnet run --project src/Cephalon.Cli/Cephalon.Cli.csproj -c Release --no-build -- doctor --scorecard artifacts/engine-completion-scorecard-microservice-validation/engine-completion-scorecard.json`
+- reference-doc bundle regeneration for `Cephalon.Observability.DependencyHealth.Core`
+- `git diff --check`
+
 ### ENG-701 Vertical-slice Eventing/outbox adoption report
 
 Status: done

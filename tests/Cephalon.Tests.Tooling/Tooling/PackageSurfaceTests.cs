@@ -859,6 +859,15 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void ObservabilityDependencyHealthCoreAssemblyExposesOnlyTheDocumentedConfigurationSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyDefinitionBase).Assembly,
+            typeof(global::Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyDefinitionBase),
+            typeof(global::Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyHealthOptionsBase<>));
+    }
+
+    [Fact]
     public void ObservabilityElasticsearchDependenciesAssemblyExposesOnlyTheDocumentedConfigurationAndRegistrationSurface()
     {
         AssertExportedTypes(

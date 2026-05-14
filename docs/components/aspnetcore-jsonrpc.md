@@ -36,6 +36,8 @@ Direct module timeout and open-circuit outcomes return HTTP `503` with JSON-RPC 
 
 The adapter publishes its live posture through `/engine/technology-surfaces/json-rpc` as `json-rpc-direct-module-resilience`, including policy source, execution mode, timeout/circuit/bulkhead settings, live circuit state, retry-after posture, bulkhead active/queued/accepted/rejected counters, and `wolverineRequired=false` / `consumerCodeRequired=false`.
 
+`scripts/validate-microservice-multi-transport-adoption.ps1` now proves the generated consumer-app path for this adapter: the script packages local NuGet artifacts, scaffolds a `Microservice` app outside the repository with `RestApi`, `JsonRpc`, and `Grpc`, verifies the generated module implements `IJsonRpcModule`, starts the generated host, calls `/json-rpc/platform`, and checks `/engine/transports` plus `/engine/snapshot` so the JSON-RPC transport claim is tied to a running app instead of catalog prose.
+
 ## Related docs
 
 - [Architecture](../architecture.md)

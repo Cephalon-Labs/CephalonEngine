@@ -37,6 +37,7 @@ public sealed class PackagePublishingTests
             Assert.Contains(packageFiles, name => name!.StartsWith("Cephalon.Engine.", StringComparison.Ordinal));
             Assert.Contains(packageFiles, name => name!.StartsWith("Cephalon.EventSourcing.", StringComparison.Ordinal));
             Assert.Contains(packageFiles, name => name!.StartsWith("Cephalon.EventSourcing.EntityFramework.", StringComparison.Ordinal));
+            Assert.Contains(packageFiles, name => name!.StartsWith("Cephalon.Observability.DependencyHealth.Core.", StringComparison.Ordinal));
             Assert.Contains(packageFiles, name => name!.StartsWith("Cephalon.ReferenceModule.Operations.", StringComparison.Ordinal));
             Assert.Contains(packageFiles, name => name!.StartsWith("Cephalon.TemplatePack.", StringComparison.Ordinal));
 

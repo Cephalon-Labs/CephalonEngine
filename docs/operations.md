@@ -62,6 +62,18 @@ The script writes `artifacts/adoption-smoke/vertical-slice-eventing-adoption.jso
 
 See `docs/getting-started.md`, `docs/app-models.md`, and `docs/components/eventing.md` for the corresponding blueprint, Eventing configuration, runtime publication, dispatch-remediation, and diagnostics guidance.
 
+## Microservice multi-transport adoption smoke
+
+For a repo-native external-adoption replay that publishes a temporary package feed, installs `Cephalon.Cli`, scaffolds a `Microservice` host with `RestApi`, `JsonRpc`, and `Grpc`, validates the generated transport adapters, generated direct module endpoints, and HTTP dependency-health package closure, runs the ASP.NET Core host over HTTP/1.1 and HTTP/2, calls the generated REST, JSON-RPC, and gRPC business endpoints, and probes `/engine/transports`, `/engine/snapshot`, `/engine/dependencies`, `/engine/diagnostics`, `/engine/runtime-story`, `/engine/technology-surfaces/json-rpc`, `/engine/technology-surfaces/grpc`, and `/scalar`, run:
+
+```powershell
+pwsh ./scripts/validate-microservice-multi-transport-adoption.ps1
+```
+
+The script writes `artifacts/adoption-smoke/microservice-multi-transport-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The adoption-smoke manifest carries this as the `microservice-multi-transport-operations` golden use case so scorecard and doctor readback can distinguish executable multi-transport proof from the basic generated host, template-pack, modular-monolith, vertical-slice, and staged-package proofs.
+
+See `docs/getting-started.md`, `docs/app-models.md`, `docs/components/aspnetcore-jsonrpc.md`, `docs/components/aspnetcore-grpc.md`, and `docs/components/observability-http-dependencies.md` for the corresponding transport, runtime truth, and dependency-health guidance.
+
 ## Out-of-tree package parity smoke
 
 For a repo-native external-adoption replay that publishes a temporary package feed with the generated app package closure including `Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`, installs `Cephalon.Cli`, scaffolds a fresh app outside the repository, packs and stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/api/operations/status`, `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot`, run:
@@ -70,7 +82,7 @@ For a repo-native external-adoption replay that publishes a temporary package fe
 pwsh ./scripts/validate-out-of-tree-package-adoption.ps1
 ```
 
-The script writes `artifacts/adoption-smoke/out-of-tree-package-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The release-readiness scorecard validates the same replay path, execution-report contract, and golden use-case map through `scripts/adoption-smoke-support.json` and emits it as `AdoptionSmokeEvidence` in the generated scorecard artifact. Keep that manifest aligned whenever the generated-app foundation, template-pack parity, modular-monolith REST/Worker/data, vertical-slice Eventing/outbox, or staged-package smoke path adds or removes script phases, staged packages, runtime probes, report fields, or planned real-app adoption lanes.
+The script writes `artifacts/adoption-smoke/out-of-tree-package-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The release-readiness scorecard validates the same replay path, execution-report contract, and golden use-case map through `scripts/adoption-smoke-support.json` and emits it as `AdoptionSmokeEvidence` in the generated scorecard artifact. Keep that manifest aligned whenever the generated-app foundation, template-pack parity, modular-monolith REST/Worker/data, vertical-slice Eventing/outbox, microservice multi-transport, or staged-package smoke path adds or removes script phases, staged packages, runtime probes, report fields, or planned real-app adoption lanes.
 
 See `docs/external-package-lifecycle.md` for the corresponding stage, trust, and inspect guidance.
 

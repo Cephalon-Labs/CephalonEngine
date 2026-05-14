@@ -1,14 +1,15 @@
 {
-  "$schemaVersion": "1.6.0",
+  "$schemaVersion": "1.7.0",
   "scenarioId": "out-of-tree-generated-app-package-stage",
   "status": "execution-report-ready",
-  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, writes machine-readable execution reports for generated-app, template-pack, modular-monolith REST/Worker/data, vertical-slice Eventing/outbox, and out-of-tree package adoption, and tracks the broader golden use-case map.",
+  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, writes machine-readable execution reports for generated-app, template-pack, modular-monolith REST/Worker/data, vertical-slice Eventing/outbox, microservice multi-transport, and out-of-tree package adoption, and tracks the broader golden use-case map.",
   "validationScript": "scripts/validate-out-of-tree-package-adoption.ps1",
   "supportingScripts": [
     "scripts/validate-generated-app-adoption.ps1",
     "scripts/validate-template-pack-adoption.ps1",
     "scripts/validate-modular-monolith-adoption.ps1",
-    "scripts/validate-vertical-slice-eventing-adoption.ps1"
+    "scripts/validate-vertical-slice-eventing-adoption.ps1",
+    "scripts/validate-microservice-multi-transport-adoption.ps1"
   ],
   "sourceDocs": [
     "docs/getting-started.md",
@@ -16,6 +17,9 @@
     "docs/external-package-lifecycle.md",
     "docs/package-publishing.md",
     "docs/components/cli.md",
+    "docs/components/aspnetcore-grpc.md",
+    "docs/components/aspnetcore-jsonrpc.md",
+    "docs/components/observability-http-dependencies.md",
     "docs/engine-completion-scorecard.md",
     "docs/release-checklist.md"
   ],
@@ -366,42 +370,99 @@
       "id": "microservice-multi-transport-operations",
       "title": "Microservice with multi-transport and operations posture",
       "appShape": "microservice",
-      "status": "planned",
-      "proofLevel": "contract-defined",
-      "primaryValidationPath": "scripts/validate-generated-app-adoption.ps1",
+      "status": "execution-report-ready",
+      "proofLevel": "executable-smoke",
+      "primaryValidationPath": "scripts/validate-microservice-multi-transport-adoption.ps1",
       "sourceDocs": [
         "docs/app-models.md",
         "docs/compatibility.md",
-        "docs/operations.md"
+        "docs/operations.md",
+        "docs/components/cli.md",
+        "docs/components/scaffolding.md",
+        "docs/components/aspnetcore-grpc.md",
+        "docs/components/aspnetcore-jsonrpc.md",
+        "docs/components/observability-http-dependencies.md"
       ],
       "qualityDimensions": [
         "Performance",
         "Security",
         "Scalability",
         "Availability",
+        "Compatibility",
+        "Auditability",
         "Compliance"
       ],
       "requiredEngineCapabilities": [
+        "blueprint-driven generated microservice",
         "transport-gated endpoint mapping",
         "OpenAPI and non-REST separation",
         "gRPC contract ownership",
-        "deployment-mode posture",
-        "observability companion packages"
+        "JSON-RPC direct module mapping",
+        "HTTP dependency-health companion proof",
+        "runtime snapshot and diagnostics truth",
+        "deployment-mode posture"
       ],
       "proofTargets": [
+        {
+          "kind": "runtime-probe",
+          "reference": "/health/ready"
+        },
+        {
+          "kind": "business-endpoint",
+          "reference": "/api/v1/platform/status"
+        },
+        {
+          "kind": "business-endpoint",
+          "reference": "/json-rpc/platform"
+        },
+        {
+          "kind": "business-endpoint",
+          "reference": "gRPC DiscoveryService.SayHello via /grpc"
+        },
         {
           "kind": "operator-surface",
           "reference": "/engine/transports"
         },
         {
           "kind": "operator-surface",
+          "reference": "/engine/snapshot"
+        },
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/dependencies"
+        },
+        {
+          "kind": "operator-surface",
           "reference": "/engine/diagnostics"
         },
         {
-          "kind": "release-evidence",
-          "reference": "DeploymentModeEvidence"
+          "kind": "operator-surface",
+          "reference": "/engine/runtime-story"
+        },
+        {
+          "kind": "rest-docs",
+          "reference": "/scalar"
         }
-      ]
+      ],
+      "executionReport": {
+        "schemaVersion": "1.0.0",
+        "defaultPath": "artifacts/adoption-smoke/microservice-multi-transport-adoption.json",
+        "statusValues": [
+          "passed",
+          "failed"
+        ],
+        "requiredFields": [
+          "$schemaVersion",
+          "ScenarioId",
+          "Status",
+          "StartedAtUtc",
+          "CompletedAtUtc",
+          "DurationMilliseconds",
+          "Assertions",
+          "RuntimeProbes",
+          "Paths"
+        ]
+      }
     },
     {
       "id": "saas-tenant-governance-audit",

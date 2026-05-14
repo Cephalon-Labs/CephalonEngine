@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T21:14:03.8766864+00:00",
+  "GeneratedAtUtc": "2026-05-14T11:44:27.0302241+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -488,6 +488,14 @@
       "FileName": "cephalon-observability-consuldependencies.md",
       "NamespaceCount": 2,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Observability.DependencyHealth.Core",
+      "Category": "Hosts",
+      "Description": "Shared dependency-health probe primitives for Cephalon observability companion packages.",
+      "FileName": "cephalon-observability-dependencyhealth-core.md",
+      "NamespaceCount": 1,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.Observability.DigitalOcean",
@@ -1787,6 +1795,13 @@
       "FileName": "cephalon-observability-consuldependencies.md",
       "AnchorId": "namespace-cephalon-observability-consuldependencies-hosting",
       "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.DependencyHealth.Core.Configuration",
+      "AssemblyName": "Cephalon.Observability.DependencyHealth.Core",
+      "FileName": "cephalon-observability-dependencyhealth-core.md",
+      "AnchorId": "namespace-cephalon-observability-dependencyhealth-core-configuration",
+      "TypeCount": 2
     },
     {
       "NamespaceName": "Cephalon.Observability.DigitalOcean.Configuration",
@@ -7569,6 +7584,36 @@
         "Constructors": 1,
         "Fields": 2,
         "Properties": 1,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "DependencyDefinitionBase",
+      "NamespaceName": "Cephalon.Observability.DependencyHealth.Core.Configuration",
+      "AssemblyName": "Cephalon.Observability.DependencyHealth.Core",
+      "FileName": "cephalon-observability-dependencyhealth-core.md",
+      "AnchorId": "type-cephalon-observability-dependencyhealth-core-configuration-dependencydefinitionbase",
+      "Declaration": "public abstract class DependencyDefinitionBase",
+      "Summary": "Base class for all dependency definitions that contribute to Cephalon runtime health.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "DependencyHealthOptionsBase\u003CTDefinition\u003E",
+      "NamespaceName": "Cephalon.Observability.DependencyHealth.Core.Configuration",
+      "AssemblyName": "Cephalon.Observability.DependencyHealth.Core",
+      "FileName": "cephalon-observability-dependencyhealth-core.md",
+      "AnchorId": "type-cephalon-observability-dependencyhealth-core-configuration-dependencyhealthoptionsbase-tdefinition",
+      "Declaration": "public abstract class DependencyHealthOptionsBase\u003CTDefinition\u003E",
+      "Summary": "Base class for provider-specific dependency-health options.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 2,
         "Methods": 0
       }
     },
@@ -46139,6 +46184,17 @@
     {
       "DisplayName": "Dependencies",
       "Category": "Properties",
+      "DeclaringTypeName": "DependencyHealthOptionsBase\u003CTDefinition\u003E",
+      "NamespaceName": "Cephalon.Observability.DependencyHealth.Core.Configuration",
+      "AssemblyName": "Cephalon.Observability.DependencyHealth.Core",
+      "FileName": "cephalon-observability-dependencyhealth-core.md",
+      "AnchorId": "member-p-cephalon-observability-dependencyhealth-core-configuration-dependencyhealthoptionsbase-1-dependencies",
+      "Signature": "IReadOnlyList\u003CTDefinition\u003E Dependencies { get; set; }",
+      "Summary": "Gets or sets the configured dependencies."
+    },
+    {
+      "DisplayName": "Dependencies",
+      "Category": "Properties",
       "DeclaringTypeName": "PackageManifest",
       "NamespaceName": "Cephalon.Engine.Manifest",
       "AssemblyName": "Cephalon.Engine",
@@ -49380,6 +49436,17 @@
       "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "Gets or sets the operator-facing connector name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "DependencyDefinitionBase",
+      "NamespaceName": "Cephalon.Observability.DependencyHealth.Core.Configuration",
+      "AssemblyName": "Cephalon.Observability.DependencyHealth.Core",
+      "FileName": "cephalon-observability-dependencyhealth-core.md",
+      "AnchorId": "member-p-cephalon-observability-dependencyhealth-core-configuration-dependencydefinitionbase-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the human-readable dependency name."
     },
     {
       "DisplayName": "DisplayName",
@@ -71765,6 +71832,17 @@
       "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-id",
       "Signature": "string Id { get; set; }",
       "Summary": "Gets or sets the stable execution-runtime identifier for the managed connector."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "DependencyDefinitionBase",
+      "NamespaceName": "Cephalon.Observability.DependencyHealth.Core.Configuration",
+      "AssemblyName": "Cephalon.Observability.DependencyHealth.Core",
+      "FileName": "cephalon-observability-dependencyhealth-core.md",
+      "AnchorId": "member-p-cephalon-observability-dependencyhealth-core-configuration-dependencydefinitionbase-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable dependency identifier."
     },
     {
       "DisplayName": "Id",
@@ -108083,6 +108161,17 @@
       "Summary": "Describes the operator-facing HTTP surface for hosted Cephalon reference documentation."
     },
     {
+      "DisplayName": "RefreshIntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DependencyHealthOptionsBase\u003CTDefinition\u003E",
+      "NamespaceName": "Cephalon.Observability.DependencyHealth.Core.Configuration",
+      "AssemblyName": "Cephalon.Observability.DependencyHealth.Core",
+      "FileName": "cephalon-observability-dependencyhealth-core.md",
+      "AnchorId": "member-p-cephalon-observability-dependencyhealth-core-configuration-dependencyhealthoptionsbase-1-refreshintervalseconds",
+      "Signature": "int RefreshIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the interval in seconds between background refresh attempts."
+    },
+    {
       "DisplayName": "Region",
       "Category": "Properties",
       "DeclaringTypeName": "AlibabaCloudTelemetryExportOptions",
@@ -110941,6 +111030,17 @@
       "AnchorId": "member-m-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-ctor-system-string",
       "Signature": "RequireCephalonAuthorizationAttribute(string policyId)",
       "Summary": "Requires a Cephalon authorization decision before an ASP.NET Core controller or action can execute."
+    },
+    {
+      "DisplayName": "Required",
+      "Category": "Properties",
+      "DeclaringTypeName": "DependencyDefinitionBase",
+      "NamespaceName": "Cephalon.Observability.DependencyHealth.Core.Configuration",
+      "AssemblyName": "Cephalon.Observability.DependencyHealth.Core",
+      "FileName": "cephalon-observability-dependencyhealth-core.md",
+      "AnchorId": "member-p-cephalon-observability-dependencyhealth-core-configuration-dependencydefinitionbase-required",
+      "Signature": "bool Required { get; set; }",
+      "Summary": "Gets or sets a value indicating whether this dependency is required for readiness."
     },
     {
       "DisplayName": "Required",
@@ -129539,6 +129639,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-timeoutseconds",
       "Signature": "int TimeoutSeconds { get; set; }",
       "Summary": "Gets or sets the maximum time allowed for the Amazon SES SDK request."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DependencyDefinitionBase",
+      "NamespaceName": "Cephalon.Observability.DependencyHealth.Core.Configuration",
+      "AssemblyName": "Cephalon.Observability.DependencyHealth.Core",
+      "FileName": "cephalon-observability-dependencyhealth-core.md",
+      "AnchorId": "member-p-cephalon-observability-dependencyhealth-core-configuration-dependencydefinitionbase-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the per-probe timeout in seconds."
     },
     {
       "DisplayName": "TimeoutSeconds",
