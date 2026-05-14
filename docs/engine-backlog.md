@@ -82,6 +82,37 @@ Current focus:
 - treat `docs/reference/reference-manifest.json` as the generated API bundle map: required browser/index/manifest assets must exist, assembly page files must be manifest-owned, namespace/type/member anchor ids must resolve in those pages, and orphan generated Markdown pages must fail Tooling coverage before hosted reference docs can drift
 - treat `docs/reference/browse.html` as the hosted reference-doc browser entry point: local `href` and `src` references must resolve inside `docs/reference` to existing generated bundle files so CSS, JavaScript, index links, and manifest links cannot drift after regeneration
 
+### ENG-703 SaaS tenant governance audit adoption proof
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: release-readiness / adoption smoke / SaaS / governance / audit / transports
+Quality dimensions: Security, Data Integrity, Auditability, Compliance, Usability, Reliability, Availability, Compatibility, Maintainability, Flexibility
+GitHub issue: `#1382`
+
+Why:
+
+- the SaaS tenant governance/audit golden use case was planned in the adoption-smoke map, but it needed a real generated app proving tenant administration, invitation delivery, status observation, audit recording, multiple transports, dependency health, and runtime truth together
+- generated tenant apps should compose governance, audit, JSON-RPC, gRPC, and HTTP dependency-health companion packages from engine-owned package references and host composition instead of requiring consumer projects to rewrite startup or duplicate operator routes
+- scorecard, release validation, and `cephalon doctor --scorecard` should count the SaaS tenant governance lane as execution-ready only after it declares and produces the same per-use-case execution-report contract as the other replayable adoption paths
+
+Delivered:
+
+- added `scripts/validate-saas-tenant-governance-audit-adoption.ps1` to publish a temporary package feed including `Cephalon.MultiTenancy.Governance`, `Cephalon.MultiTenancy.Governance.AspNetCore`, `Cephalon.Audit`, `Cephalon.AspNetCore.JsonRpc`, `Cephalon.AspNetCore.Grpc`, `Cephalon.Observability.HttpDependencies`, and `Cephalon.Observability.DependencyHealth.Core`, install `Cephalon.Cli`, scaffold a modular-monolith tenant host outside the repository, wire a smoke invitation sender plus audit proof endpoint, run the generated host over HTTP/1.1 and HTTP/2, and call REST, JSON-RPC, gRPC, tenant-administration, invitation-dispatch, delivery-status, observation, audit-store, dependency-health, technology-surface, snapshot, and Scalar endpoints
+- fixed the governance package DI path exposed by the generated host by registering `TenantInvitationDeliveryRetryHostedService` and `TenantDomainOwnershipProofPollingHostedService` concrete singleton instances only when their corresponding opt-in background hosted-service lanes are enabled
+- `scripts/adoption-smoke-support.json` is schema `1.8.0` and promotes `saas-tenant-governance-audit` to `execution-report-ready` with `artifacts/adoption-smoke/saas-tenant-governance-audit.json` as the default report
+- scorecard and doctor readback stay on scorecard schema `1.25.0` while adoption counts move to seven total golden use cases, seven execution-ready lanes, and seven per-use-case execution reports
+- README, getting-started, operations, app-model, compatibility, CLI/package docs, template-pack docs, component docs, scorecard docs, architecture follow-ups, roadmap, backlog, and project memory now name the SaaS tenant governance report path and readback contract
+
+Validation:
+
+- PowerShell AST parse for `scripts/validate-saas-tenant-governance-audit-adoption.ps1`
+- `pwsh ./scripts/validate-saas-tenant-governance-audit-adoption.ps1 -TimeoutSeconds 180`
+- focused governance DI, tooling adoption-asset, documentation, scorecard, doctor, and script Pester tests
+- `dotnet run --project src/Cephalon.Cli/Cephalon.Cli.csproj -c Release --no-build -- doctor --scorecard artifacts/engine-completion-scorecard-saas-governance-validation/engine-completion-scorecard.json`
+- `git diff --check`
+
 ### ENG-702 Microservice REST/JSON-RPC/gRPC adoption report
 
 Status: done

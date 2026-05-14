@@ -38,6 +38,8 @@ The adapter publishes its live posture through `/engine/technology-surfaces/json
 
 `scripts/validate-microservice-multi-transport-adoption.ps1` now proves the generated consumer-app path for this adapter: the script packages local NuGet artifacts, scaffolds a `Microservice` app outside the repository with `RestApi`, `JsonRpc`, and `Grpc`, verifies the generated module implements `IJsonRpcModule`, starts the generated host, calls `/json-rpc/platform`, and checks `/engine/transports` plus `/engine/snapshot` so the JSON-RPC transport claim is tied to a running app instead of catalog prose.
 
+`scripts/validate-saas-tenant-governance-audit-adoption.ps1` reuses the same adapter in a generated modular-monolith tenant host. That replay calls `/json-rpc/platform` while the same host also runs tenant-governance, audit, REST, gRPC, and dependency-health proof, so JSON-RPC stays an additive transport selection instead of a separate app model.
+
 ## Related docs
 
 - [Architecture](../architecture.md)

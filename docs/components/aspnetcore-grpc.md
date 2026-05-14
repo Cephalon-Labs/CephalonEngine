@@ -45,6 +45,8 @@ Direct module resilience faults stay transport-native. Host-enforced timeouts pl
 
 `scripts/validate-microservice-multi-transport-adoption.ps1` now proves the generated consumer-app path for this adapter. The script packages local NuGet artifacts, scaffolds a `Microservice` app outside the repository with `RestApi`, `JsonRpc`, and `Grpc`, verifies the generated module implements `IGrpcModule`, runs the generated host on an HTTP/2 endpoint, calls `DiscoveryService.SayHello` through `/grpc`, and checks `/engine/transports` plus `/engine/snapshot` so the gRPC transport claim is tied to a real running service.
 
+`scripts/validate-saas-tenant-governance-audit-adoption.ps1` reuses the same adapter in a generated modular-monolith tenant host. That replay calls `DiscoveryService.SayHello` while the same host also runs tenant-governance, audit, REST, JSON-RPC, and dependency-health proof, so gRPC remains a transport selection that can move across app shapes without rewriting business code.
+
 ## Related docs
 
 - [Architecture](../architecture.md)

@@ -116,8 +116,6 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
         services.TryAddSingleton<TenantInvitationDeliveryRunReporter>();
         services.TryAddSingleton<ITenantInvitationDeliveryRunCatalog>(
             static serviceProvider => serviceProvider.GetRequiredService<TenantInvitationDeliveryRunReporter>());
-        services.TryAddSingleton<TenantDomainOwnershipProofPollingHostedService>();
-        services.TryAddSingleton<TenantInvitationDeliveryRetryHostedService>();
         services.TryAddSingleton<ITenantMembershipCatalog, TenantMembershipCatalog>();
         services.TryAddSingleton<ITenantInvitationCatalog, TenantInvitationCatalog>();
         services.TryAddSingleton<ITenantDomainOwnershipCatalog, TenantDomainOwnershipCatalog>();
@@ -146,6 +144,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
 
         if (TenantInvitationDeliveryRetryConfiguration.IsBackgroundSchedulingEnabled(options))
         {
+            services.TryAddSingleton<TenantInvitationDeliveryRetryHostedService>();
             services.AddHostedService(static serviceProvider =>
                 serviceProvider.GetRequiredService<TenantInvitationDeliveryRetryHostedService>());
         }
@@ -223,6 +222,7 @@ internal sealed class MultiTenancyGovernanceModule(MultiTenancyGovernanceOptions
 
         if (TenantDomainOwnershipProofPollingConfiguration.IsBackgroundPollingEnabled(options))
         {
+            services.TryAddSingleton<TenantDomainOwnershipProofPollingHostedService>();
             services.AddHostedService(static serviceProvider =>
                 serviceProvider.GetRequiredService<TenantDomainOwnershipProofPollingHostedService>());
         }

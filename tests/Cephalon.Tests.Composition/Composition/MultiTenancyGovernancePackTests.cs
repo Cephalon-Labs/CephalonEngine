@@ -14,6 +14,28 @@ namespace Cephalon.Tests.Composition;
 public sealed class MultiTenancyGovernancePackTests
 {
     [Fact]
+    public void AddMultiTenancyGovernanceBuildsWithValidationWhenRetryQueueIsDisabled()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["MultiTenancy"]));
+            engine.AddMultiTenancyGovernance();
+        });
+
+        using var provider = services.BuildServiceProvider(new ServiceProviderOptions
+        {
+            ValidateOnBuild = true,
+            ValidateScopes = true
+        });
+
+        Assert.Null(provider.GetService<ITenantInvitationDeliveryRetryRunner>());
+        Assert.DoesNotContain(services, descriptor => descriptor.ServiceType == typeof(IHostedService));
+    }
+
+    [Fact]
     public async Task AddMultiTenancyGovernanceRegistersMembershipCatalogEvaluatorDiagnosticsAndRuntimeSurface()
     {
         var services = new ServiceCollection();
