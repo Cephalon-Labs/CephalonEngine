@@ -2,6 +2,10 @@
 Cephalon.EventSourcing.Configuration.EventSourcingOptions
 Cephalon.EventSourcing.Configuration.EventSourcingOptions.DefaultProvider.get -> string!
 Cephalon.EventSourcing.Configuration.EventSourcingOptions.DefaultProvider.set -> void
+Cephalon.EventSourcing.Configuration.EventSourcingOptions.EnableInMemorySnapshotStore.get -> bool
+Cephalon.EventSourcing.Configuration.EventSourcingOptions.EnableInMemorySnapshotStore.set -> void
+Cephalon.EventSourcing.Configuration.EventSourcingOptions.EnableReplayWorker.get -> bool
+Cephalon.EventSourcing.Configuration.EventSourcingOptions.EnableReplayWorker.set -> void
 Cephalon.EventSourcing.Configuration.EventSourcingOptions.EnableSnapshots.get -> bool
 Cephalon.EventSourcing.Configuration.EventSourcingOptions.EnableSnapshots.set -> void
 Cephalon.EventSourcing.Configuration.EventSourcingOptions.EventSourcingOptions() -> void
@@ -10,6 +14,33 @@ Cephalon.EventSourcing.Registration.EventSourcingEngineBuilderExtensions
 Cephalon.EventSourcing.Services.AggregateHydrator<TAggregate, TState>
 Cephalon.EventSourcing.Services.AggregateHydrator<TAggregate, TState>.AggregateHydrator() -> void
 Cephalon.EventSourcing.Services.AggregateHydrator<TAggregate, TState>.HydrateAsync(Cephalon.Abstractions.EventSourcing.IEventStore! eventStore, string! streamId, long fromVersion = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<(TState State, long Version)>!
+Cephalon.EventSourcing.Services.EventStreamReplayReport
+Cephalon.EventSourcing.Services.EventStreamReplayReport.CompletedAtUtc.get -> System.DateTimeOffset
+Cephalon.EventSourcing.Services.EventStreamReplayReport.DurationMilliseconds.get -> double
+Cephalon.EventSourcing.Services.EventStreamReplayReport.Error.get -> string?
+Cephalon.EventSourcing.Services.EventStreamReplayReport.EventStreamReplayReport(string! streamId, string! status, System.DateTimeOffset startedAtUtc, System.DateTimeOffset completedAtUtc, bool usedSnapshot, long snapshotVersion, long replayFromVersion, int replayedEventCount, int projectionCount, int projectedEventCount, long lastReplayedVersion, bool snapshotSaved, string? error = null) -> void
+Cephalon.EventSourcing.Services.EventStreamReplayReport.LastReplayedVersion.get -> long
+Cephalon.EventSourcing.Services.EventStreamReplayReport.ProjectedEventCount.get -> int
+Cephalon.EventSourcing.Services.EventStreamReplayReport.ProjectionCount.get -> int
+Cephalon.EventSourcing.Services.EventStreamReplayReport.ReplayFromVersion.get -> long
+Cephalon.EventSourcing.Services.EventStreamReplayReport.ReplayedEventCount.get -> int
+Cephalon.EventSourcing.Services.EventStreamReplayReport.SnapshotSaved.get -> bool
+Cephalon.EventSourcing.Services.EventStreamReplayReport.SnapshotVersion.get -> long
+Cephalon.EventSourcing.Services.EventStreamReplayReport.StartedAtUtc.get -> System.DateTimeOffset
+Cephalon.EventSourcing.Services.EventStreamReplayReport.Status.get -> string!
+Cephalon.EventSourcing.Services.EventStreamReplayReport.StreamId.get -> string!
+Cephalon.EventSourcing.Services.EventStreamReplayReport.UsedSnapshot.get -> bool
+Cephalon.EventSourcing.Services.EventStreamReplayRequest
+Cephalon.EventSourcing.Services.EventStreamReplayRequest.EventStreamReplayRequest(string! streamId, long fromVersion = 0, bool useSnapshots = true, bool saveSnapshot = true, bool rebuildProjections = true) -> void
+Cephalon.EventSourcing.Services.EventStreamReplayRequest.FromVersion.get -> long
+Cephalon.EventSourcing.Services.EventStreamReplayRequest.RebuildProjections.get -> bool
+Cephalon.EventSourcing.Services.EventStreamReplayRequest.SaveSnapshot.get -> bool
+Cephalon.EventSourcing.Services.EventStreamReplayRequest.StreamId.get -> string!
+Cephalon.EventSourcing.Services.EventStreamReplayRequest.UseSnapshots.get -> bool
+Cephalon.EventSourcing.Services.EventStreamReplayResult<TState>
+Cephalon.EventSourcing.Services.EventStreamReplayResult<TState>.EventStreamReplayResult(TState state, Cephalon.EventSourcing.Services.EventStreamReplayReport! report) -> void
+Cephalon.EventSourcing.Services.EventStreamReplayResult<TState>.Report.get -> Cephalon.EventSourcing.Services.EventStreamReplayReport!
+Cephalon.EventSourcing.Services.EventStreamReplayResult<TState>.State.get -> TState
 Cephalon.EventSourcing.Services.EventStreamCatalog
 Cephalon.EventSourcing.Services.EventStreamCatalog.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.EventSourcing.EventStreamDescriptor!>!
 Cephalon.EventSourcing.Services.EventStreamCatalog.EventStreamCatalog(System.Collections.Generic.IEnumerable<Cephalon.Abstractions.EventSourcing.IEventStoreContributor!>! contributors) -> void
@@ -39,6 +70,8 @@ Cephalon.EventSourcing.Services.EventTypeRegistry.TryFindByName(string! eventTyp
 Cephalon.EventSourcing.Services.EventTypeRegistry.TryFindByType(System.Type! eventType, out Cephalon.EventSourcing.Services.EventTypeDescriptor! descriptor) -> bool
 Cephalon.EventSourcing.Services.IEventTypeContributor
 Cephalon.EventSourcing.Services.IEventTypeContributor.Contribute() -> System.Collections.Generic.IReadOnlyList<Cephalon.EventSourcing.Services.EventTypeDescriptor!>!
+Cephalon.EventSourcing.Services.IEventStreamReplayWorker
+Cephalon.EventSourcing.Services.IEventStreamReplayWorker.ReplayAggregateAsync<TAggregate, TState>(Cephalon.Abstractions.EventSourcing.IEventStore! eventStore, Cephalon.EventSourcing.Services.EventStreamReplayRequest! request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.EventSourcing.Services.EventStreamReplayResult<TState>!>!
 Cephalon.EventSourcing.Services.IEventTypeRegistry
 Cephalon.EventSourcing.Services.IEventTypeRegistry.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.EventSourcing.Services.EventTypeDescriptor!>!
 Cephalon.EventSourcing.Services.IEventTypeRegistry.Deserialize(string! eventTypeName, string! payload) -> Cephalon.Abstractions.EventSourcing.IDomainEvent!

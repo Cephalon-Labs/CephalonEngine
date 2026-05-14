@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-14T11:44:27.0302241+00:00",
+  "GeneratedAtUtc": "2026-05-14T14:38:52.3742739+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -192,7 +192,7 @@
       "Description": "Runtime-neutral event-store contracts, aggregate hydration, and event-stream cataloging for Cephalon runtimes.",
       "FileName": "cephalon-eventsourcing.md",
       "NamespaceCount": 4,
-      "TypeCount": 10
+      "TypeCount": 14
     },
     {
       "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
@@ -1306,7 +1306,7 @@
       "AssemblyName": "Cephalon.EventSourcing",
       "FileName": "cephalon-eventsourcing.md",
       "AnchorId": "namespace-cephalon-eventsourcing-services",
-      "TypeCount": 7
+      "TypeCount": 11
     },
     {
       "NamespaceName": "Cephalon.Identity.AspNetCore.Configuration",
@@ -8980,7 +8980,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 1,
-        "Properties": 2,
+        "Properties": 4,
         "Methods": 0
       }
     },
@@ -9057,6 +9057,51 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-services-eventstreamreplayreport",
+      "Declaration": "public sealed class EventStreamReplayReport",
+      "Summary": "Summarizes one completed or failed event-stream replay operation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 14,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventStreamReplayRequest",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-services-eventstreamreplayrequest",
+      "Declaration": "public sealed class EventStreamReplayRequest",
+      "Summary": "Describes one on-demand event-stream replay operation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventStreamReplayResult\u003CTState\u003E",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-services-eventstreamreplayresult-tstate",
+      "Declaration": "public sealed class EventStreamReplayResult\u003CTState\u003E",
+      "Summary": "Returns the aggregate state and replay evidence for one event-stream replay operation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 0
       }
     },
     {
@@ -12007,6 +12052,21 @@
       "AnchorId": "type-cephalon-abstractions-eventsourcing-ieventstoreregistry",
       "Declaration": "public interface IEventStoreRegistry",
       "Summary": "Receives event-stream descriptors contributed by active modules or packages.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventStreamReplayWorker",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-services-ieventstreamreplayworker",
+      "Declaration": "public interface IEventStreamReplayWorker",
+      "Summary": "Replays event streams through aggregate hydration, optional snapshots, and registered projection rebuild handlers.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -38668,6 +38728,17 @@
       "Summary": "Gets the latest completion time observed for this target."
     },
     {
+      "DisplayName": "CompletedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-completedatutc",
+      "Signature": "DateTimeOffset CompletedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when replay completed or failed."
+    },
+    {
       "DisplayName": "CompletedCount",
       "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeState",
@@ -52206,6 +52277,17 @@
       "Summary": "The runtime currently has one durable store configured."
     },
     {
+      "DisplayName": "DurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-durationmilliseconds",
+      "Signature": "double DurationMilliseconds { get; }",
+      "Summary": "Gets the replay duration in milliseconds."
+    },
+    {
       "DisplayName": "Edge",
       "Category": "Fields",
       "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionDimensions",
@@ -53944,6 +54026,17 @@
       "Summary": "Gets or sets a value indicating whether ingestion features are enabled."
     },
     {
+      "DisplayName": "EnableInMemorySnapshotStore",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSourcingOptions",
+      "NamespaceName": "Cephalon.EventSourcing.Configuration",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-enableinmemorysnapshotstore",
+      "Signature": "bool EnableInMemorySnapshotStore { get; set; }",
+      "Summary": "Gets or sets a value indicating whether Cephalon should register its process-local snapshot store when snapshots are enabled and no provider-specific \u0060ISnapshotStore\u0060 has been registered."
+    },
+    {
       "DisplayName": "EnableInMemoryWriter",
       "Category": "Properties",
       "DeclaringTypeName": "AuditRuntimeOptions",
@@ -54151,6 +54244,17 @@
       "AnchorId": "member-p-cephalon-retrieval-configuration-retrievaloptions-enablequerying",
       "Signature": "bool EnableQuerying { get; set; }",
       "Summary": "Gets or sets a value indicating whether query features are enabled."
+    },
+    {
+      "DisplayName": "EnableReplayWorker",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSourcingOptions",
+      "NamespaceName": "Cephalon.EventSourcing.Configuration",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-enablereplayworker",
+      "Signature": "bool EnableReplayWorker { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the on-demand event-stream replay worker is available."
     },
     {
       "DisplayName": "EnableRetryOnFailure",
@@ -55189,6 +55293,17 @@
     {
       "DisplayName": "Error",
       "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-error",
+      "Signature": "string Error { get; }",
+      "Summary": "Gets the failure message when replay failed."
+    },
+    {
+      "DisplayName": "Error",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionExecutionReport",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -55999,6 +56114,39 @@
       "AnchorId": "member-m-cephalon-eventsourcing-services-eventstreamregistry-ctor",
       "Signature": "EventStreamRegistry()",
       "Summary": "Initializes a new instance of the \u0060EventStreamRegistry\u0060 class."
+    },
+    {
+      "DisplayName": "EventStreamReplayReport",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventstreamreplayreport-ctor-system-string-system-string-system-datetimeoffset-system-datetimeoffset-system-boolean-system-int64-system-int64-system-int32-system-int32-system-int32-system-int64-system-boolean-system-string",
+      "Signature": "EventStreamReplayReport(string streamId, string status, DateTimeOffset startedAtUtc, DateTimeOffset completedAtUtc, bool usedSnapshot, long snapshotVersion, long replayFromVersion, int replayedEventCount, int projectionCount, int projectedEventCount, long lastReplayedVersion, bool snapshotSaved, string error)",
+      "Summary": "Initializes a new instance of the \u0060EventStreamReplayReport\u0060 class."
+    },
+    {
+      "DisplayName": "EventStreamReplayRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventStreamReplayRequest",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventstreamreplayrequest-ctor-system-string-system-int64-system-boolean-system-boolean-system-boolean",
+      "Signature": "EventStreamReplayRequest(string streamId, long fromVersion, bool useSnapshots, bool saveSnapshot, bool rebuildProjections)",
+      "Summary": "Initializes a new instance of the \u0060EventStreamReplayRequest\u0060 class."
+    },
+    {
+      "DisplayName": "EventStreamReplayResult\u003CTState\u003E",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventStreamReplayResult\u003CTState\u003E",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventstreamreplayresult-1-ctor-0-cephalon-eventsourcing-services-eventstreamreplayreport",
+      "Signature": "EventStreamReplayResult\u003CTState\u003E(TState state, EventStreamReplayReport report)",
+      "Summary": "Initializes a new instance of the \u0060EventStreamReplayResult\u003CT\u003E\u0060 class."
     },
     {
       "DisplayName": "EventSubscriptionAttribute",
@@ -61686,6 +61834,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-stranglerfigroutepolicysettings-fromsection-microsoft-extensions-configuration-iconfigurationsection",
       "Signature": "StranglerFigRoutePolicySettings FromSection(IConfigurationSection section)",
       "Summary": "Reads one route-specific strangler-fig migration-policy override from configuration."
+    },
+    {
+      "DisplayName": "FromVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayRequest",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-fromversion",
+      "Signature": "long FromVersion { get; }",
+      "Summary": "Gets the first stream version to replay when no newer snapshot is available."
     },
     {
       "DisplayName": "FromVersion",
@@ -81178,6 +81337,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastreplayedversion",
       "Signature": "long? LastReplayedVersion { get; set; }",
       "Summary": "The latest stream version that was fully replayed before the durable step executed."
+    },
+    {
+      "DisplayName": "LastReplayedVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-lastreplayedversion",
+      "Signature": "long LastReplayedVersion { get; }",
+      "Summary": "Gets the latest stream version applied, or the snapshot/start version when no events were replayed."
     },
     {
       "DisplayName": "LastReporterId",
@@ -100787,6 +100957,17 @@
       "Summary": "Gets the resolved endpoint shape the candidate would publish when it wins precedence."
     },
     {
+      "DisplayName": "ProjectedEventCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-projectedeventcount",
+      "Signature": "int ProjectedEventCount { get; }",
+      "Summary": "Gets the number of projection applications completed during replay."
+    },
+    {
       "DisplayName": "ProjectId",
       "Category": "Properties",
       "DeclaringTypeName": "ScaffoldFolder",
@@ -100796,6 +100977,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-projectid",
       "Signature": "string ProjectId { get; }",
       "Summary": "Gets the owning project identifier when the folder belongs to a project."
+    },
+    {
+      "DisplayName": "ProjectionCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-projectioncount",
+      "Signature": "int ProjectionCount { get; }",
+      "Summary": "Gets the number of projection services that participated in replay."
     },
     {
       "DisplayName": "ProjectionDescriptor",
@@ -106529,6 +106721,17 @@
       "Summary": "Gets the ordered machine-readable reasons that explain the readiness state."
     },
     {
+      "DisplayName": "RebuildProjections",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayRequest",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-rebuildprojections",
+      "Signature": "bool RebuildProjections { get; }",
+      "Summary": "Gets a value indicating whether registered \u0060IProjection\u003CIDomainEvent\u003E\u0060 services should receive replayed events."
+    },
+    {
       "DisplayName": "ReceivedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "EntityFrameworkInboxEntry",
@@ -109466,6 +109669,39 @@
       "Summary": "Replaces the candidate\u0027s explicit binding plan with the configured descriptors."
     },
     {
+      "DisplayName": "ReplayAggregateAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventStreamReplayWorker",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-ieventstreamreplayworker-replayaggregateasync-2-cephalon-abstractions-eventsourcing-ieventstore-cephalon-eventsourcing-services-eventstreamreplayrequest-system-threading-cancellationtoken",
+      "Signature": "Task\u003CEventStreamReplayResult\u003CTState\u003E\u003E ReplayAggregateAsync\u003CTAggregate, TState\u003E(IEventStore eventStore, EventStreamReplayRequest request, CancellationToken cancellationToken)",
+      "Summary": "Replays one aggregate stream from the supplied event store."
+    },
+    {
+      "DisplayName": "ReplayedEventCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-replayedeventcount",
+      "Signature": "int ReplayedEventCount { get; }",
+      "Summary": "Gets the number of domain events applied to the aggregate."
+    },
+    {
+      "DisplayName": "ReplayFromVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-replayfromversion",
+      "Signature": "long ReplayFromVersion { get; }",
+      "Summary": "Gets the first event-stream version replayed from the event store."
+    },
+    {
       "DisplayName": "Replaying",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories",
@@ -109563,6 +109799,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-replytoaddresses",
       "Signature": "IReadOnlyList\u003Cstring\u003E ReplyToAddresses { get; set; }",
       "Summary": "Gets or sets reply-to addresses attached to the SES message."
+    },
+    {
+      "DisplayName": "Report",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayResult\u003CTState\u003E",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayresult-1-report",
+      "Signature": "EventStreamReplayReport Report { get; }",
+      "Summary": "Gets the replay evidence emitted by the worker."
     },
     {
       "DisplayName": "ReportAsync",
@@ -116880,6 +117127,17 @@
       "Summary": "The selected materializer depends on control-plane resources that are currently available."
     },
     {
+      "DisplayName": "SaveSnapshot",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayRequest",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-savesnapshot",
+      "Signature": "bool SaveSnapshot { get; }",
+      "Summary": "Gets a value indicating whether the replay should save the final aggregate state as a new snapshot."
+    },
+    {
       "DisplayName": "SaveSnapshotAsync",
       "Category": "Methods",
       "DeclaringTypeName": "ISnapshotStore",
@@ -120223,6 +120481,28 @@
       "Summary": "Gets or sets the Debezium snapshot mode when the pack should publish it as operator-facing metadata."
     },
     {
+      "DisplayName": "SnapshotSaved",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-snapshotsaved",
+      "Signature": "bool SnapshotSaved { get; }",
+      "Summary": "Gets a value indicating whether the final aggregate state was saved as a snapshot."
+    },
+    {
+      "DisplayName": "SnapshotVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-snapshotversion",
+      "Signature": "long SnapshotVersion { get; }",
+      "Summary": "Gets the snapshot version used, or \u0060-1\u0060 when no snapshot was used."
+    },
+    {
       "DisplayName": "SnsMessageId",
       "Category": "Properties",
       "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
@@ -122621,6 +122901,17 @@
     {
       "DisplayName": "StartedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-startedatutc",
+      "Signature": "DateTimeOffset StartedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when replay started."
+    },
+    {
+      "DisplayName": "StartedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeModuleLifecycleState",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -123281,6 +123572,17 @@
     {
       "DisplayName": "State",
       "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayResult\u003CTState\u003E",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayresult-1-state",
+      "Signature": "TState State { get; }",
+      "Summary": "Gets the aggregate state produced by replay."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeHealthReport",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -123475,6 +123777,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-engineruntime-status",
       "Signature": "RuntimeStatus Status { get; }",
       "Summary": "Gets the current lifecycle status."
+    },
+    {
+      "DisplayName": "Status",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-status",
+      "Signature": "string Status { get; }",
+      "Summary": "Gets the replay status."
     },
     {
       "DisplayName": "Status",
@@ -124421,6 +124734,28 @@
       "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-streamid",
       "Signature": "string StreamId { get; }",
       "Summary": "Gets the stream identifier that failed the concurrency check."
+    },
+    {
+      "DisplayName": "StreamId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-streamid",
+      "Signature": "string StreamId { get; }",
+      "Summary": "Gets the event stream that was replayed."
+    },
+    {
+      "DisplayName": "StreamId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayRequest",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-streamid",
+      "Signature": "string StreamId { get; }",
+      "Summary": "Gets the stable event-stream identifier to replay."
     },
     {
       "DisplayName": "StreamId",
@@ -133113,6 +133448,17 @@
       "Summary": "Gets or sets a value indicating whether the package should query the Droplet metadata service to fill in best-effort \u0060host.id\u0060, \u0060host.name\u0060, and \u0060cloud.region\u0060 values when they are missing."
     },
     {
+      "DisplayName": "UsedSnapshot",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayReport",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-usedsnapshot",
+      "Signature": "bool UsedSnapshot { get; }",
+      "Summary": "Gets a value indicating whether replay started from a saved snapshot."
+    },
+    {
       "DisplayName": "UseFailurePolicy",
       "Category": "Methods",
       "DeclaringTypeName": "EngineBuilder",
@@ -133606,6 +133952,17 @@
       "AnchorId": "member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-usesnamedconnectionstring",
       "Signature": "bool UsesNamedConnectionString { get; }",
       "Summary": "Gets a value indicating whether the role resolved through a named connection string."
+    },
+    {
+      "DisplayName": "UseSnapshots",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventStreamReplayRequest",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-usesnapshots",
+      "Signature": "bool UseSnapshots { get; }",
+      "Summary": "Gets a value indicating whether the replay should start from a saved snapshot when one is available."
     },
     {
       "DisplayName": "UsesReadWriteSplit",

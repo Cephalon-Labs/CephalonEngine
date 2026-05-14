@@ -29,6 +29,18 @@ internal static class EventSourcingServiceRegistration
         services.TryAddSingleton<IEventStoreCatalog>(static serviceProvider =>
             new EventStreamCatalog(serviceProvider.GetServices<IEventStoreContributor>()));
         services.TryAddSingleton(typeof(AggregateHydrator<,>));
+        services.TryAddSingleton<EventStreamReplayRuntimeState>();
+
+        if (options.EnableSnapshots && options.EnableInMemorySnapshotStore)
+        {
+            services.TryAddSingleton<ISnapshotStore, InMemorySnapshotStore>();
+        }
+
+        if (options.EnableReplayWorker)
+        {
+            services.TryAddScoped<IEventStreamReplayWorker, EventStreamReplayWorker>();
+        }
+
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventSourcingRuntimeContributor>());
     }
 

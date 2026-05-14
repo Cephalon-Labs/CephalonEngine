@@ -649,8 +649,8 @@ public sealed class DocumentationCoverageTests
         var maturityAudit = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-surface-maturity-audit.md"));
         var conformanceMatrix = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "conformance-matrix.md"));
 
-        Assert.Contains("sanitized `event-sourcing` runtime-surface entries for all ten provider stores", maturityAudit, StringComparison.Ordinal);
-        Assert.Contains("all ten provider packs contribute sanitized append/read store descriptors", conformanceMatrix, StringComparison.Ordinal);
+        Assert.Contains("`event-sourcing` runtime-surface entries for all ten provider stores", maturityAudit, StringComparison.Ordinal);
+        Assert.Contains("All ten providers contribute sanitized descriptors", conformanceMatrix, StringComparison.Ordinal);
     }
 
     [Fact]

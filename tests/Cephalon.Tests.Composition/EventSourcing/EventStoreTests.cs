@@ -1,4 +1,7 @@
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.Abstractions.Technologies;
+using Cephalon.EventSourcing.Configuration;
 using Cephalon.EventSourcing.EntityFramework;
 using Cephalon.EventSourcing.EntityFramework.Hosting;
 using Cephalon.EventSourcing.Hosting;
@@ -116,6 +119,84 @@ public sealed class EventStoreTests
 
     [Fact]
     [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Scenario_result naming improves test readability.")]
+    public async Task ReplayWorker_ReplaysFromSnapshot_RebuildsProjections_AndReportsRuntimeTruth()
+    {
+        await using var connection = new SqliteConnection("Data Source=:memory:");
+        await connection.OpenAsync();
+
+        using var services = BuildServices(
+            connection,
+            configureEventSourcing: static options => options.EnableSnapshots = true,
+            configureServices: static serviceCollection =>
+            {
+                serviceCollection.AddSingleton<RecordingProjection>();
+                serviceCollection.AddSingleton<IProjection<IDomainEvent>>(static serviceProvider =>
+                    serviceProvider.GetRequiredService<RecordingProjection>());
+            });
+        using var scope = services.CreateScope();
+        var eventStore = scope.ServiceProvider.GetRequiredService<IEventStore>();
+        var snapshotStore = scope.ServiceProvider.GetRequiredService<ISnapshotStore>();
+        var replayWorker = scope.ServiceProvider.GetRequiredService<IEventStreamReplayWorker>();
+
+        await eventStore.AppendAsync(
+            "cart-5",
+            [
+                new TestEvent("cart-5", 0, new DateTime(2026, 4, 6, 0, 0, 0, DateTimeKind.Utc)),
+                new TestEvent("cart-5", 1, new DateTime(2026, 4, 6, 0, 1, 0, DateTimeKind.Utc))
+            ],
+            -1);
+        await snapshotStore.SaveSnapshotAsync("cart-5", 1, 2);
+        await eventStore.AppendAsync(
+            "cart-5",
+            [
+                new TestEvent("cart-5", 2, new DateTime(2026, 4, 6, 0, 2, 0, DateTimeKind.Utc)),
+                new TestEvent("cart-5", 3, new DateTime(2026, 4, 6, 0, 3, 0, DateTimeKind.Utc))
+            ],
+            1);
+
+        var result = await replayWorker.ReplayAggregateAsync<TestAggregate, int>(
+            eventStore,
+            new EventStreamReplayRequest("cart-5"));
+
+        Assert.Equal(4, result.State);
+        Assert.Equal("passed", result.Report.Status);
+        Assert.True(result.Report.UsedSnapshot);
+        Assert.Equal(1, result.Report.SnapshotVersion);
+        Assert.Equal(2, result.Report.ReplayFromVersion);
+        Assert.Equal(2, result.Report.ReplayedEventCount);
+        Assert.Equal(1, result.Report.ProjectionCount);
+        Assert.Equal(2, result.Report.ProjectedEventCount);
+        Assert.Equal(3, result.Report.LastReplayedVersion);
+        Assert.True(result.Report.SnapshotSaved);
+
+        var savedSnapshot = await snapshotStore.LoadSnapshotAsync<int>("cart-5");
+        Assert.Equal(4, savedSnapshot.State);
+        Assert.Equal(3, savedSnapshot.Version);
+
+        var projection = scope.ServiceProvider.GetRequiredService<RecordingProjection>();
+        Assert.Equal([2L, 3L], projection.StreamVersions);
+
+        var eventSourcingSurface = scope.ServiceProvider
+            .GetServices<ITechnologyRuntimeContributor>()
+            .Select(static contributor => contributor.DescribeRuntimeSurface())
+            .Single(static surface => surface.TechnologyId == "event-sourcing");
+        var summary = Assert.Single(eventSourcingSurface.Entries, static entry => entry.Id == "event-sourcing-runtime");
+        Assert.Equal("passed", summary.Metadata["latestReplayStatus"]);
+        Assert.Equal("cart-5", summary.Metadata["latestReplayStreamId"]);
+        Assert.Equal("2", summary.Metadata["latestReplayEvents"]);
+        Assert.Equal("2", summary.Metadata["latestReplayProjectedEvents"]);
+        Assert.Equal("true", summary.Metadata["latestReplaySnapshotSaved"]);
+
+        var replayEntry = Assert.Single(eventSourcingSurface.Entries, static entry => entry.Id == "event-sourcing-managed-replay-worker");
+        Assert.Equal("cephalon-managed", replayEntry.Metadata["managedExecution"]);
+        Assert.Equal("on-demand", replayEntry.Metadata["mode"]);
+        Assert.Equal("process-local", replayEntry.Metadata["snapshotAssistedReplay"]);
+        Assert.Equal("registered-domain-event-projections", replayEntry.Metadata["projectionRebuild"]);
+        Assert.Equal("not-claimed", replayEntry.Metadata["hostedBackgroundRunner"]);
+    }
+
+    [Fact]
+    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Scenario_result naming improves test readability.")]
     public async Task ReadStream_ResolvesLegacyAssemblyQualifiedNameAlias()
     {
         await using var connection = new SqliteConnection("Data Source=:memory:");
@@ -168,16 +249,26 @@ public sealed class EventStoreTests
         Assert.Contains("AddCephalonEventType", exception.Message, StringComparison.Ordinal);
     }
 
-    private static ServiceProvider BuildServices(SqliteConnection connection, bool registerEventType = true)
+    private static ServiceProvider BuildServices(
+        SqliteConnection connection,
+        bool registerEventType = true,
+        Action<EventSourcingOptions>? configureEventSourcing = null,
+        Action<IServiceCollection>? configureServices = null)
     {
         var services = new ServiceCollection();
         services.AddDbContext<TestEventContext>(options => options.UseSqlite(connection));
+        if (configureEventSourcing is not null)
+        {
+            services.AddCephalonEventSourcing(configureEventSourcing);
+        }
+
         if (registerEventType)
         {
             services.AddCephalonEventType<TestEvent>("tests.cart-event");
         }
 
         services.AddCephalonEntityFrameworkEventSourcing<TestEventContext>();
+        configureServices?.Invoke(services);
 
         var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
@@ -213,6 +304,22 @@ public sealed class EventStoreTests
         {
             ArgumentNullException.ThrowIfNull(evt);
             return current + 1;
+        }
+    }
+
+    private sealed class RecordingProjection : IProjection<IDomainEvent>
+    {
+        private readonly List<long> streamVersions = [];
+
+        public IReadOnlyList<long> StreamVersions => streamVersions;
+
+        public ValueTask ProjectAsync(IDomainEvent message, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(message);
+
+            cancellationToken.ThrowIfCancellationRequested();
+            streamVersions.Add(message.StreamVersion);
+            return ValueTask.CompletedTask;
         }
     }
 }

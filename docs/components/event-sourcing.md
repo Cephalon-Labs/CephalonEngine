@@ -1,6 +1,6 @@
 # Cephalon.EventSourcing
 
-> **Maturity:** `M1` · **Ownership:** `application-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+> **Maturity:** `M2` · **Ownership:** `mixed: application-managed + cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.EventSourcing` is the runtime-neutral event-sourcing baseline for Cephalon.
 
@@ -12,7 +12,10 @@
 - a merged `IEventStoreCatalog` built from `IEventStoreContributor` registrations
 - a merged `IEventTypeRegistry` that maps stable persisted event names to serializer/deserializer descriptors
 - aggregate hydration through `AggregateHydrator<TAggregate, TState>` on top of `IEventStore`
-- a truthful `event-sourcing` runtime surface that reports active provider/store count, active provider ids, default provider, snapshot toggle state, and one sanitized runtime entry per contributed provider store
+- an on-demand managed replay worker through `IEventStreamReplayWorker`
+- process-local snapshot lifecycle through the existing `ISnapshotStore` contract when `EnableSnapshots` and `EnableInMemorySnapshotStore` are enabled
+- projection rebuild over registered `IProjection<IDomainEvent>` services during managed replay
+- a truthful `event-sourcing` runtime surface that reports active provider/store count, active provider ids, default provider, snapshot/replay toggle state, the `event-sourcing-managed-replay-worker` entry, latest replay evidence, explicit non-claims, and one sanitized runtime entry per contributed provider store
 
 ## Main surfaces
 
@@ -20,6 +23,10 @@
 - `Hosting/EventSourcingServiceCollectionExtensions.cs`
 - `Registration/EventSourcingEngineBuilderExtensions.cs`
 - `Services/AggregateHydrator.cs`
+- `Services/EventStreamReplayRequest.cs`
+- `Services/EventStreamReplayReport.cs`
+- `Services/EventStreamReplayResult.cs`
+- `Services/IEventStreamReplayWorker.cs`
 - `Services/EventTypeDescriptor.cs`
 - `Services/EventTypeRegistry.cs`
 - `Services/EventStreamCatalog.cs`
@@ -35,9 +42,40 @@ The host-agnostic contracts live under `Cephalon.Abstractions.EventSourcing`.
 - `IDomainEvent` and `DomainEvent` define the minimum stream identity, version, and occurrence timestamp for persisted events
 - `IEventStore` defines append, stream read, and current-version lookup
 - `IAggregate<TState>` defines deterministic state transitions during replay
-- `ISnapshotStore` is declared now so future providers can add snapshot support without changing the baseline contract
+- `ISnapshotStore` is the snapshot contract used by the managed replay worker; the core pack ships a process-local fallback store, while provider-durable snapshot stores remain provider-specific work
 - `EventStreamDescriptor`, `IEventStoreContributor`, `IEventStoreRegistry`, and `IEventStoreCatalog` keep active event-stream answers introspectable
 - `EventTypeDescriptor`, `IEventTypeContributor`, `IEventTypeRegistry`, and `EventTypeRegistry` keep event payload names, aliases, and serializers explicit so providers do not resolve persisted strings through `Type.GetType(...)`
+
+## Managed replay proof
+
+`ENG-704` adds the first Cephalon-managed EventSourcing execution proof without promoting provider packs beyond append/read truth.
+
+```csharp
+builder.Services.AddCephalonEventSourcing(options =>
+{
+    options.DefaultProvider = "entity-framework";
+    options.EnableSnapshots = true;
+});
+
+builder.Services.AddSingleton<IProjection<IDomainEvent>, OrderSummaryProjection>();
+
+var replay = scope.ServiceProvider.GetRequiredService<IEventStreamReplayWorker>();
+var result = await replay.ReplayAggregateAsync<OrderAggregate, OrderState>(
+    eventStore,
+    new EventStreamReplayRequest("orders-42"),
+    ct);
+```
+
+The worker:
+
+- starts from the latest compatible snapshot when `EnableSnapshots` and `UseSnapshots` are enabled
+- replays remaining events from the configured `IEventStore`
+- applies those events through `IAggregate<TState>`
+- sends replayed events to registered `IProjection<IDomainEvent>` services when `RebuildProjections` is enabled
+- saves the final aggregate state back through `ISnapshotStore` when `SaveSnapshot` is enabled
+- records `EventStreamReplayReport` evidence for `/engine/technology-surfaces` and `/engine/snapshot`
+
+The default snapshot implementation is deliberately process-local. It proves the lifecycle and keeps low-ceremony hosts useful, but it is not a durable provider snapshot store. Provider packs still need their own snapshot persistence, retention, archival, and replay-runner proof before they can claim provider-level `M2`.
 
 ## Event-type registry
 
@@ -94,16 +132,16 @@ var hydrator = new AggregateHydrator<OrderAggregate, OrderState>();
 var (state, version) = await hydrator.HydrateAsync(eventStore, streamId, cancellationToken: ct);
 ```
 
-`AggregateHydrator` does not own snapshots, projection rebuilds, or background execution. It only replays events from `IEventStore` through the aggregate's `Apply(...)` contract.
+`AggregateHydrator` stays a pure application-facing hydrator. Use `IEventStreamReplayWorker` when the host needs Cephalon-owned replay evidence, snapshot lifecycle, and projection rebuild reporting.
 
 ## Not shipped in this slice
 
 This baseline intentionally does not claim:
 
-- snapshot persistence or snapshot-assisted replay
-- projection rebuild orchestration
+- provider-durable snapshot persistence
+- distributed or named projection rebuild orchestration
 - stream archival, retention, or compaction
-- hosted background projection runners
+- hosted background projection or replay runners
 - event-subscription dispatch, saga orchestration, or durable consumer semantics
 
 Those remain later slices until Cephalon can ship them truthfully.

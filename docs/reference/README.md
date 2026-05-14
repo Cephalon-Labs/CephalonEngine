@@ -113,7 +113,7 @@ Quick links:
 
 ### Event-Sourcing Companion Packs
 
-- [Cephalon.EventSourcing](cephalon-eventsourcing.md): Runtime-neutral event-store contracts, aggregate hydration, and event-stream cataloging for Cephalon runtimes. Contains 4 namespaces and 10 public types. [Browse](browse.html?assembly=Cephalon.EventSourcing)
+- [Cephalon.EventSourcing](cephalon-eventsourcing.md): Runtime-neutral event-store contracts, aggregate hydration, and event-stream cataloging for Cephalon runtimes. Contains 4 namespaces and 14 public types. [Browse](browse.html?assembly=Cephalon.EventSourcing)
 - [Cephalon.EventSourcing.EntityFramework](cephalon-eventsourcing-entityframework.md): Entity Framework Core append/read event-store provider for Cephalon event-sourcing workloads. Contains 3 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.EventSourcing.EntityFramework)
 
 ## Reading order
