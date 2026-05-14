@@ -22,7 +22,8 @@ public static class RedisEventSourcingServiceCollectionExtensions
     /// </param>
     /// <param name="keyPrefix">
     /// The key prefix applied to all stream keys. Defaults to <c>"cephalon:"</c>.
-    /// Stream keys follow the pattern <c>{keyPrefix}stream:{streamId}</c>.
+    /// Stream keys follow the pattern <c>{keyPrefix}stream:{streamId}</c>, and latest-snapshot
+    /// hashes follow <c>{keyPrefix}snapshot:{streamId}:{stateType}</c>.
     /// </param>
     /// <returns>The same service collection for fluent registration.</returns>
     public static IServiceCollection AddCephalonRedisEventSourcing(
@@ -40,6 +41,10 @@ public static class RedisEventSourcingServiceCollectionExtensions
         services.AddCephalonEventTypeRegistry();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreContributor>(
             new RedisEventStoreContributor(configuration, keyPrefix)));
+        services.AddScoped<ISnapshotStore>(serviceProvider =>
+            new RedisSnapshotStore(
+                serviceProvider.GetRequiredService<IConnectionMultiplexer>(),
+                keyPrefix));
         services.TryAddSingleton<IEventStore>(serviceProvider =>
         {
             var multiplexer = serviceProvider.GetRequiredService<IConnectionMultiplexer>();

@@ -17,6 +17,7 @@ on:
           - Neo4j
           - OpenSearch
           - Qdrant
+          - Redis
           - Smtp
   schedule:
     - cron: "0 19 * * 0"
@@ -43,6 +44,7 @@ jobs:
           - Neo4j
           - OpenSearch
           - Qdrant
+          - Redis
           - Smtp
 
     env:

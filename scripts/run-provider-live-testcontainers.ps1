@@ -1,7 +1,7 @@
 #requires -Version 7.0
 
 param(
-    [ValidateSet("All", "Cassandra", "ClickHouse", "Elasticsearch", "Nats", "Neo4j", "OpenSearch", "Qdrant", "Smtp")]
+    [ValidateSet("All", "Cassandra", "ClickHouse", "Elasticsearch", "Nats", "Neo4j", "OpenSearch", "Qdrant", "Redis", "Smtp")]
     [string[]]$Providers = @("All"),
     [ValidateSet("Debug", "Release")]
     [string]$Configuration = "Release",
@@ -61,6 +61,11 @@ function Get-ProviderLiveTestMatrix {
             Provider = "Qdrant"
             FilterToken = "QdrantProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
             Runtime = "qdrant/qdrant:v1.12.5"
+        }
+        Redis = [pscustomobject]@{
+            Provider = "Redis"
+            FilterToken = "RedisProvider_StagesOutboxInboxDispatchAndEventStreamAgainstLiveRedis"
+            Runtime = "redis:7-alpine"
         }
         Smtp = [pscustomobject]@{
             Provider = "Smtp"

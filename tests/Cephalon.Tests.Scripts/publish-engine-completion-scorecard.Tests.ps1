@@ -312,7 +312,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.ProviderIntegrationCompositionOnlyCount | Should -Be 0
         $json.Summary.ProviderIntegrationExternalServiceGateCount | Should -Be 14
         $json.Summary.ProviderIntegrationDefaultSkippedCount | Should -Be 14
-        $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 99
+        $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 103
         $json.Summary.EventingOperationalSuperiorityRequiredDimensionCount | Should -Be 6
         $json.Summary.EventingOperationalSuperiorityCoveredDimensionCount | Should -Be 6
         $json.Summary.EventingOperationalSuperiorityPartialDimensionCount | Should -Be 0
@@ -525,7 +525,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.CompositionOnlyCount | Should -Be 0
         $json.ProviderIntegrationEvidence.ExternalServiceGateCount | Should -Be 14
         $json.ProviderIntegrationEvidence.DefaultSkippedCount | Should -Be 14
-        $json.ProviderIntegrationEvidence.RuntimeContractCount | Should -Be 99
+        $json.ProviderIntegrationEvidence.RuntimeContractCount | Should -Be 103
         $json.ProviderIntegrationEvidence.EnvironmentVariableCount | Should -Be 35
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "redis-data-event-sourcing-live"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "mongodb-data-runtime-surface"

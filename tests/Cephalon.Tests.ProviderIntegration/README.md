@@ -5,7 +5,7 @@ This project is the focused integration-test lane for provider-backed behavior t
 ## Current baseline
 
 - Redis live provider coverage proves the `Cephalon.Data.Redis` outbox/inbox surfaces and the `Cephalon.EventSourcing.Redis` stream provider against one live Redis runtime.
-- The Redis test verifies service registration, runtime capabilities, outbox and inbox descriptors, event-stream descriptors, Redis Hash/Sorted Set/Set/Stream persistence, idempotent outbox and inbox behavior, dispatch-store success reporting, ordered event replay, and optimistic-concurrency rejection.
+- The Redis test verifies service registration, runtime capabilities, outbox and inbox descriptors, event-stream descriptors, Redis Hash/Sorted Set/Set/Stream persistence, idempotent outbox and inbox behavior, dispatch-store success reporting, ordered event replay, provider-durable snapshot save/load, snapshot-assisted managed replay, projection rebuild, runtime-surface durable-snapshot readback, stale snapshot rejection, and optimistic-concurrency rejection.
 - MongoDB data-provider coverage starts a repo-owned disposable replica set and proves `Cephalon.Data.MongoDB` outbox/inbox/dispatch-store behavior in the default lane.
 - Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant now have opt-in live data-provider proof lanes. Each lane can run against either pre-provisioned provider services or disposable Testcontainers-backed runtimes, composes `Cephalon.Engine`, `Cephalon.Eventing`, and the real provider pack, then proves manifest capabilities, outbox/inbox descriptors, `event-driven-integration` technology surfaces, idempotent outbox/inbox writes, and real provider persistence. All except ClickHouse also prove `IEventDispatchStore` pending/success transitions; ClickHouse deliberately proves the truthful `unsupported` dispatch policy.
 - SMTP invitation delivery now has an opt-in live relay proof lane. It composes `Cephalon.MultiTenancy.Governance.SmtpDelivery`, dispatches through the real governance delivery dispatcher, hands the message to a real SMTP relay, reads the accepted message back through the relay API, and verifies message id, recipients, context headers, provider metadata, and sanitized runtime-surface truth.
@@ -63,6 +63,7 @@ Provider-specific live tests prefer pre-provisioned service settings when presen
 | Neo4j | `Neo4jProvider_StagesOutboxInboxAndDispatchAgainstLiveService` | Bolt auth must allow label/constraint creation and node writes. |
 | OpenSearch | `OpenSearchProvider_StagesOutboxInboxAndDispatchAgainstLiveService` | Index creation and refresh must be allowed; the test polls eventually visible search rows. |
 | Qdrant | `QdrantProvider_StagesOutboxInboxAndDispatchAgainstLiveService` | gRPC endpoint must be reachable and collection creation allowed. |
+| Redis | `RedisProvider_StagesOutboxInboxDispatchAndEventStreamAgainstLiveRedis` | Redis server must support Streams, Hashes, Sets, Sorted Sets, and Lua script execution. |
 | SMTP | `SmtpDelivery_DispatchesInvitationThroughLiveRelay` | SMTP relay must accept unauthenticated mail, and a MailHog-compatible API must expose accepted messages. |
 
 To run one provider lane, enable external services and filter by the provider method name:
@@ -86,14 +87,15 @@ For release-manager or CI execution, prefer the shared script so the provider ma
 ```powershell
 .\scripts\run-provider-live-testcontainers.ps1 -Providers All -Configuration Release
 .\scripts\run-provider-live-testcontainers.ps1 -Providers Nats -Configuration Release
+.\scripts\run-provider-live-testcontainers.ps1 -Providers Redis -Configuration Release
 .\scripts\run-provider-live-testcontainers.ps1 -Providers Smtp -Configuration Release
 ```
 
-The scheduled/manual GitHub Actions lane, `.github/workflows/provider-live-testcontainers.yml`, runs the same script on `ubuntu-latest` with one matrix job per provider. It is intentionally separate from release validation so default CI remains deterministic and Docker-free, while Docker-capable runners can still prove Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, Qdrant, and SMTP delivery against real disposable provider services.
+The scheduled/manual GitHub Actions lane, `.github/workflows/provider-live-testcontainers.yml`, runs the same script on `ubuntu-latest` with one matrix job per provider. It is intentionally separate from release validation so default CI remains deterministic and Docker-free, while Docker-capable runners can still prove Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, Qdrant, Redis, and SMTP delivery against real disposable provider services.
 
 ## Redis live lane
 
-`RedisProviderIntegrationTests.RedisProvider_StagesOutboxInboxDispatchAndEventStreamAgainstLiveRedis` proves the Redis data companion and Redis event-sourcing companion against a live Redis service.
+`RedisProviderIntegrationTests.RedisProvider_StagesOutboxInboxDispatchAndEventStreamAgainstLiveRedis` proves the Redis data companion and Redis event-sourcing companion against a live Redis service, including the provider-durable snapshot lifecycle used by the core replay worker.
 
 To run only the Redis live lane through Testcontainers:
 
