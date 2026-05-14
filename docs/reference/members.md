@@ -5055,6 +5055,9 @@ Browse the published API surface by public member.
 - [CompletedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-completedatutc): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompletedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest completion time observed for this target.
   - `DateTimeOffset? CompletedAtUtc { get; }`
+- [CompletedAtUtc](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-completedatutc): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=CompletedAtUtc&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the UTC timestamp when replay completed or failed.
+  - `DateTimeOffset CompletedAtUtc { get; }`
 - [CompletedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-completedcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompletedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of `completed` observations reported so far.
   - `int CompletedCount { get; set; }`
@@ -8748,6 +8751,9 @@ Browse the published API surface by public member.
 - [DurableStoreConfigured](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-durablestoreconfigured): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableStoreConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime currently has one durable store configured.
   - `const string DurableStoreConfigured`
+- [DurationMilliseconds](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-durationmilliseconds): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=DurationMilliseconds&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the replay duration in milliseconds.
+  - `double DurationMilliseconds { get; }`
 
 ## E
 
@@ -9225,6 +9231,9 @@ Browse the published API surface by public member.
 - [EnableIngestion](cephalon-retrieval.md#member-p-cephalon-retrieval-configuration-retrievaloptions-enableingestion): `Properties` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=EnableIngestion&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
   - Gets or sets a value indicating whether ingestion features are enabled.
   - `bool EnableIngestion { get; set; }`
+- [EnableInMemorySnapshotStore](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-enableinmemorysnapshotstore): `Properties` on `EventSourcingOptions` in `Cephalon.EventSourcing.Configuration` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EnableInMemorySnapshotStore&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Configuration&scope=members)
+  - Gets or sets a value indicating whether Cephalon should register its process-local snapshot store when snapshots are enabled and no provider-specific `ISnapshotStore` has been registered.
+  - `bool EnableInMemorySnapshotStore { get; set; }`
 - [EnableInMemoryWriter](cephalon-audit.md#member-p-cephalon-audit-configuration-auditruntimeoptions-enableinmemorywriter): `Properties` on `AuditRuntimeOptions` in `Cephalon.Audit.Configuration` (`Cephalon.Audit`) [Browse](browse.html?q=EnableInMemoryWriter&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Configuration&scope=members)
   - Gets or sets a value indicating whether the built-in in-memory audit writer should remain active.
   - `bool EnableInMemoryWriter { get; set; }`
@@ -9282,6 +9291,9 @@ Browse the published API surface by public member.
 - [EnableQuerying](cephalon-retrieval.md#member-p-cephalon-retrieval-configuration-retrievaloptions-enablequerying): `Properties` on `RetrievalOptions` in `Cephalon.Retrieval.Configuration` (`Cephalon.Retrieval`) [Browse](browse.html?q=EnableQuerying&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Configuration&scope=members)
   - Gets or sets a value indicating whether query features are enabled.
   - `bool EnableQuerying { get; set; }`
+- [EnableReplayWorker](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-enablereplayworker): `Properties` on `EventSourcingOptions` in `Cephalon.EventSourcing.Configuration` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EnableReplayWorker&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Configuration&scope=members)
+  - Gets or sets a value indicating whether the on-demand event-stream replay worker is available.
+  - `bool EnableReplayWorker { get; set; }`
 - [EnableRetryOnFailure](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-enableretryonfailure): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=EnableRetryOnFailure&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether transient-failure retries were explicitly selected.
   - `bool? EnableRetryOnFailure { get; }`
@@ -9564,6 +9576,9 @@ Browse the published API surface by public member.
 - [Error](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-error): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The operator-facing error summary when publication failed.
   - `string Error { get; set; }`
+- [Error](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-error): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Error&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the failure message when replay failed.
+  - `string Error { get; }`
 - [Error](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-error): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Error&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the operator-facing error summary when the observation represents a failure.
   - `string Error { get; }`
@@ -9786,6 +9801,15 @@ Browse the published API surface by public member.
 - [EventStreamRegistry](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamregistry-ctor): `Constructors` on `EventStreamRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EventStreamRegistry&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Initializes a new instance of the `EventStreamRegistry` class.
   - `EventStreamRegistry()`
+- [EventStreamReplayReport](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamreplayreport-ctor-system-string-system-string-system-datetimeoffset-system-datetimeoffset-system-boolean-system-int64-system-int64-system-int32-system-int32-system-int32-system-int64-system-boolean-system-string): `Constructors` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EventStreamReplayReport&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Initializes a new instance of the `EventStreamReplayReport` class.
+  - `EventStreamReplayReport(string streamId, string status, DateTimeOffset startedAtUtc, DateTimeOffset completedAtUtc, bool usedSnapshot, long snapshotVersion, long replayFromVersion, int replayedEventCount, int projectionCount, int projectedEventCount, long lastReplayedVersion, bool snapshotSaved, string error)`
+- [EventStreamReplayRequest](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamreplayrequest-ctor-system-string-system-int64-system-boolean-system-boolean-system-boolean): `Constructors` on `EventStreamReplayRequest` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EventStreamReplayRequest&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Initializes a new instance of the `EventStreamReplayRequest` class.
+  - `EventStreamReplayRequest(string streamId, long fromVersion, bool useSnapshots, bool saveSnapshot, bool rebuildProjections)`
+- [EventStreamReplayResult<TState>](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamreplayresult-1-ctor-0-cephalon-eventsourcing-services-eventstreamreplayreport): `Constructors` on `EventStreamReplayResult<TState>` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EventStreamReplayResult%3CTState%3E&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Initializes a new instance of the `EventStreamReplayResult<T>` class.
+  - `EventStreamReplayResult<TState>(TState state, EventStreamReplayReport report)`
 - [EventSubscriptionAttribute](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionattribute-ctor-system-string-system-string-system-string-system-string-system-string-system-string): `Constructors` on `EventSubscriptionAttribute` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSubscriptionAttribute&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new event subscription descriptor attribute.
   - `EventSubscriptionAttribute(string id, string displayName, string description, string channelId, string handlerId, string deliveryMode)`
@@ -11340,6 +11364,9 @@ Browse the published API surface by public member.
 - [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-stranglerfigroutepolicysettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `StranglerFigRoutePolicySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads one route-specific strangler-fig migration-policy override from configuration.
   - `StranglerFigRoutePolicySettings FromSection(IConfigurationSection section)`
+- [FromVersion](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-fromversion): `Properties` on `EventStreamReplayRequest` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=FromVersion&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the first stream version to replay when no newer snapshot is available.
+  - `long FromVersion { get; }`
 - [FromVersion](cephalon-eventing.md#member-p-cephalon-eventing-services-eventupcasterdescriptor-fromversion): `Properties` on `EventUpcasterDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=FromVersion&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the source event contract version.
   - `string FromVersion { get; }`
@@ -16674,6 +16701,9 @@ Browse the published API surface by public member.
 - [LastReplayedVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastreplayedversion): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastReplayedVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The latest stream version that was fully replayed before the durable step executed.
   - `long? LastReplayedVersion { get; set; }`
+- [LastReplayedVersion](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-lastreplayedversion): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=LastReplayedVersion&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the latest stream version applied, or the snapshot/start version when no events were replayed.
+  - `long LastReplayedVersion { get; }`
 - [LastReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastreporterid): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest reporter identity visible for the execution runtime when one was reported.
   - `string LastReporterId { get; set; }`
@@ -22029,9 +22059,15 @@ Browse the published API surface by public member.
 - [ProjectedEndpoint](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-projectedendpoint): `Properties` on `RestEndpointCandidateRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProjectedEndpoint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the resolved endpoint shape the candidate would publish when it wins precedence.
   - `RestEndpointRuntimeDescriptor ProjectedEndpoint { get; }`
+- [ProjectedEventCount](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-projectedeventcount): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=ProjectedEventCount&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the number of projection applications completed during replay.
+  - `int ProjectedEventCount { get; }`
 - [ProjectId](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldfolder-projectid): `Properties` on `ScaffoldFolder` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProjectId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the owning project identifier when the folder belongs to a project.
   - `string ProjectId { get; }`
+- [ProjectionCount](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-projectioncount): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=ProjectionCount&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the number of projection services that participated in replay.
+  - `int ProjectionCount { get; }`
 - [ProjectionDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-projectiondescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProjectionDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new projection descriptor.
   - `ProjectionDescriptor(string id, string displayName, string description, string sourceModuleId, string targetStoreId, string mode, IReadOnlyList<string> sourceContracts, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
@@ -23601,6 +23637,9 @@ Browse the published API surface by public member.
 - [Reasons](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor-reasons): `Properties` on `EventSubscriptionExecutionReadinessDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reasons&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the ordered machine-readable reasons that explain the readiness state.
   - `IReadOnlyList<string> Reasons { get; }`
+- [RebuildProjections](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-rebuildprojections): `Properties` on `EventStreamReplayRequest` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=RebuildProjections&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets a value indicating whether registered `IProjection<IDomainEvent>` services should receive replayed events.
+  - `bool RebuildProjections { get; }`
 - [ReceivedAtUtc](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkinboxentry-receivedatutc): `Properties` on `EntityFrameworkInboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ReceivedAtUtc&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the time at which the message was received.
   - `DateTimeOffset ReceivedAtUtc { get; set; }`
@@ -24402,6 +24441,15 @@ Browse the published API surface by public member.
 - [ReplaceExplicit](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointoverridebindingmode-replaceexplicit): `Fields` on `RestEndpointOverrideBindingMode` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReplaceExplicit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Replaces the candidate's explicit binding plan with the configured descriptors.
   - `const RestEndpointOverrideBindingMode ReplaceExplicit`
+- [ReplayAggregateAsync](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventstreamreplayworker-replayaggregateasync-2-cephalon-abstractions-eventsourcing-ieventstore-cephalon-eventsourcing-services-eventstreamreplayrequest-system-threading-cancellationtoken): `Methods` on `IEventStreamReplayWorker` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=ReplayAggregateAsync&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Replays one aggregate stream from the supplied event store.
+  - `Task<EventStreamReplayResult<TState>> ReplayAggregateAsync<TAggregate, TState>(IEventStore eventStore, EventStreamReplayRequest request, CancellationToken cancellationToken)`
+- [ReplayedEventCount](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-replayedeventcount): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=ReplayedEventCount&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the number of domain events applied to the aggregate.
+  - `int ReplayedEventCount { get; }`
+- [ReplayFromVersion](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-replayfromversion): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=ReplayFromVersion&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the first event-stream version replayed from the event store.
+  - `long ReplayFromVersion { get; }`
 - [Replaying](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-replaying): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Replaying&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Scheduler recovery is replaying retained execution evidence.
   - `const string Replaying`
@@ -24429,6 +24477,9 @@ Browse the published API surface by public member.
 - [ReplyToAddresses](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-replytoaddresses): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=ReplyToAddresses&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
   - Gets or sets reply-to addresses attached to the SES message.
   - `IReadOnlyList<string> ReplyToAddresses { get; set; }`
+- [Report](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayresult-1-report): `Properties` on `EventStreamReplayResult<TState>` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Report&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the replay evidence emitted by the worker.
+  - `EventStreamReplayReport Report { get; }`
 - [ReportAsync](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolrunreporter-reportasync-cephalon-agentics-services-agenttoolexecutionreport-system-threading-cancellationtoken): `Methods` on `IAgentToolRunReporter` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ReportAsync&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Records one runtime observation for an agent-tool run.
   - `ValueTask ReportAsync(AgentToolExecutionReport report, CancellationToken cancellationToken)`
@@ -26427,6 +26478,9 @@ Browse the published API surface by public member.
 - [Satisfied](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-satisfied): `Fields` on `CellTrafficAutomationDependencyStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Satisfied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The selected materializer depends on control-plane resources that are currently available.
   - `const string Satisfied`
+- [SaveSnapshot](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-savesnapshot): `Properties` on `EventStreamReplayRequest` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=SaveSnapshot&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets a value indicating whether the replay should save the final aggregate state as a new snapshot.
+  - `bool SaveSnapshot { get; }`
 - [SaveSnapshotAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-isnapshotstore-savesnapshotasync-1-system-string-system-int64-0-system-threading-cancellationtoken): `Methods` on `ISnapshotStore` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=SaveSnapshotAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Saves one snapshot for the requested stream.
   - `Task SaveSnapshotAsync<TState>(string streamId, long version, TState state, CancellationToken cancellationToken)`
@@ -27338,6 +27392,12 @@ Browse the published API surface by public member.
 - [SnapshotMode](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-snapshotmode): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=SnapshotMode&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
   - Gets or sets the Debezium snapshot mode when the pack should publish it as operator-facing metadata.
   - `string SnapshotMode { get; set; }`
+- [SnapshotSaved](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-snapshotsaved): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=SnapshotSaved&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets a value indicating whether the final aggregate state was saved as a snapshot.
+  - `bool SnapshotSaved { get; }`
+- [SnapshotVersion](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-snapshotversion): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=SnapshotVersion&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the snapshot version used, or `-1` when no snapshot was used.
+  - `long SnapshotVersion { get; }`
 - [SnsMessageId](cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-snsmessageid): `Properties` on `AmazonSesInvitationDeliveryStatusCallbackEventResult` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`) [Browse](browse.html?q=SnsMessageId&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting&scope=members)
   - Gets the SNS message identifier when supplied.
   - `string SnsMessageId { get; }`
@@ -27990,6 +28050,9 @@ Browse the published API surface by public member.
 - [StartedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-startedatutc): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest start time observed for this target.
   - `DateTimeOffset? StartedAtUtc { get; }`
+- [StartedAtUtc](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-startedatutc): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=StartedAtUtc&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the UTC timestamp when replay started.
+  - `DateTimeOffset StartedAtUtc { get; }`
 - [StartedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-startedatutc): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when module startup last completed successfully.
   - `DateTimeOffset? StartedAtUtc { get; set; }`
@@ -28170,6 +28233,9 @@ Browse the published API surface by public member.
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-state): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The current health state.
   - `HealthState State { get; set; }`
+- [State](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayresult-1-state): `Properties` on `EventStreamReplayResult<TState>` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=State&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the aggregate state produced by replay.
+  - `TState State { get; }`
 - [State](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-state): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=State&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The evaluated runtime health state.
   - `RuntimeHealthState State { get; set; }`
@@ -28224,6 +28290,9 @@ Browse the published API surface by public member.
 - [Status](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-status): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Status&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the current lifecycle status.
   - `RuntimeStatus Status { get; }`
+- [Status](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-status): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Status&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the replay status.
+  - `string Status { get; }`
 - [Status](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorresult-status): `Properties` on `IBehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Status&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the transport-neutral outcome status.
   - `BehaviorResultStatus Status { get; }`
@@ -28481,6 +28550,12 @@ Browse the published API surface by public member.
   - `string StreamId { get; set; }`
 - [StreamId](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-streamid): `Properties` on `EventStreamConcurrencyException` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the stream identifier that failed the concurrency check.
+  - `string StreamId { get; }`
+- [StreamId](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-streamid): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=StreamId&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the event stream that was replayed.
+  - `string StreamId { get; }`
+- [StreamId](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-streamid): `Properties` on `EventStreamReplayRequest` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=StreamId&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the stable event-stream identifier to replay.
   - `string StreamId { get; }`
 - [StreamId](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-idomainevent-streamid): `Properties` on `IDomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the stable stream identifier that owns the event.
@@ -30858,6 +30933,9 @@ Browse the published API surface by public member.
 - [UseDropletMetadataDefaults](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-usedropletmetadatadefaults): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=UseDropletMetadataDefaults&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets a value indicating whether the package should query the Droplet metadata service to fill in best-effort `host.id`, `host.name`, and `cloud.region` values when they are missing.
   - `bool UseDropletMetadataDefaults { get; set; }`
+- [UsedSnapshot](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-usedsnapshot): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=UsedSnapshot&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets a value indicating whether replay started from a saved snapshot.
+  - `bool UsedSnapshot { get; }`
 - [UseFailurePolicy](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usefailurepolicy-cephalon-engine-configuration-failurepolicy): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseFailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Replaces the failure policy used by the runtime lifecycle state machine.
   - `EngineBuilder UseFailurePolicy(FailurePolicy policy)`
@@ -30993,6 +31071,9 @@ Browse the published API surface by public member.
 - [UsesNamedConnectionString](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-usesnamedconnectionstring): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=UsesNamedConnectionString&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets a value indicating whether the role resolved through a named connection string.
   - `bool UsesNamedConnectionString { get; }`
+- [UseSnapshots](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-usesnapshots): `Properties` on `EventStreamReplayRequest` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=UseSnapshots&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets a value indicating whether the replay should start from a saved snapshot when one is available.
+  - `bool UseSnapshots { get; }`
 - [UsesReadWriteSplit](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-usesreadwritesplit): `Properties` on `EntityFrameworkDataOptions` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=UsesReadWriteSplit&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets a value indicating whether distinct read and write `DbContext` types were selected.
   - `bool UsesReadWriteSplit { get; }`

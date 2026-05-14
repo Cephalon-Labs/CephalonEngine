@@ -26,4 +26,15 @@ public sealed class EventSourcingOptions
     /// Gets or sets a value indicating whether snapshot-aware paths are enabled.
     /// </summary>
     public bool EnableSnapshots { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether Cephalon should register its process-local snapshot store when
+    /// snapshots are enabled and no provider-specific <c>ISnapshotStore</c> has been registered.
+    /// </summary>
+    public bool EnableInMemorySnapshotStore { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the on-demand event-stream replay worker is available.
+    /// </summary>
+    public bool EnableReplayWorker { get; set; } = true;
 }

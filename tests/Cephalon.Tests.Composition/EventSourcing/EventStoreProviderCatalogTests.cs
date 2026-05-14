@@ -118,13 +118,27 @@ public sealed class EventStoreProviderCatalogTests
         Assert.Equal("10", summary.Metadata["activeProviderCount"]);
         Assert.Equal("mongodb", summary.Metadata["defaultProvider"]);
         Assert.Equal("true", summary.Metadata["enableSnapshots"]);
+        Assert.Equal("true", summary.Metadata["enableInMemorySnapshotStore"]);
+        Assert.Equal("true", summary.Metadata["enableReplayWorker"]);
+        Assert.Equal("process-local", summary.Metadata["snapshotLifecycle"]);
+        Assert.Equal("on-demand-domain-event-projections", summary.Metadata["projectionRebuild"]);
+        Assert.Equal("not-claimed", summary.Metadata["hostedBackgroundRunner"]);
+
+        var replayWorker = Assert.Single(surface.Entries, entry => entry.Id == "event-sourcing-managed-replay-worker");
+        Assert.Equal("cephalon-managed", replayWorker.Metadata["managedExecution"]);
+        Assert.Equal("on-demand", replayWorker.Metadata["mode"]);
+        Assert.Equal("process-local", replayWorker.Metadata["snapshotAssistedReplay"]);
+        Assert.Equal("not-claimed", replayWorker.Metadata["hostedBackgroundRunner"]);
+        Assert.Equal("not-claimed", replayWorker.Metadata["providerDurableSnapshots"]);
 
         foreach (var expectedProvider in ExpectedProviders)
         {
             Assert.Contains(expectedProvider, summary.Metadata["activeProviders"], StringComparison.OrdinalIgnoreCase);
         }
 
-        foreach (var entry in surface.Entries.Where(entry => entry.Id != "event-sourcing-runtime"))
+        foreach (var entry in surface.Entries.Where(static entry =>
+            entry.Id != "event-sourcing-runtime" &&
+            entry.Id != "event-sourcing-managed-replay-worker"))
         {
             Assert.Contains("provider", entry.Metadata.Keys);
             Assert.DoesNotContain(entry.Metadata.Values, ContainsSecret);

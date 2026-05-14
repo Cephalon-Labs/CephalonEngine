@@ -61,6 +61,26 @@ string DefaultProvider { get; set; }
 
 Gets or sets the default event-store provider identifier.
 
+<a id="member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-enableinmemorysnapshotstore"></a>
+
+##### `EnableInMemorySnapshotStore`
+
+```csharp
+bool EnableInMemorySnapshotStore { get; set; }
+```
+
+Gets or sets a value indicating whether Cephalon should register its process-local snapshot store when snapshots are enabled and no provider-specific `ISnapshotStore` has been registered.
+
+<a id="member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-enablereplayworker"></a>
+
+##### `EnableReplayWorker`
+
+```csharp
+bool EnableReplayWorker { get; set; }
+```
+
+Gets or sets a value indicating whether the on-demand event-stream replay worker is available.
+
 <a id="member-p-cephalon-eventsourcing-configuration-eventsourcingoptions-enablesnapshots"></a>
 
 ##### `EnableSnapshots`
@@ -360,6 +380,317 @@ Registers one event-stream descriptor with the registry.
 Parameters:
 - `descriptor`: The descriptor to register.
 
+<a id="type-cephalon-eventsourcing-services-eventstreamreplayreport"></a>
+
+### `EventStreamReplayReport`
+
+Summarizes one completed or failed event-stream replay operation.
+
+#### Declaration
+```csharp
+public sealed class EventStreamReplayReport
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventsourcing-services-eventstreamreplayreport-ctor-system-string-system-string-system-datetimeoffset-system-datetimeoffset-system-boolean-system-int64-system-int64-system-int32-system-int32-system-int32-system-int64-system-boolean-system-string"></a>
+
+##### `EventStreamReplayReport`
+
+```csharp
+EventStreamReplayReport(string streamId, string status, DateTimeOffset startedAtUtc, DateTimeOffset completedAtUtc, bool usedSnapshot, long snapshotVersion, long replayFromVersion, int replayedEventCount, int projectionCount, int projectedEventCount, long lastReplayedVersion, bool snapshotSaved, string error)
+```
+
+Initializes a new instance of the `EventStreamReplayReport` class.
+
+Parameters:
+- `streamId`: The event stream that was replayed.
+- `status`: The replay status.
+- `startedAtUtc`: The UTC timestamp when replay started.
+- `completedAtUtc`: The UTC timestamp when replay completed or failed.
+- `usedSnapshot`: Whether replay started from a saved snapshot.
+- `snapshotVersion`: The snapshot version used, or `-1` when no snapshot was used.
+- `replayFromVersion`: The first event-stream version replayed from the event store.
+- `replayedEventCount`: The number of domain events applied to the aggregate.
+- `projectionCount`: The number of projection services that participated in replay.
+- `projectedEventCount`: The number of projection applications completed during replay.
+- `lastReplayedVersion`: The latest stream version applied, or the snapshot/start version when no events were replayed.
+- `snapshotSaved`: Whether the final aggregate state was saved as a snapshot.
+- `error`: The failure message when replay failed.
+
+#### Properties
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-completedatutc"></a>
+
+##### `CompletedAtUtc`
+
+```csharp
+DateTimeOffset CompletedAtUtc { get; }
+```
+
+Gets the UTC timestamp when replay completed or failed.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-durationmilliseconds"></a>
+
+##### `DurationMilliseconds`
+
+```csharp
+double DurationMilliseconds { get; }
+```
+
+Gets the replay duration in milliseconds.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-error"></a>
+
+##### `Error`
+
+```csharp
+string Error { get; }
+```
+
+Gets the failure message when replay failed.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-lastreplayedversion"></a>
+
+##### `LastReplayedVersion`
+
+```csharp
+long LastReplayedVersion { get; }
+```
+
+Gets the latest stream version applied, or the snapshot/start version when no events were replayed.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-projectedeventcount"></a>
+
+##### `ProjectedEventCount`
+
+```csharp
+int ProjectedEventCount { get; }
+```
+
+Gets the number of projection applications completed during replay.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-projectioncount"></a>
+
+##### `ProjectionCount`
+
+```csharp
+int ProjectionCount { get; }
+```
+
+Gets the number of projection services that participated in replay.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-replayedeventcount"></a>
+
+##### `ReplayedEventCount`
+
+```csharp
+int ReplayedEventCount { get; }
+```
+
+Gets the number of domain events applied to the aggregate.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-replayfromversion"></a>
+
+##### `ReplayFromVersion`
+
+```csharp
+long ReplayFromVersion { get; }
+```
+
+Gets the first event-stream version replayed from the event store.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-snapshotsaved"></a>
+
+##### `SnapshotSaved`
+
+```csharp
+bool SnapshotSaved { get; }
+```
+
+Gets a value indicating whether the final aggregate state was saved as a snapshot.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-snapshotversion"></a>
+
+##### `SnapshotVersion`
+
+```csharp
+long SnapshotVersion { get; }
+```
+
+Gets the snapshot version used, or `-1` when no snapshot was used.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-startedatutc"></a>
+
+##### `StartedAtUtc`
+
+```csharp
+DateTimeOffset StartedAtUtc { get; }
+```
+
+Gets the UTC timestamp when replay started.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-status"></a>
+
+##### `Status`
+
+```csharp
+string Status { get; }
+```
+
+Gets the replay status.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-streamid"></a>
+
+##### `StreamId`
+
+```csharp
+string StreamId { get; }
+```
+
+Gets the event stream that was replayed.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayreport-usedsnapshot"></a>
+
+##### `UsedSnapshot`
+
+```csharp
+bool UsedSnapshot { get; }
+```
+
+Gets a value indicating whether replay started from a saved snapshot.
+
+<a id="type-cephalon-eventsourcing-services-eventstreamreplayrequest"></a>
+
+### `EventStreamReplayRequest`
+
+Describes one on-demand event-stream replay operation.
+
+#### Declaration
+```csharp
+public sealed class EventStreamReplayRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventsourcing-services-eventstreamreplayrequest-ctor-system-string-system-int64-system-boolean-system-boolean-system-boolean"></a>
+
+##### `EventStreamReplayRequest`
+
+```csharp
+EventStreamReplayRequest(string streamId, long fromVersion, bool useSnapshots, bool saveSnapshot, bool rebuildProjections)
+```
+
+Initializes a new instance of the `EventStreamReplayRequest` class.
+
+Parameters:
+- `streamId`: The stable event-stream identifier to replay.
+- `fromVersion`: The first stream version to replay when no newer snapshot is available.
+- `useSnapshots`: Whether the replay should start from a saved snapshot when one is available.
+- `saveSnapshot`: Whether the replay should save the final aggregate state as a new snapshot.
+- `rebuildProjections`: Whether registered `IProjection<IDomainEvent>` services should receive replayed events.
+
+#### Properties
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-fromversion"></a>
+
+##### `FromVersion`
+
+```csharp
+long FromVersion { get; }
+```
+
+Gets the first stream version to replay when no newer snapshot is available.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-rebuildprojections"></a>
+
+##### `RebuildProjections`
+
+```csharp
+bool RebuildProjections { get; }
+```
+
+Gets a value indicating whether registered `IProjection<IDomainEvent>` services should receive replayed events.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-savesnapshot"></a>
+
+##### `SaveSnapshot`
+
+```csharp
+bool SaveSnapshot { get; }
+```
+
+Gets a value indicating whether the replay should save the final aggregate state as a new snapshot.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-streamid"></a>
+
+##### `StreamId`
+
+```csharp
+string StreamId { get; }
+```
+
+Gets the stable event-stream identifier to replay.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-usesnapshots"></a>
+
+##### `UseSnapshots`
+
+```csharp
+bool UseSnapshots { get; }
+```
+
+Gets a value indicating whether the replay should start from a saved snapshot when one is available.
+
+<a id="type-cephalon-eventsourcing-services-eventstreamreplayresult-tstate"></a>
+
+### `EventStreamReplayResult<TState>`
+
+Returns the aggregate state and replay evidence for one event-stream replay operation.
+
+#### Declaration
+```csharp
+public sealed class EventStreamReplayResult<TState>
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventsourcing-services-eventstreamreplayresult-1-ctor-0-cephalon-eventsourcing-services-eventstreamreplayreport"></a>
+
+##### `EventStreamReplayResult<TState>`
+
+```csharp
+EventStreamReplayResult<TState>(TState state, EventStreamReplayReport report)
+```
+
+Initializes a new instance of the `EventStreamReplayResult<T>` class.
+
+Parameters:
+- `state`: The aggregate state produced by replay.
+- `report`: The replay evidence emitted by the worker.
+
+#### Properties
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayresult-1-report"></a>
+
+##### `Report`
+
+```csharp
+EventStreamReplayReport Report { get; }
+```
+
+Gets the replay evidence emitted by the worker.
+
+<a id="member-p-cephalon-eventsourcing-services-eventstreamreplayresult-1-state"></a>
+
+##### `State`
+
+```csharp
+TState State { get; }
+```
+
+Gets the aggregate state produced by replay.
+
 <a id="type-cephalon-eventsourcing-services-eventtypedescriptor"></a>
 
 ### `EventTypeDescriptor`
@@ -622,6 +953,40 @@ Returns: `true` when the event type is registered; otherwise, `false`.
 Parameters:
 - `eventType`: The concrete domain-event type.
 - `descriptor`: The matching descriptor when the type is registered.
+
+<a id="type-cephalon-eventsourcing-services-ieventstreamreplayworker"></a>
+
+### `IEventStreamReplayWorker`
+
+Replays event streams through aggregate hydration, optional snapshots, and registered projection rebuild handlers.
+
+#### Declaration
+```csharp
+public interface IEventStreamReplayWorker
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventsourcing-services-ieventstreamreplayworker-replayaggregateasync-2-cephalon-abstractions-eventsourcing-ieventstore-cephalon-eventsourcing-services-eventstreamreplayrequest-system-threading-cancellationtoken"></a>
+
+##### `ReplayAggregateAsync`
+
+```csharp
+Task<EventStreamReplayResult<TState>> ReplayAggregateAsync<TAggregate, TState>(IEventStore eventStore, EventStreamReplayRequest request, CancellationToken cancellationToken)
+```
+
+Replays one aggregate stream from the supplied event store.
+
+Returns: The aggregate state and replay evidence produced by the operation.
+
+Type parameters:
+- `TAggregate`: The aggregate type that applies domain events.
+- `TState`: The aggregate state shape.
+
+Parameters:
+- `eventStore`: The event store to read from.
+- `request`: The replay request.
+- `cancellationToken`: The token that cancels the operation.
 
 <a id="type-cephalon-eventsourcing-services-ieventtypecontributor"></a>
 

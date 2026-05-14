@@ -386,7 +386,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.EventSourcing.Services`
 
-- [Cephalon.EventSourcing](cephalon-eventsourcing.md#namespace-cephalon-eventsourcing-services): 7 public types [Browse](browse.html?assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services)
+- [Cephalon.EventSourcing](cephalon-eventsourcing.md#namespace-cephalon-eventsourcing-services): 11 public types [Browse](browse.html?assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services)
 
 ## `Cephalon.Identity.AspNetCore.Configuration`
 

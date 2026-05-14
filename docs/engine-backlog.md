@@ -18,7 +18,7 @@ Current focus:
 - keep [Engine surface maturity audit](engine-surface-maturity-audit.md) authoritative for ownership and proof language
 - treat the eighteen `Cephalon.Observability.*Dependencies` provider packs as current `M2` provider-managed dependency-health proofs: each owns one concrete managed probe loop, timeout/failure handling, diagnostics event ids, cached `IDependencyHealthContributor` runtime truth, and `/engine/dependencies` / readiness integration; further promotion needs operator automation, live reconciliation, or adoption evidence beyond that probe baseline
 - treat the fourteen `Cephalon.Observability` cloud / exporter / logging configuration packs as current `M1` cephalon-managed runtime-truth projections: each active pack now contributes a sanitized `observability` technology surface through `/engine/technology-surfaces` and `/engine/snapshot`, while actual telemetry collection remains owned by the host OpenTelemetry or logging-provider stack until a pack owns a managed exporter loop
-- treat `Cephalon.EventSourcing` plus the ten provider event-store packs as current `M1` provider-visible append/read proofs: all ten providers now register sanitized `IEventStoreContributor` descriptors projected through `IEventStoreCatalog` and the `event-sourcing` runtime surface, while projection rebuild orchestration, snapshot lifecycle, retention, archival, and background replay workers remain the promotion gate before any provider claims `M2`
+- treat core `Cephalon.EventSourcing` as current `M2` mixed application-managed plus Cephalon-managed proof: aggregate logic remains application-owned, while the core pack now owns an on-demand replay worker, process-local snapshot lifecycle over `ISnapshotStore`, projection rebuild over registered `IProjection<IDomainEvent>` services, and `event-sourcing-managed-replay-worker` runtime-surface evidence; the ten provider event-store packs remain `M1` provider-visible append/read proofs until a provider owns durable snapshot persistence, retention, archival, or background replay execution
 - keep the event-sourcing stream-version contract zero-based across source and docs: a missing stream reports `-1`, the first append after `expectedVersion: -1` persists version `0`, replay starts from `fromVersion: 0`, and tooling coverage blocks provider docs or entry-model comments from drifting back to 1-based wording
 - treat the non-relational `Cephalon.Data` store provider packs as current provider-visible runtime truth rather than catalog-only placeholders: MongoDB, Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, and NATS can now be active together in one engine with provider outbox/inbox descriptors, `outbox-producers` / `inbox-stores` technology surfaces, and sanitized URI capability metadata for URI-based packs; shared family capability keys such as `data.search-store` aggregate provider metadata instead of failing composition when multiple provider packs expose the same capability family
 - treat the relational `Cephalon.Data` provider packs as provider-managed CDC/runtime proof through the shared data contracts: SQL Server, PostgreSQL, MySQL, and Oracle can now be active together in one engine with an aggregated `data.relational-store` capability family plus `data-management` `cdc-captures` / `cdc-capture-runtimes` technology surfaces; database role and migration runtime ownership remains with `Cephalon.Data.EntityFramework` over `Engine:Databases`, not the raw relational provider packs
@@ -81,6 +81,37 @@ Current focus:
 - treat generated reference docs as a guarded generated API navigation layer: repo-local links across `docs/reference/**/*.md` must resolve inside `docs/reference`, and browser-view query links such as `browse.html?assembly=...` must resolve to the generated browser file while hand-authored docs remain the primary human contract
 - treat `docs/reference/reference-manifest.json` as the generated API bundle map: required browser/index/manifest assets must exist, assembly page files must be manifest-owned, namespace/type/member anchor ids must resolve in those pages, and orphan generated Markdown pages must fail Tooling coverage before hosted reference docs can drift
 - treat `docs/reference/browse.html` as the hosted reference-doc browser entry point: local `href` and `src` references must resolve inside `docs/reference` to existing generated bundle files so CSS, JavaScript, index links, and manifest links cannot drift after regeneration
+
+### ENG-704 EventSourcing managed replay proof
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: event-sourcing / managed execution / runtime truth
+Quality dimensions: Reliability, Data Integrity, Auditability, Maintainability, Flexibility, Compatibility
+GitHub issue: `#1384`
+
+Why:
+
+- EventSourcing had real append/read provider truth, but the core pack still described snapshots, replay, and projection rebuild as application-managed or not shipped
+- the engine roadmap calls for promoting partial families to real execution only when source, tests, docs, runtime truth, and planning all prove the claim together
+- provider packs should not be promoted to `M2` just because the core pack can orchestrate an on-demand replay; provider durability, retention, archival, and hosted runners remain separate claims
+
+Delivered:
+
+- added `IEventStreamReplayWorker`, `EventStreamReplayRequest`, `EventStreamReplayReport`, and `EventStreamReplayResult<TState>` as the public on-demand replay contract
+- registered a scoped replay worker and a process-local `ISnapshotStore` fallback when `EventSourcingOptions.EnableSnapshots` and `EnableInMemorySnapshotStore` are enabled
+- replay now starts from an available snapshot, applies remaining events through `IAggregate<TState>`, rebuilds registered `IProjection<IDomainEvent>` services, saves the final snapshot, and records replay evidence
+- the `event-sourcing` technology surface now exposes `event-sourcing-managed-replay-worker`, latest replay status/counts, `snapshotLifecycle`, `projectionRebuild`, and explicit `hostedBackgroundRunner = not-claimed` / `providerDurableSnapshots = not-claimed` metadata
+- component docs, conformance matrix, maturity audit, roadmap, project memory, public API baseline, and generated reference docs now separate core `M2` proof from provider-pack `M1` append/read truth
+
+Validation:
+
+- `dotnet build src/Cephalon.EventSourcing/Cephalon.EventSourcing.csproj`
+- `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --filter EventSourcing`
+- tooling public/package surface coverage
+- reference-doc publishing after the public EventSourcing surface change
+- `git diff --check`
 
 ### ENG-703 SaaS tenant governance audit adoption proof
 
