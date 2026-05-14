@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-14T16:43:23.6226875+00:00",
+  "GeneratedAtUtc": "2026-05-14T18:04:26.3038105+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -200,7 +200,7 @@
       "Description": "Entity Framework Core append/read event-store provider for Cephalon event-sourcing workloads.",
       "FileName": "cephalon-eventsourcing-entityframework.md",
       "NamespaceCount": 3,
-      "TypeCount": 5
+      "TypeCount": 6
     },
     {
       "AssemblyName": "Cephalon.Identity",
@@ -1271,7 +1271,7 @@
       "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
       "FileName": "cephalon-eventsourcing-entityframework.md",
       "AnchorId": "namespace-cephalon-eventsourcing-entityframework",
-      "TypeCount": 3
+      "TypeCount": 4
     },
     {
       "NamespaceName": "Cephalon.EventSourcing.EntityFramework.Hosting",
@@ -8111,6 +8111,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EntityFrameworkEventSnapshotEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "type-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry",
+      "Declaration": "public sealed class EntityFrameworkEventSnapshotEntry",
+      "Summary": "Represents one persisted aggregate snapshot row stored by the Entity Framework event-sourcing provider.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
         "Methods": 0
       }
     },
@@ -54983,6 +54998,17 @@
       "Summary": "Initializes a new instance of the \u0060EntityFrameworkEventEntry\u0060 class."
     },
     {
+      "DisplayName": "EntityFrameworkEventSnapshotEntry",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EntityFrameworkEventSnapshotEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-ctor",
+      "Signature": "EntityFrameworkEventSnapshotEntry()",
+      "Summary": "Initializes a new instance of the \u0060EntityFrameworkEventSnapshotEntry\u0060 class."
+    },
+    {
       "DisplayName": "EntityFrameworkInboxEntry",
       "Category": "Constructors",
       "DeclaringTypeName": "EntityFrameworkInboxEntry",
@@ -71996,6 +72022,17 @@
       "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
       "FileName": "cephalon-eventsourcing-entityframework.md",
       "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-id",
+      "Signature": "long Id { get; set; }",
+      "Summary": "Gets or sets the database-assigned row identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventSnapshotEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-id",
       "Signature": "long Id { get; set; }",
       "Summary": "Gets or sets the database-assigned row identifier."
     },
@@ -98288,6 +98325,17 @@
     {
       "DisplayName": "Payload",
       "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventSnapshotEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-payload",
+      "Signature": "string Payload { get; set; }",
+      "Summary": "Gets or sets the serialized aggregate state payload."
+    },
+    {
+      "DisplayName": "Payload",
+      "Category": "Properties",
       "DeclaringTypeName": "EntityFrameworkInboxEntry",
       "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
       "AssemblyName": "Cephalon.Data.EntityFramework",
@@ -117138,6 +117186,17 @@
       "Summary": "The selected materializer depends on control-plane resources that are currently available."
     },
     {
+      "DisplayName": "SavedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventSnapshotEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-savedatutc",
+      "Signature": "DateTime SavedAtUtc { get; set; }",
+      "Summary": "Gets or sets the UTC time at which the snapshot was saved."
+    },
+    {
       "DisplayName": "SaveSnapshot",
       "Category": "Properties",
       "DeclaringTypeName": "EventStreamReplayRequest",
@@ -123713,6 +123772,17 @@
       "Summary": "Gets the durable workflow replay-state type name."
     },
     {
+      "DisplayName": "StateType",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventSnapshotEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-statetype",
+      "Signature": "string StateType { get; set; }",
+      "Summary": "Gets or sets the aggregate state type key represented by the snapshot payload."
+    },
+    {
       "DisplayName": "Status",
       "Category": "Properties",
       "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
@@ -124738,6 +124808,17 @@
     {
       "DisplayName": "StreamId",
       "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventSnapshotEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-streamid",
+      "Signature": "string StreamId { get; set; }",
+      "Summary": "Gets or sets the stable logical stream identifier represented by the snapshot."
+    },
+    {
+      "DisplayName": "StreamId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventStreamConcurrencyException",
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
       "AssemblyName": "Cephalon.Abstractions",
@@ -124833,6 +124914,17 @@
       "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-streamversion",
       "Signature": "long StreamVersion { get; set; }",
       "Summary": "Gets or sets the zero-based optimistic stream version for the event."
+    },
+    {
+      "DisplayName": "StreamVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventSnapshotEntry",
+      "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
+      "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
+      "FileName": "cephalon-eventsourcing-entityframework.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-streamversion",
+      "Signature": "long StreamVersion { get; set; }",
+      "Summary": "Gets or sets the zero-based stream version represented by the snapshot."
     },
     {
       "DisplayName": "StreamVersion",

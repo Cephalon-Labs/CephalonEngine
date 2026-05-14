@@ -26,6 +26,7 @@ public static class EntityFrameworkEventSourcingServiceCollectionExtensions
 
         services.AddCephalonEventTypeRegistry();
         services.TryAddScoped<IEventStore, EntityFrameworkEventStore<TContext>>();
+        services.AddScoped<ISnapshotStore, EntityFrameworkSnapshotStore<TContext>>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreContributor, EntityFrameworkEventStoreContributor<TContext>>());
         return services;
     }

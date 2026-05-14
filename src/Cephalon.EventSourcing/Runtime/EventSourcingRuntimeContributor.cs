@@ -42,6 +42,7 @@ internal sealed class EventSourcingRuntimeContributor(
     private Dictionary<string, string> CreateSummaryMetadata(string[] activeProviders)
     {
         var latestReport = replayRuntimeState.LatestReport;
+        var durableSnapshotProviders = ResolveDurableSnapshotProviders();
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["activeStoreCount"] = eventStores.All.Count.ToString(CultureInfo.InvariantCulture),
@@ -53,7 +54,8 @@ internal sealed class EventSourcingRuntimeContributor(
             ["enableSnapshots"] = options.EnableSnapshots ? "true" : "false",
             ["enableInMemorySnapshotStore"] = options.EnableInMemorySnapshotStore ? "true" : "false",
             ["enableReplayWorker"] = options.EnableReplayWorker ? "true" : "false",
-            ["snapshotLifecycle"] = ResolveSnapshotLifecycle(),
+            ["snapshotLifecycle"] = ResolveSnapshotLifecycle(durableSnapshotProviders),
+            ["providerDurableSnapshotProviders"] = durableSnapshotProviders.Length == 0 ? "none" : string.Join(",", durableSnapshotProviders),
             ["projectionRebuild"] = options.EnableReplayWorker ? "on-demand-domain-event-projections" : "disabled",
             ["hostedBackgroundRunner"] = "not-claimed",
             ["latestReplayStatus"] = latestReport?.Status ?? "none",
@@ -77,14 +79,16 @@ internal sealed class EventSourcingRuntimeContributor(
     private TechnologyRuntimeEntry CreateReplayWorkerEntry()
     {
         var latestReport = replayRuntimeState.LatestReport;
+        var durableSnapshotProviders = ResolveDurableSnapshotProviders();
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["managedExecution"] = options.EnableReplayWorker ? "cephalon-managed" : "disabled",
             ["mode"] = options.EnableReplayWorker ? "on-demand" : "disabled",
-            ["snapshotAssistedReplay"] = options.EnableSnapshots ? ResolveSnapshotLifecycle() : "disabled",
+            ["snapshotAssistedReplay"] = options.EnableSnapshots ? ResolveSnapshotLifecycle(durableSnapshotProviders) : "disabled",
             ["projectionRebuild"] = options.EnableReplayWorker ? "registered-domain-event-projections" : "disabled",
             ["hostedBackgroundRunner"] = "not-claimed",
-            ["providerDurableSnapshots"] = "not-claimed",
+            ["providerDurableSnapshots"] = durableSnapshotProviders.Length == 0 ? "not-claimed" : "claimed",
+            ["providerDurableSnapshotProviders"] = durableSnapshotProviders.Length == 0 ? "none" : string.Join(",", durableSnapshotProviders),
             ["latestReplayStatus"] = latestReport?.Status ?? "none"
         };
 
@@ -103,14 +107,36 @@ internal sealed class EventSourcingRuntimeContributor(
             metadata: metadata);
     }
 
-    private string ResolveSnapshotLifecycle()
+    private string ResolveSnapshotLifecycle(string[] durableSnapshotProviders)
     {
         if (!options.EnableSnapshots)
         {
             return "disabled";
         }
 
+        if (durableSnapshotProviders.Length > 0)
+        {
+            return "provider-durable";
+        }
+
         return options.EnableInMemorySnapshotStore ? "process-local" : "provider-managed-or-unregistered";
+    }
+
+    private string[] ResolveDurableSnapshotProviders()
+    {
+        if (!options.EnableSnapshots)
+        {
+            return [];
+        }
+
+        return eventStores.All
+            .Where(static descriptor =>
+                descriptor.Metadata.TryGetValue("snapshotLifecycle", out var snapshotLifecycle) &&
+                string.Equals(snapshotLifecycle, "provider-durable", StringComparison.OrdinalIgnoreCase))
+            .Select(static descriptor => descriptor.Provider)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static provider => provider, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
     }
 
     private static TechnologyRuntimeEntry CreateEntry(EventStreamDescriptor descriptor)

@@ -120,16 +120,18 @@ public sealed class EventStoreProviderCatalogTests
         Assert.Equal("true", summary.Metadata["enableSnapshots"]);
         Assert.Equal("true", summary.Metadata["enableInMemorySnapshotStore"]);
         Assert.Equal("true", summary.Metadata["enableReplayWorker"]);
-        Assert.Equal("process-local", summary.Metadata["snapshotLifecycle"]);
+        Assert.Equal("provider-durable", summary.Metadata["snapshotLifecycle"]);
+        Assert.Equal("entity-framework", summary.Metadata["providerDurableSnapshotProviders"]);
         Assert.Equal("on-demand-domain-event-projections", summary.Metadata["projectionRebuild"]);
         Assert.Equal("not-claimed", summary.Metadata["hostedBackgroundRunner"]);
 
         var replayWorker = Assert.Single(surface.Entries, entry => entry.Id == "event-sourcing-managed-replay-worker");
         Assert.Equal("cephalon-managed", replayWorker.Metadata["managedExecution"]);
         Assert.Equal("on-demand", replayWorker.Metadata["mode"]);
-        Assert.Equal("process-local", replayWorker.Metadata["snapshotAssistedReplay"]);
+        Assert.Equal("provider-durable", replayWorker.Metadata["snapshotAssistedReplay"]);
         Assert.Equal("not-claimed", replayWorker.Metadata["hostedBackgroundRunner"]);
-        Assert.Equal("not-claimed", replayWorker.Metadata["providerDurableSnapshots"]);
+        Assert.Equal("claimed", replayWorker.Metadata["providerDurableSnapshots"]);
+        Assert.Equal("entity-framework", replayWorker.Metadata["providerDurableSnapshotProviders"]);
 
         foreach (var expectedProvider in ExpectedProviders)
         {
@@ -143,6 +145,12 @@ public sealed class EventStoreProviderCatalogTests
             Assert.Contains("provider", entry.Metadata.Keys);
             Assert.DoesNotContain(entry.Metadata.Values, ContainsSecret);
         }
+
+        var entityFrameworkEntry = Assert.Single(surface.Entries, entry =>
+            entry.Metadata.TryGetValue("provider", out var provider) &&
+            provider == "entity-framework");
+        Assert.Equal("provider-durable", entityFrameworkEntry.Metadata["provider.snapshotLifecycle"]);
+        Assert.Equal("CephalonEventSnapshots", entityFrameworkEntry.Metadata["provider.snapshotStorage"]);
     }
 
     private static bool ContainsSecret(string value)

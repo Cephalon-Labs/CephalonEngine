@@ -19,6 +19,20 @@ Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.StreamVersion.g
 Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.StreamVersion.set -> void
 Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.TenantId.get -> string?
 Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.TenantId.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry.EntityFrameworkEventSnapshotEntry() -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry.Id.get -> long
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry.Id.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry.Payload.get -> string!
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry.Payload.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry.SavedAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry.SavedAtUtc.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry.StateType.get -> string!
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry.StateType.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry.StreamId.get -> string!
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry.StreamId.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry.StreamVersion.get -> long
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry.StreamVersion.set -> void
 Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSourcingConfiguration
 Cephalon.EventSourcing.EntityFramework.Hosting.EntityFrameworkEventSourcingServiceCollectionExtensions
 Cephalon.EventSourcing.EntityFramework.IEntityFrameworkEventContext

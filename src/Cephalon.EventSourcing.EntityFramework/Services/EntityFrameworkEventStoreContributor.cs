@@ -21,7 +21,9 @@ internal sealed class EntityFrameworkEventStoreContributor<TContext> : IEventSto
                 {
                     ["dbContext"] = typeof(TContext).FullName ?? typeof(TContext).Name,
                     ["storage"] = "CephalonEvents",
-                    ["concurrency"] = "optimistic-version"
+                    ["concurrency"] = "optimistic-version",
+                    ["snapshotStorage"] = "CephalonEventSnapshots",
+                    ["snapshotLifecycle"] = "provider-durable"
                 })
         ];
     }

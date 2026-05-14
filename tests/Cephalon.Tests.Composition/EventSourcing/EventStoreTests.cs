@@ -190,9 +190,102 @@ public sealed class EventStoreTests
         var replayEntry = Assert.Single(eventSourcingSurface.Entries, static entry => entry.Id == "event-sourcing-managed-replay-worker");
         Assert.Equal("cephalon-managed", replayEntry.Metadata["managedExecution"]);
         Assert.Equal("on-demand", replayEntry.Metadata["mode"]);
-        Assert.Equal("process-local", replayEntry.Metadata["snapshotAssistedReplay"]);
+        Assert.Equal("provider-durable", replayEntry.Metadata["snapshotAssistedReplay"]);
         Assert.Equal("registered-domain-event-projections", replayEntry.Metadata["projectionRebuild"]);
         Assert.Equal("not-claimed", replayEntry.Metadata["hostedBackgroundRunner"]);
+        Assert.Equal("claimed", replayEntry.Metadata["providerDurableSnapshots"]);
+        Assert.Equal("entity-framework", replayEntry.Metadata["providerDurableSnapshotProviders"]);
+    }
+
+    [Fact]
+    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Scenario_result naming improves test readability.")]
+    public async Task EntityFrameworkSnapshotStore_PersistsSnapshotsAcrossServiceProviders_AndFeedsManagedReplay()
+    {
+        await using var connection = new SqliteConnection("Data Source=:memory:");
+        await connection.OpenAsync();
+
+        using (var services = BuildServices(
+            connection,
+            configureEventSourcing: static options => options.EnableSnapshots = true))
+        using (var scope = services.CreateScope())
+        {
+            var eventStore = scope.ServiceProvider.GetRequiredService<IEventStore>();
+            var snapshotStore = scope.ServiceProvider.GetRequiredService<ISnapshotStore>();
+
+            await eventStore.AppendAsync(
+                "cart-ef-snapshots",
+                [
+                    new TestEvent("cart-ef-snapshots", 0, new DateTime(2026, 4, 6, 0, 0, 0, DateTimeKind.Utc)),
+                    new TestEvent("cart-ef-snapshots", 1, new DateTime(2026, 4, 6, 0, 1, 0, DateTimeKind.Utc))
+                ],
+                -1);
+            await snapshotStore.SaveSnapshotAsync("cart-ef-snapshots", 1, 2);
+            await eventStore.AppendAsync(
+                "cart-ef-snapshots",
+                [
+                    new TestEvent("cart-ef-snapshots", 2, new DateTime(2026, 4, 6, 0, 2, 0, DateTimeKind.Utc)),
+                    new TestEvent("cart-ef-snapshots", 3, new DateTime(2026, 4, 6, 0, 3, 0, DateTimeKind.Utc))
+                ],
+                1);
+        }
+
+        using (var services = BuildServices(
+            connection,
+            configureEventSourcing: static options => options.EnableSnapshots = true))
+        using (var scope = services.CreateScope())
+        {
+            var eventStore = scope.ServiceProvider.GetRequiredService<IEventStore>();
+            var snapshotStore = scope.ServiceProvider.GetRequiredService<ISnapshotStore>();
+            var replayWorker = scope.ServiceProvider.GetRequiredService<IEventStreamReplayWorker>();
+
+            var loadedSnapshot = await snapshotStore.LoadSnapshotAsync<int>("cart-ef-snapshots");
+            Assert.Equal(2, loadedSnapshot.State);
+            Assert.Equal(1, loadedSnapshot.Version);
+
+            var result = await replayWorker.ReplayAggregateAsync<TestAggregate, int>(
+                eventStore,
+                new EventStreamReplayRequest("cart-ef-snapshots"));
+
+            Assert.Equal(4, result.State);
+            Assert.True(result.Report.UsedSnapshot);
+            Assert.Equal(1, result.Report.SnapshotVersion);
+            Assert.Equal(2, result.Report.ReplayFromVersion);
+            Assert.Equal(2, result.Report.ReplayedEventCount);
+            Assert.True(result.Report.SnapshotSaved);
+
+            var context = scope.ServiceProvider.GetRequiredService<TestEventContext>();
+            var persistedSnapshot = await context.Set<EntityFrameworkEventSnapshotEntry>()
+                .SingleAsync(static entry => entry.StreamId == "cart-ef-snapshots");
+            Assert.Equal(3, persistedSnapshot.StreamVersion);
+            Assert.Equal("4", persistedSnapshot.Payload);
+
+            var eventSourcingSurface = scope.ServiceProvider
+                .GetServices<ITechnologyRuntimeContributor>()
+                .Select(static contributor => contributor.DescribeRuntimeSurface())
+                .Single(static surface => surface.TechnologyId == "event-sourcing");
+            var summary = Assert.Single(eventSourcingSurface.Entries, static entry => entry.Id == "event-sourcing-runtime");
+            Assert.Equal("provider-durable", summary.Metadata["snapshotLifecycle"]);
+            Assert.Equal("entity-framework", summary.Metadata["providerDurableSnapshotProviders"]);
+
+            var replayEntry = Assert.Single(eventSourcingSurface.Entries, static entry => entry.Id == "event-sourcing-managed-replay-worker");
+            Assert.Equal("provider-durable", replayEntry.Metadata["snapshotAssistedReplay"]);
+            Assert.Equal("claimed", replayEntry.Metadata["providerDurableSnapshots"]);
+            Assert.Equal("entity-framework", replayEntry.Metadata["providerDurableSnapshotProviders"]);
+        }
+
+        using (var services = BuildServices(
+            connection,
+            configureEventSourcing: static options => options.EnableSnapshots = true))
+        using (var scope = services.CreateScope())
+        {
+            var snapshotStore = scope.ServiceProvider.GetRequiredService<ISnapshotStore>();
+            var loadedSnapshot = await snapshotStore.LoadSnapshotAsync<int>("cart-ef-snapshots");
+            Assert.Equal(4, loadedSnapshot.State);
+            Assert.Equal(3, loadedSnapshot.Version);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                snapshotStore.SaveSnapshotAsync("cart-ef-snapshots", 2, 3));
+        }
     }
 
     [Fact]

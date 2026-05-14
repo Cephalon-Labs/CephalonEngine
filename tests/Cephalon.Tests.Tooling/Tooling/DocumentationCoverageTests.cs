@@ -596,38 +596,48 @@ public sealed class DocumentationCoverageTests
         var sourceRoot = Path.Combine(repositoryRoot, "src");
         var componentDocsRoot = Path.Combine(repositoryRoot, "docs", "components");
 
-        var providers = new Dictionary<string, (string Doc, string Contributor)>(StringComparer.Ordinal)
+        var providers = new Dictionary<string, (string Doc, string Contributor, string Maturity)>(StringComparer.Ordinal)
         {
             ["Cephalon.EventSourcing.Cassandra"] = (
                 "event-sourcing-cassandra.md",
-                "CassandraEventStoreContributor.cs"),
+                "CassandraEventStoreContributor.cs",
+                "M1"),
             ["Cephalon.EventSourcing.ClickHouse"] = (
                 "event-sourcing-clickhouse.md",
-                "ClickHouseEventStoreContributor.cs"),
+                "ClickHouseEventStoreContributor.cs",
+                "M1"),
             ["Cephalon.EventSourcing.Elasticsearch"] = (
                 "event-sourcing-elasticsearch.md",
-                "ElasticsearchEventStoreContributor.cs"),
+                "ElasticsearchEventStoreContributor.cs",
+                "M1"),
             ["Cephalon.EventSourcing.EntityFramework"] = (
                 "event-sourcing-entityframework.md",
-                "EntityFrameworkEventStoreContributor.cs"),
+                "EntityFrameworkEventStoreContributor.cs",
+                "M2"),
             ["Cephalon.EventSourcing.MongoDB"] = (
                 "event-sourcing-mongodb.md",
-                "MongoDbEventStoreContributor.cs"),
+                "MongoDbEventStoreContributor.cs",
+                "M1"),
             ["Cephalon.EventSourcing.Nats"] = (
                 "event-sourcing-nats.md",
-                "NatsEventStoreContributor.cs"),
+                "NatsEventStoreContributor.cs",
+                "M1"),
             ["Cephalon.EventSourcing.Neo4j"] = (
                 "event-sourcing-neo4j.md",
-                "Neo4jEventStoreContributor.cs"),
+                "Neo4jEventStoreContributor.cs",
+                "M1"),
             ["Cephalon.EventSourcing.OpenSearch"] = (
                 "event-sourcing-opensearch.md",
-                "OpenSearchEventStoreContributor.cs"),
+                "OpenSearchEventStoreContributor.cs",
+                "M1"),
             ["Cephalon.EventSourcing.Qdrant"] = (
                 "event-sourcing-qdrant.md",
-                "QdrantEventStoreContributor.cs"),
+                "QdrantEventStoreContributor.cs",
+                "M1"),
             ["Cephalon.EventSourcing.Redis"] = (
                 "event-sourcing-redis.md",
-                "RedisEventStoreContributor.cs"),
+                "RedisEventStoreContributor.cs",
+                "M1"),
         };
 
         foreach (var (projectName, expected) in providers)
@@ -636,10 +646,16 @@ public sealed class DocumentationCoverageTests
             Assert.True(File.Exists(contributorPath), $"Expected event-store contributor at '{contributorPath}'.");
 
             var componentDoc = File.ReadAllText(Path.Combine(componentDocsRoot, expected.Doc));
-            Assert.Contains("**Maturity:** `M1`", componentDoc, StringComparison.Ordinal);
+            Assert.Contains($"**Maturity:** `{expected.Maturity}`", componentDoc, StringComparison.Ordinal);
             Assert.Contains("**Ownership:** `provider-managed`", componentDoc, StringComparison.Ordinal);
             Assert.Contains(expected.Contributor, componentDoc, StringComparison.Ordinal);
             Assert.Contains("`event-sourcing` runtime surface", componentDoc, StringComparison.Ordinal);
+
+            if (projectName == "Cephalon.EventSourcing.EntityFramework")
+            {
+                Assert.Contains("CephalonEventSnapshots", componentDoc, StringComparison.Ordinal);
+                Assert.Contains("snapshotLifecycle = provider-durable", componentDoc, StringComparison.Ordinal);
+            }
         }
 
         var coreDoc = File.ReadAllText(Path.Combine(componentDocsRoot, "event-sourcing.md"));
@@ -649,7 +665,9 @@ public sealed class DocumentationCoverageTests
         var maturityAudit = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-surface-maturity-audit.md"));
         var conformanceMatrix = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "conformance-matrix.md"));
 
-        Assert.Contains("`event-sourcing` runtime-surface entries for all ten provider stores", maturityAudit, StringComparison.Ordinal);
+        Assert.Contains("`event-sourcing` runtime-surface entries for the nine remaining provider stores", maturityAudit, StringComparison.Ordinal);
+        Assert.Contains("`Cephalon.EventSourcing.EntityFramework`", maturityAudit, StringComparison.Ordinal);
+        Assert.Contains("provider-durable `CephalonEventSnapshots`", maturityAudit, StringComparison.Ordinal);
         Assert.Contains("All ten providers contribute sanitized descriptors", conformanceMatrix, StringComparison.Ordinal);
     }
 
