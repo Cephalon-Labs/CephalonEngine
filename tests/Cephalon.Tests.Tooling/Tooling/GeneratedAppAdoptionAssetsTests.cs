@@ -9,14 +9,17 @@ public sealed class GeneratedAppAdoptionAssetsTests
         var gettingStartedPath = Path.Combine(repositoryRoot, "docs", "getting-started.md");
         var operationsPath = Path.Combine(repositoryRoot, "docs", "operations.md");
         var validationScriptPath = Path.Combine(repositoryRoot, "scripts", "validate-generated-app-adoption.ps1");
+        var adoptionSmokeManifestPath = Path.Combine(repositoryRoot, "scripts", "adoption-smoke-support.json");
 
         Assert.True(File.Exists(gettingStartedPath), "Expected the getting-started guide.");
         Assert.True(File.Exists(operationsPath), "Expected the operations guide.");
         Assert.True(File.Exists(validationScriptPath), "Expected the generated-app adoption validation script.");
+        Assert.True(File.Exists(adoptionSmokeManifestPath), "Expected the adoption smoke support manifest.");
 
         var gettingStarted = File.ReadAllText(gettingStartedPath);
         var operations = File.ReadAllText(operationsPath);
         var validationScript = File.ReadAllText(validationScriptPath);
+        var adoptionSmokeManifest = File.ReadAllText(adoptionSmokeManifestPath);
 
         Assert.Contains("validate-generated-app-adoption.ps1", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("validate-generated-app-adoption.ps1", operations, StringComparison.Ordinal);
@@ -33,9 +36,24 @@ public sealed class GeneratedAppAdoptionAssetsTests
         Assert.Contains("\"build\"", validationScript, StringComparison.Ordinal);
         Assert.Contains("NUGET_PACKAGES", validationScript, StringComparison.Ordinal);
         Assert.Contains("Restoring repo package assets back to the default NuGet cache...", validationScript, StringComparison.Ordinal);
+        Assert.Contains("ReportPath", validationScript, StringComparison.Ordinal);
+        Assert.Contains("Write-GeneratedAppAdoptionExecutionReport", validationScript, StringComparison.Ordinal);
+        Assert.Contains("Generated app adoption execution report:", validationScript, StringComparison.Ordinal);
+        Assert.Contains("generated-app-runtime-foundation", validationScript, StringComparison.Ordinal);
+        Assert.Contains("artifacts/adoption-smoke/generated-app-adoption.json", validationScript, StringComparison.Ordinal);
         Assert.Contains("/health/ready", validationScript, StringComparison.Ordinal);
+        Assert.Contains("/engine", validationScript, StringComparison.Ordinal);
         Assert.Contains("/engine/snapshot", validationScript, StringComparison.Ordinal);
+        Assert.Contains("/scalar", validationScript, StringComparison.Ordinal);
         Assert.Contains("Generated app adoption validation completed successfully.", validationScript, StringComparison.Ordinal);
+
+        Assert.Contains("generated-app-runtime-foundation", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("Generated app REST and operator foundation", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("validate-generated-app-adoption.ps1", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("artifacts/adoption-smoke/generated-app-adoption.json", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("\"executionReport\"", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("\"RuntimeProbes\"", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("\"Paths\"", adoptionSmokeManifest, StringComparison.Ordinal);
     }
 
     private static string GetRepositoryRoot()

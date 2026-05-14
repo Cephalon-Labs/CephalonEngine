@@ -186,7 +186,7 @@ public sealed class DocumentationCoverageTests
         Assert.DoesNotContain("being rolled out incrementally", componentCatalog, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("Tooling coverage fails if a shipped `src/Cephalon.*` project has a component page without a maturity label", componentCatalog, StringComparison.Ordinal);
         Assert.Contains("ProviderIntegrationEvidence.DependencyHealthProviderManifest", componentCatalog, StringComparison.Ordinal);
-        Assert.Contains("scorecard schema `1.24.0`", componentCatalog, StringComparison.Ordinal);
+        Assert.Contains("scorecard schema `1.25.0`", componentCatalog, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard", componentCatalog, StringComparison.Ordinal);
     }
 
@@ -846,6 +846,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("adoption-smoke counts from `AdoptionSmokeEvidence`", scorecard, StringComparison.Ordinal);
         Assert.Contains("execution-report default path/schema", scorecard, StringComparison.Ordinal);
         Assert.Contains("golden use cases", scorecard, StringComparison.Ordinal);
+        Assert.Contains("golden use-case execution reports", scorecard, StringComparison.Ordinal);
         Assert.Contains("ProviderIntegrationEvidence.DependencyHealthProviderManifest", scorecard, StringComparison.Ordinal);
         Assert.Contains("claims-report path, gate status, target count, warning count, error count, and package-claim verdict counts", scorecard, StringComparison.Ordinal);
         Assert.Contains("boundary/core/full-common/full-operator route-delegate, operator response JSON contract, non-operator endpoint, and framework endpoint boundary audit status/failure counts", scorecard, StringComparison.Ordinal);
@@ -881,7 +882,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("validates `docs/test-coverage-roadmap.md` into `TestCoverageEvidence`", projectMemory, StringComparison.Ordinal);
         Assert.Contains("test coverage counts from `TestCoverageEvidence`", projectMemory, StringComparison.Ordinal);
         Assert.Contains("claims-report gate/target/warning/error/package-claim", cliComponentDoc, StringComparison.Ordinal);
-        Assert.Contains("adoption-smoke execution-report and golden use-case readback", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("adoption-smoke execution-report, golden use-case, and per-use-case report readback", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("claims-report gate/target/warning/error/package-claim", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("provider integration counts from `ProviderIntegrationEvidence`", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("dependency-health provider-manifest readback", cliComponentDoc, StringComparison.Ordinal);

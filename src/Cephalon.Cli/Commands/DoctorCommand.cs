@@ -17,7 +17,7 @@ internal static class DoctorCommand
     private const string DotNetSdkDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/sdk:";
     private const string DotNetAspNetDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/aspnet:";
     private const string TemplatePackCustomHiveEnvironmentVariable = "CEPHALON_DOCTOR_TEMPLATE_HIVE";
-    private const string RequiredScorecardSchemaVersion = "1.24.0";
+    private const string RequiredScorecardSchemaVersion = "1.25.0";
 
     private static readonly string[] ExpectedTemplateShortNames =
     [
@@ -856,6 +856,7 @@ internal static class DoctorCommand
         var adoptionSmokeExecutionReportRequiredFieldCount = GetRequiredScorecardInt(summary, "AdoptionSmokeExecutionReportRequiredFieldCount", errors);
         var adoptionSmokeGoldenUseCaseCount = GetRequiredScorecardInt(summary, "AdoptionSmokeGoldenUseCaseCount", errors);
         var adoptionSmokeGoldenUseCaseExecutionReadyCount = GetRequiredScorecardInt(summary, "AdoptionSmokeGoldenUseCaseExecutionReadyCount", errors);
+        var adoptionSmokeGoldenUseCaseExecutionReportCount = GetRequiredScorecardInt(summary, "AdoptionSmokeGoldenUseCaseExecutionReportCount", errors);
         var providerIntegrationEvidenceRowCount = GetRequiredScorecardInt(summary, "ProviderIntegrationEvidenceRowCount", errors);
         var providerIntegrationLiveProofCount = GetRequiredScorecardInt(summary, "ProviderIntegrationLiveProofCount", errors);
         var providerIntegrationCompositionOnlyCount = GetRequiredScorecardInt(summary, "ProviderIntegrationCompositionOnlyCount", errors);
@@ -937,6 +938,7 @@ internal static class DoctorCommand
         var evidenceAdoptionSmokeAssertionCount = GetRequiredScorecardArrayCount(adoptionSmokeEvidence, "Assertions", errors, "AdoptionSmokeEvidence");
         var evidenceAdoptionSmokeGoldenUseCaseCount = GetRequiredScorecardArrayCount(adoptionSmokeEvidence, "GoldenUseCases", errors, "AdoptionSmokeEvidence");
         var evidenceAdoptionSmokeGoldenUseCaseExecutionReadyCount = 0;
+        var evidenceAdoptionSmokeGoldenUseCaseExecutionReportCount = 0;
         if (adoptionSmokeEvidence?["GoldenUseCases"] is JsonArray adoptionSmokeGoldenUseCases)
         {
             foreach (var useCase in adoptionSmokeGoldenUseCases)
@@ -947,6 +949,11 @@ internal static class DoctorCommand
                     string.Equals(status, "shipped", StringComparison.OrdinalIgnoreCase))
                 {
                     evidenceAdoptionSmokeGoldenUseCaseExecutionReadyCount++;
+                }
+
+                if (useCase?["ExecutionReport"] is JsonObject)
+                {
+                    evidenceAdoptionSmokeGoldenUseCaseExecutionReportCount++;
                 }
             }
         }
@@ -1237,7 +1244,8 @@ internal static class DoctorCommand
             adoptionSmokeAssertionCount != evidenceAdoptionSmokeAssertionCount ||
             adoptionSmokeExecutionReportRequiredFieldCount != evidenceAdoptionSmokeExecutionReportRequiredFieldCount ||
             adoptionSmokeGoldenUseCaseCount != evidenceAdoptionSmokeGoldenUseCaseCount ||
-            adoptionSmokeGoldenUseCaseExecutionReadyCount != evidenceAdoptionSmokeGoldenUseCaseExecutionReadyCount)
+            adoptionSmokeGoldenUseCaseExecutionReadyCount != evidenceAdoptionSmokeGoldenUseCaseExecutionReadyCount ||
+            adoptionSmokeGoldenUseCaseExecutionReportCount != evidenceAdoptionSmokeGoldenUseCaseExecutionReportCount)
         {
             checks.Add(new DoctorCheck(
                 DoctorCheckSeverity.Failure,
@@ -1383,7 +1391,7 @@ internal static class DoctorCommand
         checks.Add(new DoctorCheck(
             DoctorCheckSeverity.Pass,
             "Engine completion scorecard adoption smoke evidence",
-            $"{adoptionSmokeScenarioCount} scenario ({evidenceAdoptionSmokeScenarioId}, {evidenceAdoptionSmokeStatus}); runtime probes {adoptionSmokeRuntimeProbeCount}, assertions {adoptionSmokeAssertionCount}, execution-report fields {adoptionSmokeExecutionReportRequiredFieldCount}; golden use cases {adoptionSmokeGoldenUseCaseCount}, execution-ready {adoptionSmokeGoldenUseCaseExecutionReadyCount}; report {evidenceAdoptionSmokeExecutionReportPath} schema {evidenceAdoptionSmokeExecutionReportSchema}.",
+            $"{adoptionSmokeScenarioCount} scenario ({evidenceAdoptionSmokeScenarioId}, {evidenceAdoptionSmokeStatus}); runtime probes {adoptionSmokeRuntimeProbeCount}, assertions {adoptionSmokeAssertionCount}, execution-report fields {adoptionSmokeExecutionReportRequiredFieldCount}; golden use cases {adoptionSmokeGoldenUseCaseCount}, execution-ready {adoptionSmokeGoldenUseCaseExecutionReadyCount}, reports {adoptionSmokeGoldenUseCaseExecutionReportCount}; report {evidenceAdoptionSmokeExecutionReportPath} schema {evidenceAdoptionSmokeExecutionReportSchema}.",
             null));
 
         var providerIntegrationSeverity =

@@ -43,7 +43,7 @@ BeforeAll {
         }
 
         $scorecard = [ordered]@{
-            '$schemaVersion' = "1.24.0"
+            '$schemaVersion' = "1.25.0"
             SourceDocument = "docs/engine-completion-scorecard.md"
             DeploymentModeEvidence = [ordered]@{
                 GlobalClaimCount = 3
