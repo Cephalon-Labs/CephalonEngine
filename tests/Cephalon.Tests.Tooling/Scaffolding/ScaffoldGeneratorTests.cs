@@ -77,6 +77,13 @@ public sealed class ScaffoldGeneratorTests
             scaffold.Files,
             file => file.Path == "src/Acme.Explorer.Host/Configurations/AddEngine.Messaging.json");
         Assert.Contains("\"Messaging\"", messagingSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"Channels\"", messagingSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"application-events\"", messagingSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"InProcessSubscriptions\"", messagingSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"EnableExecution\": false", messagingSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"Publications\"", messagingSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"Routing\"", messagingSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"application.*\": \"application-events\"", messagingSettings.Contents, StringComparison.Ordinal);
         Assert.DoesNotContain("\"Provider\": \"Wolverine\"", messagingSettings.Contents, StringComparison.Ordinal);
 
         var localizationSettings = Assert.Single(
@@ -138,7 +145,7 @@ public sealed class ScaffoldGeneratorTests
         Assert.Contains("builder.AddCephalonProjectConfigurations();", phase8HostProgram.Contents, StringComparison.Ordinal);
         Assert.DoesNotContain("builder.Configuration.AddEnvironmentVariables();", phase8HostProgram.Contents, StringComparison.Ordinal);
         Assert.Contains("builder.AddCephalon(engine =>", phase8HostProgram.Contents, StringComparison.Ordinal);
-        Assert.Contains("engine.AddEventing();", phase8HostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("engine.AddEventingFromConfiguration(builder.Configuration);", phase8HostProgram.Contents, StringComparison.Ordinal);
         Assert.DoesNotContain("engine.AddWolverineEventing();", phase8HostProgram.Contents, StringComparison.Ordinal);
         Assert.Contains("builder.Configuration.GetSection(\"Serilog\").Exists()", phase8HostProgram.Contents, StringComparison.Ordinal);
         Assert.Contains("builder.Logging.ClearProviders();", phase8HostProgram.Contents, StringComparison.Ordinal);
@@ -473,7 +480,7 @@ public sealed class ScaffoldGeneratorTests
         Assert.Contains("builder.AddCephalonIdentityAspNetCore();", hostProgram.Contents, StringComparison.Ordinal);
         Assert.Contains("engine.AddData();", hostProgram.Contents, StringComparison.Ordinal);
         Assert.Contains("engine.AddSfidIds();", hostProgram.Contents, StringComparison.Ordinal);
-        Assert.Contains("engine.AddEventing();", hostProgram.Contents, StringComparison.Ordinal);
+        Assert.Contains("engine.AddEventingFromConfiguration(builder.Configuration);", hostProgram.Contents, StringComparison.Ordinal);
         Assert.Contains("engine.AddWolverineEventing();", hostProgram.Contents, StringComparison.Ordinal);
         Assert.Contains("engine.AddIdentityAccess();", hostProgram.Contents, StringComparison.Ordinal);
         Assert.Contains("engine.AddMultiTenancy();", hostProgram.Contents, StringComparison.Ordinal);
@@ -533,6 +540,18 @@ public sealed class ScaffoldGeneratorTests
             scaffold.Files,
             file => file.Path == "src/Acme.Platform.Host/Configurations/AddEngine.Messaging.json");
         Assert.Contains("\"Provider\": \"Wolverine\"", messagingSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"application-events\"", messagingSettings.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"application.*\": \"application-events\"", messagingSettings.Contents, StringComparison.Ordinal);
+
+        var platformModule = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "src/Acme.Platform.Modules.Platform/PlatformModule.cs");
+        Assert.Contains("IOutboxContributor", platformModule.Contents, StringComparison.Ordinal);
+        Assert.Contains("IOutbox", platformModule.Contents, StringComparison.Ordinal);
+        Assert.Contains("OutboxDescriptor", platformModule.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"platform-outbox\"", platformModule.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"application-events\"", platformModule.Contents, StringComparison.Ordinal);
+        Assert.Contains("\"generated-process-local\"", platformModule.Contents, StringComparison.Ordinal);
 
         var compositionSmokeTest = Assert.Single(
             scaffold.Files,

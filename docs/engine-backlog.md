@@ -82,6 +82,38 @@ Current focus:
 - treat `docs/reference/reference-manifest.json` as the generated API bundle map: required browser/index/manifest assets must exist, assembly page files must be manifest-owned, namespace/type/member anchor ids must resolve in those pages, and orphan generated Markdown pages must fail Tooling coverage before hosted reference docs can drift
 - treat `docs/reference/browse.html` as the hosted reference-doc browser entry point: local `href` and `src` references must resolve inside `docs/reference` to existing generated bundle files so CSS, JavaScript, index links, and manifest links cannot drift after regeneration
 
+### ENG-701 Vertical-slice Eventing/outbox adoption report
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: release-readiness / adoption smoke / eventing / app model
+Quality dimensions: Reliability, Scalability, Data Integrity, Auditability, Flexibility, Maintainability, Compatibility
+GitHub issue: #1376
+
+Why:
+
+- the modular vertical-slice Eventing/outbox golden use case was defined in the adoption-smoke map, but it still needed an executable replay proving the behavior pipeline, Eventing runtime truth, and dispatch-remediation operator surfaces together
+- generated hosts should compose Eventing from `Engine:Messaging` instead of registering a dormant default, so consumer projects can change channel/routing behavior without rewriting host code
+- scorecard, release validation, and `cephalon doctor --scorecard` should count the vertical-slice Eventing/outbox lane as execution-ready only after it declares the same per-use-case execution-report contract as the other replayable adoption paths
+
+Delivered:
+
+- added `scripts/validate-vertical-slice-eventing-adoption.ps1` to publish a temporary package feed including `Cephalon.Eventing`, `Cephalon.Eventing.Behaviors`, `Cephalon.Data`, `Cephalon.Ids.Sfid`, and behavior packages, install `Cephalon.Cli`, scaffold `ModularVerticalSlice` with `CQRS`, `Outbox`, `RestApi`, and `EventDrivenIntegration`, validate generated startup and split configuration, run the ASP.NET Core host, publish an event through `/engine/event-publications`, and probe Eventing runtime, dispatch-remediation, diagnostics, snapshot, health, and Scalar routes
+- generated Eventing hosts now call `engine.AddEventingFromConfiguration(builder.Configuration)` and emit executable `Engine:Messaging` defaults for `application-events` plus `application.*` publication routing, while generated modules contribute a process-local starter `IOutbox`/`IOutboxContributor` descriptor so `/engine/event-publications` can prove accepted outbox handoff without claiming durable broker dispatch
+- `scripts/adoption-smoke-support.json` is schema `1.6.0` and promotes `vertical-slice-eventing-outbox` to `execution-report-ready` with `artifacts/adoption-smoke/vertical-slice-eventing-adoption.json` as the default report
+- scorecard and doctor readback stay on scorecard schema `1.25.0` while adoption counts move to seven total golden use cases, five execution-ready lanes, and five per-use-case execution reports
+- README, getting-started, operations, app-model, CLI component/package docs, template-pack package docs, scorecard docs, roadmap, architecture follow-ups, backlog, and project memory now name the vertical-slice Eventing/outbox report path and readback contract
+
+Validation:
+
+- PowerShell AST parse for `scripts/validate-vertical-slice-eventing-adoption.ps1`
+- `scripts/publish-engine-completion-scorecard.ps1 -OutputPath <temp-dir>` readback: adoption manifest schema `1.6.0`, seven golden use cases, five execution-ready lanes, five per-use-case execution reports, and 37 evidence-source references
+- `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/publish-engine-completion-scorecard.Tests.ps1 -Output Detailed`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj -c Release --filter "FullyQualifiedName~ScaffoldGeneratorTests|FullyQualifiedName~VerticalSliceEventingAdoptionAssetsTests|FullyQualifiedName~OutOfTreePackageAdoptionAssetsTests|FullyQualifiedName~DocumentationCoverageTests|FullyQualifiedName~CliApplicationTests" --logger "console;verbosity=minimal"`
+- `pwsh ./scripts/validate-vertical-slice-eventing-adoption.ps1 -Configuration Release -TimeoutSeconds 180 -ReportPath artifacts/adoption-smoke/vertical-slice-eventing-adoption.json`
+- `git diff --check`
+
 ### ENG-700 Modular-monolith REST/Worker/data adoption report
 
 Status: done

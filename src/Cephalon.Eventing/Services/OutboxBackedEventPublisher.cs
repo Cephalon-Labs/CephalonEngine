@@ -5,12 +5,14 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace Cephalon.Eventing.Services;
 
 internal sealed class OutboxBackedEventPublisher(
-    IOutbox outbox,
+    IEnumerable<IOutbox> outboxServices,
+    IOutboxCatalog outboxCatalog,
     IEventChannelCatalog channels,
     IEventContextPolicyCatalog contextPolicyCatalog,
     IEventPublicationRuntimeReporter publicationRuntimeReporter,
     ILoggerFactory? loggerFactory = null) : IEventPublisher
 {
+    private readonly IOutbox[] outboxes = (outboxServices ?? throw new ArgumentNullException(nameof(outboxServices))).ToArray();
     private readonly ILogger logger = (loggerFactory ?? NullLoggerFactory.Instance)
         .CreateLogger<OutboxBackedEventPublisher>();
 
@@ -27,6 +29,7 @@ internal sealed class OutboxBackedEventPublisher(
         }
 
         var contextPolicyEvaluation = EventContextPolicyEvaluation.Evaluate(contextPolicyCatalog, publication);
+        var outbox = ResolveOutbox(publication);
         if (!contextPolicyEvaluation.IsValid)
         {
             var validationError = contextPolicyEvaluation.CreateValidationFailureMessage(publication);
@@ -172,5 +175,33 @@ internal sealed class OutboxBackedEventPublisher(
         metadata[EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders] = "not-claimed";
         metadata[EventDispatchRuntimeMetadataKeys.ConsumerContextExtraction] = "not-claimed";
         metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff] = "not-claimed";
+    }
+
+    private IOutbox ResolveOutbox(EventPublication publication)
+    {
+        if (outboxes.Length == 0)
+        {
+            throw new InvalidOperationException(
+                "No active IOutbox binding is available for the outbox-backed event publisher.");
+        }
+
+        var descriptors = outboxCatalog.GetByChannelId(publication.ChannelId);
+        foreach (var descriptor in descriptors)
+        {
+            var match = outboxes.FirstOrDefault(outbox =>
+                string.Equals(outbox.OutboxId, descriptor.Id, StringComparison.OrdinalIgnoreCase));
+            if (match is not null)
+            {
+                return match;
+            }
+        }
+
+        if (outboxes.Length == 1)
+        {
+            return outboxes[0];
+        }
+
+        throw new InvalidOperationException(
+            $"Event channel '{publication.ChannelId}' matched {descriptors.Count} outbox descriptor(s), but no active IOutbox binding could be selected.");
     }
 }

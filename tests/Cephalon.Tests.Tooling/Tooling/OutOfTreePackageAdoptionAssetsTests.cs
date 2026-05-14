@@ -64,6 +64,7 @@ public sealed class OutOfTreePackageAdoptionAssetsTests
         Assert.Contains("proofTargets", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("validate-out-of-tree-package-adoption.ps1", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("validate-modular-monolith-adoption.ps1", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("validate-vertical-slice-eventing-adoption.ps1", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Behaviors.SourceGen", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Diagnostics", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Resilience", adoptionSmokeManifest, StringComparison.Ordinal);
@@ -81,6 +82,7 @@ public sealed class OutOfTreePackageAdoptionAssetsTests
         Assert.Contains("artifacts/adoption-smoke/generated-app-adoption.json", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("artifacts/adoption-smoke/template-pack-adoption.json", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("artifacts/adoption-smoke/modular-monolith-adoption.json", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("artifacts/adoption-smoke/vertical-slice-eventing-adoption.json", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("RuntimeProbes", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("Paths", adoptionSmokeManifest, StringComparison.Ordinal);
     }

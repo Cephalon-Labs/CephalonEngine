@@ -769,7 +769,7 @@ docker compose up --build
         if (ShouldGenerateEventingPack(appProfile))
         {
             usingLines.Add("using Cephalon.Eventing.Registration;");
-            engineRegistrationLines.Add("    engine.AddEventing();");
+            engineRegistrationLines.Add("    engine.AddEventingFromConfiguration(builder.Configuration);");
         }
 
         if (ShouldGenerateWolverinePack(appProfile))
@@ -1157,6 +1157,36 @@ variables, and command-line arguments continue to win the same way developers ex
             settings["Provider"] = provider;
         }
 
+        if (ShouldGenerateEventingPack(appProfile))
+        {
+            settings["Channels"] = new JsonObject
+            {
+                ["application-events"] = new JsonObject
+                {
+                    ["DisplayName"] = "Application Events",
+                    ["Description"] = "Generated channel for application-owned event publications.",
+                    ["Tags"] = CreateJsonArray(["generated", "event-driven-integration"])
+                }
+            };
+            settings["InProcessSubscriptions"] = new JsonObject
+            {
+                ["EnableExecution"] = false
+            };
+            settings["Publications"] = new JsonObject
+            {
+                ["Routing"] = new JsonObject
+                {
+                    ["Enabled"] = true,
+                    ["AutoChannelId"] = "auto",
+                    ["RejectMismatchedExplicitChannel"] = true,
+                    ["Routes"] = new JsonObject
+                    {
+                        ["application.*"] = "application-events"
+                    }
+                }
+            };
+        }
+
         return settings;
     }
 
@@ -1177,6 +1207,12 @@ variables, and command-line arguments continue to win the same way developers ex
         return appProfile.Data.HasValues ||
             HasPattern(appProfile, "cqrs") ||
             HasPattern(appProfile, "outbox");
+    }
+
+    private static bool ShouldGenerateOutboxStarter(AppProfile appProfile)
+    {
+        return ShouldGenerateEventingPack(appProfile) &&
+            (appProfile.Data.OutboxEnabled == true || HasPattern(appProfile, "outbox"));
     }
 
     private static bool ShouldGenerateSfidPack(AppProfile appProfile)
@@ -1309,13 +1345,18 @@ public sealed record GreetingContract(string Message, DateTimeOffset CreatedAtUt
         var moduleName = ResolveModuleName(project);
         var moduleTypeName = ResolveModuleTypeName(project);
         var moduleId = ScaffoldRequest.ToSlug(moduleName, "module");
+        var generatedOutboxUsings = BuildGeneratedOutboxUsings(appProfile);
+        var generatedOutboxInterface = BuildGeneratedOutboxInterface(appProfile);
+        var generatedOutboxModuleMembers = BuildGeneratedOutboxModuleMembers(appProfile, moduleId, moduleName, moduleTypeName);
+        var generatedOutboxTypes = BuildGeneratedOutboxTypes(appProfile, moduleId, moduleName, moduleTypeName);
 
         return $@"using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
+{generatedOutboxUsings}
 
 namespace {request.RootNamespace}.Modules.{ScaffoldRequest.ToIdentifier(moduleName, "Module")};
 
-public sealed class {moduleTypeName}Module : ModuleBase
+public sealed class {moduleTypeName}Module : ModuleBase{generatedOutboxInterface}
 {{
     public override ModuleDescriptor Descriptor {{ get; }} = new(
         id: ""{moduleId}"",
@@ -1330,7 +1371,9 @@ public sealed class {moduleTypeName}Module : ModuleBase
             displayName: ""{EscapeString(moduleName)} health"",
             description: ""Generated health capability for the {EscapeString(moduleName)} module.""));
     }}
+{generatedOutboxModuleMembers}
 }}
+{generatedOutboxTypes}
 ";
     }
 
@@ -1345,16 +1388,21 @@ public sealed class {moduleTypeName}Module : ModuleBase
         var behaviorTypeName = $"Get{moduleTypeName}StatusBehavior";
         var inputTypeName = $"Get{moduleTypeName}StatusInput";
         var responseTypeName = $"{moduleTypeName}StatusSnapshot";
+        var generatedOutboxUsings = BuildGeneratedOutboxUsings(appProfile);
+        var generatedOutboxInterface = BuildGeneratedOutboxInterface(appProfile);
+        var generatedOutboxModuleMembers = BuildGeneratedOutboxModuleMembers(appProfile, moduleId, moduleName, moduleTypeName);
+        var generatedOutboxTypes = BuildGeneratedOutboxTypes(appProfile, moduleId, moduleName, moduleTypeName);
 
         return $@"using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Hosting;
+{generatedOutboxUsings}
 
 namespace {request.RootNamespace}.Modules.{ScaffoldRequest.ToIdentifier(moduleName, "Module")};
 
-public sealed class {moduleTypeName}Module : RestBehaviorModuleBase
+public sealed class {moduleTypeName}Module : RestBehaviorModuleBase{generatedOutboxInterface}
 {{
     public override ModuleDescriptor Descriptor {{ get; }} = new(
         id: ""{moduleId}"",
@@ -1376,6 +1424,7 @@ public sealed class {moduleTypeName}Module : RestBehaviorModuleBase
             .WithTagName(""{EscapeString(moduleName)} API"")
             .MapProfile<{behaviorTypeName}>();
     }}
+{generatedOutboxModuleMembers}
 }}
 
 [AppBehavior(""{moduleId}.status.get"")]
@@ -1410,7 +1459,99 @@ internal sealed record {responseTypeName}(
     string Module,
     string Blueprint,
     string Message);
+{generatedOutboxTypes}
 ";
+    }
+
+    private static string BuildGeneratedOutboxUsings(AppProfile appProfile)
+    {
+        return ShouldGenerateOutboxStarter(appProfile)
+            ? "using Cephalon.Abstractions.Data;\nusing Microsoft.Extensions.DependencyInjection;"
+            : string.Empty;
+    }
+
+    private static string BuildGeneratedOutboxInterface(AppProfile appProfile)
+    {
+        return ShouldGenerateOutboxStarter(appProfile)
+            ? ", IOutboxContributor"
+            : string.Empty;
+    }
+
+    private static string BuildGeneratedOutboxModuleMembers(
+        AppProfile appProfile,
+        string moduleId,
+        string moduleName,
+        string moduleTypeName)
+    {
+        if (!ShouldGenerateOutboxStarter(appProfile))
+        {
+            return string.Empty;
+        }
+
+        return $@"
+
+    public override void ConfigureServices(IServiceCollection services)
+    {{
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.AddSingleton<{moduleTypeName}GeneratedOutbox>();
+        services.AddSingleton<IOutbox>(static provider => provider.GetRequiredService<{moduleTypeName}GeneratedOutbox>());
+    }}
+
+    public void RegisterOutboxes(IOutboxRegistry outboxes)
+    {{
+        ArgumentNullException.ThrowIfNull(outboxes);
+
+        outboxes.Add(new OutboxDescriptor(
+            id: ""{moduleId}-outbox"",
+            displayName: ""{EscapeString(moduleName)} generated outbox"",
+            description: ""Generated process-local outbox for application event publications in the {EscapeString(moduleName)} module."",
+            sourceModuleId: ""{moduleId}"",
+            provider: ""generated-process-local"",
+            mode: ""process-local"",
+            channelIds: [""application-events""],
+            tags: [""generated"", ""event-driven-integration"", ""outbox""],
+            metadata: new Dictionary<string, string>
+            {{
+                [""adoptionPurpose""] = ""vertical-slice-eventing-outbox"",
+                [""durability""] = ""process-local""
+            }}));
+    }}";
+    }
+
+    private static string BuildGeneratedOutboxTypes(
+        AppProfile appProfile,
+        string moduleId,
+        string moduleName,
+        string moduleTypeName)
+    {
+        if (!ShouldGenerateOutboxStarter(appProfile))
+        {
+            return string.Empty;
+        }
+
+        return $@"
+
+internal sealed class {moduleTypeName}GeneratedOutbox : IOutbox
+{{
+    private readonly object gate = new();
+    private readonly List<OutboxMessage> messages = [];
+
+    public string OutboxId => ""{moduleId}-outbox"";
+
+    public ValueTask EnqueueAsync(OutboxMessage message, CancellationToken cancellationToken = default)
+    {{
+        ArgumentNullException.ThrowIfNull(message);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        lock (gate)
+        {{
+            messages.Add(message);
+        }}
+
+        return ValueTask.CompletedTask;
+    }}
+}}";
     }
 
     private static string BuildPackageManifest(RenderedProject project, ScaffoldRequest request)
