@@ -1,8 +1,8 @@
 {
-  "$schemaVersion": "1.2.0",
+  "$schemaVersion": "1.3.0",
   "scenarioId": "out-of-tree-generated-app-package-stage",
   "status": "execution-report-ready",
-  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, and writes a machine-readable execution report.",
+  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, writes machine-readable execution reports, and tracks the broader golden use-case map.",
   "validationScript": "scripts/validate-out-of-tree-package-adoption.ps1",
   "supportingScripts": [
     "scripts/validate-generated-app-adoption.ps1",
@@ -13,6 +13,7 @@
     "docs/operations.md",
     "docs/external-package-lifecycle.md",
     "docs/package-publishing.md",
+    "docs/components/cli.md",
     "docs/engine-completion-scorecard.md",
     "docs/release-checklist.md"
   ],
@@ -65,7 +66,91 @@
           "kind": "reference-module-route",
           "reference": "/api/operations/status"
         }
-      ]
+      ],
+      "executionReport": {
+        "schemaVersion": "1.0.0",
+        "defaultPath": "artifacts/adoption-smoke/out-of-tree-package-adoption.json",
+        "statusValues": [
+          "passed",
+          "failed"
+        ],
+        "requiredFields": [
+          "$schemaVersion",
+          "ScenarioId",
+          "Status",
+          "StartedAtUtc",
+          "CompletedAtUtc",
+          "DurationMilliseconds",
+          "Assertions",
+          "RuntimeProbes",
+          "Paths"
+        ]
+      }
+    },
+    {
+      "id": "generated-app-runtime-foundation",
+      "title": "Generated app REST and operator foundation",
+      "appShape": "generated-modular-monolith",
+      "status": "execution-report-ready",
+      "proofLevel": "executable-smoke",
+      "primaryValidationPath": "scripts/validate-generated-app-adoption.ps1",
+      "sourceDocs": [
+        "docs/getting-started.md",
+        "docs/operations.md",
+        "docs/app-models.md",
+        "docs/components/cli.md"
+      ],
+      "qualityDimensions": [
+        "Usability",
+        "Reliability",
+        "Maintainability",
+        "Availability",
+        "Compatibility"
+      ],
+      "requiredEngineCapabilities": [
+        "blueprint-driven generated app",
+        "temporary local package feed",
+        "CLI doctor bootstrap",
+        "generated host restore and build",
+        "runtime operator documentation"
+      ],
+      "proofTargets": [
+        {
+          "kind": "runtime-probe",
+          "reference": "/health/ready"
+        },
+        {
+          "kind": "runtime-probe",
+          "reference": "/engine"
+        },
+        {
+          "kind": "runtime-probe",
+          "reference": "/engine/snapshot"
+        },
+        {
+          "kind": "rest-docs",
+          "reference": "/scalar"
+        }
+      ],
+      "executionReport": {
+        "schemaVersion": "1.0.0",
+        "defaultPath": "artifacts/adoption-smoke/generated-app-adoption.json",
+        "statusValues": [
+          "passed",
+          "failed"
+        ],
+        "requiredFields": [
+          "$schemaVersion",
+          "ScenarioId",
+          "Status",
+          "StartedAtUtc",
+          "CompletedAtUtc",
+          "DurationMilliseconds",
+          "Assertions",
+          "RuntimeProbes",
+          "Paths"
+        ]
+      }
     },
     {
       "id": "modular-monolith-rest-worker-data",

@@ -17,7 +17,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.24.0"
+$Script:SchemaVersion = "1.25.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -1691,6 +1691,62 @@ function Convert-DeploymentModeEvidence {
     })
 }
 
+function Convert-AdoptionSmokeExecutionReportContract {
+    param(
+        [AllowNull()]
+        $ExecutionReport,
+        [Parameter(Mandatory = $true)]
+        [string]$Context
+    )
+
+    if ($null -eq $ExecutionReport) {
+        throw "$Context is missing executionReport."
+    }
+
+    $schemaVersion = [string](Get-ManifestPropertyValue -Object $ExecutionReport -PropertyName "schemaVersion" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($schemaVersion)) {
+        throw "$Context executionReport is missing schemaVersion."
+    }
+
+    $defaultPath = [string](Get-ManifestPropertyValue -Object $ExecutionReport -PropertyName "defaultPath" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($defaultPath)) {
+        throw "$Context executionReport is missing defaultPath."
+    }
+
+    if (-not $defaultPath.EndsWith(".json", [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "$Context executionReport defaultPath '$defaultPath' must point at a JSON report."
+    }
+
+    $statusValues = @(
+        Get-ManifestPropertyValue -Object $ExecutionReport -PropertyName "statusValues" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+    foreach ($requiredStatus in @("passed", "failed")) {
+        if ($statusValues -notcontains $requiredStatus) {
+            throw "$Context executionReport statusValues must include '$requiredStatus'."
+        }
+    }
+
+    $requiredFields = @(
+        Get-ManifestPropertyValue -Object $ExecutionReport -PropertyName "requiredFields" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+    foreach ($requiredField in @('$schemaVersion', "ScenarioId", "Status", "Assertions", "RuntimeProbes", "Paths")) {
+        if ($requiredFields -notcontains $requiredField) {
+            throw "$Context executionReport requiredFields must include '$requiredField'."
+        }
+    }
+
+    return [pscustomobject]([ordered]@{
+        SchemaVersion = $schemaVersion
+        DefaultPath = $defaultPath
+        StatusValues = $statusValues
+        RequiredFields = $requiredFields
+    })
+}
+
 function Convert-AdoptionSmokeEvidence {
     param(
         [Parameter(Mandatory = $true)]
@@ -1801,48 +1857,9 @@ function Convert-AdoptionSmokeEvidence {
         throw "Adoption smoke support manifest must declare at least one runtime probe."
     }
 
-    $executionReport = Get-ManifestPropertyValue -Object $manifest -PropertyName "executionReport"
-    if ($null -eq $executionReport) {
-        throw "Adoption smoke support manifest is missing executionReport."
-    }
-
-    $executionReportSchemaVersion = [string](Get-ManifestPropertyValue -Object $executionReport -PropertyName "schemaVersion" -DefaultValue "")
-    if ([string]::IsNullOrWhiteSpace($executionReportSchemaVersion)) {
-        throw "Adoption smoke executionReport is missing schemaVersion."
-    }
-
-    $executionReportPath = [string](Get-ManifestPropertyValue -Object $executionReport -PropertyName "defaultPath" -DefaultValue "")
-    if ([string]::IsNullOrWhiteSpace($executionReportPath)) {
-        throw "Adoption smoke executionReport is missing defaultPath."
-    }
-
-    if (-not $executionReportPath.EndsWith(".json", [System.StringComparison]::OrdinalIgnoreCase)) {
-        throw "Adoption smoke executionReport defaultPath '$executionReportPath' must point at a JSON report."
-    }
-
-    $executionReportStatusValues = @(
-        Get-ManifestPropertyValue -Object $executionReport -PropertyName "statusValues" -DefaultValue @() |
-            ForEach-Object { [string]$_ } |
-            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
-    )
-    foreach ($requiredStatus in @("passed", "failed")) {
-        if ($executionReportStatusValues -notcontains $requiredStatus) {
-            throw "Adoption smoke executionReport statusValues must include '$requiredStatus'."
-        }
-    }
-
-    $executionReportRequiredFields = @(
-        Get-ManifestPropertyValue -Object $executionReport -PropertyName "requiredFields" -DefaultValue @() |
-            ForEach-Object { [string]$_ } |
-            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
-    )
-    foreach ($requiredField in @('$schemaVersion', "ScenarioId", "Status", "Assertions", "RuntimeProbes", "Paths")) {
-        if ($executionReportRequiredFields -notcontains $requiredField) {
-            throw "Adoption smoke executionReport requiredFields must include '$requiredField'."
-        }
-    }
-
+    $executionReportContract = Convert-AdoptionSmokeExecutionReportContract -ExecutionReport (Get-ManifestPropertyValue -Object $manifest -PropertyName "executionReport") -Context "Adoption smoke support manifest"
     $allowedGoldenUseCaseStatuses = @("planned", "execution-report-ready", "validated", "shipped")
+    $executionReadyGoldenUseCaseStatuses = @("execution-report-ready", "validated", "shipped")
     $allowedGoldenUseCaseProofLevels = @("contract-defined", "executable-smoke", "runtime-verified", "release-gated")
     $goldenUseCaseReferences = @()
     $goldenUseCaseIds = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
@@ -1878,6 +1895,8 @@ function Convert-AdoptionSmokeEvidence {
                 }
 
                 $primaryValidationReference = Resolve-AdoptionSmokeManifestPath -DeclaredPath $primaryValidationPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "goldenUseCases.primaryValidationPath" -PathType "File"
+                $primaryValidationFullPath = Resolve-FullPath -Path $primaryValidationPath -BasePath $ResolvedRepoRoot
+                $primaryValidationScript = Get-Content -LiteralPath $primaryValidationFullPath -Raw -Encoding UTF8
                 $sourceDocReferences = @(
                     Get-ManifestPropertyValue -Object $_ -PropertyName "sourceDocs" -DefaultValue @() |
                         ForEach-Object {
@@ -1926,6 +1945,22 @@ function Convert-AdoptionSmokeEvidence {
                     throw "Adoption smoke golden use case '$id' must declare at least one proof target."
                 }
 
+                $useCaseExecutionReportSource = Get-ManifestPropertyValue -Object $_ -PropertyName "executionReport"
+                $useCaseExecutionReport = $null
+                if ($null -ne $useCaseExecutionReportSource) {
+                    $useCaseExecutionReport = Convert-AdoptionSmokeExecutionReportContract -ExecutionReport $useCaseExecutionReportSource -Context "Adoption smoke golden use case '$id'"
+                    if (-not $primaryValidationScript.Contains("ReportPath", [System.StringComparison]::OrdinalIgnoreCase)) {
+                        throw "Adoption smoke golden use case '$id' primary validation script '$primaryValidationPath' does not expose ReportPath."
+                    }
+
+                    if (-not $primaryValidationScript.Contains($useCaseExecutionReport.DefaultPath, [System.StringComparison]::Ordinal)) {
+                        throw "Adoption smoke golden use case '$id' primary validation script '$primaryValidationPath' does not contain execution report path '$($useCaseExecutionReport.DefaultPath)'."
+                    }
+                }
+                elseif ($executionReadyGoldenUseCaseStatuses -contains $status) {
+                    throw "Adoption smoke golden use case '$id' must declare executionReport when status is '$status'."
+                }
+
                 $goldenUseCaseReferences += $primaryValidationReference
                 $goldenUseCaseReferences += $sourceDocReferences
 
@@ -1940,6 +1975,7 @@ function Convert-AdoptionSmokeEvidence {
                     QualityDimensions          = $qualityDimensions
                     RequiredEngineCapabilities = $requiredEngineCapabilities
                     ProofTargets               = $proofTargets
+                    ExecutionReport            = $useCaseExecutionReport
                 })
             }
     )
@@ -1962,10 +1998,10 @@ function Convert-AdoptionSmokeEvidence {
         RequiredScriptTokens      = $requiredScriptTokens
         GoldenUseCases            = $goldenUseCases
         ExecutionReport           = [pscustomobject]([ordered]@{
-            SchemaVersion = $executionReportSchemaVersion
-            DefaultPath = $executionReportPath
-            StatusValues = $executionReportStatusValues
-            RequiredFields = $executionReportRequiredFields
+            SchemaVersion = $executionReportContract.SchemaVersion
+            DefaultPath = $executionReportContract.DefaultPath
+            StatusValues = $executionReportContract.StatusValues
+            RequiredFields = $executionReportContract.RequiredFields
         })
         RuntimeProbes             = $runtimeProbes
         ValidatedReferences       = @(
@@ -3986,6 +4022,7 @@ function New-EngineCompletionScorecardReport {
             AdoptionSmokeExecutionReportRequiredFieldCount = @($adoptionSmokeEvidence.ExecutionReport.RequiredFields).Count
             AdoptionSmokeGoldenUseCaseCount = @($adoptionSmokeEvidence.GoldenUseCases).Count
             AdoptionSmokeGoldenUseCaseExecutionReadyCount = @($adoptionSmokeEvidence.GoldenUseCases | Where-Object { @("execution-report-ready", "validated", "shipped") -contains $_.Status }).Count
+            AdoptionSmokeGoldenUseCaseExecutionReportCount = @($adoptionSmokeEvidence.GoldenUseCases | Where-Object { $null -ne $_.ExecutionReport }).Count
             ProviderIntegrationEvidenceRowCount = $providerIntegrationEvidence.EvidenceRowCount
             ProviderIntegrationLiveProofCount = $providerIntegrationEvidence.LiveProofCount
             ProviderIntegrationCompositionOnlyCount = $providerIntegrationEvidence.CompositionOnlyCount
@@ -4097,6 +4134,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Adoption smoke execution-report fields: $($Report.Summary.AdoptionSmokeExecutionReportRequiredFieldCount)")
     $markdown.Add("- Adoption smoke golden use cases: $($Report.Summary.AdoptionSmokeGoldenUseCaseCount)")
     $markdown.Add("- Adoption smoke execution-ready golden use cases: $($Report.Summary.AdoptionSmokeGoldenUseCaseExecutionReadyCount)")
+    $markdown.Add("- Adoption smoke golden use-case execution reports: $($Report.Summary.AdoptionSmokeGoldenUseCaseExecutionReportCount)")
     $markdown.Add("- Provider integration evidence rows: $($Report.Summary.ProviderIntegrationEvidenceRowCount)")
     $markdown.Add("- Provider integration live proofs: $($Report.Summary.ProviderIntegrationLiveProofCount)")
     $markdown.Add("- Provider integration composition-only rows: $($Report.Summary.ProviderIntegrationCompositionOnlyCount)")
@@ -4386,10 +4424,11 @@ function Write-EngineCompletionScorecardReport {
     }
 
     $markdown.Add("")
-    $markdown.Add("| Golden use case | App shape | Status | Proof level | Primary validation |")
-    $markdown.Add("| --- | --- | --- | --- | --- |")
+    $markdown.Add("| Golden use case | App shape | Status | Proof level | Primary validation | Execution report |")
+    $markdown.Add("| --- | --- | --- | --- | --- | --- |")
     foreach ($useCase in $Report.AdoptionSmokeEvidence.GoldenUseCases) {
-        $markdown.Add("| $($useCase.Id) | $($useCase.AppShape) | $($useCase.Status) | $($useCase.ProofLevel) | ``$($useCase.PrimaryValidationPath)`` |")
+        $useCaseExecutionReportPath = if ($null -ne $useCase.ExecutionReport) { "``$($useCase.ExecutionReport.DefaultPath)``" } else { "" }
+        $markdown.Add("| $($useCase.Id) | $($useCase.AppShape) | $($useCase.Status) | $($useCase.ProofLevel) | ``$($useCase.PrimaryValidationPath)`` | $useCaseExecutionReportPath |")
     }
 
     $markdown.Add("")

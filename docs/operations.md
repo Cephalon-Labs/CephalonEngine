@@ -22,6 +22,8 @@ For a repo-native external-adoption replay that publishes a temporary package fe
 pwsh ./scripts/validate-generated-app-adoption.ps1
 ```
 
+The script writes `artifacts/adoption-smoke/generated-app-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The adoption-smoke manifest carries this as the `generated-app-runtime-foundation` golden use case so scorecard and doctor readback can distinguish the basic generated host proof from the later staged-package proof.
+
 See `docs/getting-started.md` for the corresponding install, doctor, scaffold, seed, restore, and first-run guidance.
 
 ## Template-pack cold-start adoption smoke
@@ -42,7 +44,7 @@ For a repo-native external-adoption replay that publishes a temporary package fe
 pwsh ./scripts/validate-out-of-tree-package-adoption.ps1
 ```
 
-The script writes `artifacts/adoption-smoke/out-of-tree-package-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The release-readiness scorecard validates the same replay path, execution-report contract, and golden use-case map through `scripts/adoption-smoke-support.json` and emits it as `AdoptionSmokeEvidence` in the generated scorecard artifact. Keep that manifest aligned whenever this smoke path adds or removes script phases, staged packages, runtime probes, report fields, or planned real-app adoption lanes.
+The script writes `artifacts/adoption-smoke/out-of-tree-package-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The release-readiness scorecard validates the same replay path, execution-report contract, and golden use-case map through `scripts/adoption-smoke-support.json` and emits it as `AdoptionSmokeEvidence` in the generated scorecard artifact. Keep that manifest aligned whenever either generated-app foundation or staged-package smoke path adds or removes script phases, staged packages, runtime probes, report fields, or planned real-app adoption lanes.
 
 See `docs/external-package-lifecycle.md` for the corresponding stage, trust, and inspect guidance.
 

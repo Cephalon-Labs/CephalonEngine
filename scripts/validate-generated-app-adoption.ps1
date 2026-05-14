@@ -3,6 +3,7 @@ param(
     [string]$HostUrl = "http://127.0.0.1:18081",
     [int]$TimeoutSeconds = 120,
     [string]$Configuration = "Release",
+    [string]$ReportPath = "artifacts/adoption-smoke/generated-app-adoption.json",
     [switch]$SkipPackageBuild,
     [switch]$KeepOutput
 )
@@ -10,6 +11,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+$validationStartedAtUtc = [DateTimeOffset]::UtcNow
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $publishPackagesScriptPath = Join-Path $repoRoot "scripts\publish-package-artifacts.ps1"
 $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("cephalon-generated-adoption-" + [Guid]::NewGuid().ToString("N"))
@@ -160,9 +162,110 @@ function Write-RecentLogs {
     Get-Content -LiteralPath $Path -Tail 80
 }
 
+function Resolve-ReportPath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    if ([System.IO.Path]::IsPathRooted($Path)) {
+        return [System.IO.Path]::GetFullPath($Path)
+    }
+
+    return [System.IO.Path]::GetFullPath((Join-Path $repoRoot $Path))
+}
+
+function New-GeneratedAppAdoptionRuntimeProbeRows {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Status
+    )
+
+    @(
+        [pscustomobject]([ordered]@{ Kind = "health"; Path = "/health/ready"; Status = $Status })
+        [pscustomobject]([ordered]@{ Kind = "engine-root"; Path = "/engine"; Status = $Status })
+        [pscustomobject]([ordered]@{ Kind = "snapshot"; Path = "/engine/snapshot"; Status = $Status })
+        [pscustomobject]([ordered]@{ Kind = "rest-docs"; Path = "/scalar"; Status = $Status })
+    )
+}
+
+function New-GeneratedAppAdoptionAssertionRows {
+    param(
+        [Parameter(Mandatory = $true)]
+        [bool]$Passed
+    )
+
+    @(
+        [pscustomobject]([ordered]@{ Name = "runsOutsideRepository"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "publishesLocalPackages"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "installsCliFromTemporaryFeed"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "replaysMachineDoctor"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "scaffoldsGeneratedApp"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "seedsGeneratedLocalPackageFeed"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "replaysGeneratedAppDoctor"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "restoresGeneratedSolution"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "buildsGeneratedSolution"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "runsGeneratedHost"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "validatesOperatorSurfaces"; Passed = $Passed })
+    )
+}
+
+function Write-GeneratedAppAdoptionExecutionReport {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Status,
+        [string]$ErrorMessage = ""
+    )
+
+    $completedAtUtc = [DateTimeOffset]::UtcNow
+    $passed = $Status.Equals("passed", [System.StringComparison]::OrdinalIgnoreCase)
+    $runtimeProbeStatus = if ($passed) { "passed" } else { "not-run-or-failed" }
+    $resolvedReportPath = Resolve-ReportPath -Path $ReportPath
+    $reportDirectory = Split-Path -Parent $resolvedReportPath
+    if (-not [string]::IsNullOrWhiteSpace($reportDirectory)) {
+        New-Item -ItemType Directory -Path $reportDirectory -Force | Out-Null
+    }
+
+    $report = [pscustomobject]([ordered]@{
+        '$schemaVersion' = "1.0.0"
+        ScenarioId = "generated-app-runtime-foundation"
+        Status = $Status
+        AppName = $AppName
+        HostUrl = $HostUrl
+        Configuration = $Configuration
+        SkipPackageBuild = [bool]$SkipPackageBuild
+        KeepOutput = [bool]$KeepOutput
+        StartedAtUtc = $validationStartedAtUtc.ToString("O")
+        CompletedAtUtc = $completedAtUtc.ToString("O")
+        DurationMilliseconds = [math]::Round(($completedAtUtc - $validationStartedAtUtc).TotalMilliseconds, 2)
+        Assertions = New-GeneratedAppAdoptionAssertionRows -Passed:$passed
+        RuntimeProbes = New-GeneratedAppAdoptionRuntimeProbeRows -Status $runtimeProbeStatus
+        Paths = [pscustomobject]([ordered]@{
+            TemporaryRoot = $tempRoot
+            PackageFeed = $packageFeedPath
+            ToolPath = $toolPath
+            NuGetPackages = $nuGetPackagesPath
+            WorkspaceRoot = $workspaceRoot
+            GeneratedAppRoot = $generatedRoot
+            GeneratedPackageFeed = $generatedPackageFeedPath
+            Solution = $solutionPath
+            HostProject = $hostProjectPath
+            StdoutLog = $stdoutLogPath
+            StderrLog = $stderrLogPath
+            TemporaryOutputRetained = [bool]$KeepOutput
+        })
+        Error = $ErrorMessage
+    })
+
+    $report | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $resolvedReportPath -Encoding UTF8
+    Write-Host "Generated app adoption execution report: $resolvedReportPath" -ForegroundColor Cyan
+}
+
 $process = $null
 $previousNuGetPackages = $null
 $restoreRepoPackageAssets = $false
+$hostProjectPath = ""
+$solutionPath = ""
 
 try {
     New-Item -ItemType Directory -Path $packageFeedPath -Force | Out-Null
@@ -278,6 +381,7 @@ try {
 
     Write-Host ""
     Write-Host "Generated app adoption validation completed successfully." -ForegroundColor Green
+    Write-GeneratedAppAdoptionExecutionReport -Status "passed"
     Write-Host "Temporary package feed: $packageFeedPath" -ForegroundColor Cyan
     Write-Host "Installed tool path: $toolPath" -ForegroundColor Cyan
     Write-Host "NuGet package cache: $nuGetPackagesPath" -ForegroundColor Cyan
@@ -288,6 +392,12 @@ catch {
     Write-Host "Generated app adoption validation failed." -ForegroundColor Yellow
     Write-RecentLogs -Path $stdoutLogPath -Label "Generated host stdout"
     Write-RecentLogs -Path $stderrLogPath -Label "Generated host stderr"
+    try {
+        Write-GeneratedAppAdoptionExecutionReport -Status "failed" -ErrorMessage $_.Exception.Message
+    }
+    catch {
+        Write-Warning "Could not write generated app adoption execution report: $($_.Exception.Message)"
+    }
     throw
 }
 finally {

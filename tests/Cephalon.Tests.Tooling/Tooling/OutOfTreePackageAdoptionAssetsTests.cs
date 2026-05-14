@@ -54,6 +54,7 @@ public sealed class OutOfTreePackageAdoptionAssetsTests
         Assert.Contains("execution-report-ready", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("goldenUseCases", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("out-of-tree-package-adoption", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("generated-app-runtime-foundation", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("modular-monolith-rest-worker-data", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("vertical-slice-eventing-outbox", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("microservice-multi-transport-operations", adoptionSmokeManifest, StringComparison.Ordinal);
@@ -75,6 +76,7 @@ public sealed class OutOfTreePackageAdoptionAssetsTests
         Assert.Contains("/api/operations/status", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("executionReport", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("artifacts/adoption-smoke/out-of-tree-package-adoption.json", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("artifacts/adoption-smoke/generated-app-adoption.json", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("RuntimeProbes", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("Paths", adoptionSmokeManifest, StringComparison.Ordinal);
     }

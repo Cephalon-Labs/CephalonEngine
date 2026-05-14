@@ -1,6 +1,6 @@
 # Engine Surface Maturity Audit
 
-Surface maturity in this document reflects the repository state as of `May 14, 2026` (after the Sprint 125 Eventing operational-superiority evidence stream, scorecard schema `1.24.0`, the adoption golden-use-case readback, and the component maturity-badge completion guard).
+Surface maturity in this document reflects the repository state as of `May 14, 2026` (after the Sprint 125 Eventing operational-superiority evidence stream, scorecard schema `1.25.0`, the generated-app adoption report readback, the adoption golden-use-case readback, and the component maturity-badge completion guard).
 
 ## Why this document exists
 
