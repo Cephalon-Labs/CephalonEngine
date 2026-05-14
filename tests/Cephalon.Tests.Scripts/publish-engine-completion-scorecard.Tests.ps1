@@ -255,7 +255,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.23.0"
+        $json.'$schemaVersion' | Should -Be "1.24.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
@@ -304,6 +304,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
         $json.Summary.AdoptionSmokeExecutionReportRequiredFieldCount | Should -Be 9
+        $json.Summary.AdoptionSmokeGoldenUseCaseCount | Should -Be 5
+        $json.Summary.AdoptionSmokeGoldenUseCaseExecutionReadyCount | Should -Be 1
         $json.Summary.ProviderIntegrationEvidenceRowCount | Should -Be 33
         $json.Summary.ProviderIntegrationLiveProofCount | Should -Be 33
         $json.Summary.ProviderIntegrationCompositionOnlyCount | Should -Be 0
@@ -440,7 +442,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Data.MySql.SciSharpReplication"
         $json.DeploymentModeEvidence.TransitiveAuditRows.PackagePattern | Should -Contain "Newtonsoft.Json"
 
-        $json.AdoptionSmokeEvidence.ManifestSchemaVersion | Should -Be "1.1.0"
+        $json.AdoptionSmokeEvidence.ManifestSchemaVersion | Should -Be "1.2.0"
         $json.AdoptionSmokeEvidence.ScenarioId | Should -Be "out-of-tree-generated-app-package-stage"
         $json.AdoptionSmokeEvidence.Status | Should -Be "execution-report-ready"
         $json.AdoptionSmokeEvidence.ValidationScript | Should -Be "scripts/validate-out-of-tree-package-adoption.ps1"
@@ -457,6 +459,14 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.AdoptionSmokeEvidence.ExecutionReport.RequiredFields.Count | Should -Be 9
         $json.AdoptionSmokeEvidence.ExecutionReport.RequiredFields | Should -Contain '$schemaVersion'
         $json.AdoptionSmokeEvidence.ExecutionReport.RequiredFields | Should -Contain "RuntimeProbes"
+        $json.AdoptionSmokeEvidence.GoldenUseCases.Count | Should -Be 5
+        $json.AdoptionSmokeEvidence.GoldenUseCases.Id | Should -Contain "out-of-tree-package-adoption"
+        $json.AdoptionSmokeEvidence.GoldenUseCases.Id | Should -Contain "modular-monolith-rest-worker-data"
+        $json.AdoptionSmokeEvidence.GoldenUseCases.Id | Should -Contain "vertical-slice-eventing-outbox"
+        $json.AdoptionSmokeEvidence.GoldenUseCases.Id | Should -Contain "microservice-multi-transport-operations"
+        $json.AdoptionSmokeEvidence.GoldenUseCases.Id | Should -Contain "saas-tenant-governance-audit"
+        $json.AdoptionSmokeEvidence.GoldenUseCases.Status | Should -Contain "execution-report-ready"
+        $json.AdoptionSmokeEvidence.GoldenUseCases.PrimaryValidationPath | Should -Contain "scripts/validate-out-of-tree-package-adoption.ps1"
 
         $json.TestCoverageEvidence.Roadmap | Should -Be "docs/test-coverage-roadmap.md"
         $json.TestCoverageEvidence.LayeredProjectCount | Should -Be 8
@@ -816,6 +826,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Cephalon.Abstractions"
         $markdown | Should -Match "Adoption Smoke Evidence"
         $markdown | Should -Match "out-of-tree-generated-app-package-stage"
+        $markdown | Should -Match "Adoption smoke golden use cases: 5"
+        $markdown | Should -Match "out-of-tree-package-adoption"
         $markdown | Should -Match "Provider Integration Evidence"
         $markdown | Should -Match "Provider integration evidence rows: 33"
         $markdown | Should -Match "live proofs: 33"
@@ -968,7 +980,7 @@ Start-Process
 
         $manifestPath = Join-Path $scriptsRoot "adoption-smoke-support.json"
         @{
-            '$schemaVersion' = "1.1.0"
+            '$schemaVersion' = "1.2.0"
             scenarioId = "fixture"
             status = "execution-report-ready"
             validationScript = $replayScriptPath
@@ -984,6 +996,24 @@ Start-Process
                 (Join-Path $docsRoot "release-checklist.md")
             )
             referenceModuleProject = (Join-Path $sampleRoot "Cephalon.ReferenceModule.Operations.csproj")
+            goldenUseCases = @(
+                @{
+                    id = "fixture-use-case"
+                    title = "Fixture use case"
+                    appShape = "modular-monolith"
+                    status = "execution-report-ready"
+                    proofLevel = "executable-smoke"
+                    primaryValidationPath = $replayScriptPath
+                    sourceDocs = @(
+                        (Join-Path $docsRoot "getting-started.md")
+                    )
+                    qualityDimensions = @("Reliability")
+                    requiredEngineCapabilities = @("runtime introspection")
+                    proofTargets = @(
+                        @{ kind = "runtime-probe"; reference = "/engine/packages" }
+                    )
+                }
+            )
             assertions = @{
                 runsOutsideRepository = $true
                 publishesLocalPackages = $true
