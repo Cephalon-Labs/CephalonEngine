@@ -10,25 +10,30 @@ This guide records the current Cephalon truth for future-framework assessment wi
 - `.NET 11` is currently a readiness lane, not a default-target migration
 - trim, Native AOT, and single-file support remain explicit global `not-claimed` support statements tracked through [Deployment-mode support](deployment-mode-support.md) and `scripts/deployment-mode-support.json`; package-scoped claims such as `Cephalon.Diagnostics` single-file support are narrower manifest entries and do not change the global support rows, and `publishProbePolicy` now makes the representative `singleFile` publish probe release-blocking without promoting global single-file support
 
-As of `May 13, 2026`, Microsoft has:
+As of `May 14, 2026`, Microsoft has:
 
 - shipped `.NET 11 Preview 1` on `February 10, 2026`
 - shipped `.NET 11 Preview 2` on `March 10, 2026`
 - shipped `.NET 11 Preview 3` on `April 14, 2026`
 - shipped `.NET 11 Preview 4` on `May 12, 2026`
 - published `11.0.100-preview.4.26230.115` as the current SDK on the `.NET 11` download page
-- published the official `dotnet/core` `release-notes/11.0/preview/preview4` folder. The Microsoft Learn overview still states that it was last updated for Preview 3, so current-build identity should be read from the `.NET 11` download page plus `dotnet/core` release notes until Learn catches up
+- published the official `dotnet/core` `release-notes/11.0/preview/preview4` folder
+- updated the Microsoft Learn `.NET 11` overview and SDK/tooling pages for Preview 4
+- documented C# 15 preview features for `.NET 11` previews, while the `.NET 11` download page still lists SDK language support as C# 14.0; Cephalon should keep C# 15 union types and collection-expression arguments in readiness-only planning until SDK/tooling/source alignment is unambiguous
 - kept `.NET 10` in active LTS support through `November 14, 2028`
 - kept the official `.NET 11` final-release target on `November 2026`
 
-When Preview 5, an RC, or GA lands, refresh this anchor again rather than letting the dated section drift into multi-month staleness; the readiness lane is most useful when the dated truth is recent. The May 13 refresh keeps the release-scorecard `.NET 11` gate as a current `partial` readiness lane, but it does not promote a `.NET 11` support baseline.
+When Preview 5, an RC, or GA lands, refresh this anchor again rather than letting the dated section drift into multi-month staleness; the readiness lane is most useful when the dated truth is recent. The May 14 refresh keeps the release-scorecard `.NET 11` gate as a current `partial` readiness lane, but it does not promote a `.NET 11` support baseline.
 
 Official sources:
 
 - [.NET 11 Preview 1 announcement](https://devblogs.microsoft.com/dotnet/dotnet-11-preview-1/)
 - [.NET 11 Preview 2 announcement](https://devblogs.microsoft.com/dotnet/dotnet-11-preview-2/)
 - [.NET 11 Preview 3 announcement](https://devblogs.microsoft.com/dotnet/dotnet-11-preview-3/)
+- [.NET 11 Preview 4 announcement](https://devblogs.microsoft.com/dotnet/dotnet-11-preview-4/)
 - [What's new in .NET 11 (Microsoft Learn)](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/overview)
+- [What's new in the SDK and tooling for .NET 11](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/sdk)
+- [What's new in C# 15](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-15)
 - [.NET 11 download page](https://dotnet.microsoft.com/en-us/download/dotnet/11.0)
 - [.NET 11 release-notes folder (`dotnet/core`)](https://github.com/dotnet/core/tree/main/release-notes/11.0/preview/)
 - [.NET 11 Preview 4 release-notes folder (`dotnet/core`)](https://github.com/dotnet/core/tree/main/release-notes/11.0/preview/preview4)
