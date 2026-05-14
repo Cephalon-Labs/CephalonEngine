@@ -1,13 +1,14 @@
 {
-  "$schemaVersion": "1.5.0",
+  "$schemaVersion": "1.6.0",
   "scenarioId": "out-of-tree-generated-app-package-stage",
   "status": "execution-report-ready",
-  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, writes machine-readable execution reports for generated-app, template-pack, modular-monolith REST/Worker/data, and out-of-tree package adoption, and tracks the broader golden use-case map.",
+  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, writes machine-readable execution reports for generated-app, template-pack, modular-monolith REST/Worker/data, vertical-slice Eventing/outbox, and out-of-tree package adoption, and tracks the broader golden use-case map.",
   "validationScript": "scripts/validate-out-of-tree-package-adoption.ps1",
   "supportingScripts": [
     "scripts/validate-generated-app-adoption.ps1",
     "scripts/validate-template-pack-adoption.ps1",
-    "scripts/validate-modular-monolith-adoption.ps1"
+    "scripts/validate-modular-monolith-adoption.ps1",
+    "scripts/validate-vertical-slice-eventing-adoption.ps1"
   ],
   "sourceDocs": [
     "docs/getting-started.md",
@@ -302,11 +303,14 @@
       "id": "vertical-slice-eventing-outbox",
       "title": "Vertical slice behavior, Eventing, and outbox flow",
       "appShape": "modular-vertical-slice",
-      "status": "planned",
-      "proofLevel": "contract-defined",
-      "primaryValidationPath": "scripts/validate-generated-app-adoption.ps1",
+      "status": "execution-report-ready",
+      "proofLevel": "executable-smoke",
+      "primaryValidationPath": "scripts/validate-vertical-slice-eventing-adoption.ps1",
       "sourceDocs": [
         "docs/app-models.md",
+        "docs/components/README.md",
+        "docs/components/behaviors.md",
+        "docs/components/data.md",
         "docs/components/eventing.md",
         "docs/operations.md"
       ],
@@ -337,7 +341,26 @@
           "kind": "operator-surface",
           "reference": "/engine/diagnostics"
         }
-      ]
+      ],
+      "executionReport": {
+        "schemaVersion": "1.0.0",
+        "defaultPath": "artifacts/adoption-smoke/vertical-slice-eventing-adoption.json",
+        "statusValues": [
+          "passed",
+          "failed"
+        ],
+        "requiredFields": [
+          "$schemaVersion",
+          "ScenarioId",
+          "Status",
+          "StartedAtUtc",
+          "CompletedAtUtc",
+          "DurationMilliseconds",
+          "Assertions",
+          "RuntimeProbes",
+          "Paths"
+        ]
+      }
     },
     {
       "id": "microservice-multi-transport-operations",

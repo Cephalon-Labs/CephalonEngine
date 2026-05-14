@@ -199,6 +199,14 @@ pwsh ./scripts/validate-modular-monolith-adoption.ps1
 
 That script publishes the same temporary feed including `Cephalon.Data`, `Cephalon.Ids.Sfid`, and `Cephalon.Worker`, installs the CLI, scaffolds a modular-monolith host with `CQRS`, `Outbox`, and `RestApi`, validates the generated data/Sfid split configuration and package references, runs the ASP.NET Core host, probes `/health/ready`, `/engine`, `/engine/snapshot`, `/engine/dependencies`, `/engine/runtime-story`, and `/scalar`, then builds and runs a generic-host Worker probe against the same generated configuration. It writes `artifacts/adoption-smoke/modular-monolith-adoption.json` unless `-ReportPath` overrides it.
 
+For the modular vertical-slice Eventing/outbox replay, run:
+
+```powershell
+pwsh ./scripts/validate-vertical-slice-eventing-adoption.ps1
+```
+
+That script publishes the same temporary feed including `Cephalon.Eventing`, `Cephalon.Eventing.Behaviors`, `Cephalon.Data`, `Cephalon.Ids.Sfid`, and the behavior packages, installs the CLI, scaffolds a `ModularVerticalSlice` host with `CQRS`, `Outbox`, `RestApi`, and `EventDrivenIntegration`, validates that generated Eventing startup uses `engine.AddEventingFromConfiguration(builder.Configuration)` with executable `Engine:Messaging` channel/routing settings plus a generated process-local `IOutbox` starter descriptor, runs the ASP.NET Core host, publishes an application event through `/engine/event-publications`, proves the resulting accepted outbox handoff through `/engine/event-publications/runtime/{publicationId}`, and probes `/engine/event-dispatches/terminal-failures`, `/engine/event-dispatch-remediation-commands/summary`, `/engine/diagnostics`, `/engine/snapshot`, and `/scalar`. It writes `artifacts/adoption-smoke/vertical-slice-eventing-adoption.json` unless `-ReportPath` overrides it.
+
 ## Optional Published-Output Path
 
 Generated host projects now also include `Properties/PublishProfiles/CephalonFolder.pubxml`.
