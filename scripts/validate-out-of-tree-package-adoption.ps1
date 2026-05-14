@@ -27,6 +27,7 @@ $stdoutLogPath = Join-Path $tempRoot "external-package.stdout.log"
 $stderrLogPath = Join-Path $tempRoot "external-package.stderr.log"
 $packageProjectPaths = @(
     "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+    "src/Cephalon.Analyzers/Cephalon.Analyzers.csproj",
     "src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj",
     "src/Cephalon.Engine/Cephalon.Engine.csproj",
     "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",

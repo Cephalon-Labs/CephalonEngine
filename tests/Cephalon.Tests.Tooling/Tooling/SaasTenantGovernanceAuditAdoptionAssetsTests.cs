@@ -52,6 +52,7 @@ public sealed class SaasTenantGovernanceAuditAdoptionAssetsTests
         Assert.Contains("validate-saas-tenant-governance-audit-adoption.ps1", governanceAspNetCoreComponent, StringComparison.Ordinal);
         Assert.Contains("validate-saas-tenant-governance-audit-adoption.ps1", httpDependenciesComponent, StringComparison.Ordinal);
 
+        Assert.Contains("Cephalon.Analyzers", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.MultiTenancy.Governance", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.MultiTenancy.Governance.AspNetCore", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Audit", validationScript, StringComparison.Ordinal);

@@ -599,6 +599,7 @@
   },
   "requiredScriptTokens": [
     "Cephalon.Cli",
+    "Cephalon.Analyzers",
     "Cephalon.Behaviors.SourceGen",
     "Cephalon.Diagnostics",
     "Cephalon.Resilience",

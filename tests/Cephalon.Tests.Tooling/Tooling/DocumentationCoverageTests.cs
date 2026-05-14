@@ -941,6 +941,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("AddCephalonProjectConfigurations", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("MapCephalon", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("PackageReference", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Analyzers", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Engine.SourceGen", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Behaviors.SourceGen", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("Configurations/**/*.json", gettingStarted, StringComparison.Ordinal);
@@ -1083,6 +1084,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("AddCephalonProjectConfigurations", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("MapCephalon", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("PackageReference", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Analyzers", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Engine.SourceGen", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Behaviors.SourceGen", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/**/*.json", cliPackageReadme, StringComparison.Ordinal);
@@ -1135,6 +1137,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("AddCephalonProjectConfigurations", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("MapCephalon", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("PackageReference", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Analyzers", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Engine.SourceGen", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Behaviors.SourceGen", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/**/*.json", templatePackReadme, StringComparison.Ordinal);
@@ -1197,6 +1200,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("AddCephalonProjectConfigurations", rootReadme, StringComparison.Ordinal);
         Assert.Contains("MapCephalon", rootReadme, StringComparison.Ordinal);
         Assert.Contains("PackageReference", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Analyzers", rootReadme, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Engine.SourceGen", rootReadme, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Behaviors.SourceGen", rootReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/**/*.json", rootReadme, StringComparison.Ordinal);
@@ -1218,6 +1222,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("AddCephalonProjectConfigurations", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("MapCephalon", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("PackageReference", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Analyzers", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Engine.SourceGen", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Behaviors.SourceGen", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("Configurations/**/*.json", cliComponentDoc, StringComparison.Ordinal);

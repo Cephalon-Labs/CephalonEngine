@@ -30,6 +30,7 @@ $workerStdoutLogPath = Join-Path $tempRoot "modular-monolith-worker.stdout.log"
 $workerStderrLogPath = Join-Path $tempRoot "modular-monolith-worker.stderr.log"
 $packageProjectPaths = @(
     "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+    "src/Cephalon.Analyzers/Cephalon.Analyzers.csproj",
     "src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj",
     "src/Cephalon.Engine/Cephalon.Engine.csproj",
     "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",

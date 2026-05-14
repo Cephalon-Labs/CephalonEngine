@@ -1,3 +1,5 @@
+#pragma warning disable MA0048 // Starter keeps small generated helper types beside the module for adoption clarity.
+
 using System.Threading;
 using System.Threading.Tasks;
 using Cephalon.Abstractions.Behaviors;

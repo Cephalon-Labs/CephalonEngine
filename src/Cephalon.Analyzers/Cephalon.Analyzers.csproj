@@ -29,8 +29,10 @@
 
   <!--
     Analyzers flow transitively to consumers. PrivateAssets is intentionally left at the default
-    so a `<PackageReference Include="Cephalon.Analyzers" />` in a consumer project pulls in all
-    of the bundled analyzer packages and runs them at consumer build time.
+    so a `<PackageReference Include="Cephalon.Analyzers" />` in a consumer project pulls in the
+    bundled analyzer packages. PublicApiAnalyzers rules are suppressed by default in the
+    buildTransitive props until package authors opt into public API tracking with
+    CephalonAnalyzersEnablePublicApiTracking=true.
   -->
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers">

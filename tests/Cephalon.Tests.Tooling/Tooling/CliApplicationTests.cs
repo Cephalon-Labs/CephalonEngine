@@ -82,6 +82,7 @@ public sealed class CliApplicationTests
             Assert.True(File.Exists(Path.Combine(outputPath, "tests", "Acme.Store.Service.Tests", "Features", "CheckoutBehaviorSpecifications.cs")));
 
             var packageProps = await File.ReadAllTextAsync(Path.Combine(outputPath, "Directory.Packages.props"));
+            Assert.Contains("Cephalon.Analyzers", packageProps, StringComparison.Ordinal);
             Assert.Contains("Cephalon.AspNetCore.Grpc", packageProps, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Observability.OpenTelemetry", packageProps, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Observability.Serilog", packageProps, StringComparison.Ordinal);
@@ -2647,7 +2648,7 @@ public sealed class CliApplicationTests
             Assert.Equal(0, exitCode);
             Assert.Contains($"[ok] Generated app root: {appRootPath}", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app solution: ./Acme.Store.slnx", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[ok] Generated package baseline: Cephalon.AspNetCore 0.1.0-preview, Cephalon.Behaviors.SourceGen 0.1.0-preview, Cephalon.Data 0.1.0-preview, Cephalon.Engine.SourceGen 0.1.0-preview", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated package baseline: Cephalon.Analyzers 0.1.0-preview, Cephalon.AspNetCore 0.1.0-preview, Cephalon.Behaviors.SourceGen 0.1.0-preview, Cephalon.Data 0.1.0-preview, Cephalon.Engine.SourceGen 0.1.0-preview", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Cephalon package source: ./.cephalon/packages", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Cephalon local package feed:", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains(".cephalon/packages", stdout.ToString(), StringComparison.Ordinal);
@@ -2757,6 +2758,7 @@ public sealed class CliApplicationTests
             Assert.Contains($"[ok] Generated app root: {appRootPath}", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app solution: Template-pack project-root layout via ./Acme.Store.csproj.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated package baseline: ./Acme.Store.csproj keeps direct Cephalon package versions explicit:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Cephalon.Analyzers 0.1.0-preview", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("Cephalon.AspNetCore 0.1.0-preview", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Cephalon package source: ./.cephalon/packages", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Cephalon local package feed: 1 package(s) found under ./.cephalon/packages.", stdout.ToString(), StringComparison.Ordinal);
@@ -3202,6 +3204,8 @@ public sealed class CliApplicationTests
             Assert.Contains("AddCephalonObservability", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("MapCephalon", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[error] Generated host project baseline:", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Cephalon.Analyzers", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("Cephalon.Engine.SourceGen", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("Cephalon.Observability", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("Cephalon.Observability.OpenTelemetry", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("Cephalon.Observability.Serilog", stdout.ToString(), StringComparison.Ordinal);
@@ -4965,6 +4969,7 @@ public sealed class CliApplicationTests
             """
             <Project>
               <ItemGroup>
+                <PackageVersion Include="Cephalon.Analyzers" Version="0.1.0-preview" />
                 <PackageVersion Include="Cephalon.AspNetCore" Version="0.1.0-preview" />
                 <PackageVersion Include="Cephalon.Behaviors.SourceGen" Version="0.1.0-preview" />
                 <PackageVersion Include="Cephalon.Data" Version="0.1.0-preview" />
@@ -5010,6 +5015,7 @@ public sealed class CliApplicationTests
               </PropertyGroup>
 
               <ItemGroup>
+                <PackageReference Include="Cephalon.Analyzers" Version="0.1.0-preview" PrivateAssets="all" />
                 <PackageReference Include="Cephalon.AspNetCore" Version="0.1.0-preview" />
                 <PackageReference Include="Cephalon.Behaviors.SourceGen" Version="0.1.0-preview" PrivateAssets="all" />
                 <PackageReference Include="Cephalon.Engine.SourceGen" Version="0.1.0-preview" PrivateAssets="all" />

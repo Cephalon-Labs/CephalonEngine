@@ -70,6 +70,7 @@ Current focus:
 - treat open GitHub issue drift as a planning-quality risk: `scripts/validate-planning-github-issues.ps1` now checks open `ENG-*` issues against backlog truth, detects duplicate open issue numbers for the same ENG id, and detects stale open duplicates for backlog rows that are already `done` or `shipped` at another issue number
 - treat missing GitHub Project 2 planning fields as a planning-quality risk: `scripts/validate-planning-project-fields.ps1` now verifies open `ENG-*` issue project items have populated `Status`, `Estimate`, `Iteration`, `Test`, and `Benchmark`, and the first live run corrected the missing `Iteration` field on `ENG-532` / issue `#1180`
 - treat signed-release dry-run dispatch proof as scorecard readback, not prose-only release context: `SupplyChainEvidence.SignedReleaseDryRun` now records the dry-run status, partial proof state, current `dispatch-identity-actions-disabled` blocker, required `-RequireRunCreated` command, output path, handoff output path, and required report fields, while `scripts/invoke-signed-release-dry-run.ps1` reports the dispatch actor, identity resolution status, exact dispatch command, required release-manager action, and release-manager handoff artifact, Pester validates the manifest-required report fields plus generated handoff content against generated in-memory and persisted JSON reports, and Tooling documentation coverage derives the same required field list plus `handoffOutputPath` into [`package-publishing.md`](package-publishing.md), [`release-checklist.md`](release-checklist.md), and [`release-checklist-template.md`](release-checklist-template.md) so `ENG-532` stays actionable until an Actions-enabled release-manager identity creates the workflow run
+- treat `Cephalon.Analyzers` as current `M2` cephalon-managed adoption baseline: generated non-test projects and all template-pack app/module starters now include the analyzer meta-package as a private analyzer package, `cephalon doctor --app-root` requires it in the generated host project baseline before a starter can claim the scaffolded quality posture, and consumer default builds keep PublicApiAnalyzers public-surface tracking opt-in so fresh generated apps do not emit starter-owned analyzer warnings
 - treat component-page maturity badges as a completed adoption contract: every shipped source-project component page now carries a maturity label, ownership label, and `engine-surface-maturity-audit.md` back-pointer, and Tooling coverage blocks any new shipped component page from skipping that first-scan truth
 - treat the component catalog as a unique source-project map: every shipped `src/Cephalon.*` project must appear exactly once in `docs/components/README.md`, so future family re-grouping cannot leave duplicate component links behind
 - treat the component catalog as a two-way adoption map: every hand-authored component doc under `docs/components/*.md` must be linked exactly once from `docs/components/README.md`, so new component pages cannot become orphan docs outside the catalog
@@ -81,6 +82,41 @@ Current focus:
 - treat generated reference docs as a guarded generated API navigation layer: repo-local links across `docs/reference/**/*.md` must resolve inside `docs/reference`, and browser-view query links such as `browse.html?assembly=...` must resolve to the generated browser file while hand-authored docs remain the primary human contract
 - treat `docs/reference/reference-manifest.json` as the generated API bundle map: required browser/index/manifest assets must exist, assembly page files must be manifest-owned, namespace/type/member anchor ids must resolve in those pages, and orphan generated Markdown pages must fail Tooling coverage before hosted reference docs can drift
 - treat `docs/reference/browse.html` as the hosted reference-doc browser entry point: local `href` and `src` references must resolve inside `docs/reference` to existing generated bundle files so CSS, JavaScript, index links, and manifest links cannot drift after regeneration
+
+### ENG-705 Cephalon.Analyzers template-pack adoption baseline
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: code-quality / analyzers / scaffolding / template-pack / adoption
+Quality dimensions: Maintainability, Compatibility, Security, Usability, Reliability
+GitHub issue: `#1386`
+
+Why:
+
+- `Cephalon.Analyzers` had a real curated meta-package and internal `Cephalon.Abstractions` proof, but external starters still required consumers to discover and add the analyzer package manually
+- the maturity audit explicitly gated `M2` on the documented adoption path and template-pack starter defaults
+- generated apps should inherit engine-owned quality guardrails with the same low-ceremony path as source generators and host bootstrap defaults
+
+Delivered:
+
+- `cephalon new` now adds `Cephalon.Analyzers` to every generated non-test project and emits it as a `PrivateAssets="all"` analyzer package through central package management
+- every shipped app/module template-pack starter now references `Cephalon.Analyzers` by default as a private analyzer package
+- `cephalon doctor --app-root` now requires `Cephalon.Analyzers` in the generated host project baseline and includes it in package-baseline readback
+- `validate-generated-app-adoption.ps1` now publishes the full generated-app closure it already documents, including `Cephalon.Diagnostics` and `Cephalon.Resilience`, so a local feed can restore the generated app without falling through package-source mapping
+- `Cephalon.Analyzers` now keeps PublicApiAnalyzers public-surface tracking opt-in through `CephalonAnalyzersEnablePublicApiTracking=true`, ships a warning-clean `BannedSymbols.txt`, and the generated/template starter files suppress only the intentional `MA0048` multi-type starter-file warning where the starter deliberately keeps small helper types beside a module
+- component docs, getting-started, CLI/package docs, template-pack docs, README, conformance matrix, maturity audit, supply-chain uplift plan, roadmap, and project memory now record `Cephalon.Analyzers` as `M2` adoption baseline rather than an `M1` proof-of-concept
+
+Validation:
+
+- `dotnet build tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj -m:1`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-build --filter "FullyQualifiedName~Cephalon.Tests.Scaffolding.ScaffoldGeneratorTests"`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-build --filter "FullyQualifiedName=Cephalon.Tests.Tooling.CliApplicationTests.RunAsyncGeneratesAppFromBlueprintCommand|FullyQualifiedName=Cephalon.Tests.Tooling.CliApplicationTests.RunAsyncDoctorValidatesGeneratedAppBootstrap|FullyQualifiedName=Cephalon.Tests.Tooling.CliApplicationTests.RunAsyncDoctorValidatesTemplatePackGeneratedAppBootstrap|FullyQualifiedName=Cephalon.Tests.Tooling.CliApplicationTests.RunAsyncDoctorFailsWhenGeneratedHostBootstrapBaselinesDrift"`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-build --filter "FullyQualifiedName=Cephalon.Tests.Tooling.TemplatePackTests.TemplatePackCanBeInstalledAndGenerateAMonolithTemplate|FullyQualifiedName=Cephalon.Tests.Tooling.TemplatePackTests.TemplatePackProjectPacksTemplatesIntoNuGetContentFolder"`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-build --filter "FullyQualifiedName=Cephalon.Tests.Tooling.DocumentationCoverageTests.AdoptionGuideAndPackageReadmesStayAlignedWithDoctorPath"`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-build --filter "FullyQualifiedName~GeneratedAppAdoptionAssetsTests|FullyQualifiedName~TemplatePackAdoptionAssetsTests|FullyQualifiedName~OutOfTreePackageAdoptionAssetsTests|FullyQualifiedName~ModularMonolithAdoptionAssetsTests|FullyQualifiedName~VerticalSliceEventingAdoptionAssetsTests|FullyQualifiedName~MicroserviceMultiTransportAdoptionAssetsTests|FullyQualifiedName~SaasTenantGovernanceAuditAdoptionAssetsTests"`
+- `pwsh ./scripts/validate-generated-app-adoption.ps1 -ReportPath artifacts/adoption-smoke/generated-app-adoption-analyzer-m2.json`
+- `git diff --check`
 
 ### ENG-704 EventSourcing managed replay proof
 

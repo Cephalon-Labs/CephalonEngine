@@ -11,9 +11,16 @@
         <CephalonAnalyzersUseBannedSymbols>false</CephalonAnalyzersUseBannedSymbols>
     in their own MSBuild file before this props file is loaded, or by including their own
     BannedSymbols.txt as an AdditionalFile.
+
+    PublicApiAnalyzers is bundled for package authors, but public API tracking requires
+    committed PublicAPI.Shipped.txt / PublicAPI.Unshipped.txt files. Consumer apps opt into
+    that stricter contract by setting:
+        <CephalonAnalyzersEnablePublicApiTracking>true</CephalonAnalyzersEnablePublicApiTracking>
   -->
   <PropertyGroup>
     <CephalonAnalyzersUseBannedSymbols Condition="'$(CephalonAnalyzersUseBannedSymbols)' == ''">true</CephalonAnalyzersUseBannedSymbols>
+    <CephalonAnalyzersEnablePublicApiTracking Condition="'$(CephalonAnalyzersEnablePublicApiTracking)' == ''">false</CephalonAnalyzersEnablePublicApiTracking>
+    <NoWarn Condition="'$(CephalonAnalyzersEnablePublicApiTracking)' != 'true'">$(NoWarn);RS0016;RS0017;RS0026;RS0027;RS0037;RS0041</NoWarn>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(CephalonAnalyzersUseBannedSymbols)' == 'true'">

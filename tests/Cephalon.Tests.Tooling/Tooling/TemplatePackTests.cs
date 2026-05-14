@@ -336,6 +336,7 @@ public sealed class TemplatePackTests
             Assert.Contains("Cephalon.Audit", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Ids.Sfid", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Behaviors.Http", appProjectContents, StringComparison.Ordinal);
+            Assert.Contains("<PackageReference Include=\"Cephalon.Analyzers\" Version=\"0.1.0-preview\" PrivateAssets=\"all\" />", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("<PackageReference Include=\"Cephalon.Behaviors.SourceGen\" Version=\"0.1.0-preview\" PrivateAssets=\"all\" />", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Observability.OpenTelemetry", appProjectContents, StringComparison.Ordinal);
@@ -356,6 +357,10 @@ public sealed class TemplatePackTests
             Assert.Contains("builder.AddCephalonOpenTelemetry();", programContents, StringComparison.Ordinal);
             Assert.Contains("WindowsServiceHelpers.IsWindowsService()", programContents, StringComparison.Ordinal);
             Assert.Contains("builder.Host.UseWindowsService();", programContents, StringComparison.Ordinal);
+            var catalogModuleContents = File.ReadAllText(Path.Combine(appOutputPath, "Modules", "Catalog", "Endpoints", "CatalogModule.cs"));
+            Assert.Contains("#pragma warning disable MA0048", catalogModuleContents, StringComparison.Ordinal);
+            var catalogOverviewServiceContents = File.ReadAllText(Path.Combine(appOutputPath, "Modules", "Catalog", "Application", "CatalogOverviewService.cs"));
+            Assert.Contains("#pragma warning disable MA0048", catalogOverviewServiceContents, StringComparison.Ordinal);
             Assert.Equal("{}", File.ReadAllText(Path.Combine(appOutputPath, "appsettings.json")).Trim(), ignoreCase: false, ignoreLineEndingDifferences: false, ignoreWhiteSpaceDifferences: false);
             Assert.Equal("{}", File.ReadAllText(Path.Combine(appOutputPath, "appsettings.Development.json")).Trim(), ignoreCase: false, ignoreLineEndingDifferences: false, ignoreWhiteSpaceDifferences: false);
             var observabilityDevelopment = File.ReadAllText(Path.Combine(appOutputPath, "Configurations", "Observability", "Development.json"));
@@ -515,6 +520,7 @@ public sealed class TemplatePackTests
 
             var moduleProjectPath = Path.Combine(moduleOutputPath, "OperationsKit.csproj");
             var moduleProjectContents = File.ReadAllText(moduleProjectPath);
+            Assert.Contains("<PackageReference Include=\"Cephalon.Analyzers\" Version=\"0.1.0-preview\" PrivateAssets=\"all\" />", moduleProjectContents, StringComparison.Ordinal);
             Assert.Contains("<Content Include=\"cephalon.package.json\">", moduleProjectContents, StringComparison.Ordinal);
 
             var packageManifestPath = Path.Combine(moduleOutputPath, "cephalon.package.json");
@@ -556,6 +562,7 @@ public sealed class TemplatePackTests
             var behaviorModuleProjectPath = Path.Combine(behaviorModuleOutputPath, "OrdersBehaviorKit.csproj");
             var behaviorModuleProjectContents = File.ReadAllText(behaviorModuleProjectPath);
             Assert.Contains("Cephalon.Behaviors.Http", behaviorModuleProjectContents, StringComparison.Ordinal);
+            Assert.Contains("<PackageReference Include=\"Cephalon.Analyzers\" Version=\"0.1.0-preview\" PrivateAssets=\"all\" />", behaviorModuleProjectContents, StringComparison.Ordinal);
             Assert.Contains("<PackageReference Include=\"Cephalon.Behaviors.SourceGen\" Version=\"0.1.0-preview\" PrivateAssets=\"all\" />", behaviorModuleProjectContents, StringComparison.Ordinal);
             Assert.Contains("<Content Include=\"cephalon.package.json\">", behaviorModuleProjectContents, StringComparison.Ordinal);
 
@@ -640,6 +647,7 @@ public sealed class TemplatePackTests
         var appProject = ReadPackageEntry(
             package,
             $"content/templates/{templateFolder}/CephalonTemplateApp.csproj");
+        Assert.Contains("Cephalon.Analyzers", appProject, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Behaviors.Http", appProject, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Behaviors.SourceGen", appProject, StringComparison.Ordinal);
 

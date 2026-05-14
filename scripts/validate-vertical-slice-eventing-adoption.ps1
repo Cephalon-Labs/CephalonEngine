@@ -26,6 +26,7 @@ $stderrLogPath = Join-Path $tempRoot "vertical-slice-eventing.stderr.log"
 $publicationId = "vertical-slice-eventing-" + [Guid]::NewGuid().ToString("N")
 $packageProjectPaths = @(
     "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+    "src/Cephalon.Analyzers/Cephalon.Analyzers.csproj",
     "src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj",
     "src/Cephalon.Engine/Cephalon.Engine.csproj",
     "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",

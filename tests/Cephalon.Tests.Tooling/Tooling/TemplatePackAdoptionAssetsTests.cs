@@ -35,6 +35,7 @@ public sealed class TemplatePackAdoptionAssetsTests
         Assert.Contains("--app-root", validationScript, StringComparison.Ordinal);
         Assert.Contains("\"restore\"", validationScript, StringComparison.Ordinal);
         Assert.Contains("\"build\"", validationScript, StringComparison.Ordinal);
+        Assert.Contains("src/Cephalon.Analyzers/Cephalon.Analyzers.csproj", validationScript, StringComparison.Ordinal);
         Assert.Contains("src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj", validationScript, StringComparison.Ordinal);
         Assert.Contains("src/Cephalon.Resilience/Cephalon.Resilience.csproj", validationScript, StringComparison.Ordinal);
         Assert.Contains("ReportPath", validationScript, StringComparison.Ordinal);

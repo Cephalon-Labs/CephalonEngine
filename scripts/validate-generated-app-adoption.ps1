@@ -25,12 +25,15 @@ $stdoutLogPath = Join-Path $tempRoot "generated-app.stdout.log"
 $stderrLogPath = Join-Path $tempRoot "generated-app.stderr.log"
 $packageProjectPaths = @(
     "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+    "src/Cephalon.Analyzers/Cephalon.Analyzers.csproj",
+    "src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj",
     "src/Cephalon.Engine/Cephalon.Engine.csproj",
     "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",
     "src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj",
     "src/Cephalon.Behaviors/Cephalon.Behaviors.csproj",
     "src/Cephalon.Behaviors.Http/Cephalon.Behaviors.Http.csproj",
     "src/Cephalon.Behaviors.SourceGen/Cephalon.Behaviors.SourceGen.csproj",
+    "src/Cephalon.Resilience/Cephalon.Resilience.csproj",
     "src/Cephalon.Cli/Cephalon.Cli.csproj",
     "src/Cephalon.Observability/Cephalon.Observability.csproj",
     "src/Cephalon.Observability.OpenTelemetry/Cephalon.Observability.OpenTelemetry.csproj",

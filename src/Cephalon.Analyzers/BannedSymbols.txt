@@ -1,37 +1,10 @@
-# Cephalon-curated banned symbols
-#
-# Format follows Microsoft.CodeAnalysis.BannedApiAnalyzers (RS0030):
-#   one ban per line, optional ;message after the symbol
-#   T:Namespace.Type        bans the type
-#   M:Namespace.Type.Member bans the specific member
-#   P:Namespace.Type.Prop   bans the specific property
-#   F:Namespace.Type.Field  bans the specific field
-#
-# The intent is to ban patterns that hurt determinism, testability, or async correctness
-# inside engine and module code. Consumers can extend or override this list in their own
-# BannedSymbols.txt; this file ships the engine baseline.
-
-# Wall-clock time without injectable abstraction. Use TimeProvider, IClock, or DateTimeOffset
-# from a configurable source so tests can control time.
 P:System.DateTime.Now;Use TimeProvider, IClock, or DateTimeOffset.UtcNow with an injectable abstraction so tests can control time.
 P:System.DateTime.UtcNow;Use TimeProvider or an injectable IClock so tests can control time.
 P:System.DateTimeOffset.Now;Use TimeProvider, IClock, or DateTimeOffset.UtcNow with an injectable abstraction.
-
-# Synchronous waits on async code: hot path for deadlocks under sync contexts.
 M:System.Threading.Tasks.Task.Wait();Block-on-async deadlocks; await the task or restructure the call.
 M:System.Threading.Tasks.Task.Wait(System.Int32);Block-on-async deadlocks; await the task or restructure the call.
 M:System.Threading.Tasks.Task.Wait(System.TimeSpan);Block-on-async deadlocks; await the task or restructure the call.
 P:System.Threading.Tasks.Task`1.Result;Block-on-async deadlocks; await the task or restructure the call.
-
-# Thread.Sleep blocks the synchronization thread; in async code use Task.Delay with cancellation.
 M:System.Threading.Thread.Sleep(System.Int32);Use Task.Delay with a CancellationToken; Thread.Sleep blocks the calling thread.
 M:System.Threading.Thread.Sleep(System.TimeSpan);Use Task.Delay with a CancellationToken; Thread.Sleep blocks the calling thread.
-
-# Unhandled fire-and-forget Task.Run on the request path is a back-pressure footgun.
-# This ban is opt-in; consumers can suppress per-call where the use is genuinely background.
-# (Commented out by default so consumers do not get a ban they did not ask for.)
-#M:System.Threading.Tasks.Task.Run(System.Action);Use a hosted service or queue with explicit back-pressure.
-
-# Environment.Exit short-circuits hosting lifecycle; engine and modules should propagate
-# failures through the host's IHostApplicationLifetime / IHostLifetime instead.
 M:System.Environment.Exit(System.Int32);Use IHostApplicationLifetime / IHostLifetime to stop the host instead of Environment.Exit.
