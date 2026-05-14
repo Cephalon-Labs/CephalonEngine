@@ -177,6 +177,8 @@ Use when:
 
 The executable adoption proof for this shape is `scripts/validate-microservice-multi-transport-adoption.ps1`. It scaffolds a `Microservice` outside the repository with `RestApi`, `JsonRpc`, and `Grpc`, packages the local transport and HTTP dependency-health companions, runs the generated service, calls the generated REST, JSON-RPC, and gRPC business endpoints, and verifies `/engine/transports`, `/engine/snapshot`, `/engine/dependencies`, `/engine/diagnostics`, `/engine/runtime-story`, `/engine/technology-surfaces/json-rpc`, `/engine/technology-surfaces/grpc`, and `/scalar`. This proves a single Cephalon-powered service boundary with multiple transports without turning `Microservice` into a whole distributed suite.
 
+The executable SaaS tenant-app proof is `scripts/validate-saas-tenant-governance-audit-adoption.ps1`. It deliberately keeps the app shape as `ModularMonolith` while enabling `MultiTenancy`, REST, JSON-RPC, gRPC, tenant governance, audit, and dependency-health companion packs through generated package references and host composition. The replay proves tenant-administration invitation issue, invitation dispatch, delivery-status reconciliation/observation, audit recording, `/engine/audit-stores`, `/engine/technology-surfaces/multi-tenancy`, `/engine/dependencies`, `/engine/transports`, `/engine/snapshot`, and REST/JSON-RPC/gRPC business endpoints from the same generated host, which keeps SaaS governance as an app-shape use case rather than a separate blueprint.
+
 ### 4. `MicroserviceSuite`
 
 A higher-level solution template, not just one app.

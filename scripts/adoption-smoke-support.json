@@ -1,15 +1,16 @@
 {
-  "$schemaVersion": "1.7.0",
+  "$schemaVersion": "1.8.0",
   "scenarioId": "out-of-tree-generated-app-package-stage",
   "status": "execution-report-ready",
-  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, writes machine-readable execution reports for generated-app, template-pack, modular-monolith REST/Worker/data, vertical-slice Eventing/outbox, microservice multi-transport, and out-of-tree package adoption, and tracks the broader golden use-case map.",
+  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, writes machine-readable execution reports for generated-app, template-pack, modular-monolith REST/Worker/data, vertical-slice Eventing/outbox, microservice multi-transport, SaaS tenant governance/audit, and out-of-tree package adoption, and tracks the broader golden use-case map.",
   "validationScript": "scripts/validate-out-of-tree-package-adoption.ps1",
   "supportingScripts": [
     "scripts/validate-generated-app-adoption.ps1",
     "scripts/validate-template-pack-adoption.ps1",
     "scripts/validate-modular-monolith-adoption.ps1",
     "scripts/validate-vertical-slice-eventing-adoption.ps1",
-    "scripts/validate-microservice-multi-transport-adoption.ps1"
+    "scripts/validate-microservice-multi-transport-adoption.ps1",
+    "scripts/validate-saas-tenant-governance-audit-adoption.ps1"
   ],
   "sourceDocs": [
     "docs/getting-started.md",
@@ -19,6 +20,9 @@
     "docs/components/cli.md",
     "docs/components/aspnetcore-grpc.md",
     "docs/components/aspnetcore-jsonrpc.md",
+    "docs/components/audit.md",
+    "docs/components/multi-tenancy-governance.md",
+    "docs/components/multi-tenancy-governance-aspnetcore.md",
     "docs/components/observability-http-dependencies.md",
     "docs/engine-completion-scorecard.md",
     "docs/release-checklist.md"
@@ -468,13 +472,20 @@
       "id": "saas-tenant-governance-audit",
       "title": "SaaS tenant governance, invitation delivery, and audit",
       "appShape": "modular-monolith",
-      "status": "planned",
-      "proofLevel": "contract-defined",
-      "primaryValidationPath": "scripts/validate-out-of-tree-package-adoption.ps1",
+      "status": "execution-report-ready",
+      "proofLevel": "executable-smoke",
+      "primaryValidationPath": "scripts/validate-saas-tenant-governance-audit-adoption.ps1",
       "sourceDocs": [
-        "docs/components/multi-tenancy-governance.md",
+        "docs/getting-started.md",
+        "docs/app-models.md",
         "docs/operations.md",
-        "docs/package-publishing.md"
+        "docs/components/cli.md",
+        "docs/components/audit.md",
+        "docs/components/aspnetcore-grpc.md",
+        "docs/components/aspnetcore-jsonrpc.md",
+        "docs/components/multi-tenancy-governance.md",
+        "docs/components/multi-tenancy-governance-aspnetcore.md",
+        "docs/components/observability-http-dependencies.md"
       ],
       "qualityDimensions": [
         "Security",
@@ -484,26 +495,96 @@
         "Usability"
       ],
       "requiredEngineCapabilities": [
-        "tenant membership governance",
+        "blueprint-driven generated SaaS modular monolith",
+        "REST, JSON-RPC, and gRPC transport proof",
+        "tenant administration workflow",
         "invitation delivery dispatch",
-        "delivery status reconciliation",
-        "package provenance",
-        "audit runtime proofs"
+        "delivery status reconciliation and observation",
+        "audit recording and audit-store runtime truth",
+        "HTTP dependency-health companion proof",
+        "runtime snapshot and technology-surface truth"
       ],
       "proofTargets": [
         {
+          "kind": "runtime-probe",
+          "reference": "/health/ready"
+        },
+        {
+          "kind": "business-endpoint",
+          "reference": "/api/v1/platform/status"
+        },
+        {
+          "kind": "business-endpoint",
+          "reference": "/json-rpc/platform"
+        },
+        {
+          "kind": "business-endpoint",
+          "reference": "gRPC DiscoveryService.SayHello via /grpc"
+        },
+        {
+          "kind": "operator-action",
+          "reference": "/engine/tenant-administration/commands"
+        },
+        {
+          "kind": "operator-action",
+          "reference": "/engine/tenant-invitations/delivery-dispatches"
+        },
+        {
+          "kind": "operator-ingress",
+          "reference": "/engine/tenant-invitations/delivery-status"
+        },
+        {
+          "kind": "operator-read",
+          "reference": "/engine/tenant-invitations/delivery-status/observations"
+        },
+        {
+          "kind": "business-endpoint",
+          "reference": "/api/tenants/{tenantId}/audit-proof"
+        },
+        {
           "kind": "operator-surface",
-          "reference": "/engine/technology-surfaces"
+          "reference": "/engine/audit-stores"
+        },
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/technology-surfaces/multi-tenancy"
+        },
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/dependencies"
+        },
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/transports"
         },
         {
           "kind": "operator-surface",
           "reference": "/engine/snapshot"
         },
         {
-          "kind": "release-evidence",
-          "reference": "SupplyChainEvidence"
+          "kind": "rest-docs",
+          "reference": "/scalar"
         }
-      ]
+      ],
+      "executionReport": {
+        "schemaVersion": "1.0.0",
+        "defaultPath": "artifacts/adoption-smoke/saas-tenant-governance-audit.json",
+        "statusValues": [
+          "passed",
+          "failed"
+        ],
+        "requiredFields": [
+          "$schemaVersion",
+          "ScenarioId",
+          "Status",
+          "StartedAtUtc",
+          "CompletedAtUtc",
+          "DurationMilliseconds",
+          "Assertions",
+          "RuntimeProbes",
+          "Paths"
+        ]
+      }
     }
   ],
   "referenceModuleProject": "samples/Cephalon.ReferenceModule.Operations/Cephalon.ReferenceModule.Operations.csproj",

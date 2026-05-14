@@ -74,6 +74,18 @@ The script writes `artifacts/adoption-smoke/microservice-multi-transport-adoptio
 
 See `docs/getting-started.md`, `docs/app-models.md`, `docs/components/aspnetcore-jsonrpc.md`, `docs/components/aspnetcore-grpc.md`, and `docs/components/observability-http-dependencies.md` for the corresponding transport, runtime truth, and dependency-health guidance.
 
+## SaaS tenant governance and audit adoption smoke
+
+For a repo-native external-adoption replay that publishes a temporary package feed, installs `Cephalon.Cli`, scaffolds a modular-monolith tenant host with `MultiTenancy`, `RestApi`, `JsonRpc`, and `Grpc`, wires `Cephalon.MultiTenancy.Governance`, `Cephalon.MultiTenancy.Governance.AspNetCore`, `Cephalon.Audit`, and HTTP dependency-health companions from the generated host, runs the ASP.NET Core host over HTTP/1.1 and HTTP/2, issues a tenant-administration invitation command, dispatches the invitation through a smoke sender, reconciles and reads delivery-status observations, records a business audit event, calls REST, JSON-RPC, and gRPC endpoints, and probes `/engine/tenant-administration/commands`, `/engine/tenant-invitations/delivery-dispatches`, `/engine/tenant-invitations/delivery-status`, `/engine/tenant-invitations/delivery-status/observations`, `/engine/audit-stores`, `/engine/technology-surfaces/multi-tenancy`, `/engine/dependencies`, `/engine/transports`, `/engine/snapshot`, and `/scalar`, run:
+
+```powershell
+pwsh ./scripts/validate-saas-tenant-governance-audit-adoption.ps1
+```
+
+The script writes `artifacts/adoption-smoke/saas-tenant-governance-audit.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The adoption-smoke manifest carries this as the `saas-tenant-governance-audit` golden use case so scorecard and doctor readback can distinguish executable tenant-governance, delivery-observation, audit, multi-transport, and dependency-health proof from prose-only SaaS confidence.
+
+See `docs/getting-started.md`, `docs/app-models.md`, `docs/components/audit.md`, `docs/components/multi-tenancy-governance.md`, `docs/components/multi-tenancy-governance-aspnetcore.md`, `docs/components/aspnetcore-jsonrpc.md`, `docs/components/aspnetcore-grpc.md`, and `docs/components/observability-http-dependencies.md` for the corresponding runtime, audit, transport, and operator-surface guidance.
+
 ## Out-of-tree package parity smoke
 
 For a repo-native external-adoption replay that publishes a temporary package feed with the generated app package closure including `Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`, installs `Cephalon.Cli`, scaffolds a fresh app outside the repository, packs and stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/api/operations/status`, `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot`, run:
@@ -82,7 +94,7 @@ For a repo-native external-adoption replay that publishes a temporary package fe
 pwsh ./scripts/validate-out-of-tree-package-adoption.ps1
 ```
 
-The script writes `artifacts/adoption-smoke/out-of-tree-package-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The release-readiness scorecard validates the same replay path, execution-report contract, and golden use-case map through `scripts/adoption-smoke-support.json` and emits it as `AdoptionSmokeEvidence` in the generated scorecard artifact. Keep that manifest aligned whenever the generated-app foundation, template-pack parity, modular-monolith REST/Worker/data, vertical-slice Eventing/outbox, microservice multi-transport, or staged-package smoke path adds or removes script phases, staged packages, runtime probes, report fields, or planned real-app adoption lanes.
+The script writes `artifacts/adoption-smoke/out-of-tree-package-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The release-readiness scorecard validates the same replay path, execution-report contract, and golden use-case map through `scripts/adoption-smoke-support.json` and emits it as `AdoptionSmokeEvidence` in the generated scorecard artifact. Keep that manifest aligned whenever the generated-app foundation, template-pack parity, modular-monolith REST/Worker/data, vertical-slice Eventing/outbox, microservice multi-transport, SaaS tenant governance/audit, or staged-package smoke path adds or removes script phases, staged packages, runtime probes, report fields, or planned real-app adoption lanes.
 
 See `docs/external-package-lifecycle.md` for the corresponding stage, trust, and inspect guidance.
 
