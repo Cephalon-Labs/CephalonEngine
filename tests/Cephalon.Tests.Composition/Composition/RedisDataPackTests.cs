@@ -280,7 +280,9 @@ public sealed class RedisDataPackTests
 
         using var provider = services.BuildServiceProvider();
         var eventStore = provider.GetRequiredService<IEventStore>();
+        var snapshotStore = provider.GetRequiredService<ISnapshotStore>();
         Assert.NotNull(eventStore);
+        Assert.NotNull(snapshotStore);
         Assert.IsType<RedisEventStore>(eventStore);
     }
 

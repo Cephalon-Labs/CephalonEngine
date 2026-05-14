@@ -23,7 +23,10 @@ internal sealed class RedisEventStoreContributor(
                     ["keyPrefix"] = keyPrefix,
                     ["configurationConfigured"] = string.IsNullOrWhiteSpace(configuration) ? "false" : "true",
                     ["configurationProjection"] = "redacted",
-                    ["secretProjection"] = "redacted"
+                    ["secretProjection"] = "redacted",
+                    ["snapshotKeyPrefix"] = $"{keyPrefix}snapshot:",
+                    ["snapshotStorage"] = "Redis Hash latest-snapshot",
+                    ["snapshotLifecycle"] = "provider-durable"
                 })
         ];
     }

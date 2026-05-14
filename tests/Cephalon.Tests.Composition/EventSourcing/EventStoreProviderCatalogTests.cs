@@ -121,7 +121,7 @@ public sealed class EventStoreProviderCatalogTests
         Assert.Equal("true", summary.Metadata["enableInMemorySnapshotStore"]);
         Assert.Equal("true", summary.Metadata["enableReplayWorker"]);
         Assert.Equal("provider-durable", summary.Metadata["snapshotLifecycle"]);
-        Assert.Equal("entity-framework,mongodb", summary.Metadata["providerDurableSnapshotProviders"]);
+        Assert.Equal("entity-framework,mongodb,redis", summary.Metadata["providerDurableSnapshotProviders"]);
         Assert.Equal("on-demand-domain-event-projections", summary.Metadata["projectionRebuild"]);
         Assert.Equal("not-claimed", summary.Metadata["hostedBackgroundRunner"]);
 
@@ -131,7 +131,7 @@ public sealed class EventStoreProviderCatalogTests
         Assert.Equal("provider-durable", replayWorker.Metadata["snapshotAssistedReplay"]);
         Assert.Equal("not-claimed", replayWorker.Metadata["hostedBackgroundRunner"]);
         Assert.Equal("claimed", replayWorker.Metadata["providerDurableSnapshots"]);
-        Assert.Equal("entity-framework,mongodb", replayWorker.Metadata["providerDurableSnapshotProviders"]);
+        Assert.Equal("entity-framework,mongodb,redis", replayWorker.Metadata["providerDurableSnapshotProviders"]);
 
         foreach (var expectedProvider in ExpectedProviders)
         {
@@ -157,6 +157,13 @@ public sealed class EventStoreProviderCatalogTests
             provider == "mongodb");
         Assert.Equal("provider-durable", mongoDbEntry.Metadata["provider.snapshotLifecycle"]);
         Assert.Equal("order_events_snapshots", mongoDbEntry.Metadata["provider.snapshotStorage"]);
+
+        var redisEntry = Assert.Single(surface.Entries, entry =>
+            entry.Metadata.TryGetValue("provider", out var provider) &&
+            provider == "redis");
+        Assert.Equal("provider-durable", redisEntry.Metadata["provider.snapshotLifecycle"]);
+        Assert.Equal("Redis Hash latest-snapshot", redisEntry.Metadata["provider.snapshotStorage"]);
+        Assert.Equal("orders:snapshot:", redisEntry.Metadata["provider.snapshotKeyPrefix"]);
     }
 
     private static bool ContainsSecret(string value)

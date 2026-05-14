@@ -1,7 +1,7 @@
 {
   "$schemaVersion": "1.0.0",
   "status": "expanded-live-provider-evidence",
-  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing, MongoDB data, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data providers have live proof lanes with pre-provisioned or disposable Testcontainers runtime modes; SMTP invitation delivery has a live relay handoff proof lane; CDC database providers have live proof lanes; observability dependency-health providers now have deterministic managed-probe live runtime proof across all eighteen provider packs. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
+  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing including provider-durable snapshot replay, MongoDB data, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data providers have live proof lanes with pre-provisioned or disposable Testcontainers runtime modes; SMTP invitation delivery has a live relay handoff proof lane; CDC database providers have live proof lanes; observability dependency-health providers now have deterministic managed-probe live runtime proof across all eighteen provider packs. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
   "sourceDocs": [
     "docs/engine-completion-scorecard.md",
     "docs/release-checklist.md",
@@ -41,6 +41,10 @@
         "redis-outbox",
         "redis-inbox",
         "redis-event-store",
+        "ISnapshotStore",
+        "IEventStreamReplayWorker",
+        "event-sourcing-managed-replay-worker",
+        "provider-durable-snapshot",
         "outbox-producers",
         "inbox-stores",
         "event-sourcing"

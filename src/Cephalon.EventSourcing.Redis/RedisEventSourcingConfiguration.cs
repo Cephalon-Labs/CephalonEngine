@@ -13,4 +13,7 @@ public static class RedisEventSourcingConfiguration
     /// <returns>The fully qualified Redis key for the stream (e.g. <c>"cephalon:stream:orders-42"</c>).</returns>
     public static string StreamKey(string keyPrefix, string streamId) =>
         $"{keyPrefix}stream:{streamId}";
+
+    internal static string SnapshotKey(string keyPrefix, string streamId, string stateType) =>
+        $"{keyPrefix}snapshot:{streamId}:{stateType}";
 }

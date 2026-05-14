@@ -22,7 +22,7 @@ AfterAll {
 }
 
 Describe "run-provider-live-testcontainers.ps1 provider matrix" {
-    It "tracks the eight Docker-backed provider live proof lanes" {
+    It "tracks the nine Docker-backed provider live proof lanes" {
         $matrix = Get-ProviderLiveTestMatrix
 
         $matrix.Keys | Should -Be @(
@@ -33,6 +33,7 @@ Describe "run-provider-live-testcontainers.ps1 provider matrix" {
             "Neo4j",
             "OpenSearch",
             "Qdrant",
+            "Redis",
             "Smtp"
         )
 
@@ -43,6 +44,7 @@ Describe "run-provider-live-testcontainers.ps1 provider matrix" {
         $matrix.Neo4j.FilterToken | Should -Be "Neo4jProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
         $matrix.OpenSearch.FilterToken | Should -Be "OpenSearchProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
         $matrix.Qdrant.FilterToken | Should -Be "QdrantProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
+        $matrix.Redis.FilterToken | Should -Be "RedisProvider_StagesOutboxInboxDispatchAndEventStreamAgainstLiveRedis"
         $matrix.Smtp.FilterToken | Should -Be "SmtpDelivery_DispatchesInvitationThroughLiveRelay"
     }
 
@@ -57,6 +59,7 @@ Describe "run-provider-live-testcontainers.ps1 provider matrix" {
             "Neo4j",
             "OpenSearch",
             "Qdrant",
+            "Redis",
             "Smtp"
         )
     }
