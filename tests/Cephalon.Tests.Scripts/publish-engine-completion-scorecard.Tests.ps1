@@ -269,7 +269,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
         $json.EvidenceSources.Count | Should -Be 14
-        $json.EvidenceSourceReferences.Count | Should -Be 35
+        $json.EvidenceSourceReferences.Count | Should -Be 36
         $json.PlatformGates.Count | Should -Be 12
         $json.QualityDimensions.Count | Should -Be 12
         $json.PackageFamilies.Count | Should -Be 9
@@ -305,8 +305,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
         $json.Summary.AdoptionSmokeExecutionReportRequiredFieldCount | Should -Be 9
         $json.Summary.AdoptionSmokeGoldenUseCaseCount | Should -Be 7
-        $json.Summary.AdoptionSmokeGoldenUseCaseExecutionReadyCount | Should -Be 3
-        $json.Summary.AdoptionSmokeGoldenUseCaseExecutionReportCount | Should -Be 3
+        $json.Summary.AdoptionSmokeGoldenUseCaseExecutionReadyCount | Should -Be 4
+        $json.Summary.AdoptionSmokeGoldenUseCaseExecutionReportCount | Should -Be 4
         $json.Summary.ProviderIntegrationEvidenceRowCount | Should -Be 33
         $json.Summary.ProviderIntegrationLiveProofCount | Should -Be 33
         $json.Summary.ProviderIntegrationCompositionOnlyCount | Should -Be 0
@@ -354,7 +354,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.PublicApiAdditiveEntryCount | Should -Be 0
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
         $json.Summary.EvidenceSourceCount | Should -Be 14
-        $json.Summary.EvidenceSourceReferenceCount | Should -Be 35
+        $json.Summary.EvidenceSourceReferenceCount | Should -Be 36
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
         $json.Summary.PlatformStatusCounts.partial | Should -Be 8
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
@@ -443,12 +443,13 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Data.MySql.SciSharpReplication"
         $json.DeploymentModeEvidence.TransitiveAuditRows.PackagePattern | Should -Contain "Newtonsoft.Json"
 
-        $json.AdoptionSmokeEvidence.ManifestSchemaVersion | Should -Be "1.4.0"
+        $json.AdoptionSmokeEvidence.ManifestSchemaVersion | Should -Be "1.5.0"
         $json.AdoptionSmokeEvidence.ScenarioId | Should -Be "out-of-tree-generated-app-package-stage"
         $json.AdoptionSmokeEvidence.Status | Should -Be "execution-report-ready"
         $json.AdoptionSmokeEvidence.ValidationScript | Should -Be "scripts/validate-out-of-tree-package-adoption.ps1"
         $json.AdoptionSmokeEvidence.ReferenceModuleProject | Should -Be "samples/Cephalon.ReferenceModule.Operations/Cephalon.ReferenceModule.Operations.csproj"
         $json.AdoptionSmokeEvidence.SupportingScripts | Should -Contain "scripts/validate-generated-app-adoption.ps1"
+        $json.AdoptionSmokeEvidence.SupportingScripts | Should -Contain "scripts/validate-modular-monolith-adoption.ps1"
         $json.AdoptionSmokeEvidence.SourceDocuments | Should -Contain "docs/package-publishing.md"
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/engine/packages"
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/engine/trust-policy"
@@ -472,6 +473,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.AdoptionSmokeEvidence.GoldenUseCases.PrimaryValidationPath | Should -Contain "scripts/validate-out-of-tree-package-adoption.ps1"
         $json.AdoptionSmokeEvidence.GoldenUseCases.PrimaryValidationPath | Should -Contain "scripts/validate-generated-app-adoption.ps1"
         $json.AdoptionSmokeEvidence.GoldenUseCases.PrimaryValidationPath | Should -Contain "scripts/validate-template-pack-adoption.ps1"
+        $json.AdoptionSmokeEvidence.GoldenUseCases.PrimaryValidationPath | Should -Contain "scripts/validate-modular-monolith-adoption.ps1"
         $goldenUseCaseExecutionReportPaths = @(
             $json.AdoptionSmokeEvidence.GoldenUseCases |
                 Where-Object { $null -ne $_.ExecutionReport } |
@@ -480,6 +482,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $goldenUseCaseExecutionReportPaths | Should -Contain "artifacts/adoption-smoke/out-of-tree-package-adoption.json"
         $goldenUseCaseExecutionReportPaths | Should -Contain "artifacts/adoption-smoke/generated-app-adoption.json"
         $goldenUseCaseExecutionReportPaths | Should -Contain "artifacts/adoption-smoke/template-pack-adoption.json"
+        $goldenUseCaseExecutionReportPaths | Should -Contain "artifacts/adoption-smoke/modular-monolith-adoption.json"
 
         $json.TestCoverageEvidence.Roadmap | Should -Be "docs/test-coverage-roadmap.md"
         $json.TestCoverageEvidence.LayeredProjectCount | Should -Be 8
@@ -840,10 +843,11 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Adoption Smoke Evidence"
         $markdown | Should -Match "out-of-tree-generated-app-package-stage"
         $markdown | Should -Match "Adoption smoke golden use cases: 7"
-        $markdown | Should -Match "Adoption smoke golden use-case execution reports: 3"
+        $markdown | Should -Match "Adoption smoke golden use-case execution reports: 4"
         $markdown | Should -Match "out-of-tree-package-adoption"
         $markdown | Should -Match "generated-app-runtime-foundation"
         $markdown | Should -Match "template-pack-dotnet-new-parity"
+        $markdown | Should -Match "modular-monolith-rest-worker-data"
         $markdown | Should -Match "Provider Integration Evidence"
         $markdown | Should -Match "Provider integration evidence rows: 33"
         $markdown | Should -Match "live proofs: 33"
@@ -991,6 +995,7 @@ artifacts/adoption-smoke/out-of-tree-package-adoption.json
 
         Set-Content -LiteralPath (Join-Path $scriptsRoot "validate-generated-app-adoption.ps1") -Value "# generated app replay" -Encoding UTF8
         Set-Content -LiteralPath (Join-Path $scriptsRoot "validate-template-pack-adoption.ps1") -Value "# template pack replay" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $scriptsRoot "validate-modular-monolith-adoption.ps1") -Value "# modular monolith replay" -Encoding UTF8
         Set-Content -LiteralPath (Join-Path $sampleRoot "Cephalon.ReferenceModule.Operations.csproj") -Value "<Project />" -Encoding UTF8
         foreach ($docName in @("getting-started.md", "operations.md", "external-package-lifecycle.md", "engine-completion-scorecard.md", "release-checklist.md")) {
             Set-Content -LiteralPath (Join-Path $docsRoot $docName) -Value "# $docName" -Encoding UTF8
@@ -998,13 +1003,14 @@ artifacts/adoption-smoke/out-of-tree-package-adoption.json
 
         $manifestPath = Join-Path $scriptsRoot "adoption-smoke-support.json"
         @{
-            '$schemaVersion' = "1.4.0"
+            '$schemaVersion' = "1.5.0"
             scenarioId = "fixture"
             status = "execution-report-ready"
             validationScript = $replayScriptPath
             supportingScripts = @(
                 (Join-Path $scriptsRoot "validate-generated-app-adoption.ps1"),
-                (Join-Path $scriptsRoot "validate-template-pack-adoption.ps1")
+                (Join-Path $scriptsRoot "validate-template-pack-adoption.ps1"),
+                (Join-Path $scriptsRoot "validate-modular-monolith-adoption.ps1")
             )
             sourceDocs = @(
                 (Join-Path $docsRoot "getting-started.md"),

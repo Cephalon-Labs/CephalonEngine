@@ -82,6 +82,37 @@ Current focus:
 - treat `docs/reference/reference-manifest.json` as the generated API bundle map: required browser/index/manifest assets must exist, assembly page files must be manifest-owned, namespace/type/member anchor ids must resolve in those pages, and orphan generated Markdown pages must fail Tooling coverage before hosted reference docs can drift
 - treat `docs/reference/browse.html` as the hosted reference-doc browser entry point: local `href` and `src` references must resolve inside `docs/reference` to existing generated bundle files so CSS, JavaScript, index links, and manifest links cannot drift after regeneration
 
+### ENG-700 Modular-monolith REST/Worker/data adoption report
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: release-readiness / adoption smoke / app model
+Quality dimensions: Usability, Reliability, Maintainability, Compatibility, Data Integrity, Availability, Auditability
+GitHub issue: #1374
+
+Why:
+
+- the modular-monolith REST/Worker/data golden use case was planned, but it did not yet have a replayable execution report that proved the richer `CQRS` + `Outbox` + `RestApi` app-model path
+- the adoption lane should prove both the ASP.NET Core runtime surface and the generic-host Worker adapter from the same generated configuration so the engine stays host-agnostic in practice, not just in prose
+- scorecard, release validation, and `cephalon doctor --scorecard` should count the modular-monolith lane as execution-ready only after it declares the same report contract as the other executable golden use cases
+
+Delivered:
+
+- added `scripts/validate-modular-monolith-adoption.ps1` to publish a temporary package feed including `Cephalon.Data`, `Cephalon.Ids.Sfid`, and `Cephalon.Worker`, install `Cephalon.Cli`, scaffold `CQRS` plus `Outbox` over `RestApi`, validate the generated data/Sfid package and split-configuration baseline, run the ASP.NET Core host, probe `/health/ready`, `/engine`, `/engine/snapshot`, `/engine/dependencies`, `/engine/runtime-story`, and `/scalar`, then build and run a generic-host Worker probe from the same generated configuration
+- `scripts/adoption-smoke-support.json` is schema `1.5.0` and promotes `modular-monolith-rest-worker-data` to `execution-report-ready` with `artifacts/adoption-smoke/modular-monolith-adoption.json` as the default report
+- scorecard and doctor readback stay on scorecard schema `1.25.0` while adoption counts move to seven total golden use cases, four execution-ready lanes, and four per-use-case execution reports
+- README, getting-started, operations, CLI component/package docs, template-pack package docs, scorecard docs, roadmap, architecture follow-ups, backlog, and project memory now name the modular-monolith report path and readback contract
+
+Validation:
+
+- PowerShell AST parse for `scripts/validate-modular-monolith-adoption.ps1`
+- `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/publish-engine-completion-scorecard.Tests.ps1 -Output Detailed`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj -c Debug --filter "FullyQualifiedName~RunAsyncDoctorReportsEngineCompletionScorecardSummary|FullyQualifiedName~CompletionScorecardDocsStayAlignedWithDoctorSummary|FullyQualifiedName~AdoptionGuideAndPackageReadmesStayAlignedWithDoctorPath|FullyQualifiedName~TemplatePackAdoptionAssetsStayAligned|FullyQualifiedName~OutOfTreePackageAdoptionAssetsStayAligned|FullyQualifiedName~GeneratedAppAdoptionAssetsStayAligned|FullyQualifiedName~ModularMonolithAdoptionAssetsStayAligned" --logger "console;verbosity=minimal"`
+- `pwsh ./scripts/validate-modular-monolith-adoption.ps1 -Configuration Release -TimeoutSeconds 180 -ReportPath <temp-json>`
+- `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/validate-release.Tests.ps1 -Output Detailed`
+- `git diff --check`
+
 ### ENG-699 Template-pack adoption report readback
 
 Status: done

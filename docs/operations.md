@@ -38,6 +38,18 @@ The script writes `artifacts/adoption-smoke/template-pack-adoption.json` by defa
 
 See `docs/getting-started.md` for the corresponding template-pack install, doctor, scaffold, and first-run guidance.
 
+## Modular-monolith REST/Worker/data adoption smoke
+
+For a repo-native external-adoption replay that publishes a temporary package feed, installs `Cephalon.Cli`, scaffolds a modular-monolith REST host with the `CQRS` and `Outbox` data patterns, validates the generated data/Sfid package and split-configuration baseline, runs the ASP.NET Core host, probes `/health/ready`, `/engine`, `/engine/snapshot`, `/engine/dependencies`, `/engine/runtime-story`, and `/scalar`, then builds and runs a generic-host Worker probe from the same generated configuration, run:
+
+```powershell
+pwsh ./scripts/validate-modular-monolith-adoption.ps1
+```
+
+The script writes `artifacts/adoption-smoke/modular-monolith-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The adoption-smoke manifest carries this as the `modular-monolith-rest-worker-data` golden use case so scorecard and doctor readback can distinguish a REST + Worker + data-foundation proof from the basic generated host, template-pack, and staged-package proofs.
+
+See `docs/getting-started.md` and `docs/app-models.md` for the corresponding blueprint, pattern, split-configuration, REST operator-surface, and Worker-host guidance.
+
 ## Out-of-tree package parity smoke
 
 For a repo-native external-adoption replay that publishes a temporary package feed with the generated app package closure including `Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`, installs `Cephalon.Cli`, scaffolds a fresh app outside the repository, packs and stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/api/operations/status`, `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot`, run:
@@ -46,7 +58,7 @@ For a repo-native external-adoption replay that publishes a temporary package fe
 pwsh ./scripts/validate-out-of-tree-package-adoption.ps1
 ```
 
-The script writes `artifacts/adoption-smoke/out-of-tree-package-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The release-readiness scorecard validates the same replay path, execution-report contract, and golden use-case map through `scripts/adoption-smoke-support.json` and emits it as `AdoptionSmokeEvidence` in the generated scorecard artifact. Keep that manifest aligned whenever the generated-app foundation, template-pack parity, or staged-package smoke path adds or removes script phases, staged packages, runtime probes, report fields, or planned real-app adoption lanes.
+The script writes `artifacts/adoption-smoke/out-of-tree-package-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The release-readiness scorecard validates the same replay path, execution-report contract, and golden use-case map through `scripts/adoption-smoke-support.json` and emits it as `AdoptionSmokeEvidence` in the generated scorecard artifact. Keep that manifest aligned whenever the generated-app foundation, template-pack parity, modular-monolith REST/Worker/data, or staged-package smoke path adds or removes script phases, staged packages, runtime probes, report fields, or planned real-app adoption lanes.
 
 See `docs/external-package-lifecycle.md` for the corresponding stage, trust, and inspect guidance.
 
