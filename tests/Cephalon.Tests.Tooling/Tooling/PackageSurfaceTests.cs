@@ -1123,6 +1123,7 @@ public sealed class PackageSurfaceTests
         AssertExportedTypes(
             typeof(global::Cephalon.EventSourcing.EntityFramework.Registration.EntityFrameworkEventSourcingEngineBuilderExtensions).Assembly,
             typeof(global::Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry),
+            typeof(global::Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSnapshotEntry),
             typeof(global::Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSourcingConfiguration),
             typeof(global::Cephalon.EventSourcing.EntityFramework.Hosting.EntityFrameworkEventSourcingServiceCollectionExtensions),
             typeof(global::Cephalon.EventSourcing.EntityFramework.IEntityFrameworkEventContext),

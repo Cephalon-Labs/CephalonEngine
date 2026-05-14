@@ -13,9 +13,9 @@
 - a merged `IEventTypeRegistry` that maps stable persisted event names to serializer/deserializer descriptors
 - aggregate hydration through `AggregateHydrator<TAggregate, TState>` on top of `IEventStore`
 - an on-demand managed replay worker through `IEventStreamReplayWorker`
-- process-local snapshot lifecycle through the existing `ISnapshotStore` contract when `EnableSnapshots` and `EnableInMemorySnapshotStore` are enabled
+- snapshot lifecycle through the existing `ISnapshotStore` contract: process-local by default, or provider-durable when an active provider such as Entity Framework registers a durable store
 - projection rebuild over registered `IProjection<IDomainEvent>` services during managed replay
-- a truthful `event-sourcing` runtime surface that reports active provider/store count, active provider ids, default provider, snapshot/replay toggle state, the `event-sourcing-managed-replay-worker` entry, latest replay evidence, explicit non-claims, and one sanitized runtime entry per contributed provider store
+- a truthful `event-sourcing` runtime surface that reports active provider/store count, active provider ids, default provider, snapshot/replay toggle state, provider-durable snapshot providers, the `event-sourcing-managed-replay-worker` entry, latest replay evidence, explicit non-claims, and one sanitized runtime entry per contributed provider store
 
 ## Main surfaces
 
@@ -42,13 +42,13 @@ The host-agnostic contracts live under `Cephalon.Abstractions.EventSourcing`.
 - `IDomainEvent` and `DomainEvent` define the minimum stream identity, version, and occurrence timestamp for persisted events
 - `IEventStore` defines append, stream read, and current-version lookup
 - `IAggregate<TState>` defines deterministic state transitions during replay
-- `ISnapshotStore` is the snapshot contract used by the managed replay worker; the core pack ships a process-local fallback store, while provider-durable snapshot stores remain provider-specific work
+- `ISnapshotStore` is the snapshot contract used by the managed replay worker; the core pack ships a process-local fallback store, and provider packs can replace it with provider-durable persistence without changing aggregate or replay code
 - `EventStreamDescriptor`, `IEventStoreContributor`, `IEventStoreRegistry`, and `IEventStoreCatalog` keep active event-stream answers introspectable
 - `EventTypeDescriptor`, `IEventTypeContributor`, `IEventTypeRegistry`, and `EventTypeRegistry` keep event payload names, aliases, and serializers explicit so providers do not resolve persisted strings through `Type.GetType(...)`
 
 ## Managed replay proof
 
-`ENG-704` adds the first Cephalon-managed EventSourcing execution proof without promoting provider packs beyond append/read truth.
+`ENG-704` adds the first Cephalon-managed EventSourcing execution proof without promoting provider packs beyond append/read truth. `ENG-708` keeps the same replay contract but proves the first provider-durable snapshot path through Entity Framework.
 
 ```csharp
 builder.Services.AddCephalonEventSourcing(options =>
@@ -75,7 +75,7 @@ The worker:
 - saves the final aggregate state back through `ISnapshotStore` when `SaveSnapshot` is enabled
 - records `EventStreamReplayReport` evidence for `/engine/technology-surfaces` and `/engine/snapshot`
 
-The default snapshot implementation is deliberately process-local. It proves the lifecycle and keeps low-ceremony hosts useful, but it is not a durable provider snapshot store. Provider packs still need their own snapshot persistence, retention, archival, and replay-runner proof before they can claim provider-level `M2`.
+The default snapshot implementation is deliberately process-local. It proves the lifecycle and keeps low-ceremony hosts useful. When a provider registers a durable `ISnapshotStore`, the same worker starts from that provider snapshot, replays the remaining events, saves the final state back through the provider store, and reports `snapshotLifecycle = provider-durable`, `providerDurableSnapshots = claimed`, and the provider id through the `event-sourcing` runtime surface. Entity Framework is the first provider with that proof; retention, archival, distributed replay, and hosted background replay/projection runners remain future work.
 
 ## Event-type registry
 
@@ -138,7 +138,7 @@ var (state, version) = await hydrator.HydrateAsync(eventStore, streamId, cancell
 
 This baseline intentionally does not claim:
 
-- provider-durable snapshot persistence
+- provider-durable snapshot persistence outside the Entity Framework provider
 - distributed or named projection rebuild orchestration
 - stream archival, retention, or compaction
 - hosted background projection or replay runners

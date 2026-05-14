@@ -128,6 +128,91 @@ string TenantId { get; set; }
 
 Gets or sets the tenant identifier associated with the event when known.
 
+<a id="type-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry"></a>
+
+### `EntityFrameworkEventSnapshotEntry`
+
+Represents one persisted aggregate snapshot row stored by the Entity Framework event-sourcing provider.
+
+#### Declaration
+```csharp
+public sealed class EntityFrameworkEventSnapshotEntry
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-ctor"></a>
+
+##### `EntityFrameworkEventSnapshotEntry`
+
+```csharp
+EntityFrameworkEventSnapshotEntry()
+```
+
+Initializes a new instance of the `EntityFrameworkEventSnapshotEntry` class.
+
+#### Properties
+
+<a id="member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-id"></a>
+
+##### `Id`
+
+```csharp
+long Id { get; set; }
+```
+
+Gets or sets the database-assigned row identifier.
+
+<a id="member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-payload"></a>
+
+##### `Payload`
+
+```csharp
+string Payload { get; set; }
+```
+
+Gets or sets the serialized aggregate state payload.
+
+<a id="member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-savedatutc"></a>
+
+##### `SavedAtUtc`
+
+```csharp
+DateTime SavedAtUtc { get; set; }
+```
+
+Gets or sets the UTC time at which the snapshot was saved.
+
+<a id="member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-statetype"></a>
+
+##### `StateType`
+
+```csharp
+string StateType { get; set; }
+```
+
+Gets or sets the aggregate state type key represented by the snapshot payload.
+
+<a id="member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-streamid"></a>
+
+##### `StreamId`
+
+```csharp
+string StreamId { get; set; }
+```
+
+Gets or sets the stable logical stream identifier represented by the snapshot.
+
+<a id="member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-streamversion"></a>
+
+##### `StreamVersion`
+
+```csharp
+long StreamVersion { get; set; }
+```
+
+Gets or sets the zero-based stream version represented by the snapshot.
+
 <a id="type-cephalon-eventsourcing-entityframework-entityframeworkeventsourcingconfiguration"></a>
 
 ### `EntityFrameworkEventSourcingConfiguration`

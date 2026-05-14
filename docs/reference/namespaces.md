@@ -366,7 +366,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.EventSourcing.EntityFramework`
 
-- [Cephalon.EventSourcing.EntityFramework](cephalon-eventsourcing-entityframework.md#namespace-cephalon-eventsourcing-entityframework): 3 public types [Browse](browse.html?assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework)
+- [Cephalon.EventSourcing.EntityFramework](cephalon-eventsourcing-entityframework.md#namespace-cephalon-eventsourcing-entityframework): 4 public types [Browse](browse.html?assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework)
 
 ## `Cephalon.EventSourcing.EntityFramework.Hosting`
 

@@ -24,5 +24,14 @@ public static class EntityFrameworkEventSourcingConfiguration
         entity.HasIndex(static entry => new { entry.StreamId, entry.StreamVersion }).IsUnique();
         entity.HasIndex(static entry => entry.StreamId);
         entity.HasIndex(static entry => entry.AppendedAtUtc);
+
+        var snapshot = modelBuilder.Entity<EntityFrameworkEventSnapshotEntry>();
+        snapshot.HasKey(static entry => entry.Id);
+        snapshot.Property(static entry => entry.Id).ValueGeneratedOnAdd();
+        snapshot.Property(static entry => entry.StreamId).IsRequired().HasMaxLength(500);
+        snapshot.Property(static entry => entry.StateType).IsRequired().HasMaxLength(1000);
+        snapshot.Property(static entry => entry.Payload).IsRequired();
+        snapshot.HasIndex(static entry => new { entry.StreamId, entry.StateType }).IsUnique();
+        snapshot.HasIndex(static entry => entry.SavedAtUtc);
     }
 }

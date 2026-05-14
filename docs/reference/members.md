@@ -9492,6 +9492,9 @@ Browse the published API surface by public member.
 - [EntityFrameworkEventEntry](cephalon-eventsourcing-entityframework.md#member-m-cephalon-eventsourcing-entityframework-entityframeworkevententry-ctor): `Constructors` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=EntityFrameworkEventEntry&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
   - Initializes a new instance of the `EntityFrameworkEventEntry` class.
   - `EntityFrameworkEventEntry()`
+- [EntityFrameworkEventSnapshotEntry](cephalon-eventsourcing-entityframework.md#member-m-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-ctor): `Constructors` on `EntityFrameworkEventSnapshotEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=EntityFrameworkEventSnapshotEntry&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Initializes a new instance of the `EntityFrameworkEventSnapshotEntry` class.
+  - `EntityFrameworkEventSnapshotEntry()`
 - [EntityFrameworkInboxEntry](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-modeling-entityframeworkinboxentry-ctor): `Constructors` on `EntityFrameworkInboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=EntityFrameworkInboxEntry&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Initializes a new instance of the `EntityFrameworkInboxEntry` class.
   - `EntityFrameworkInboxEntry()`
@@ -14143,6 +14146,9 @@ Browse the published API surface by public member.
   - Gets the stable node identifier.
   - `string Id { get; }`
 - [Id](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-id): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=Id&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the database-assigned row identifier.
+  - `long Id { get; set; }`
+- [Id](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-id): `Properties` on `EntityFrameworkEventSnapshotEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=Id&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
   - Gets or sets the database-assigned row identifier.
   - `long Id { get; set; }`
 - [Id](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkinboxentry-id): `Properties` on `EntityFrameworkInboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Id&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
@@ -21332,6 +21338,9 @@ Browse the published API surface by public member.
 - [Payload](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-payload): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=Payload&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
   - Gets or sets the serialized event payload.
   - `string Payload { get; set; }`
+- [Payload](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-payload): `Properties` on `EntityFrameworkEventSnapshotEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=Payload&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the serialized aggregate state payload.
+  - `string Payload { get; set; }`
 - [Payload](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkinboxentry-payload): `Properties` on `EntityFrameworkInboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Payload&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the serialized payload that was received.
   - `string Payload { get; set; }`
@@ -26481,6 +26490,9 @@ Browse the published API surface by public member.
 - [Satisfied](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-satisfied): `Fields` on `CellTrafficAutomationDependencyStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Satisfied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The selected materializer depends on control-plane resources that are currently available.
   - `const string Satisfied`
+- [SavedAtUtc](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-savedatutc): `Properties` on `EntityFrameworkEventSnapshotEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=SavedAtUtc&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the UTC time at which the snapshot was saved.
+  - `DateTime SavedAtUtc { get; set; }`
 - [SaveSnapshot](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayrequest-savesnapshot): `Properties` on `EventStreamReplayRequest` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=SaveSnapshot&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Gets a value indicating whether the replay should save the final aggregate state as a new snapshot.
   - `bool SaveSnapshot { get; }`
@@ -28272,6 +28284,9 @@ Browse the published API surface by public member.
 - [StateType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-statetype): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=StateType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the durable workflow replay-state type name.
   - `string StateType { get; }`
+- [StateType](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-statetype): `Properties` on `EntityFrameworkEventSnapshotEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=StateType&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the aggregate state type key represented by the snapshot payload.
+  - `string StateType { get; set; }`
 - [Status](cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-status): `Properties` on `AmazonSesInvitationDeliveryStatusCallbackEventResult` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`) [Browse](browse.html?q=Status&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting&scope=members)
   - Gets the normalized Cephalon delivery status when translated.
   - `string Status { get; }`
@@ -28551,6 +28566,9 @@ Browse the published API surface by public member.
 - [StreamId](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-streamid): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=StreamId&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
   - Gets or sets the stable logical stream identifier.
   - `string StreamId { get; set; }`
+- [StreamId](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-streamid): `Properties` on `EntityFrameworkEventSnapshotEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=StreamId&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the stable logical stream identifier represented by the snapshot.
+  - `string StreamId { get; set; }`
 - [StreamId](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamconcurrencyexception-streamid): `Properties` on `EventStreamConcurrencyException` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the stream identifier that failed the concurrency check.
   - `string StreamId { get; }`
@@ -28577,6 +28595,9 @@ Browse the published API surface by public member.
   - `long StreamVersion { get; set; }`
 - [StreamVersion](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-streamversion): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=StreamVersion&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
   - Gets or sets the zero-based optimistic stream version for the event.
+  - `long StreamVersion { get; set; }`
+- [StreamVersion](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkeventsnapshotentry-streamversion): `Properties` on `EntityFrameworkEventSnapshotEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=StreamVersion&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
+  - Gets or sets the zero-based stream version represented by the snapshot.
   - `long StreamVersion { get; set; }`
 - [StreamVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-idomainevent-streamversion): `Properties` on `IDomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the optimistic stream version assigned to the event.
