@@ -175,6 +175,8 @@ Use when:
 - service boundaries are already clear
 - separate deployment/scale/security boundaries are needed
 
+The executable adoption proof for this shape is `scripts/validate-microservice-multi-transport-adoption.ps1`. It scaffolds a `Microservice` outside the repository with `RestApi`, `JsonRpc`, and `Grpc`, packages the local transport and HTTP dependency-health companions, runs the generated service, calls the generated REST, JSON-RPC, and gRPC business endpoints, and verifies `/engine/transports`, `/engine/snapshot`, `/engine/dependencies`, `/engine/diagnostics`, `/engine/runtime-story`, `/engine/technology-surfaces/json-rpc`, `/engine/technology-surfaces/grpc`, and `/scalar`. This proves a single Cephalon-powered service boundary with multiple transports without turning `Microservice` into a whole distributed suite.
+
 ### 4. `MicroserviceSuite`
 
 A higher-level solution template, not just one app.

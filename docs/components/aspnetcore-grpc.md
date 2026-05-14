@@ -43,6 +43,8 @@ The adapter also registers a gRPC interceptor that applies the configured direct
 
 Direct module resilience faults stay transport-native. Host-enforced timeouts plus `TimeoutException` and optional Polly `TimeoutRejectedException` faults become `DeadlineExceeded`, host-enforced open-circuit rejections plus optional Polly `BrokenCircuitException` faults become `Unavailable`, and full bulkheads become `ResourceExhausted`; all three carry stable Cephalon metadata trailers so callers and operators can distinguish resilience faults from arbitrary handler failures. Unmapped exceptions still flow through ASP.NET Core gRPC's normal `Unknown` behavior.
 
+`scripts/validate-microservice-multi-transport-adoption.ps1` now proves the generated consumer-app path for this adapter. The script packages local NuGet artifacts, scaffolds a `Microservice` app outside the repository with `RestApi`, `JsonRpc`, and `Grpc`, verifies the generated module implements `IGrpcModule`, runs the generated host on an HTTP/2 endpoint, calls `DiscoveryService.SayHello` through `/grpc`, and checks `/engine/transports` plus `/engine/snapshot` so the gRPC transport claim is tied to a real running service.
+
 ## Related docs
 
 - [Architecture](../architecture.md)

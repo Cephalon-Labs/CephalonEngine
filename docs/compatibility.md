@@ -59,6 +59,7 @@ See also: [Engineering standards](engineering-standards.md) is the broader quali
 - `Cephalon.Cli` is the richer generation and docs-publishing shell over the same contracts
 - `Cephalon.TemplatePack` is the lightweight install surface for the same shipped blueprint family and module starter conventions
 - when blueprint, transport, docs-hosting, or package-manifest behavior changes, update all affected surfaces together instead of letting one generator path drift
+- microservice multi-transport generation is now a replayable compatibility contract: `scripts/validate-microservice-multi-transport-adoption.ps1` packages local NuGet artifacts, scaffolds a `Microservice` outside the repository with `RestApi`, `JsonRpc`, and `Grpc`, runs the host over HTTP/1.1 and HTTP/2, and validates the same generated business boundary through REST, JSON-RPC, gRPC, dependency-health, diagnostics, runtime-story, snapshot, and Scalar surfaces. Keep that script, `scripts/adoption-smoke-support.json`, scaffold output, CLI/package docs, component docs, and scorecard readback aligned whenever microservice transport semantics change.
 
 ### Technology-pack execution ownership
 
@@ -158,7 +159,7 @@ Use this checklist whenever compatibility-sensitive behavior changes:
 
 1. If the Cephalon package version changed, did you update CLI defaults, scaffold output, template-pack metadata, starter manifests, and versioned docs examples?
 2. If the target framework changed, did you update project files, starter manifests, template files, samples, and docs examples together?
-3. If blueprint or transport semantics changed, did you update runtime contracts, scaffolding, CLI help/behavior, template starters, and docs together?
+3. If blueprint or transport semantics changed, did you update runtime contracts, scaffolding, CLI help/behavior, template starters, adoption smoke manifests/scripts, and docs together?
 4. If `cephalon.package.json` changed, did you update engine enforcement, scaffold/template output, authoring docs, and operational guidance together?
 5. If reference-doc publishing changed, did you update `Cephalon.ReferenceDocs`, CLI docs commands, scaffolded `ReferenceDocs` config, and `docs/reference-docs.md` together?
 6. If framework-readiness or future-SDK behavior changed, did you update `scripts/deployment-mode-support.json`, `scripts/validate-dotnet-readiness.ps1`, the release-validation workflow, `docs/deployment-mode-support.md`, `docs/dotnet11-readiness.md`, `docs/project-memory.md`, and planning docs together?

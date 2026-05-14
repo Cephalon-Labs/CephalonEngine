@@ -126,6 +126,7 @@ Every shipped source-project component page now carries this badge. Tooling cove
 - [Cephalon.Observability.CassandraDependencies](observability-cassandra-dependencies.md)
 - [Cephalon.Observability.ClickHouseDependencies](observability-clickhouse-dependencies.md)
 - [Cephalon.Observability.ConsulDependencies](observability-consul-dependencies.md)
+- [Cephalon.Observability.DependencyHealth.Core](observability-dependency-health-core.md)
 - [Cephalon.Observability.ElasticsearchDependencies](observability-elasticsearch-dependencies.md)
 - [Cephalon.Observability.HttpDependencies](observability-http-dependencies.md)
 - [Cephalon.Observability.KafkaDependencies](observability-kafka-dependencies.md)

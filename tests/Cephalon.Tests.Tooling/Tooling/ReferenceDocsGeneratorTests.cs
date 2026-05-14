@@ -683,6 +683,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.MultiTenancy.Governance.SendGridDelivery",
                 "Cephalon.MultiTenancy.Governance",
                 "Cephalon.Observability",
+                "Cephalon.Observability.DependencyHealth.Core",
                 "Cephalon.Observability.CassandraDependencies",
                 "Cephalon.Observability.ClickHouseDependencies",
                 "Cephalon.Observability.ConsulDependencies",
@@ -782,6 +783,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-cassandradependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-clickhousedependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-consuldependencies.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-dependencyhealth-core.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-elasticsearchdependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-kafkadependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-memcacheddependencies.md");
@@ -926,6 +928,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.OracleCloud", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.DependencyHealth.Core", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.Kubernetes", StringComparison.Ordinal));

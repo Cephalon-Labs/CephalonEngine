@@ -608,6 +608,10 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.ConsulDependencies](cephalon-observability-consuldependencies.md#namespace-cephalon-observability-consuldependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Hosting)
 
+## `Cephalon.Observability.DependencyHealth.Core.Configuration`
+
+- [Cephalon.Observability.DependencyHealth.Core](cephalon-observability-dependencyhealth-core.md#namespace-cephalon-observability-dependencyhealth-core-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Observability.DependencyHealth.Core&namespace=Cephalon.Observability.DependencyHealth.Core.Configuration)
+
 ## `Cephalon.Observability.DigitalOcean.Configuration`
 
 - [Cephalon.Observability.DigitalOcean](cephalon-observability-digitalocean.md#namespace-cephalon-observability-digitalocean-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration)

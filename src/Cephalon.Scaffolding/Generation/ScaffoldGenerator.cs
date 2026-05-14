@@ -744,6 +744,12 @@ docker compose up --build
             registrationLines.Add("builder.AddGraphQLTransport();");
         }
 
+        if (ShouldGenerateHttpDependencyHealthCompanion(appProfile))
+        {
+            usingLines.Add("using Cephalon.Observability.HttpDependencies.Hosting;");
+            registrationLines.Add("builder.Services.AddCephalonHttpDependencyHealth(builder.Configuration);");
+        }
+
         if (HasRestApiTransport(appProfile))
         {
             usingLines.Add("using Cephalon.Behaviors.Hosting;");
@@ -861,7 +867,7 @@ app.Run();
             new(Path.Combine(projectPath, "Configurations", "AddEngine.Tenancy.json"), BuildHostTenancySettings(appProfile)),
             new(Path.Combine(projectPath, "Configurations", "AddEngine.Audit.json"), BuildHostAuditSettings(appProfile)),
             new(Path.Combine(projectPath, "Configurations", "AddEngine.Messaging.json"), BuildHostMessagingSettings(appProfile)),
-            new(Path.Combine(projectPath, "Configurations", "AddEngine.Observability.json"), BuildHostObservabilitySettings()),
+            new(Path.Combine(projectPath, "Configurations", "AddEngine.Observability.json"), BuildHostObservabilitySettings(appProfile)),
             new(Path.Combine(projectPath, "Configurations", "AddEngine.Localization.json"), BuildHostLocalizationSettings(request)),
             new(
                 Path.Combine(projectPath, "Configurations", "Observability", "Development.json"),
@@ -1016,26 +1022,40 @@ variables, and command-line arguments continue to win the same way developers ex
         });
     }
 
-    private static string BuildHostObservabilitySettings()
+    private static string BuildHostObservabilitySettings(AppProfile appProfile)
     {
+        var observability = new JsonObject
+        {
+            ["LogManifestSummary"] = true,
+            ["LogModuleSummary"] = true,
+            ["LogCapabilitySummary"] = true,
+            ["Telemetry"] = new JsonObject
+            {
+                ["Provider"] = "OpenTelemetry",
+                ["Protocol"] = "otlp/http",
+                ["ExportLogs"] = true,
+                ["ExportMetrics"] = true,
+                ["ExportTraces"] = true
+            }
+        };
+
+        if (ShouldGenerateHttpDependencyHealthCompanion(appProfile))
+        {
+            observability["DependencyHealth"] = new JsonObject
+            {
+                ["Http"] = new JsonObject
+                {
+                    ["RefreshIntervalSeconds"] = 30,
+                    ["Dependencies"] = new JsonArray()
+                }
+            };
+        }
+
         return BuildJsonContents(new JsonObject
         {
             ["Engine"] = new JsonObject
             {
-                ["Observability"] = new JsonObject
-                {
-                    ["LogManifestSummary"] = true,
-                    ["LogModuleSummary"] = true,
-                    ["LogCapabilitySummary"] = true,
-                    ["Telemetry"] = new JsonObject
-                    {
-                        ["Provider"] = "OpenTelemetry",
-                        ["Protocol"] = "otlp/http",
-                        ["ExportLogs"] = true,
-                        ["ExportMetrics"] = true,
-                        ["ExportTraces"] = true
-                    }
-                }
+                ["Observability"] = observability
             }
         });
     }
@@ -1220,6 +1240,11 @@ variables, and command-line arguments continue to win the same way developers ex
         return !string.IsNullOrWhiteSpace(ResolveGeneratedIdGenerator(appProfile));
     }
 
+    private static bool ShouldGenerateHttpDependencyHealthCompanion(AppProfile appProfile)
+    {
+        return string.Equals(appProfile.BlueprintId, "microservice", StringComparison.OrdinalIgnoreCase);
+    }
+
     private static string? ResolveGeneratedIdGenerator(AppProfile appProfile)
     {
         if (!string.IsNullOrWhiteSpace(appProfile.Data.IdGenerator))
@@ -1345,18 +1370,18 @@ public sealed record GreetingContract(string Message, DateTimeOffset CreatedAtUt
         var moduleName = ResolveModuleName(project);
         var moduleTypeName = ResolveModuleTypeName(project);
         var moduleId = ScaffoldRequest.ToSlug(moduleName, "module");
-        var generatedOutboxUsings = BuildGeneratedOutboxUsings(appProfile);
-        var generatedOutboxInterface = BuildGeneratedOutboxInterface(appProfile);
-        var generatedOutboxModuleMembers = BuildGeneratedOutboxModuleMembers(appProfile, moduleId, moduleName, moduleTypeName);
-        var generatedOutboxTypes = BuildGeneratedOutboxTypes(appProfile, moduleId, moduleName, moduleTypeName);
+        var generatedModuleUsings = BuildGeneratedModuleUsings(appProfile);
+        var generatedModuleInterfaces = BuildGeneratedModuleInterfaces(appProfile);
+        var generatedModuleMembers = BuildGeneratedModuleMembers(appProfile, moduleId, moduleName, moduleTypeName);
+        var generatedModuleTypes = BuildGeneratedModuleTypes(appProfile, moduleId, moduleName, moduleTypeName, appProfile.BlueprintDisplayName);
 
         return $@"using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
-{generatedOutboxUsings}
+{generatedModuleUsings}
 
 namespace {request.RootNamespace}.Modules.{ScaffoldRequest.ToIdentifier(moduleName, "Module")};
 
-public sealed class {moduleTypeName}Module : ModuleBase{generatedOutboxInterface}
+public sealed class {moduleTypeName}Module : ModuleBase{generatedModuleInterfaces}
 {{
     public override ModuleDescriptor Descriptor {{ get; }} = new(
         id: ""{moduleId}"",
@@ -1371,9 +1396,9 @@ public sealed class {moduleTypeName}Module : ModuleBase{generatedOutboxInterface
             displayName: ""{EscapeString(moduleName)} health"",
             description: ""Generated health capability for the {EscapeString(moduleName)} module.""));
     }}
-{generatedOutboxModuleMembers}
+{generatedModuleMembers}
 }}
-{generatedOutboxTypes}
+{generatedModuleTypes}
 ";
     }
 
@@ -1388,21 +1413,21 @@ public sealed class {moduleTypeName}Module : ModuleBase{generatedOutboxInterface
         var behaviorTypeName = $"Get{moduleTypeName}StatusBehavior";
         var inputTypeName = $"Get{moduleTypeName}StatusInput";
         var responseTypeName = $"{moduleTypeName}StatusSnapshot";
-        var generatedOutboxUsings = BuildGeneratedOutboxUsings(appProfile);
-        var generatedOutboxInterface = BuildGeneratedOutboxInterface(appProfile);
-        var generatedOutboxModuleMembers = BuildGeneratedOutboxModuleMembers(appProfile, moduleId, moduleName, moduleTypeName);
-        var generatedOutboxTypes = BuildGeneratedOutboxTypes(appProfile, moduleId, moduleName, moduleTypeName);
+        var generatedModuleUsings = BuildGeneratedModuleUsings(appProfile);
+        var generatedModuleInterfaces = BuildGeneratedModuleInterfaces(appProfile);
+        var generatedModuleMembers = BuildGeneratedModuleMembers(appProfile, moduleId, moduleName, moduleTypeName);
+        var generatedModuleTypes = BuildGeneratedModuleTypes(appProfile, moduleId, moduleName, moduleTypeName, appProfile.BlueprintDisplayName);
 
         return $@"using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Hosting;
-{generatedOutboxUsings}
+{generatedModuleUsings}
 
 namespace {request.RootNamespace}.Modules.{ScaffoldRequest.ToIdentifier(moduleName, "Module")};
 
-public sealed class {moduleTypeName}Module : RestBehaviorModuleBase{generatedOutboxInterface}
+public sealed class {moduleTypeName}Module : RestBehaviorModuleBase{generatedModuleInterfaces}
 {{
     public override ModuleDescriptor Descriptor {{ get; }} = new(
         id: ""{moduleId}"",
@@ -1424,7 +1449,7 @@ public sealed class {moduleTypeName}Module : RestBehaviorModuleBase{generatedOut
             .WithTagName(""{EscapeString(moduleName)} API"")
             .MapProfile<{behaviorTypeName}>();
     }}
-{generatedOutboxModuleMembers}
+{generatedModuleMembers}
 }}
 
 [AppBehavior(""{moduleId}.status.get"")]
@@ -1459,44 +1484,134 @@ internal sealed record {responseTypeName}(
     string Module,
     string Blueprint,
     string Message);
-{generatedOutboxTypes}
+{generatedModuleTypes}
 ";
     }
 
-    private static string BuildGeneratedOutboxUsings(AppProfile appProfile)
+    private static string BuildGeneratedModuleUsings(AppProfile appProfile)
     {
-        return ShouldGenerateOutboxStarter(appProfile)
-            ? "using Cephalon.Abstractions.Data;\nusing Microsoft.Extensions.DependencyInjection;"
-            : string.Empty;
+        var usings = new List<string>();
+
+        if (ShouldGenerateOutboxStarter(appProfile))
+        {
+            usings.Add("using Cephalon.Abstractions.Data;");
+            usings.Add("using Microsoft.Extensions.DependencyInjection;");
+        }
+
+        if (HasJsonRpcTransport(appProfile))
+        {
+            usings.Add("using Cephalon.AspNetCore.JsonRpc.Modules;");
+            usings.Add("using Microsoft.AspNetCore.Builder;");
+            usings.Add("using Microsoft.AspNetCore.Http;");
+            usings.Add("using Microsoft.AspNetCore.Routing;");
+            usings.Add("using Microsoft.Extensions.DependencyInjection;");
+        }
+
+        if (HasGrpcTransport(appProfile))
+        {
+            usings.Add("using Cephalon.AspNetCore.Grpc.Contracts.Discovery;");
+            usings.Add("using Cephalon.AspNetCore.Grpc.Modules;");
+            usings.Add("using Grpc.Core;");
+            usings.Add("using Microsoft.AspNetCore.Builder;");
+            usings.Add("using Microsoft.AspNetCore.Routing;");
+            usings.Add("using Microsoft.Extensions.DependencyInjection;");
+        }
+
+        return usings.Count == 0
+            ? string.Empty
+            : string.Join(Environment.NewLine, usings.Distinct(StringComparer.Ordinal));
     }
 
-    private static string BuildGeneratedOutboxInterface(AppProfile appProfile)
+    private static string BuildGeneratedModuleInterfaces(AppProfile appProfile)
     {
-        return ShouldGenerateOutboxStarter(appProfile)
-            ? ", IOutboxContributor"
-            : string.Empty;
+        var interfaces = new List<string>();
+        if (ShouldGenerateOutboxStarter(appProfile))
+        {
+            interfaces.Add("IOutboxContributor");
+        }
+
+        if (HasJsonRpcTransport(appProfile))
+        {
+            interfaces.Add("IJsonRpcModule");
+        }
+
+        if (HasGrpcTransport(appProfile))
+        {
+            interfaces.Add("IGrpcModule");
+        }
+
+        return interfaces.Count == 0
+            ? string.Empty
+            : ", " + string.Join(", ", interfaces);
     }
 
-    private static string BuildGeneratedOutboxModuleMembers(
+    private static string BuildGeneratedModuleMembers(
         AppProfile appProfile,
         string moduleId,
         string moduleName,
         string moduleTypeName)
     {
-        if (!ShouldGenerateOutboxStarter(appProfile))
+        var members = new List<string>();
+        var serviceRegistrations = BuildGeneratedServiceRegistrations(appProfile, moduleTypeName);
+        if (!string.IsNullOrWhiteSpace(serviceRegistrations))
         {
-            return string.Empty;
-        }
-
-        return $@"
+            members.Add($@"
 
     public override void ConfigureServices(IServiceCollection services)
     {{
         ArgumentNullException.ThrowIfNull(services);
+{serviceRegistrations}
+    }}");
+        }
+
+        if (ShouldGenerateOutboxStarter(appProfile))
+        {
+            members.Add(BuildGeneratedOutboxRegistration(moduleId, moduleName));
+        }
+
+        if (HasJsonRpcTransport(appProfile))
+        {
+            members.Add(BuildGeneratedJsonRpcEndpoint(moduleId, moduleName));
+        }
+
+        if (HasGrpcTransport(appProfile))
+        {
+            members.Add(BuildGeneratedGrpcEndpoint(moduleTypeName));
+        }
+
+        return string.Join(string.Empty, members);
+    }
+
+    private static string BuildGeneratedServiceRegistrations(AppProfile appProfile, string moduleTypeName)
+    {
+        var registrations = new List<string>();
+        if (ShouldGenerateOutboxStarter(appProfile))
+        {
+            registrations.Add($@"
 
         services.AddSingleton<{moduleTypeName}GeneratedOutbox>();
-        services.AddSingleton<IOutbox>(static provider => provider.GetRequiredService<{moduleTypeName}GeneratedOutbox>());
-    }}
+        services.AddSingleton<IOutbox>(static provider => provider.GetRequiredService<{moduleTypeName}GeneratedOutbox>());");
+        }
+
+        if (HasJsonRpcTransport(appProfile) || HasGrpcTransport(appProfile))
+        {
+            registrations.Add($@"
+
+        services.AddSingleton<{moduleTypeName}GeneratedTransportStatusComposer>();");
+        }
+
+        if (HasGrpcTransport(appProfile))
+        {
+            registrations.Add($@"
+        services.AddTransient<{moduleTypeName}GeneratedGrpcService>();");
+        }
+
+        return string.Join(string.Empty, registrations);
+    }
+
+    private static string BuildGeneratedOutboxRegistration(string moduleId, string moduleName)
+    {
+        return $@"
 
     public void RegisterOutboxes(IOutboxRegistry outboxes)
     {{
@@ -1517,6 +1632,207 @@ internal sealed record {responseTypeName}(
                 [""durability""] = ""process-local""
             }}));
     }}";
+    }
+
+    private static string BuildGeneratedJsonRpcEndpoint(string moduleId, string moduleName)
+    {
+        return $@"
+
+    public void MapJsonRpcEndpoints(IEndpointRouteBuilder endpoints)
+    {{
+        ArgumentNullException.ThrowIfNull(endpoints);
+
+        var group = endpoints.MapGroup(""/{moduleId}"");
+        group.MapPost(""/"", async context =>
+        {{
+            var composer = context.RequestServices.GetRequiredService<{ScaffoldRequest.ToIdentifier(moduleName, "Module")}GeneratedTransportStatusComposer>();
+            var request = await context.Request.ReadFromJsonAsync<GeneratedJsonRpcRequest>(cancellationToken: context.RequestAborted);
+            if (request is null)
+            {{
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsJsonAsync(
+                    new GeneratedJsonRpcResponse(""2.0"", null, new GeneratedJsonRpcError(-32600, ""Invalid Request""), null),
+                    cancellationToken: context.RequestAborted);
+                return;
+            }}
+
+            if (!string.Equals(request.Method, ""{moduleId}.status.get"", StringComparison.Ordinal))
+            {{
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsJsonAsync(
+                    new GeneratedJsonRpcResponse(
+                        request.JsonRpc ?? ""2.0"",
+                        null,
+                        new GeneratedJsonRpcError(-32601, $""Method '{{request.Method}}' was not found.""),
+                        request.Id),
+                    cancellationToken: context.RequestAborted);
+                return;
+            }}
+
+            var name = request.Params is not null &&
+                request.Params.TryGetValue(""name"", out var requestedName)
+                    ? requestedName
+                    : null;
+            await context.Response.WriteAsJsonAsync(
+                new GeneratedJsonRpcResponse(
+                    request.JsonRpc ?? ""2.0"",
+                    composer.Compose(name),
+                    null,
+                    request.Id),
+                cancellationToken: context.RequestAborted);
+        }});
+    }}";
+    }
+
+    private static string BuildGeneratedGrpcEndpoint(string moduleTypeName)
+    {
+        return $@"
+
+    public void MapGrpcEndpoints(IEndpointRouteBuilder endpoints)
+    {{
+        ArgumentNullException.ThrowIfNull(endpoints);
+
+        endpoints.MapGrpcService<{moduleTypeName}GeneratedGrpcService>();
+    }}";
+    }
+
+    private static string BuildGeneratedModuleTypes(
+        AppProfile appProfile,
+        string moduleId,
+        string moduleName,
+        string moduleTypeName,
+        string blueprintDisplayName)
+    {
+        var types = new List<string>();
+        var outboxTypes = BuildGeneratedOutboxTypes(appProfile, moduleId, moduleName, moduleTypeName);
+        if (!string.IsNullOrWhiteSpace(outboxTypes))
+        {
+            types.Add(outboxTypes);
+        }
+
+        var transportTypes = BuildGeneratedTransportTypes(appProfile, moduleId, moduleName, moduleTypeName, blueprintDisplayName);
+        if (!string.IsNullOrWhiteSpace(transportTypes))
+        {
+            types.Add(transportTypes);
+        }
+
+        return string.Join(string.Empty, types);
+    }
+
+    private static string BuildGeneratedTransportTypes(
+        AppProfile appProfile,
+        string moduleId,
+        string moduleName,
+        string moduleTypeName,
+        string blueprintDisplayName)
+    {
+        if (!HasJsonRpcTransport(appProfile) && !HasGrpcTransport(appProfile))
+        {
+            return string.Empty;
+        }
+
+        var transportLiteral = BuildGeneratedTransportArrayLiteral(appProfile);
+        var jsonRpcTypes = HasJsonRpcTransport(appProfile)
+            ? @"
+
+internal sealed record GeneratedJsonRpcRequest(
+    string? JsonRpc,
+    string? Method,
+    Dictionary<string, string?>? Params,
+    string? Id);
+
+internal sealed record GeneratedJsonRpcResponse(
+    string JsonRpc,
+    object? Result,
+    GeneratedJsonRpcError? Error,
+    string? Id);
+
+internal sealed record GeneratedJsonRpcError(int Code, string Message);"
+            : string.Empty;
+        var grpcTypes = HasGrpcTransport(appProfile)
+            ? $@"
+
+internal sealed class {moduleTypeName}GeneratedGrpcService({moduleTypeName}GeneratedTransportStatusComposer composer) : DiscoveryService.DiscoveryServiceBase
+{{
+    public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
+    {{
+        ArgumentNullException.ThrowIfNull(request);
+
+        return Task.FromResult(ToReply(composer.Compose(request.Name)));
+    }}
+
+    public override async Task StreamPrinciples(
+        PrinciplesRequest request,
+        IServerStreamWriter<PrincipleReply> responseStream,
+        ServerCallContext context)
+    {{
+        foreach (var principle in new[] {{ ""microservice"", ""multi-transport"", ""observable"" }})
+        {{
+            await responseStream.WriteAsync(new PrincipleReply
+            {{
+                Principle = principle
+            }});
+        }}
+    }}
+
+    public override async Task ExchangeGreetings(
+        IAsyncStreamReader<HelloRequest> requestStream,
+        IServerStreamWriter<HelloReply> responseStream,
+        ServerCallContext context)
+    {{
+        await foreach (var request in requestStream.ReadAllAsync(context.CancellationToken))
+        {{
+            await responseStream.WriteAsync(ToReply(composer.Compose(request.Name)));
+        }}
+    }}
+
+    private static HelloReply ToReply(GeneratedTransportStatus status)
+    {{
+        var reply = new HelloReply
+        {{
+            Message = status.Message,
+            GeneratedAtUtc = DateTimeOffset.UtcNow.ToString(""O"")
+        }};
+
+        reply.Traits.AddRange(status.Transports);
+        return reply;
+    }}
+}}"
+            : string.Empty;
+
+        return $@"
+
+internal sealed class {moduleTypeName}GeneratedTransportStatusComposer
+{{
+    public GeneratedTransportStatus Compose(string? name)
+    {{
+        var caller = string.IsNullOrWhiteSpace(name) ? ""consumer"" : name.Trim();
+        return new GeneratedTransportStatus(
+            Message: ""Hello, "" + caller + "" from the {EscapeString(moduleName)} microservice boundary."",
+            ModuleId: ""{moduleId}"",
+            Module: ""{EscapeString(moduleName)}"",
+            Blueprint: ""{EscapeString(blueprintDisplayName)}"",
+            Transports: {transportLiteral});
+    }}
+}}
+
+internal sealed record GeneratedTransportStatus(
+    string Message,
+    string ModuleId,
+    string Module,
+    string Blueprint,
+    IReadOnlyList<string> Transports);{jsonRpcTypes}{grpcTypes}";
+    }
+
+    private static string BuildGeneratedTransportArrayLiteral(AppProfile appProfile)
+    {
+        var transports = appProfile.Transports
+            .Select(transport => $"\"{EscapeString(transport.Id)}\"")
+            .ToArray();
+
+        return transports.Length == 0
+            ? "Array.Empty<string>()"
+            : "new[] { " + string.Join(", ", transports) + " }";
     }
 
     private static string BuildGeneratedOutboxTypes(
@@ -3451,6 +3767,16 @@ service:
         return HasTransport(appProfile, "rest-api");
     }
 
+    private static bool HasJsonRpcTransport(AppProfile appProfile)
+    {
+        return HasTransport(appProfile, "json-rpc");
+    }
+
+    private static bool HasGrpcTransport(AppProfile appProfile)
+    {
+        return HasTransport(appProfile, "grpc");
+    }
+
     private sealed class ProjectInstance
     {
         public ProjectInstance(
@@ -3561,6 +3887,12 @@ service:
             effectivePackages.Add("Serilog.Sinks.Console");
         }
 
+        if (template is "cephalon-web-host" or "cephalon-service-host" &&
+            ShouldGenerateHttpDependencyHealthCompanion(appProfile))
+        {
+            effectivePackages.Add("Cephalon.Observability.HttpDependencies");
+        }
+
         if (template == "cephalon-module")
         {
             effectivePackages.Add("Cephalon.Engine.SourceGen");
@@ -3570,6 +3902,16 @@ service:
         {
             effectivePackages.Add("Cephalon.Behaviors.Http");
             effectivePackages.Add("Cephalon.Behaviors.SourceGen");
+        }
+
+        if (template == "cephalon-module" && HasJsonRpcTransport(appProfile))
+        {
+            effectivePackages.Add("Cephalon.AspNetCore.JsonRpc");
+        }
+
+        if (template == "cephalon-module" && HasGrpcTransport(appProfile))
+        {
+            effectivePackages.Add("Cephalon.AspNetCore.Grpc");
         }
 
         return effectivePackages
