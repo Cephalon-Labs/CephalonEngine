@@ -40,7 +40,7 @@ Describe "run-provider-live-testcontainers.ps1 provider matrix" {
         $matrix.Cassandra.FilterToken | Should -Be "CassandraProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
         $matrix.ClickHouse.FilterToken | Should -Be "ClickHouseProvider_StagesOutboxAndInboxAgainstLiveService"
         $matrix.Elasticsearch.FilterToken | Should -Be "ElasticsearchProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
-        $matrix.Nats.FilterToken | Should -Be "NatsProvider_StagesOutboxInboxAndDispatchAgainstLiveJetStream"
+        $matrix.Nats.FilterToken | Should -Be "NatsProvider_"
         $matrix.Neo4j.FilterToken | Should -Be "Neo4jProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
         $matrix.OpenSearch.FilterToken | Should -Be "OpenSearchProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
         $matrix.Qdrant.FilterToken | Should -Be "QdrantProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
@@ -68,7 +68,7 @@ Describe "run-provider-live-testcontainers.ps1 provider matrix" {
         $providers = Resolve-ProviderLiveTestSelection -ProviderNames @("nats")
 
         $providers.Provider | Should -Be @("Nats")
-        $providers.FilterToken | Should -Be @("NatsProvider_StagesOutboxInboxAndDispatchAgainstLiveJetStream")
+        $providers.FilterToken | Should -Be @("NatsProvider_")
     }
 
     It "rejects unknown providers before test execution" {

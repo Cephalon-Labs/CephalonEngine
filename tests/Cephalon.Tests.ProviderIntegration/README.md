@@ -6,6 +6,8 @@ This project is the focused integration-test lane for provider-backed behavior t
 
 - Redis live provider coverage proves the `Cephalon.Data.Redis` outbox/inbox surfaces and the `Cephalon.EventSourcing.Redis` stream provider against one live Redis runtime.
 - The Redis test verifies service registration, runtime capabilities, outbox and inbox descriptors, event-stream descriptors, Redis Hash/Sorted Set/Set/Stream persistence, idempotent outbox and inbox behavior, dispatch-store success reporting, ordered event replay, provider-durable snapshot save/load, snapshot-assisted managed replay, projection rebuild, runtime-surface durable-snapshot readback, stale snapshot rejection, and optimistic-concurrency rejection.
+- NATS live provider coverage proves the `Cephalon.Data.Nats` outbox/inbox surfaces and the `Cephalon.EventSourcing.Nats` JetStream KV event/snapshot provider against one live JetStream-enabled NATS runtime.
+- The NATS event-sourcing test verifies service registration, runtime metadata, JetStream KV event persistence, ordered replay, provider-durable snapshot save/load, snapshot-assisted managed replay, projection rebuild, runtime-surface durable-snapshot readback, stale snapshot rejection, and optimistic-concurrency rejection.
 - MongoDB data-provider coverage starts a repo-owned disposable replica set and proves `Cephalon.Data.MongoDB` outbox/inbox/dispatch-store behavior in the default lane.
 - Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant now have opt-in live data-provider proof lanes. Each lane can run against either pre-provisioned provider services or disposable Testcontainers-backed runtimes, composes `Cephalon.Engine`, `Cephalon.Eventing`, and the real provider pack, then proves manifest capabilities, outbox/inbox descriptors, `event-driven-integration` technology surfaces, idempotent outbox/inbox writes, and real provider persistence. All except ClickHouse also prove `IEventDispatchStore` pending/success transitions; ClickHouse deliberately proves the truthful `unsupported` dispatch policy.
 - SMTP invitation delivery now has an opt-in live relay proof lane. It composes `Cephalon.MultiTenancy.Governance.SmtpDelivery`, dispatches through the real governance delivery dispatcher, hands the message to a real SMTP relay, reads the accepted message back through the relay API, and verifies message id, recipients, context headers, provider metadata, and sanitized runtime-surface truth.
@@ -59,7 +61,7 @@ Provider-specific live tests prefer pre-provisioned service settings when presen
 | Cassandra | `CassandraProvider_StagesOutboxInboxAndDispatchAgainstLiveService` | Native transport reachable and keyspace creation allowed or pre-created. |
 | ClickHouse | `ClickHouseProvider_StagesOutboxAndInboxAgainstLiveService` | Database reachable over HTTP; dispatch store remains intentionally unsupported. |
 | Elasticsearch | `ElasticsearchProvider_StagesOutboxInboxAndDispatchAgainstLiveService` | Index creation and refresh must be allowed; the test polls eventually visible search rows. |
-| NATS | `NatsProvider_StagesOutboxInboxAndDispatchAgainstLiveJetStream` | JetStream and KV buckets must be enabled. |
+| NATS | `NatsProvider_` | JetStream and KV buckets must be enabled. This runs both data outbox/inbox/dispatch proof and event-sourcing snapshot/replay proof. |
 | Neo4j | `Neo4jProvider_StagesOutboxInboxAndDispatchAgainstLiveService` | Bolt auth must allow label/constraint creation and node writes. |
 | OpenSearch | `OpenSearchProvider_StagesOutboxInboxAndDispatchAgainstLiveService` | Index creation and refresh must be allowed; the test polls eventually visible search rows. |
 | Qdrant | `QdrantProvider_StagesOutboxInboxAndDispatchAgainstLiveService` | gRPC endpoint must be reachable and collection creation allowed. |
@@ -71,7 +73,7 @@ To run one provider lane, enable external services and filter by the provider me
 ```powershell
 $env:CEPHALON_PROVIDER_EXTERNAL_SERVICES = '1'
 $env:CEPHALON_PROVIDER_NATS_URI = 'nats://localhost:4222'
-dotnet test .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj --no-restore --filter FullyQualifiedName~NatsProvider_StagesOutboxInboxAndDispatchAgainstLiveJetStream --logger "console;verbosity=normal"
+dotnet test .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj --no-restore --filter FullyQualifiedName~NatsProvider_ --logger "console;verbosity=normal"
 ```
 
 To run the non-relational provider live lanes through disposable Testcontainers:
@@ -111,6 +113,18 @@ To run only the Redis live lane against a pre-provisioned service:
 $env:CEPHALON_PROVIDER_EXTERNAL_SERVICES = '1'
 $env:CEPHALON_PROVIDER_REDIS_CONNECTION_STRING = 'localhost:6379'
 dotnet test .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj --no-restore --filter FullyQualifiedName~RedisProvider_StagesOutboxInboxDispatchAndEventStreamAgainstLiveRedis --logger "console;verbosity=normal"
+```
+
+## NATS live lane
+
+`LiveDataProviderIntegrationTests.NatsProvider_StagesOutboxInboxAndDispatchAgainstLiveJetStream` proves the NATS data companion against a live JetStream KV runtime. `NatsProviderIntegrationTests.NatsProvider_ReplaysEventStreamSnapshotsAgainstLiveJetStream` proves the NATS event-sourcing companion against the same provider family, including the provider-durable snapshot lifecycle used by the core replay worker.
+
+To run only the NATS live lane through Testcontainers:
+
+```powershell
+$env:CEPHALON_PROVIDER_EXTERNAL_SERVICES = '1'
+$env:CEPHALON_PROVIDER_TESTCONTAINERS = '1'
+dotnet test .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj --no-restore --filter FullyQualifiedName~NatsProvider_ --logger "console;verbosity=normal"
 ```
 
 ## Run

@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Data;
+using Cephalon.Abstractions.EventSourcing;
 using Cephalon.Data.Nats.Configuration;
 using Cephalon.Data.Nats.Registration;
 using Cephalon.Data.Qdrant.Configuration;
@@ -7,6 +8,8 @@ using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Eventing.Registration;
 using Cephalon.Eventing.Services;
+using Cephalon.EventSourcing.Hosting;
+using Cephalon.EventSourcing.Nats.Hosting;
 using Cephalon.Tests.Support;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -256,5 +259,21 @@ public sealed class VectorLedgerDataPackTests
         var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
         Assert.NotNull(dispatchStore);
         Assert.Equal("nats-outbox", Assert.Single(dispatchStore.OutboxIds));
+    }
+
+    [Fact]
+    public async Task AddCephalonNatsEventSourcing_RegistersEventStoreAndSnapshotStore()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalonEventSourcing();
+        services.AddCephalonNatsEventSourcing("nats://localhost:4222", "cephalon-events");
+
+        await using var provider = services.BuildServiceProvider();
+        var eventStore = provider.GetRequiredService<IEventStore>();
+        using var scope = provider.CreateScope();
+        var snapshotStore = scope.ServiceProvider.GetRequiredService<ISnapshotStore>();
+
+        Assert.NotNull(eventStore);
+        Assert.NotNull(snapshotStore);
     }
 }

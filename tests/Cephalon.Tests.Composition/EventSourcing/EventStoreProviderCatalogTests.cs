@@ -121,7 +121,7 @@ public sealed class EventStoreProviderCatalogTests
         Assert.Equal("true", summary.Metadata["enableInMemorySnapshotStore"]);
         Assert.Equal("true", summary.Metadata["enableReplayWorker"]);
         Assert.Equal("provider-durable", summary.Metadata["snapshotLifecycle"]);
-        Assert.Equal("entity-framework,mongodb,redis", summary.Metadata["providerDurableSnapshotProviders"]);
+        Assert.Equal("entity-framework,mongodb,nats,redis", summary.Metadata["providerDurableSnapshotProviders"]);
         Assert.Equal("on-demand-domain-event-projections", summary.Metadata["projectionRebuild"]);
         Assert.Equal("not-claimed", summary.Metadata["hostedBackgroundRunner"]);
 
@@ -131,7 +131,7 @@ public sealed class EventStoreProviderCatalogTests
         Assert.Equal("provider-durable", replayWorker.Metadata["snapshotAssistedReplay"]);
         Assert.Equal("not-claimed", replayWorker.Metadata["hostedBackgroundRunner"]);
         Assert.Equal("claimed", replayWorker.Metadata["providerDurableSnapshots"]);
-        Assert.Equal("entity-framework,mongodb,redis", replayWorker.Metadata["providerDurableSnapshotProviders"]);
+        Assert.Equal("entity-framework,mongodb,nats,redis", replayWorker.Metadata["providerDurableSnapshotProviders"]);
 
         foreach (var expectedProvider in ExpectedProviders)
         {
@@ -164,6 +164,14 @@ public sealed class EventStoreProviderCatalogTests
         Assert.Equal("provider-durable", redisEntry.Metadata["provider.snapshotLifecycle"]);
         Assert.Equal("Redis Hash latest-snapshot", redisEntry.Metadata["provider.snapshotStorage"]);
         Assert.Equal("orders:snapshot:", redisEntry.Metadata["provider.snapshotKeyPrefix"]);
+
+        var natsEntry = Assert.Single(surface.Entries, entry =>
+            entry.Metadata.TryGetValue("provider", out var provider) &&
+            provider == "nats");
+        Assert.Equal("provider-durable", natsEntry.Metadata["provider.snapshotLifecycle"]);
+        Assert.Equal("NATS JetStream KV latest-snapshot", natsEntry.Metadata["provider.snapshotStorage"]);
+        Assert.Equal("snapshots/", natsEntry.Metadata["provider.snapshotKeyPrefix"]);
+        Assert.Equal("revision-compare-and-set", natsEntry.Metadata["provider.snapshotConcurrency"]);
     }
 
     private static bool ContainsSecret(string value)

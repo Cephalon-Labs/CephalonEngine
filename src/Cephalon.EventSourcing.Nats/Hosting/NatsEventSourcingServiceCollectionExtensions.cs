@@ -40,6 +40,10 @@ public static class NatsEventSourcingServiceCollectionExtensions
         services.AddCephalonEventTypeRegistry();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreContributor>(
             new NatsEventStoreContributor(url, bucketName)));
+        services.AddScoped<ISnapshotStore>(serviceProvider =>
+            new NatsSnapshotStore(
+                serviceProvider.GetRequiredService<INatsConnection>(),
+                bucketName));
         services.TryAddSingleton<IEventStore>(serviceProvider =>
         {
             var nats = serviceProvider.GetRequiredService<INatsConnection>();

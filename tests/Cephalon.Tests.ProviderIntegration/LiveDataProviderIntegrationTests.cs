@@ -119,7 +119,7 @@ public sealed class LiveDataProviderIntegrationTests : IAsyncLifetime, IDisposab
             scenario.RegisterProvider(engine);
         });
 
-        using var provider = services.BuildServiceProvider();
+        await using var provider = services.BuildServiceProvider();
         AssertRuntimeProjection(provider, scenario);
 
         using var scope = provider.CreateScope();
@@ -374,7 +374,7 @@ public sealed class LiveDataProviderIntegrationTests : IAsyncLifetime, IDisposab
             InboxMetadataKey: "bucket",
             InboxMetadataValue: $"{bucketPrefix}-inbox",
             SupportsDispatchStore: true,
-            ExpectedDispatchPolicyId: "disabled",
+            ExpectedDispatchPolicyId: "consumer-managed",
             RegisterProvider: engine => engine.AddNatsData(service.Uri, options =>
             {
                 options.BucketPrefix = bucketPrefix;
