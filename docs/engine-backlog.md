@@ -82,6 +82,37 @@ Current focus:
 - treat `docs/reference/reference-manifest.json` as the generated API bundle map: required browser/index/manifest assets must exist, assembly page files must be manifest-owned, namespace/type/member anchor ids must resolve in those pages, and orphan generated Markdown pages must fail Tooling coverage before hosted reference docs can drift
 - treat `docs/reference/browse.html` as the hosted reference-doc browser entry point: local `href` and `src` references must resolve inside `docs/reference` to existing generated bundle files so CSS, JavaScript, index links, and manifest links cannot drift after regeneration
 
+### ENG-699 Template-pack adoption report readback
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: release-readiness / adoption smoke / template pack
+Quality dimensions: Usability, Reliability, Maintainability, Compatibility, Auditability
+GitHub issue: #1370
+
+Why:
+
+- `scripts/validate-template-pack-adoption.ps1` already proved the `dotnet new` template-pack path from a temporary workspace, but it was still console-only while generated-app and out-of-tree package adoption wrote execution reports
+- the adoption-smoke golden use-case map should distinguish CLI scaffold, template-pack starter, and staged-package adoption as separate execution-ready lanes
+- release validation and `cephalon doctor --scorecard` should read the template-pack parity proof through the same manifest/scorecard contract without changing scorecard JSON shape
+
+Delivered:
+
+- `scripts/validate-template-pack-adoption.ps1` now accepts `-ReportPath`, publishes the template-pack generated-app package closure including `Cephalon.Diagnostics` and `Cephalon.Resilience`, writes `artifacts/adoption-smoke/template-pack-adoption.json` by default on pass/fail, and records scenario id, timing, assertions, runtime probes, paths, and failure text
+- `scripts/adoption-smoke-support.json` is schema `1.4.0` and adds `template-pack-dotnet-new-parity` as an `execution-report-ready` golden use case
+- scorecard and doctor readback stay on scorecard schema `1.25.0` while adoption counts move to seven total golden use cases, three execution-ready lanes, and three per-use-case execution reports
+- getting-started, operations, CLI component/package docs, template-pack package docs, roadmap, architecture follow-ups, backlog, and project memory now name the template-pack report path and readback contract
+
+Validation:
+
+- `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/publish-engine-completion-scorecard.Tests.ps1 -Output Detailed`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj -c Debug --filter "FullyQualifiedName~RunAsyncDoctorReportsEngineCompletionScorecardSummary|FullyQualifiedName~CompletionScorecardDocsStayAlignedWithDoctorSummary|FullyQualifiedName~AdoptionGuideAndPackageReadmesStayAlignedWithDoctorPath|FullyQualifiedName~TemplatePackAdoptionAssetsStayAligned|FullyQualifiedName~OutOfTreePackageAdoptionAssetsStayAligned|FullyQualifiedName~GeneratedAppAdoptionAssetsStayAligned" --logger "console;verbosity=minimal"`
+- `pwsh ./scripts/validate-template-pack-adoption.ps1 -Configuration Release -TimeoutSeconds 180 -ReportPath <temp-json>`
+- `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/validate-release.Tests.ps1 -Output Detailed`
+- PowerShell AST parse for `scripts/validate-template-pack-adoption.ps1`
+- `git diff --check`
+
 ### ENG-696 Signed-release dry-run handoff artifact
 
 Status: done

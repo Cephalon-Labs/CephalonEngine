@@ -28,11 +28,13 @@ See `docs/getting-started.md` for the corresponding install, doctor, scaffold, s
 
 ## Template-pack cold-start adoption smoke
 
-For a repo-native external-adoption replay that publishes a temporary package feed, installs `Cephalon.Cli`, installs `Cephalon.TemplatePack` into an isolated custom hive, reruns `cephalon doctor` with that custom hive visible, scaffolds a fresh `dotnet new cephalon-monolith` starter outside the repository, seeds the generated local package feed, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/health/ready`, `/engine`, `/engine/snapshot`, and `/scalar`, run:
+For a repo-native external-adoption replay that publishes a temporary package feed plus the generated app package closure including `Cephalon.Diagnostics` and `Cephalon.Resilience`, installs `Cephalon.Cli`, installs `Cephalon.TemplatePack` into an isolated custom hive, reruns `cephalon doctor` with that custom hive visible, scaffolds a fresh `dotnet new cephalon-monolith` starter outside the repository, seeds the generated local package feed, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/health/ready`, `/engine`, `/engine/snapshot`, and `/scalar`, run:
 
 ```powershell
 pwsh ./scripts/validate-template-pack-adoption.ps1
 ```
+
+The script writes `artifacts/adoption-smoke/template-pack-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The adoption-smoke manifest carries this as the `template-pack-dotnet-new-parity` golden use case so scorecard and doctor readback can distinguish the `dotnet new` starter path from the CLI-generated host and staged-package proofs.
 
 See `docs/getting-started.md` for the corresponding template-pack install, doctor, scaffold, and first-run guidance.
 
@@ -44,7 +46,7 @@ For a repo-native external-adoption replay that publishes a temporary package fe
 pwsh ./scripts/validate-out-of-tree-package-adoption.ps1
 ```
 
-The script writes `artifacts/adoption-smoke/out-of-tree-package-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The release-readiness scorecard validates the same replay path, execution-report contract, and golden use-case map through `scripts/adoption-smoke-support.json` and emits it as `AdoptionSmokeEvidence` in the generated scorecard artifact. Keep that manifest aligned whenever either generated-app foundation or staged-package smoke path adds or removes script phases, staged packages, runtime probes, report fields, or planned real-app adoption lanes.
+The script writes `artifacts/adoption-smoke/out-of-tree-package-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The release-readiness scorecard validates the same replay path, execution-report contract, and golden use-case map through `scripts/adoption-smoke-support.json` and emits it as `AdoptionSmokeEvidence` in the generated scorecard artifact. Keep that manifest aligned whenever the generated-app foundation, template-pack parity, or staged-package smoke path adds or removes script phases, staged packages, runtime probes, report fields, or planned real-app adoption lanes.
 
 See `docs/external-package-lifecycle.md` for the corresponding stage, trust, and inspect guidance.
 

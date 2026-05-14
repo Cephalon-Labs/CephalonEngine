@@ -1,8 +1,8 @@
 {
-  "$schemaVersion": "1.3.0",
+  "$schemaVersion": "1.4.0",
   "scenarioId": "out-of-tree-generated-app-package-stage",
   "status": "execution-report-ready",
-  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, writes machine-readable execution reports, and tracks the broader golden use-case map.",
+  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, writes machine-readable execution reports for generated-app, template-pack, and out-of-tree package adoption, and tracks the broader golden use-case map.",
   "validationScript": "scripts/validate-out-of-tree-package-adoption.ps1",
   "supportingScripts": [
     "scripts/validate-generated-app-adoption.ps1",
@@ -135,6 +135,77 @@
       "executionReport": {
         "schemaVersion": "1.0.0",
         "defaultPath": "artifacts/adoption-smoke/generated-app-adoption.json",
+        "statusValues": [
+          "passed",
+          "failed"
+        ],
+        "requiredFields": [
+          "$schemaVersion",
+          "ScenarioId",
+          "Status",
+          "StartedAtUtc",
+          "CompletedAtUtc",
+          "DurationMilliseconds",
+          "Assertions",
+          "RuntimeProbes",
+          "Paths"
+        ]
+      }
+    },
+    {
+      "id": "template-pack-dotnet-new-parity",
+      "title": "Template pack dotnet new starter parity",
+      "appShape": "dotnet-new-modular-monolith",
+      "status": "execution-report-ready",
+      "proofLevel": "executable-smoke",
+      "primaryValidationPath": "scripts/validate-template-pack-adoption.ps1",
+      "sourceDocs": [
+        "docs/getting-started.md",
+        "docs/operations.md",
+        "docs/components/cli.md",
+        "src/Cephalon.Cli/PACKAGE.md",
+        "templates/Cephalon.TemplatePack/PACKAGE.md"
+      ],
+      "qualityDimensions": [
+        "Usability",
+        "Reliability",
+        "Maintainability",
+        "Compatibility",
+        "Auditability"
+      ],
+      "requiredEngineCapabilities": [
+        "template-pack installation",
+        "template-pack generated app package closure",
+        "isolated dotnet new custom hive",
+        "CLI doctor template-pack discovery",
+        "template-pack project-root starter",
+        "runtime operator documentation"
+      ],
+      "proofTargets": [
+        {
+          "kind": "template-catalog",
+          "reference": "dotnet new list cephalon"
+        },
+        {
+          "kind": "runtime-probe",
+          "reference": "/health/ready"
+        },
+        {
+          "kind": "runtime-probe",
+          "reference": "/engine"
+        },
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/snapshot"
+        },
+        {
+          "kind": "rest-docs",
+          "reference": "/scalar"
+        }
+      ],
+      "executionReport": {
+        "schemaVersion": "1.0.0",
+        "defaultPath": "artifacts/adoption-smoke/template-pack-adoption.json",
         "statusValues": [
           "passed",
           "failed"

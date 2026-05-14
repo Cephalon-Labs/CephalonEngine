@@ -3,6 +3,7 @@ param(
     [string]$HostUrl = "http://127.0.0.1:18082",
     [int]$TimeoutSeconds = 120,
     [string]$Configuration = "Release",
+    [string]$ReportPath = "artifacts/adoption-smoke/template-pack-adoption.json",
     [switch]$SkipPackageBuild,
     [switch]$KeepOutput
 )
@@ -10,6 +11,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+$validationStartedAtUtc = [DateTimeOffset]::UtcNow
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $publishPackagesScriptPath = Join-Path $repoRoot "scripts\publish-package-artifacts.ps1"
 $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("cephalon-template-adoption-" + [Guid]::NewGuid().ToString("N"))
@@ -24,6 +26,7 @@ $stdoutLogPath = Join-Path $tempRoot "template-app.stdout.log"
 $stderrLogPath = Join-Path $tempRoot "template-app.stderr.log"
 $initialPackageProjectPaths = @(
     "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+    "src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj",
     "src/Cephalon.Engine/Cephalon.Engine.csproj",
     "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",
     "src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj",
@@ -37,11 +40,13 @@ $initialPackageProjectPaths = @(
     "src/Cephalon.Observability.OpenTelemetry/Cephalon.Observability.OpenTelemetry.csproj",
     "src/Cephalon.Observability.Serilog/Cephalon.Observability.Serilog.csproj",
     "src/Cephalon.ReferenceDocs/Cephalon.ReferenceDocs.csproj",
+    "src/Cephalon.Resilience/Cephalon.Resilience.csproj",
     "src/Cephalon.Scaffolding/Cephalon.Scaffolding.csproj",
     "templates/Cephalon.TemplatePack/Cephalon.TemplatePack.csproj"
 )
 $generatedPackageProjectPaths = @(
     "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+    "src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj",
     "src/Cephalon.Engine/Cephalon.Engine.csproj",
     "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",
     "src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj",
@@ -52,6 +57,7 @@ $generatedPackageProjectPaths = @(
     "src/Cephalon.Ids.Sfid/Cephalon.Ids.Sfid.csproj",
     "src/Cephalon.Observability/Cephalon.Observability.csproj",
     "src/Cephalon.Observability.OpenTelemetry/Cephalon.Observability.OpenTelemetry.csproj",
+    "src/Cephalon.Resilience/Cephalon.Resilience.csproj",
     "src/Cephalon.Observability.Serilog/Cephalon.Observability.Serilog.csproj"
 )
 $cephalonExecutableFileName = if ($IsWindows) { "cephalon.exe" } else { "cephalon" }
@@ -198,7 +204,110 @@ function Write-RecentLogs {
     Get-Content -LiteralPath $Path -Tail 80
 }
 
+function Resolve-ReportPath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    if ([System.IO.Path]::IsPathRooted($Path)) {
+        return [System.IO.Path]::GetFullPath($Path)
+    }
+
+    return [System.IO.Path]::GetFullPath((Join-Path $repoRoot $Path))
+}
+
+function New-TemplatePackAdoptionRuntimeProbeRows {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Status
+    )
+
+    @(
+        [pscustomobject]([ordered]@{ Kind = "health"; Path = "/health/ready"; Status = $Status })
+        [pscustomobject]([ordered]@{ Kind = "engine-root"; Path = "/engine"; Status = $Status })
+        [pscustomobject]([ordered]@{ Kind = "snapshot"; Path = "/engine/snapshot"; Status = $Status })
+        [pscustomobject]([ordered]@{ Kind = "rest-docs"; Path = "/scalar"; Status = $Status })
+    )
+}
+
+function New-TemplatePackAdoptionAssertionRows {
+    param(
+        [Parameter(Mandatory = $true)]
+        [bool]$Passed
+    )
+
+    @(
+        [pscustomobject]([ordered]@{ Name = "runsOutsideRepository"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "publishesLocalPackages"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "installsCliFromTemporaryFeed"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "replaysMachineDoctor"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "installsTemplatePackIntoIsolatedHive"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "listsInstalledCephalonTemplates"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "replaysTemplateAwareDoctor"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "scaffoldsTemplatePackApp"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "seedsGeneratedLocalPackageFeed"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "replaysGeneratedAppDoctor"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "restoresGeneratedHost"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "buildsGeneratedHost"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "runsGeneratedHost"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "validatesOperatorSurfaces"; Passed = $Passed })
+    )
+}
+
+function Write-TemplatePackAdoptionExecutionReport {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Status,
+        [string]$ErrorMessage = ""
+    )
+
+    $completedAtUtc = [DateTimeOffset]::UtcNow
+    $passed = $Status.Equals("passed", [System.StringComparison]::OrdinalIgnoreCase)
+    $runtimeProbeStatus = if ($passed) { "passed" } else { "not-run-or-failed" }
+    $resolvedReportPath = Resolve-ReportPath -Path $ReportPath
+    $reportDirectory = Split-Path -Parent $resolvedReportPath
+    if (-not [string]::IsNullOrWhiteSpace($reportDirectory)) {
+        New-Item -ItemType Directory -Path $reportDirectory -Force | Out-Null
+    }
+
+    $report = [pscustomobject]([ordered]@{
+        '$schemaVersion' = "1.0.0"
+        ScenarioId = "template-pack-dotnet-new-parity"
+        Status = $Status
+        AppName = $AppName
+        HostUrl = $HostUrl
+        Configuration = $Configuration
+        SkipPackageBuild = [bool]$SkipPackageBuild
+        KeepOutput = [bool]$KeepOutput
+        StartedAtUtc = $validationStartedAtUtc.ToString("O")
+        CompletedAtUtc = $completedAtUtc.ToString("O")
+        DurationMilliseconds = [math]::Round(($completedAtUtc - $validationStartedAtUtc).TotalMilliseconds, 2)
+        Assertions = New-TemplatePackAdoptionAssertionRows -Passed:$passed
+        RuntimeProbes = New-TemplatePackAdoptionRuntimeProbeRows -Status $runtimeProbeStatus
+        Paths = [pscustomobject]([ordered]@{
+            TemporaryRoot = $tempRoot
+            PackageFeed = $packageFeedPath
+            ToolPath = $toolPath
+            CustomHive = $customHivePath
+            NuGetPackages = $nuGetPackagesPath
+            WorkspaceRoot = $workspaceRoot
+            GeneratedAppRoot = $generatedRoot
+            GeneratedPackageFeed = $generatedPackageFeedPath
+            HostProject = $hostProjectPath
+            StdoutLog = $stdoutLogPath
+            StderrLog = $stderrLogPath
+            TemporaryOutputRetained = [bool]$KeepOutput
+        })
+        Error = $ErrorMessage
+    })
+
+    $report | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $resolvedReportPath -Encoding UTF8
+    Write-Host "Template-pack adoption execution report: $resolvedReportPath" -ForegroundColor Cyan
+}
+
 $process = $null
+$hostProjectPath = $null
 $previousNuGetPackages = $null
 $previousTemplateHive = $null
 $restoreRepoPackageAssets = $false
@@ -344,6 +453,8 @@ try {
     Wait-ForHttpSuccess -Uri "$HostUrl/engine/snapshot" -TimeoutSeconds $TimeoutSeconds -Process $process
     Wait-ForHttpSuccess -Uri "$HostUrl/scalar" -TimeoutSeconds $TimeoutSeconds -Process $process
 
+    Write-TemplatePackAdoptionExecutionReport -Status "passed"
+
     Write-Host ""
     Write-Host "Template-pack adoption validation completed successfully." -ForegroundColor Green
     Write-Host "Temporary package feed: $packageFeedPath" -ForegroundColor Cyan
@@ -353,8 +464,16 @@ try {
     Write-Host "Generated app root: $generatedRoot" -ForegroundColor Cyan
 }
 catch {
+    $failureMessage = $_.Exception.Message
     Write-Host ""
     Write-Host "Template-pack adoption validation failed." -ForegroundColor Yellow
+    try {
+        Write-TemplatePackAdoptionExecutionReport -Status "failed" -ErrorMessage $failureMessage
+    }
+    catch {
+        Write-Warning "Could not write template-pack adoption execution report: $($_.Exception.Message)"
+    }
+
     Write-RecentLogs -Path $stdoutLogPath -Label "Generated host stdout"
     Write-RecentLogs -Path $stderrLogPath -Label "Generated host stderr"
     throw
