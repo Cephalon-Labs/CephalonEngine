@@ -88,20 +88,28 @@ Describe "invoke-signed-release-dry-run.ps1" {
 
         Test-Path -LiteralPath $result.JsonPath -PathType Leaf | Should -BeTrue
         Test-Path -LiteralPath $result.HandoffPath -PathType Leaf | Should -BeTrue
-        $result.Report.'$schemaVersion' | Should -Be "1.1.0"
+        $result.Report.'$schemaVersion' | Should -Be "1.2.0"
         $result.Report.Status | Should -Be "ready"
         $result.Report.BlockerClass | Should -BeNullOrEmpty
+        $result.Report.DispatchBlockerScope | Should -Be "none"
+        $result.Report.ReadinessDiagnostic | Should -Match "dispatch was skipped by request"
+        $result.Report.WorkflowDispatchPrerequisitesStatus | Should -Be "repository-and-workflow-ready-dispatch-skipped"
         $result.Report.DispatchActor | Should -Be "Cephalon-Neza"
         $result.Report.DispatchIdentityStatus | Should -Be "resolved"
         $result.Report.DispatchCommand | Should -Be 'gh workflow run "Publish Release" --repo Cephalon-Labs/CephalonEngine --ref master -f dry_run=true'
         $result.Report.RequiredReleaseManagerAction | Should -Match "RequireRunCreated"
         $result.Report.WorkflowActive | Should -BeTrue
+        $result.Report.WorkflowDispatchDeclared | Should -BeTrue
         $result.Report.RepositoryActionsEnabled | Should -BeTrue
+        $result.Report.RepositoryWorkflowDispatchReady | Should -BeTrue
         $result.Report.DispatchAttempted | Should -BeFalse
         $result.Report.RunCreated | Should -BeFalse
         $handoff = Get-Content -LiteralPath $result.HandoffPath -Raw -Encoding UTF8
         $handoff | Should -Match "# Signed-release dry-run handoff"
         $handoff | Should -Match "Status: ``ready``"
+        $handoff | Should -Match "DispatchBlockerScope: ``none``"
+        $handoff | Should -Match "RepositoryWorkflowDispatchReady: ``True``"
+        $handoff | Should -Match "WorkflowDispatchPrerequisitesStatus: ``repository-and-workflow-ready-dispatch-skipped``"
         $handoff | Should -Match "DispatchActor: ``Cephalon-Neza``"
     }
 
@@ -135,6 +143,10 @@ Describe "invoke-signed-release-dry-run.ps1" {
 
         $result.Report.Status | Should -Be "blocked"
         $result.Report.BlockerClass | Should -Be "dispatch-identity-actions-disabled"
+        $result.Report.DispatchBlockerScope | Should -Be "identity"
+        $result.Report.RepositoryWorkflowDispatchReady | Should -BeTrue
+        $result.Report.WorkflowDispatchPrerequisitesStatus | Should -Be "repository-and-workflow-ready-identity-blocked"
+        $result.Report.ReadinessDiagnostic | Should -Match "blocked by dispatch identity 'Cephalon-Neza'"
         $result.Report.DispatchActor | Should -Be "Cephalon-Neza"
         $result.Report.DispatchIdentityStatus | Should -Be "resolved"
         $result.Report.RequiredReleaseManagerAction | Should -Be "Enable GitHub Actions for dispatch identity 'Cephalon-Neza' or rerun the probe with an Actions-enabled release-manager identity."
@@ -145,6 +157,9 @@ Describe "invoke-signed-release-dry-run.ps1" {
         Test-Path -LiteralPath $result.HandoffPath -PathType Leaf | Should -BeTrue
         $handoff = Get-Content -LiteralPath $result.HandoffPath -Raw -Encoding UTF8
         $handoff | Should -Match "BlockerClass: ``dispatch-identity-actions-disabled``"
+        $handoff | Should -Match "DispatchBlockerScope: ``identity``"
+        $handoff | Should -Match "RepositoryWorkflowDispatchReady: ``True``"
+        $handoff | Should -Match "WorkflowDispatchPrerequisitesStatus: ``repository-and-workflow-ready-identity-blocked``"
         $handoff | Should -Match "DispatchActor: ``Cephalon-Neza``"
         $handoff | Should -Match "Enable GitHub Actions for dispatch identity 'Cephalon-Neza'"
         $handoff | Should -Match "Actions has been disabled for this user"
@@ -180,7 +195,7 @@ Describe "invoke-signed-release-dry-run.ps1" {
 
         $supportManifestPath = Join-Path $script:repoRoot "scripts\supply-chain-release-support.json"
         $supportManifest = Get-Content -LiteralPath $supportManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 32
-        $supportManifest.'$schemaVersion' | Should -Be "1.6.0"
+        $supportManifest.'$schemaVersion' | Should -Be "1.7.0"
         $supportManifest.signedReleaseDryRun.handoffOutputPath | Should -Be "artifacts/signed-release-dry-run/signed-release-dry-run-handoff.md"
 
         $requiredFields = @($supportManifest.signedReleaseDryRun.requiredReportFields)
@@ -188,6 +203,10 @@ Describe "invoke-signed-release-dry-run.ps1" {
         $requiredFields | Should -Contain "DispatchActor"
         $requiredFields | Should -Contain "DispatchIdentityStatus"
         $requiredFields | Should -Contain "DispatchCommand"
+        $requiredFields | Should -Contain "DispatchBlockerScope"
+        $requiredFields | Should -Contain "ReadinessDiagnostic"
+        $requiredFields | Should -Contain "RepositoryWorkflowDispatchReady"
+        $requiredFields | Should -Contain "WorkflowDispatchPrerequisitesStatus"
         $requiredFields | Should -Contain "RequiredReleaseManagerAction"
 
         $reportPropertyNames = @($result.Report.PSObject.Properties.Name)
@@ -253,6 +272,10 @@ Describe "invoke-signed-release-dry-run.ps1" {
 
         $result.Report.Status | Should -Be "submitted"
         $result.Report.BlockerClass | Should -BeNullOrEmpty
+        $result.Report.DispatchBlockerScope | Should -Be "none"
+        $result.Report.RepositoryWorkflowDispatchReady | Should -BeTrue
+        $result.Report.WorkflowDispatchPrerequisitesStatus | Should -Be "workflow-dispatch-submitted-run-found"
+        $result.Report.ReadinessDiagnostic | Should -Match "workflow run URL was found"
         $result.Report.DispatchAttempted | Should -BeTrue
         $result.Report.RunCreated | Should -BeTrue
         $result.Report.RunLookupStatus | Should -Be "found"
@@ -303,6 +326,10 @@ Describe "invoke-signed-release-dry-run.ps1" {
         Test-Path -LiteralPath $handoffPath -PathType Leaf | Should -BeTrue
         $report = Get-Content -LiteralPath $jsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
         $report.BlockerClass | Should -Be "dispatch-identity-actions-disabled"
+        $report.DispatchBlockerScope | Should -Be "identity"
+        $report.RepositoryWorkflowDispatchReady | Should -BeTrue
+        $report.WorkflowDispatchPrerequisitesStatus | Should -Be "repository-and-workflow-ready-identity-blocked"
+        $report.ReadinessDiagnostic | Should -Match "blocked by dispatch identity 'Cephalon-Neza'"
         $report.DispatchActor | Should -Be "Cephalon-Neza"
         $report.RequiredReleaseManagerAction | Should -Match "Actions-enabled release-manager identity"
         $handoff = Get-Content -LiteralPath $handoffPath -Raw -Encoding UTF8

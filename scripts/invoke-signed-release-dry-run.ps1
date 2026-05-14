@@ -117,6 +117,181 @@ function Resolve-SignedReleaseDryRunBlockerClass {
     return "dispatch-failed"
 }
 
+function Test-SignedReleaseDryRunWorkflowDispatchDeclaration {
+    param(
+        [AllowNull()]
+        [string]$WorkflowPath,
+        [Parameter(Mandatory = $true)]
+        [string]$RepoRoot
+    )
+
+    if ([string]::IsNullOrWhiteSpace($WorkflowPath)) {
+        return $null
+    }
+
+    $resolvedWorkflowPath = Resolve-RepoPath -Path $WorkflowPath -RepoRoot $RepoRoot
+    if (-not (Test-Path -LiteralPath $resolvedWorkflowPath -PathType Leaf)) {
+        return $null
+    }
+
+    $workflowContent = Get-Content -LiteralPath $resolvedWorkflowPath -Raw -Encoding UTF8
+    return $workflowContent.Contains("workflow_dispatch", [System.StringComparison]::OrdinalIgnoreCase)
+}
+
+function Resolve-SignedReleaseDryRunBlockerScope {
+    param(
+        [AllowNull()]
+        [string]$BlockerClass
+    )
+
+    if ([string]::IsNullOrWhiteSpace($BlockerClass)) {
+        return "none"
+    }
+
+    switch ($BlockerClass) {
+        "dispatch-identity-actions-disabled" { return "identity" }
+        "dispatch-token-permission-denied" { return "token" }
+        "repository-actions-disabled" { return "repository" }
+        "repository-actions-permission-read-failed" { return "repository" }
+        "workflow-dispatch-not-enabled" { return "workflow" }
+        "workflow-inactive" { return "workflow" }
+        "workflow-list-failed" { return "workflow" }
+        "workflow-not-found" { return "workflow" }
+        "workflow-not-found-or-inaccessible" { return "workflow" }
+        default { return "unknown" }
+    }
+}
+
+function Resolve-SignedReleaseDryRunPrerequisitesStatus {
+    param(
+        [AllowNull()]
+        [string]$Status,
+        [AllowNull()]
+        [string]$BlockerClass,
+        [AllowNull()]
+        [object]$RepositoryWorkflowDispatchReady,
+        [bool]$SkipDispatch,
+        [bool]$RunCreated,
+        [AllowNull()]
+        [string]$RunLookupStatus
+    )
+
+    if ($Status -eq "submitted" -and $RunCreated) {
+        return "workflow-dispatch-submitted-run-found"
+    }
+
+    if ($Status -eq "submitted") {
+        return "workflow-dispatch-submitted-$RunLookupStatus"
+    }
+
+    if ($Status -eq "ready" -and $SkipDispatch) {
+        return "repository-and-workflow-ready-dispatch-skipped"
+    }
+
+    if ($RepositoryWorkflowDispatchReady -eq $true) {
+        switch ($BlockerClass) {
+            "dispatch-identity-actions-disabled" { return "repository-and-workflow-ready-identity-blocked" }
+            "dispatch-token-permission-denied" { return "repository-and-workflow-ready-token-blocked" }
+            "workflow-dispatch-not-enabled" { return "workflow-dispatch-not-enabled" }
+            "workflow-not-found-or-inaccessible" { return "repository-and-workflow-ready-workflow-inaccessible" }
+            "dispatch-failed" { return "repository-and-workflow-ready-dispatch-failed" }
+            { -not [string]::IsNullOrWhiteSpace($_) } { return "repository-and-workflow-ready-blocked" }
+            default { return "repository-and-workflow-ready" }
+        }
+    }
+
+    switch ($BlockerClass) {
+        "repository-actions-disabled" { return "repository-actions-disabled" }
+        "repository-actions-permission-read-failed" { return "repository-actions-permission-read-failed" }
+        "workflow-dispatch-not-enabled" { return "workflow-dispatch-not-enabled" }
+        "workflow-inactive" { return "workflow-inactive" }
+        "workflow-list-failed" { return "workflow-list-failed" }
+        "workflow-not-found" { return "workflow-not-found" }
+        default {
+            if ($Status -eq "blocked") {
+                return "dispatch-prerequisites-blocked"
+            }
+
+            return "dispatch-prerequisites-unknown"
+        }
+    }
+}
+
+function Resolve-SignedReleaseDryRunDiagnostic {
+    param(
+        [AllowNull()]
+        [string]$Status,
+        [AllowNull()]
+        [string]$BlockerClass,
+        [AllowNull()]
+        [string]$DispatchActor,
+        [AllowNull()]
+        [object]$RepositoryWorkflowDispatchReady,
+        [AllowNull()]
+        [object]$WorkflowDispatchDeclared,
+        [bool]$SkipDispatch,
+        [bool]$RunCreated,
+        [AllowNull()]
+        [string]$RunLookupStatus
+    )
+
+    $actor = if ([string]::IsNullOrWhiteSpace($DispatchActor)) { "the dispatching GitHub identity" } else { "dispatch identity '$DispatchActor'" }
+
+    if ($Status -eq "submitted" -and $RunCreated) {
+        return "The Publish Release workflow dry-run dispatch was submitted and a workflow run URL was found."
+    }
+
+    if ($Status -eq "submitted") {
+        return "The Publish Release workflow dry-run dispatch was submitted, but run lookup finished with '$RunLookupStatus'."
+    }
+
+    if ($Status -eq "ready" -and $SkipDispatch) {
+        return "Repository Actions are enabled, the Publish Release workflow is active, workflow_dispatch is declared, and dispatch was skipped by request."
+    }
+
+    if ($RepositoryWorkflowDispatchReady -eq $true -and $BlockerClass -eq "dispatch-identity-actions-disabled") {
+        return "Repository Actions are enabled and the Publish Release workflow is active with workflow_dispatch declared; dry-run proof is blocked by $actor."
+    }
+
+    if ($RepositoryWorkflowDispatchReady -eq $true -and $BlockerClass -eq "dispatch-token-permission-denied") {
+        return "Repository Actions and workflow dispatch prerequisites are ready, but the dispatch token cannot create the workflow_dispatch run."
+    }
+
+    switch ($BlockerClass) {
+        "repository-actions-disabled" {
+            return "Repository Actions permissions are disabled, so workflow dispatch cannot be attempted."
+        }
+        "repository-actions-permission-read-failed" {
+            return "Repository Actions permission readback failed, so dispatch prerequisites cannot be trusted."
+        }
+        "workflow-inactive" {
+            return "The Publish Release workflow exists but is not active."
+        }
+        "workflow-not-found" {
+            return "The Publish Release workflow was not found in repository workflow metadata."
+        }
+        "workflow-dispatch-not-enabled" {
+            return "The Publish Release workflow does not expose workflow_dispatch for dry-run dispatch."
+        }
+        "workflow-not-found-or-inaccessible" {
+            return "The Publish Release workflow was not found or is inaccessible to the dispatch identity."
+        }
+        "workflow-list-failed" {
+            return "Workflow metadata readback failed, so dispatch prerequisites cannot be trusted."
+        }
+        { -not [string]::IsNullOrWhiteSpace($_) } {
+            return "The Publish Release workflow dry-run dispatch is blocked by '$BlockerClass'."
+        }
+        default {
+            if ($WorkflowDispatchDeclared -eq $false) {
+                return "The Publish Release workflow file does not declare workflow_dispatch."
+            }
+
+            return "Signed-release dry-run readiness could not produce a more specific diagnostic."
+        }
+    }
+}
+
 function Resolve-SignedReleaseDryRunRequiredAction {
     param(
         [AllowNull()]
@@ -199,9 +374,17 @@ function New-SignedReleaseDryRunHandoffMarkdown {
     $lines.Add("")
     $lines.Add("- Status: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.Status)``")
     $lines.Add("- BlockerClass: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.BlockerClass)``")
+    $lines.Add("- DispatchBlockerScope: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.DispatchBlockerScope)``")
     $lines.Add("- RunCreated: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.RunCreated)``")
     $lines.Add("- RunUrl: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.RunUrl)``")
     $lines.Add("- RunLookupStatus: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.RunLookupStatus)``")
+    $lines.Add("")
+    $lines.Add("## Diagnostics")
+    $lines.Add("")
+    $lines.Add("- RepositoryWorkflowDispatchReady: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.RepositoryWorkflowDispatchReady)``")
+    $lines.Add("- WorkflowDispatchDeclared: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.WorkflowDispatchDeclared)``")
+    $lines.Add("- WorkflowDispatchPrerequisitesStatus: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.WorkflowDispatchPrerequisitesStatus)``")
+    $lines.Add("- ReadinessDiagnostic: $(Format-SignedReleaseDryRunHandoffValue -Value $Report.ReadinessDiagnostic)")
     $lines.Add("")
     $lines.Add("## Dispatch")
     $lines.Add("")
@@ -301,6 +484,7 @@ function Invoke-SignedReleaseDryRunReadiness {
     $workflowPath = $null
     $workflowState = "unknown"
     $workflowActive = $false
+    $workflowDispatchDeclared = $null
     $repositoryActionsEnabled = $null
     $allowedActions = "unknown"
     $status = "ready"
@@ -332,10 +516,16 @@ function Invoke-SignedReleaseDryRunReadiness {
             $workflowPath = [string]$workflow.path
             $workflowState = [string]$workflow.state
             $workflowActive = $workflowState -eq "active"
+            $workflowDispatchDeclared = Test-SignedReleaseDryRunWorkflowDispatchDeclaration -WorkflowPath $workflowPath -RepoRoot $repoRoot
             if (-not $workflowActive) {
                 $status = "blocked"
                 $blockerClass = "workflow-inactive"
                 $summary = "The Publish Release workflow is present but is not active."
+            }
+            elseif ($workflowDispatchDeclared -eq $false) {
+                $status = "blocked"
+                $blockerClass = "workflow-dispatch-not-enabled"
+                $summary = "The Publish Release workflow does not declare workflow_dispatch."
             }
         }
     }
@@ -368,6 +558,7 @@ function Invoke-SignedReleaseDryRunReadiness {
     $runCreatedAtUtc = $null
     $runLookupStatus = "not-run"
     $dispatchCommand = "gh workflow run `"$WorkflowName`" --repo $Repository --ref $Ref -f dry_run=true"
+    $repositoryWorkflowDispatchReady = $repositoryActionsEnabled -eq $true -and $workflowActive -and $workflowDispatchDeclared -eq $true
 
     if ($status -eq "ready" -and -not $SkipDispatch) {
         $dispatchAttempted = $true
@@ -437,11 +628,32 @@ function Invoke-SignedReleaseDryRunReadiness {
         -BlockerClass $blockerClass `
         -DispatchActor $dispatchActor
 
+    $dispatchBlockerScope = Resolve-SignedReleaseDryRunBlockerScope -BlockerClass $blockerClass
+    $workflowDispatchPrerequisitesStatus = Resolve-SignedReleaseDryRunPrerequisitesStatus `
+        -Status $status `
+        -BlockerClass $blockerClass `
+        -RepositoryWorkflowDispatchReady $repositoryWorkflowDispatchReady `
+        -SkipDispatch:$SkipDispatch `
+        -RunCreated:$runCreated `
+        -RunLookupStatus $runLookupStatus
+    $readinessDiagnostic = Resolve-SignedReleaseDryRunDiagnostic `
+        -Status $status `
+        -BlockerClass $blockerClass `
+        -DispatchActor $dispatchActor `
+        -RepositoryWorkflowDispatchReady $repositoryWorkflowDispatchReady `
+        -WorkflowDispatchDeclared $workflowDispatchDeclared `
+        -SkipDispatch:$SkipDispatch `
+        -RunCreated:$runCreated `
+        -RunLookupStatus $runLookupStatus
+
     $report = [pscustomobject]([ordered]@{
-        '$schemaVersion' = "1.1.0"
+        '$schemaVersion' = "1.2.0"
         Status = $status
         BlockerClass = $blockerClass
+        DispatchBlockerScope = $dispatchBlockerScope
         Summary = $summary
+        ReadinessDiagnostic = $readinessDiagnostic
+        WorkflowDispatchPrerequisitesStatus = $workflowDispatchPrerequisitesStatus
         Repository = $Repository
         DispatchActor = $dispatchActor
         DispatchIdentityStatus = $dispatchIdentityStatus
@@ -452,9 +664,11 @@ function Invoke-SignedReleaseDryRunReadiness {
         WorkflowPath = $workflowPath
         WorkflowState = $workflowState
         WorkflowActive = $workflowActive
+        WorkflowDispatchDeclared = $workflowDispatchDeclared
         Ref = $Ref
         DryRun = $true
         RepositoryActionsEnabled = $repositoryActionsEnabled
+        RepositoryWorkflowDispatchReady = $repositoryWorkflowDispatchReady
         AllowedActions = $allowedActions
         DispatchAttempted = $dispatchAttempted
         DispatchExitCode = $dispatchExitCode

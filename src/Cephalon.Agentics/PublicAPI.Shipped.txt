@@ -7,6 +7,8 @@ Cephalon.Agentics.Configuration.AgenticRuntimeOptions.EnableExecutionIdempotency
 Cephalon.Agentics.Configuration.AgenticRuntimeOptions.EnableExecutionIdempotency.set -> void
 Cephalon.Agentics.Configuration.AgenticRuntimeOptions.EnableMemory.get -> bool
 Cephalon.Agentics.Configuration.AgenticRuntimeOptions.EnableMemory.set -> void
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.ExecutionIdempotencyDurability.get -> string!
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.ExecutionIdempotencyDurability.set -> void
 Cephalon.Agentics.Configuration.AgenticRuntimeOptions.ExecutionIdempotencyRetentionMinutes.get -> int
 Cephalon.Agentics.Configuration.AgenticRuntimeOptions.ExecutionIdempotencyRetentionMinutes.set -> void
 Cephalon.Agentics.Configuration.AgenticRuntimeOptions.ExecutionMaxAttempts.get -> int

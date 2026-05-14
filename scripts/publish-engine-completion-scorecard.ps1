@@ -3669,6 +3669,9 @@ function Convert-SupplyChainEvidence {
         $dryRunStatus = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "status" -DefaultValue "")
         $dryRunCurrentProofState = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "currentProofState" -DefaultValue "")
         $dryRunCurrentBlockerClass = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "currentBlockerClass" -DefaultValue "")
+        $dryRunCurrentBlockerScope = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "currentBlockerScope" -DefaultValue "")
+        $dryRunCurrentWorkflowDispatchPrerequisitesStatus = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "currentWorkflowDispatchPrerequisitesStatus" -DefaultValue "")
+        $dryRunReadinessDiagnostic = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "readinessDiagnostic" -DefaultValue "")
         $dryRunReadinessPolicy = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "readinessPolicy" -DefaultValue "")
         $dryRunValidationScriptPath = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "validationScript" -DefaultValue "")
         $dryRunOutputPath = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "outputPath" -DefaultValue "")
@@ -3682,6 +3685,9 @@ function Convert-SupplyChainEvidence {
         foreach ($field in @(
             @{ Name = "status"; Value = $dryRunStatus },
             @{ Name = "currentProofState"; Value = $dryRunCurrentProofState },
+            @{ Name = "currentBlockerScope"; Value = $dryRunCurrentBlockerScope },
+            @{ Name = "currentWorkflowDispatchPrerequisitesStatus"; Value = $dryRunCurrentWorkflowDispatchPrerequisitesStatus },
+            @{ Name = "readinessDiagnostic"; Value = $dryRunReadinessDiagnostic },
             @{ Name = "readinessPolicy"; Value = $dryRunReadinessPolicy },
             @{ Name = "validationScript"; Value = $dryRunValidationScriptPath },
             @{ Name = "outputPath"; Value = $dryRunOutputPath },
@@ -3729,6 +3735,10 @@ function Convert-SupplyChainEvidence {
             Status                   = $dryRunStatus
             CurrentProofState        = $dryRunCurrentProofState
             CurrentBlockerClass      = $dryRunCurrentBlockerClass
+            CurrentBlockerScope      = $dryRunCurrentBlockerScope
+            RepositoryWorkflowDispatchReady = ConvertTo-RequiredSupplyChainBoolean -Value (Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "repositoryWorkflowDispatchReady" -DefaultValue $false) -Name "signedReleaseDryRun.repositoryWorkflowDispatchReady"
+            CurrentWorkflowDispatchPrerequisitesStatus = $dryRunCurrentWorkflowDispatchPrerequisitesStatus
+            ReadinessDiagnostic      = $dryRunReadinessDiagnostic
             ReadinessPolicy          = $dryRunReadinessPolicy
             ValidationScript         = $dryRunValidationScriptReference.Reference
             OutputPath               = $dryRunOutputPath
@@ -4359,6 +4369,10 @@ function Write-EngineCompletionScorecardReport {
         $markdown.Add("- Status: $($Report.SupplyChainEvidence.SignedReleaseDryRun.Status)")
         $markdown.Add("- Current proof state: $($Report.SupplyChainEvidence.SignedReleaseDryRun.CurrentProofState)")
         $markdown.Add("- Current blocker class: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.CurrentBlockerClass)``")
+        $markdown.Add("- Current blocker scope: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.CurrentBlockerScope)``")
+        $markdown.Add("- Repository/workflow dispatch ready: $($Report.SupplyChainEvidence.SignedReleaseDryRun.RepositoryWorkflowDispatchReady)")
+        $markdown.Add("- Workflow dispatch prerequisites status: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.CurrentWorkflowDispatchPrerequisitesStatus)``")
+        $markdown.Add("- Readiness diagnostic: $($Report.SupplyChainEvidence.SignedReleaseDryRun.ReadinessDiagnostic)")
         $markdown.Add("- Readiness policy: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.ReadinessPolicy)``")
         $markdown.Add("- Required command: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.RequiredCommand)``")
         $markdown.Add("- Output path: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.OutputPath)``")
