@@ -1,5 +1,5 @@
 {
-  "$schemaVersion": "1.1.0",
+  "$schemaVersion": "1.2.0",
   "scenarioId": "out-of-tree-generated-app-package-stage",
   "status": "execution-report-ready",
   "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, and writes a machine-readable execution report.",
@@ -15,6 +15,222 @@
     "docs/package-publishing.md",
     "docs/engine-completion-scorecard.md",
     "docs/release-checklist.md"
+  ],
+  "goldenUseCases": [
+    {
+      "id": "out-of-tree-package-adoption",
+      "title": "Generated app with staged external package",
+      "appShape": "generated-modular-monolith",
+      "status": "execution-report-ready",
+      "proofLevel": "executable-smoke",
+      "primaryValidationPath": "scripts/validate-out-of-tree-package-adoption.ps1",
+      "sourceDocs": [
+        "docs/getting-started.md",
+        "docs/operations.md",
+        "docs/external-package-lifecycle.md",
+        "docs/package-publishing.md"
+      ],
+      "qualityDimensions": [
+        "Usability",
+        "Reliability",
+        "Maintainability",
+        "Compatibility",
+        "Auditability"
+      ],
+      "requiredEngineCapabilities": [
+        "blueprint-driven generated app",
+        "temporary local package feed",
+        "external package staging",
+        "package policy and trust",
+        "runtime introspection"
+      ],
+      "proofTargets": [
+        {
+          "kind": "runtime-probe",
+          "reference": "/engine/packages"
+        },
+        {
+          "kind": "runtime-probe",
+          "reference": "/engine/package-policy"
+        },
+        {
+          "kind": "runtime-probe",
+          "reference": "/engine/trust-policy"
+        },
+        {
+          "kind": "runtime-probe",
+          "reference": "/engine/snapshot"
+        },
+        {
+          "kind": "reference-module-route",
+          "reference": "/api/operations/status"
+        }
+      ]
+    },
+    {
+      "id": "modular-monolith-rest-worker-data",
+      "title": "Modular monolith REST, Worker, and data foundation",
+      "appShape": "modular-monolith",
+      "status": "planned",
+      "proofLevel": "contract-defined",
+      "primaryValidationPath": "scripts/validate-generated-app-adoption.ps1",
+      "sourceDocs": [
+        "docs/app-models.md",
+        "docs/operations.md",
+        "docs/components/README.md"
+      ],
+      "qualityDimensions": [
+        "Performance",
+        "Reliability",
+        "Maintainability",
+        "Data Integrity",
+        "Availability"
+      ],
+      "requiredEngineCapabilities": [
+        "configuration-driven blueprint selection",
+        "thin ASP.NET Core host",
+        "thin Worker host",
+        "dependency health catalog",
+        "runtime snapshot"
+      ],
+      "proofTargets": [
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/snapshot"
+        },
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/dependencies"
+        },
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/runtime-story"
+        }
+      ]
+    },
+    {
+      "id": "vertical-slice-eventing-outbox",
+      "title": "Vertical slice behavior, Eventing, and outbox flow",
+      "appShape": "modular-vertical-slice",
+      "status": "planned",
+      "proofLevel": "contract-defined",
+      "primaryValidationPath": "scripts/validate-generated-app-adoption.ps1",
+      "sourceDocs": [
+        "docs/app-models.md",
+        "docs/components/eventing.md",
+        "docs/operations.md"
+      ],
+      "qualityDimensions": [
+        "Reliability",
+        "Scalability",
+        "Data Integrity",
+        "Auditability",
+        "Flexibility"
+      ],
+      "requiredEngineCapabilities": [
+        "behavior pipeline composition",
+        "event publication runtime truth",
+        "dispatch failure remediation",
+        "transport selection",
+        "runtime diagnostics catalog"
+      ],
+      "proofTargets": [
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/event-publications/runtime"
+        },
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/event-dispatches/terminal-failures"
+        },
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/diagnostics"
+        }
+      ]
+    },
+    {
+      "id": "microservice-multi-transport-operations",
+      "title": "Microservice with multi-transport and operations posture",
+      "appShape": "microservice",
+      "status": "planned",
+      "proofLevel": "contract-defined",
+      "primaryValidationPath": "scripts/validate-generated-app-adoption.ps1",
+      "sourceDocs": [
+        "docs/app-models.md",
+        "docs/compatibility.md",
+        "docs/operations.md"
+      ],
+      "qualityDimensions": [
+        "Performance",
+        "Security",
+        "Scalability",
+        "Availability",
+        "Compliance"
+      ],
+      "requiredEngineCapabilities": [
+        "transport-gated endpoint mapping",
+        "OpenAPI and non-REST separation",
+        "gRPC contract ownership",
+        "deployment-mode posture",
+        "observability companion packages"
+      ],
+      "proofTargets": [
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/transports"
+        },
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/diagnostics"
+        },
+        {
+          "kind": "release-evidence",
+          "reference": "DeploymentModeEvidence"
+        }
+      ]
+    },
+    {
+      "id": "saas-tenant-governance-audit",
+      "title": "SaaS tenant governance, invitation delivery, and audit",
+      "appShape": "modular-monolith",
+      "status": "planned",
+      "proofLevel": "contract-defined",
+      "primaryValidationPath": "scripts/validate-out-of-tree-package-adoption.ps1",
+      "sourceDocs": [
+        "docs/components/multi-tenancy-governance.md",
+        "docs/operations.md",
+        "docs/package-publishing.md"
+      ],
+      "qualityDimensions": [
+        "Security",
+        "Data Integrity",
+        "Auditability",
+        "Compliance",
+        "Usability"
+      ],
+      "requiredEngineCapabilities": [
+        "tenant membership governance",
+        "invitation delivery dispatch",
+        "delivery status reconciliation",
+        "package provenance",
+        "audit runtime proofs"
+      ],
+      "proofTargets": [
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/technology-surfaces"
+        },
+        {
+          "kind": "operator-surface",
+          "reference": "/engine/snapshot"
+        },
+        {
+          "kind": "release-evidence",
+          "reference": "SupplyChainEvidence"
+        }
+      ]
+    }
   ],
   "referenceModuleProject": "samples/Cephalon.ReferenceModule.Operations/Cephalon.ReferenceModule.Operations.csproj",
   "assertions": {

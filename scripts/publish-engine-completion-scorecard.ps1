@@ -17,7 +17,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.23.0"
+$Script:SchemaVersion = "1.24.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -1842,6 +1842,112 @@ function Convert-AdoptionSmokeEvidence {
         }
     }
 
+    $allowedGoldenUseCaseStatuses = @("planned", "execution-report-ready", "validated", "shipped")
+    $allowedGoldenUseCaseProofLevels = @("contract-defined", "executable-smoke", "runtime-verified", "release-gated")
+    $goldenUseCaseReferences = @()
+    $goldenUseCaseIds = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+    $goldenUseCases = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "goldenUseCases" -DefaultValue @() |
+            ForEach-Object {
+                $id = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "id" -DefaultValue "")
+                $title = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "title" -DefaultValue "")
+                $appShape = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "appShape" -DefaultValue "")
+                $status = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "status" -DefaultValue "")
+                $proofLevel = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "proofLevel" -DefaultValue "")
+                $primaryValidationPath = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "primaryValidationPath" -DefaultValue "")
+
+                if ([string]::IsNullOrWhiteSpace($id) -or
+                    [string]::IsNullOrWhiteSpace($title) -or
+                    [string]::IsNullOrWhiteSpace($appShape) -or
+                    [string]::IsNullOrWhiteSpace($status) -or
+                    [string]::IsNullOrWhiteSpace($proofLevel) -or
+                    [string]::IsNullOrWhiteSpace($primaryValidationPath)) {
+                    throw "Adoption smoke golden use case entries must include id, title, appShape, status, proofLevel, and primaryValidationPath."
+                }
+
+                if (-not $goldenUseCaseIds.Add($id)) {
+                    throw "Adoption smoke golden use case id '$id' is duplicated."
+                }
+
+                if ($allowedGoldenUseCaseStatuses -notcontains $status) {
+                    throw "Adoption smoke golden use case '$id' has unsupported status '$status'."
+                }
+
+                if ($allowedGoldenUseCaseProofLevels -notcontains $proofLevel) {
+                    throw "Adoption smoke golden use case '$id' has unsupported proofLevel '$proofLevel'."
+                }
+
+                $primaryValidationReference = Resolve-AdoptionSmokeManifestPath -DeclaredPath $primaryValidationPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "goldenUseCases.primaryValidationPath" -PathType "File"
+                $sourceDocReferences = @(
+                    Get-ManifestPropertyValue -Object $_ -PropertyName "sourceDocs" -DefaultValue @() |
+                        ForEach-Object {
+                            Resolve-AdoptionSmokeManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "goldenUseCases.sourceDocs" -PathType "File"
+                        }
+                )
+
+                if ($sourceDocReferences.Count -eq 0) {
+                    throw "Adoption smoke golden use case '$id' must declare at least one source document."
+                }
+
+                $qualityDimensions = @(
+                    Get-ManifestPropertyValue -Object $_ -PropertyName "qualityDimensions" -DefaultValue @() |
+                        ForEach-Object { [string]$_ } |
+                        Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+                )
+                if ($qualityDimensions.Count -eq 0) {
+                    throw "Adoption smoke golden use case '$id' must declare at least one quality dimension."
+                }
+
+                $requiredEngineCapabilities = @(
+                    Get-ManifestPropertyValue -Object $_ -PropertyName "requiredEngineCapabilities" -DefaultValue @() |
+                        ForEach-Object { [string]$_ } |
+                        Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+                )
+                if ($requiredEngineCapabilities.Count -eq 0) {
+                    throw "Adoption smoke golden use case '$id' must declare at least one required engine capability."
+                }
+
+                $proofTargets = @(
+                    Get-ManifestPropertyValue -Object $_ -PropertyName "proofTargets" -DefaultValue @() |
+                        ForEach-Object {
+                            $kind = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "kind" -DefaultValue "")
+                            $reference = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "reference" -DefaultValue "")
+                            if ([string]::IsNullOrWhiteSpace($kind) -or [string]::IsNullOrWhiteSpace($reference)) {
+                                throw "Adoption smoke golden use case '$id' proof targets must include kind and reference."
+                            }
+
+                            [pscustomobject]([ordered]@{
+                                Kind = $kind
+                                Reference = $reference
+                            })
+                        }
+                )
+                if ($proofTargets.Count -eq 0) {
+                    throw "Adoption smoke golden use case '$id' must declare at least one proof target."
+                }
+
+                $goldenUseCaseReferences += $primaryValidationReference
+                $goldenUseCaseReferences += $sourceDocReferences
+
+                [pscustomobject]([ordered]@{
+                    Id                         = $id
+                    Title                      = $title
+                    AppShape                   = $appShape
+                    Status                     = $status
+                    ProofLevel                 = $proofLevel
+                    PrimaryValidationPath      = $primaryValidationReference.Reference
+                    SourceDocuments            = @($sourceDocReferences | ForEach-Object { $_.Reference })
+                    QualityDimensions          = $qualityDimensions
+                    RequiredEngineCapabilities = $requiredEngineCapabilities
+                    ProofTargets               = $proofTargets
+                })
+            }
+    )
+
+    if ($goldenUseCases.Count -eq 0) {
+        throw "Adoption smoke support manifest must declare at least one golden use case."
+    }
+
     return [pscustomobject]([ordered]@{
         Manifest                  = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
         ManifestSchemaVersion     = $schemaVersion
@@ -1854,6 +1960,7 @@ function Convert-AdoptionSmokeEvidence {
         ReferenceModuleProject    = $referenceModuleProjectReference.Reference
         Assertions                = $assertionRows
         RequiredScriptTokens      = $requiredScriptTokens
+        GoldenUseCases            = $goldenUseCases
         ExecutionReport           = [pscustomobject]([ordered]@{
             SchemaVersion = $executionReportSchemaVersion
             DefaultPath = $executionReportPath
@@ -1866,6 +1973,7 @@ function Convert-AdoptionSmokeEvidence {
             $referenceModuleProjectReference
             $supportingScriptReferences
             $sourceDocumentReferences
+            $goldenUseCaseReferences
         ) | Sort-Object Reference -Unique
     })
 }
@@ -3876,6 +3984,8 @@ function New-EngineCompletionScorecardReport {
             AdoptionSmokeRuntimeProbeCount = @($adoptionSmokeEvidence.RuntimeProbes).Count
             AdoptionSmokeAssertionCount = @($adoptionSmokeEvidence.Assertions).Count
             AdoptionSmokeExecutionReportRequiredFieldCount = @($adoptionSmokeEvidence.ExecutionReport.RequiredFields).Count
+            AdoptionSmokeGoldenUseCaseCount = @($adoptionSmokeEvidence.GoldenUseCases).Count
+            AdoptionSmokeGoldenUseCaseExecutionReadyCount = @($adoptionSmokeEvidence.GoldenUseCases | Where-Object { @("execution-report-ready", "validated", "shipped") -contains $_.Status }).Count
             ProviderIntegrationEvidenceRowCount = $providerIntegrationEvidence.EvidenceRowCount
             ProviderIntegrationLiveProofCount = $providerIntegrationEvidence.LiveProofCount
             ProviderIntegrationCompositionOnlyCount = $providerIntegrationEvidence.CompositionOnlyCount
@@ -3985,6 +4095,8 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Adoption smoke scenarios: $($Report.Summary.AdoptionSmokeScenarioCount)")
     $markdown.Add("- Adoption smoke runtime probes: $($Report.Summary.AdoptionSmokeRuntimeProbeCount)")
     $markdown.Add("- Adoption smoke execution-report fields: $($Report.Summary.AdoptionSmokeExecutionReportRequiredFieldCount)")
+    $markdown.Add("- Adoption smoke golden use cases: $($Report.Summary.AdoptionSmokeGoldenUseCaseCount)")
+    $markdown.Add("- Adoption smoke execution-ready golden use cases: $($Report.Summary.AdoptionSmokeGoldenUseCaseExecutionReadyCount)")
     $markdown.Add("- Provider integration evidence rows: $($Report.Summary.ProviderIntegrationEvidenceRowCount)")
     $markdown.Add("- Provider integration live proofs: $($Report.Summary.ProviderIntegrationLiveProofCount)")
     $markdown.Add("- Provider integration composition-only rows: $($Report.Summary.ProviderIntegrationCompositionOnlyCount)")
@@ -4271,6 +4383,13 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("| --- | --- |")
     foreach ($probe in $Report.AdoptionSmokeEvidence.RuntimeProbes) {
         $markdown.Add("| $($probe.Kind) | ``$($probe.Path)`` |")
+    }
+
+    $markdown.Add("")
+    $markdown.Add("| Golden use case | App shape | Status | Proof level | Primary validation |")
+    $markdown.Add("| --- | --- | --- | --- | --- |")
+    foreach ($useCase in $Report.AdoptionSmokeEvidence.GoldenUseCases) {
+        $markdown.Add("| $($useCase.Id) | $($useCase.AppShape) | $($useCase.Status) | $($useCase.ProofLevel) | ``$($useCase.PrimaryValidationPath)`` |")
     }
 
     $markdown.Add("")

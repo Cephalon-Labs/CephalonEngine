@@ -52,6 +52,14 @@ public sealed class OutOfTreePackageAdoptionAssetsTests
 
         Assert.Contains("out-of-tree-generated-app-package-stage", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("execution-report-ready", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("goldenUseCases", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("out-of-tree-package-adoption", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("modular-monolith-rest-worker-data", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("vertical-slice-eventing-outbox", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("microservice-multi-transport-operations", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("saas-tenant-governance-audit", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("requiredEngineCapabilities", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("proofTargets", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("validate-out-of-tree-package-adoption.ps1", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Behaviors.SourceGen", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Diagnostics", adoptionSmokeManifest, StringComparison.Ordinal);
