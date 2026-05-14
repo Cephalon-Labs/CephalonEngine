@@ -44,7 +44,7 @@ function Get-ProviderLiveTestMatrix {
         }
         Nats = [pscustomobject]@{
             Provider = "Nats"
-            FilterToken = "NatsProvider_StagesOutboxInboxAndDispatchAgainstLiveJetStream"
+            FilterToken = "NatsProvider_"
             Runtime = "nats:2.10-alpine -js"
         }
         Neo4j = [pscustomobject]@{

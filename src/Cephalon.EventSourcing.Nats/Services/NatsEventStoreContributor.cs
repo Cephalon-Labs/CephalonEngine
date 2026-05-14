@@ -27,7 +27,12 @@ internal sealed class NatsEventStoreContributor(string url, string bucketName) :
         {
             ["bucketName"] = bucketName,
             ["urlConfigured"] = "true",
-            ["secretProjection"] = "redacted"
+            ["secretProjection"] = "redacted",
+            ["snapshotBucketName"] = bucketName,
+            ["snapshotKeyPrefix"] = NatsEventSourcingConfiguration.SnapshotKeyPrefix,
+            ["snapshotStorage"] = "NATS JetStream KV latest-snapshot",
+            ["snapshotLifecycle"] = "provider-durable",
+            ["snapshotConcurrency"] = "revision-compare-and-set"
         };
 
         if (Uri.TryCreate(url, UriKind.Absolute, out var parsed))

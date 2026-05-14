@@ -1,7 +1,7 @@
 {
   "$schemaVersion": "1.0.0",
   "status": "expanded-live-provider-evidence",
-  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing including provider-durable snapshot replay, MongoDB data, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data providers have live proof lanes with pre-provisioned or disposable Testcontainers runtime modes; SMTP invitation delivery has a live relay handoff proof lane; CDC database providers have live proof lanes; observability dependency-health providers now have deterministic managed-probe live runtime proof across all eighteen provider packs. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
+  "summary": "Provider integration evidence is machine-readable. Redis and NATS data/event-sourcing including provider-durable snapshot replay, MongoDB data, Cassandra, ClickHouse, Elasticsearch, Neo4j, OpenSearch, and Qdrant data providers have live proof lanes with pre-provisioned or disposable Testcontainers runtime modes; SMTP invitation delivery has a live relay handoff proof lane; CDC database providers have live proof lanes; observability dependency-health providers now have deterministic managed-probe live runtime proof across all eighteen provider packs. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
   "sourceDocs": [
     "docs/engine-completion-scorecard.md",
     "docs/release-checklist.md",
@@ -393,16 +393,18 @@
     {
       "id": "nats-data-runtime-surface",
       "provider": "NATS",
-      "family": "data",
+      "family": "data-event-sourcing",
       "status": "live-proof-available",
       "defaultRunBehavior": "skipped-unless-enabled",
       "testProject": "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
       "testFiles": [
         "tests/Cephalon.Tests.ProviderIntegration/LiveDataProviderIntegrationTests.cs",
+        "tests/Cephalon.Tests.ProviderIntegration/NatsProviderIntegrationTests.cs",
         "tests/Cephalon.Tests.ProviderIntegration/ExternalServices/ExternalProviderServiceGate.cs"
       ],
       "sourceDocuments": [
         "docs/components/data-nats.md",
+        "docs/components/event-sourcing-nats.md",
         "docs/test-coverage-roadmap.md"
       ],
       "runtimeContracts": [
@@ -412,6 +414,12 @@
         "data.inbox.nats",
         "nats-outbox",
         "nats-inbox",
+        "nats-event-store",
+        "ISnapshotStore",
+        "IEventStreamReplayWorker",
+        "event-sourcing-managed-replay-worker",
+        "provider-durable-snapshot",
+        "event-sourcing",
         "outbox-producers",
         "inbox-stores",
         "IOutbox.EnqueueAsync",

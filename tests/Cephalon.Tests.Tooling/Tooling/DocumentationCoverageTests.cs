@@ -621,7 +621,7 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.EventSourcing.Nats"] = (
                 "event-sourcing-nats.md",
                 "NatsEventStoreContributor.cs",
-                "M1"),
+                "M2"),
             ["Cephalon.EventSourcing.Neo4j"] = (
                 "event-sourcing-neo4j.md",
                 "Neo4jEventStoreContributor.cs",
@@ -651,7 +651,7 @@ public sealed class DocumentationCoverageTests
             Assert.Contains(expected.Contributor, componentDoc, StringComparison.Ordinal);
             Assert.Contains("`event-sourcing` runtime surface", componentDoc, StringComparison.Ordinal);
 
-            if (projectName is "Cephalon.EventSourcing.EntityFramework" or "Cephalon.EventSourcing.MongoDB" or "Cephalon.EventSourcing.Redis")
+            if (projectName is "Cephalon.EventSourcing.EntityFramework" or "Cephalon.EventSourcing.MongoDB" or "Cephalon.EventSourcing.Redis" or "Cephalon.EventSourcing.Nats")
             {
                 Assert.Contains("snapshot", componentDoc, StringComparison.OrdinalIgnoreCase);
                 Assert.Contains("snapshotLifecycle = provider-durable", componentDoc, StringComparison.Ordinal);
@@ -665,13 +665,15 @@ public sealed class DocumentationCoverageTests
         var maturityAudit = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-surface-maturity-audit.md"));
         var conformanceMatrix = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "conformance-matrix.md"));
 
-        Assert.Contains("`event-sourcing` runtime-surface entries for the seven remaining provider stores", maturityAudit, StringComparison.Ordinal);
+        Assert.Contains("`event-sourcing` runtime-surface entries for the six remaining provider stores", maturityAudit, StringComparison.Ordinal);
         Assert.Contains("`Cephalon.EventSourcing.EntityFramework`", maturityAudit, StringComparison.Ordinal);
         Assert.Contains("`Cephalon.EventSourcing.MongoDB`", maturityAudit, StringComparison.Ordinal);
         Assert.Contains("`Cephalon.EventSourcing.Redis`", maturityAudit, StringComparison.Ordinal);
+        Assert.Contains("`Cephalon.EventSourcing.Nats`", maturityAudit, StringComparison.Ordinal);
         Assert.Contains("provider-durable `CephalonEventSnapshots`", maturityAudit, StringComparison.Ordinal);
         Assert.Contains("provider-durable MongoDB latest-snapshot collection", maturityAudit, StringComparison.Ordinal);
         Assert.Contains("provider-durable Redis Hash latest-snapshot", maturityAudit, StringComparison.Ordinal);
+        Assert.Contains("provider-durable NATS JetStream KV latest-snapshot", maturityAudit, StringComparison.Ordinal);
         Assert.Contains("All ten providers contribute sanitized descriptors", conformanceMatrix, StringComparison.Ordinal);
     }
 

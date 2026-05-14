@@ -18,7 +18,7 @@ Current focus:
 - keep [Engine surface maturity audit](engine-surface-maturity-audit.md) authoritative for ownership and proof language
 - treat the eighteen `Cephalon.Observability.*Dependencies` provider packs as current `M2` provider-managed dependency-health proofs: each owns one concrete managed probe loop, timeout/failure handling, diagnostics event ids, cached `IDependencyHealthContributor` runtime truth, and `/engine/dependencies` / readiness integration; further promotion needs operator automation, live reconciliation, or adoption evidence beyond that probe baseline
 - treat the fourteen `Cephalon.Observability` cloud / exporter / logging configuration packs as current `M1` cephalon-managed runtime-truth projections: each active pack now contributes a sanitized `observability` technology surface through `/engine/technology-surfaces` and `/engine/snapshot`, while actual telemetry collection remains owned by the host OpenTelemetry or logging-provider stack until a pack owns a managed exporter loop
-- treat core `Cephalon.EventSourcing` as current `M2` mixed application-managed plus Cephalon-managed proof: aggregate logic remains application-owned, while the core pack now owns an on-demand replay worker, snapshot lifecycle over `ISnapshotStore`, projection rebuild over registered `IProjection<IDomainEvent>` services, provider-durable snapshot provider readback, and `event-sourcing-managed-replay-worker` runtime-surface evidence; `Cephalon.EventSourcing.EntityFramework`, `Cephalon.EventSourcing.MongoDB`, and `Cephalon.EventSourcing.Redis` are the current `M2` provider-durable latest-snapshot proofs, while the other seven provider event-store packs remain `M1` provider-visible append/read proofs until each provider owns durable snapshot persistence, retention, archival, or background replay execution
+- treat core `Cephalon.EventSourcing` as current `M2` mixed application-managed plus Cephalon-managed proof: aggregate logic remains application-owned, while the core pack now owns an on-demand replay worker, snapshot lifecycle over `ISnapshotStore`, projection rebuild over registered `IProjection<IDomainEvent>` services, provider-durable snapshot provider readback, and `event-sourcing-managed-replay-worker` runtime-surface evidence; `Cephalon.EventSourcing.EntityFramework`, `Cephalon.EventSourcing.MongoDB`, `Cephalon.EventSourcing.Redis`, and `Cephalon.EventSourcing.Nats` are the current `M2` provider-durable latest-snapshot proofs, while the other six provider event-store packs remain `M1` provider-visible append/read proofs until each provider owns durable snapshot persistence, retention, archival, or background replay execution
 - keep the event-sourcing stream-version contract zero-based across source and docs: a missing stream reports `-1`, the first append after `expectedVersion: -1` persists version `0`, replay starts from `fromVersion: 0`, and tooling coverage blocks provider docs or entry-model comments from drifting back to 1-based wording
 - treat the non-relational `Cephalon.Data` store provider packs as current provider-visible runtime truth rather than catalog-only placeholders: MongoDB, Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, and NATS can now be active together in one engine with provider outbox/inbox descriptors, `outbox-producers` / `inbox-stores` technology surfaces, and sanitized URI capability metadata for URI-based packs; shared family capability keys such as `data.search-store` aggregate provider metadata instead of failing composition when multiple provider packs expose the same capability family
 - treat the relational `Cephalon.Data` provider packs as provider-managed CDC/runtime proof through the shared data contracts: SQL Server, PostgreSQL, MySQL, and Oracle can now be active together in one engine with an aggregated `data.relational-store` capability family plus `data-management` `cdc-captures` / `cdc-capture-runtimes` technology surfaces; database role and migration runtime ownership remains with `Cephalon.Data.EntityFramework` over `Engine:Databases`, not the raw relational provider packs
@@ -60,7 +60,7 @@ Current focus:
 - treat package publishing and NuGet discoverability as archive-validated release evidence: `scripts/publish-package-artifacts.ps1` now emits `.snupkg` symbol packages for runtime/tool packages, runs `scripts/validate-package-metadata.ps1`, and writes `package-metadata-validation.json` so readmes, tags, license, package type, repository/source metadata, and symbol pairing are checked from the produced archives before package publication can be considered green
 - treat NuGet vulnerability audit as a fail-closed security/compliance release gate: `scripts/validate-release.ps1` now runs `scripts/validate-nuget-vulnerability-audit.ps1`, writes `artifacts/nuget-vulnerability-audit-release/nuget-vulnerability-audit.json`, and the signed release bundle includes the advisory report beside package, SBOM, signature, and external-policy artefacts
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, SQL Server CDC against an opt-in live service, Postgres logical replication against an opt-in live service, MySQL binlog streaming against an opt-in live service, and Oracle LogMiner against an opt-in live service while keeping default CI Docker-free through the shared external-service gate, instead of implying those provider paths through fake transport harnesses
-- treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing and Redis Hash provider-durable snapshot replay against an opt-in live Redis runtime, MongoDB data outbox/inbox/dispatch-store behavior against a disposable replica-set runtime without a permanent external service, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data outbox/inbox runtime behavior against either pre-provisioned provider services or disposable Testcontainers-backed runtimes, and SMTP invitation delivery handoff against a live relay/API pair
+- treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing and Redis Hash provider-durable snapshot replay against an opt-in live Redis runtime, NATS data outbox/inbox/dispatch-store behavior plus NATS JetStream KV event sourcing and NATS KV provider-durable snapshot replay against an opt-in live NATS runtime, MongoDB data outbox/inbox/dispatch-store behavior against a disposable replica-set runtime without a permanent external service, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data outbox/inbox runtime behavior against either pre-provisioned provider services or disposable Testcontainers-backed runtimes, and SMTP invitation delivery handoff against a live relay/API pair
 - treat `scripts/provider-integration-support.json` as the release-readiness manifest for provider claims across live-provider tests, CDC integration lanes, and the eighteen dependency-health companion-pack live managed-probe proofs; the scorecard, release validation, CLI doctor, and script-level Pester tests must read provider-integration counts and dependency-health provider-manifest readback from that manifest instead of hand-authored prose, and the scorecard publisher must fail if dependency-health provider rows drift from the source-derived provider manifest
 - treat `scripts/observability-dependency-health-providers.json` as the source-derived dependency-health provider-family manifest: runtime invariant tests, managed-probe live runtime tests, provider-integration scorecard row validation, and Tooling documentation coverage must derive the eighteen `Cephalon.Observability.*Dependencies` expectations from that file so the next provider cannot ship with source/docs/planning counts drifting apart
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
@@ -117,6 +117,43 @@ Validation:
 - `dotnet build tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj -m:1`
 - focused Tooling documentation / CLI / package-surface guard tests
 - focused Pester script/scorecard/release-readback tests
+- `git diff --check`
+
+### ENG-711 EventSourcing NATS durable snapshot proof
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: event-sourcing / provider-managed snapshots / NATS / runtime truth
+Quality dimensions: Reliability, Data Integrity, Auditability, Maintainability, Compatibility, Flexibility
+GitHub issue: `#1398`
+
+Why:
+
+- NATS EventSourcing already owned real JetStream KV append/read behavior and the NATS data provider already had an opt-in live provider proof, but provider-durable snapshots were still an explicit non-claim
+- the core replay worker already consumes any active `ISnapshotStore`, so NATS should prove the same consumer-code-stable snapshot lifecycle as Entity Framework, MongoDB, and Redis without introducing provider-specific aggregate or projection code
+- runtime truth needed to show NATS durable snapshot ownership narrowly while leaving Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, and Qdrant at the honest append/read `M1` family floor
+
+Delivered:
+
+- added a NATS JetStream KV-backed `ISnapshotStore` with latest snapshots stored at `snapshots/{streamId}/{stateTypeKey}`
+- `AddCephalonNatsEventSourcing(...)` now registers the NATS snapshot store beside the JetStream KV event store and event-type registry
+- NATS snapshot saves reject stale rewinds and use JetStream KV revisions as a compare-and-set guard for latest-snapshot updates
+- NATS provider descriptors now report `snapshotStorage = NATS JetStream KV latest-snapshot`, `snapshotKeyPrefix = snapshots/`, `snapshotLifecycle = provider-durable`, and `snapshotConcurrency = revision-compare-and-set`
+- the core `event-sourcing` runtime surface reports NATS in `providerDurableSnapshotProviders` only when the NATS provider contributes that durable snapshot evidence
+- the live NATS provider canary now proves JetStream KV append/read, snapshot save/load, managed replay from snapshot version 1 to version 3, registered projection rebuild, final snapshot saveback, stale snapshot rejection, runtime-surface readback, and optimistic-concurrency rejection against a real NATS runtime
+- component docs, conformance matrix, maturity audit, roadmap, project memory, provider-live Testcontainers matrix, and provider-integration scorecard readback now separate the NATS `M2` provider claim from the remaining provider-pack `M1` floor
+
+Validation:
+
+- `dotnet build src/Cephalon.EventSourcing.Nats/Cephalon.EventSourcing.Nats.csproj -m:1`
+- `dotnet build tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj -m:1 --no-restore`
+- `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-build --filter "FullyQualifiedName~VectorLedgerDataPackTests|FullyQualifiedName~EventStoreProviderCatalogTests"`
+- `dotnet test tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj --no-build --filter "FullyQualifiedName~NatsProvider_"`
+- `pwsh ./scripts/run-provider-live-testcontainers.ps1 -Providers Nats -Configuration Release`
+- `dotnet build tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj -m:1 --no-restore`
+- focused Tooling documentation, CLI doctor, and package-surface guard tests
+- focused Pester script, scorecard, and release-readback tests
 - `git diff --check`
 
 ### ENG-709 EventSourcing MongoDB durable snapshot proof
