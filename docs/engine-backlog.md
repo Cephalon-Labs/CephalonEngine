@@ -18,7 +18,7 @@ Current focus:
 - keep [Engine surface maturity audit](engine-surface-maturity-audit.md) authoritative for ownership and proof language
 - treat the eighteen `Cephalon.Observability.*Dependencies` provider packs as current `M2` provider-managed dependency-health proofs: each owns one concrete managed probe loop, timeout/failure handling, diagnostics event ids, cached `IDependencyHealthContributor` runtime truth, and `/engine/dependencies` / readiness integration; further promotion needs operator automation, live reconciliation, or adoption evidence beyond that probe baseline
 - treat the fourteen `Cephalon.Observability` cloud / exporter / logging configuration packs as current `M1` cephalon-managed runtime-truth projections: each active pack now contributes a sanitized `observability` technology surface through `/engine/technology-surfaces` and `/engine/snapshot`, while actual telemetry collection remains owned by the host OpenTelemetry or logging-provider stack until a pack owns a managed exporter loop
-- treat core `Cephalon.EventSourcing` as current `M2` mixed application-managed plus Cephalon-managed proof: aggregate logic remains application-owned, while the core pack now owns an on-demand replay worker, snapshot lifecycle over `ISnapshotStore`, projection rebuild over registered `IProjection<IDomainEvent>` services, provider-durable snapshot provider readback, and `event-sourcing-managed-replay-worker` runtime-surface evidence; `Cephalon.EventSourcing.EntityFramework` is the first `M2` provider-durable latest-snapshot proof, while the other nine provider event-store packs remain `M1` provider-visible append/read proofs until each provider owns durable snapshot persistence, retention, archival, or background replay execution
+- treat core `Cephalon.EventSourcing` as current `M2` mixed application-managed plus Cephalon-managed proof: aggregate logic remains application-owned, while the core pack now owns an on-demand replay worker, snapshot lifecycle over `ISnapshotStore`, projection rebuild over registered `IProjection<IDomainEvent>` services, provider-durable snapshot provider readback, and `event-sourcing-managed-replay-worker` runtime-surface evidence; `Cephalon.EventSourcing.EntityFramework` and `Cephalon.EventSourcing.MongoDB` are the current `M2` provider-durable latest-snapshot proofs, while the other eight provider event-store packs remain `M1` provider-visible append/read proofs until each provider owns durable snapshot persistence, retention, archival, or background replay execution
 - keep the event-sourcing stream-version contract zero-based across source and docs: a missing stream reports `-1`, the first append after `expectedVersion: -1` persists version `0`, replay starts from `fromVersion: 0`, and tooling coverage blocks provider docs or entry-model comments from drifting back to 1-based wording
 - treat the non-relational `Cephalon.Data` store provider packs as current provider-visible runtime truth rather than catalog-only placeholders: MongoDB, Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, and NATS can now be active together in one engine with provider outbox/inbox descriptors, `outbox-producers` / `inbox-stores` technology surfaces, and sanitized URI capability metadata for URI-based packs; shared family capability keys such as `data.search-store` aggregate provider metadata instead of failing composition when multiple provider packs expose the same capability family
 - treat the relational `Cephalon.Data` provider packs as provider-managed CDC/runtime proof through the shared data contracts: SQL Server, PostgreSQL, MySQL, and Oracle can now be active together in one engine with an aggregated `data.relational-store` capability family plus `data-management` `cdc-captures` / `cdc-capture-runtimes` technology surfaces; database role and migration runtime ownership remains with `Cephalon.Data.EntityFramework` over `Engine:Databases`, not the raw relational provider packs
@@ -82,6 +82,39 @@ Current focus:
 - treat generated reference docs as a guarded generated API navigation layer: repo-local links across `docs/reference/**/*.md` must resolve inside `docs/reference`, and browser-view query links such as `browse.html?assembly=...` must resolve to the generated browser file while hand-authored docs remain the primary human contract
 - treat `docs/reference/reference-manifest.json` as the generated API bundle map: required browser/index/manifest assets must exist, assembly page files must be manifest-owned, namespace/type/member anchor ids must resolve in those pages, and orphan generated Markdown pages must fail Tooling coverage before hosted reference docs can drift
 - treat `docs/reference/browse.html` as the hosted reference-doc browser entry point: local `href` and `src` references must resolve inside `docs/reference` to existing generated bundle files so CSS, JavaScript, index links, and manifest links cannot drift after regeneration
+
+### ENG-709 EventSourcing MongoDB durable snapshot proof
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: event-sourcing / provider-managed snapshots / data integrity / runtime truth
+Quality dimensions: Reliability, Data Integrity, Auditability, Maintainability, Compatibility, Flexibility
+GitHub issue: `#1394`
+
+Why:
+
+- MongoDB EventSourcing already owned append/read event-store behavior and sanitized provider runtime truth, but provider-durable snapshots were still an explicit non-claim
+- the core replay worker can already consume any active `ISnapshotStore`, so MongoDB should prove the same consumer-code-stable snapshot lifecycle as Entity Framework without introducing another aggregate or projection API
+- runtime truth needed to show MongoDB durable snapshot ownership narrowly while leaving Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, and NATS at the honest append/read `M1` family floor
+
+Delivered:
+
+- added a MongoDB-backed `ISnapshotStore` with a latest-snapshot collection derived from the event collection name (`{collectionName}_snapshots`)
+- `AddCephalonMongoDbEventSourcing(...)` now registers the snapshot collection and durable snapshot store beside the MongoDB event store and event-type registry
+- MongoDB provider descriptors now report `snapshotStorage = {collectionName}_snapshots` and `snapshotLifecycle = provider-durable`
+- the core `event-sourcing` runtime surface reports MongoDB in `providerDurableSnapshotProviders` only when the MongoDB provider contributes that durable snapshot evidence
+- composition coverage proves snapshots persist across service-provider boundaries, feed managed replay, rebuild registered projections, update final state, reject stale snapshot rewinds, and remain visible through runtime surface metadata
+- component docs, conformance matrix, maturity audit, roadmap, and project memory now separate the MongoDB `M2` provider claim from the remaining provider-pack `M1` floor
+
+Validation:
+
+- `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --filter "FullyQualifiedName~MongoDbDataPackTests|FullyQualifiedName~EventStoreProviderCatalogTests"`
+- `dotnet build tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj -m:1`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-build --filter "FullyQualifiedName=Cephalon.Tests.Tooling.DocumentationCoverageTests.EventSourcingProviderDocsMatchRuntimeCatalogContributors"`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-build --filter "FullyQualifiedName=Cephalon.Tests.Tooling.DocumentationCoverageTests.EventSourcingProviderDocsMatchZeroBasedStreamVersionContract"`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-build --filter "FullyQualifiedName=Cephalon.Tests.Tooling.PackageSurfaceTests.EventSourcingProvidersUseRegistryInsteadOfPersistedTypeNameReflection"`
+- `git diff --check`
 
 ### ENG-708 EventSourcing Entity Framework durable snapshot proof
 

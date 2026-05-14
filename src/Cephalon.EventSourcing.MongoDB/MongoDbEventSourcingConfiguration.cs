@@ -7,6 +7,9 @@ namespace Cephalon.EventSourcing.MongoDB;
 /// </summary>
 public static class MongoDbEventSourcingConfiguration
 {
+    internal static string SnapshotCollectionName(string collectionName) =>
+        string.Concat(collectionName, "_snapshots");
+
     /// <summary>
     /// Creates the compound unique index on <c>(StreamId, StreamVersion)</c> required by the MongoDB event-store provider.
     /// </summary>
@@ -34,5 +37,24 @@ public static class MongoDbEventSourcingConfiguration
             new CreateIndexOptions { Name = "ix_event_appended_at" });
 
         await collection.Indexes.CreateManyAsync([uniqueStreamVersionIndex, streamIdIndex, appendedAtIndex], cancellationToken).ConfigureAwait(false);
+    }
+
+    internal static async Task EnsureSnapshotIndexesAsync(
+        IMongoCollection<MongoDbEventSnapshotEntry> collection,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(collection);
+
+        var uniqueStreamStateIndex = new CreateIndexModel<MongoDbEventSnapshotEntry>(
+            Builders<MongoDbEventSnapshotEntry>.IndexKeys
+                .Ascending(entry => entry.StreamId)
+                .Ascending(entry => entry.StateType),
+            new CreateIndexOptions { Unique = true, Name = "ux_event_snapshot_stream_state" });
+
+        var savedAtIndex = new CreateIndexModel<MongoDbEventSnapshotEntry>(
+            Builders<MongoDbEventSnapshotEntry>.IndexKeys.Ascending(entry => entry.SavedAtUtc),
+            new CreateIndexOptions { Name = "ix_event_snapshot_saved_at" });
+
+        await collection.Indexes.CreateManyAsync([uniqueStreamStateIndex, savedAtIndex], cancellationToken).ConfigureAwait(false);
     }
 }
