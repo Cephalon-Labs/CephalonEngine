@@ -853,7 +853,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("SRE posture counts from `SrePostureEvidence`", scorecard, StringComparison.Ordinal);
         Assert.Contains("stable-baseline manifest rows/measurements", scorecard, StringComparison.Ordinal);
         Assert.Contains("pending-baseline blocker evidence rows", scorecard, StringComparison.Ordinal);
-        Assert.Contains("signed-release dry-run status/proof/blocker", scorecard, StringComparison.Ordinal);
+        Assert.Contains("signed-release dry-run status/proof/blocker/scope/diagnostic", scorecard, StringComparison.Ordinal);
         Assert.Contains("test coverage counts from `TestCoverageEvidence`", scorecard, StringComparison.Ordinal);
         Assert.Contains($"scorecard schema `{expectedSchemaVersion}`", componentCatalog, StringComparison.Ordinal);
         Assert.Contains("ProviderIntegrationEvidence", componentCatalog, StringComparison.Ordinal);
@@ -890,8 +890,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("Eventing operational-superiority promotion contract/status/dimension/coverage/hot-path/Wolverine", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("SRE posture plus stable-baseline manifest, pending-baseline blocker, and guardrail-coverage counts", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("SRE SLI/target/baseline/stable-baseline-manifest/pending-baseline-blocker/guardrail-coverage counts", cliPackageReadme, StringComparison.Ordinal);
-        Assert.Contains("signed-release dry-run status/proof/blocker/command/output", cliComponentDoc, StringComparison.Ordinal);
-        Assert.Contains("signed-release dry-run status/proof/blocker/command/output", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("signed-release dry-run status/proof/blocker/scope/diagnostic/command/output", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("signed-release dry-run status/proof/blocker/scope/diagnostic/command/output", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("test coverage counts from `TestCoverageEvidence`", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("test coverage layered-project/gap/recommendation/quarantine counts from `TestCoverageEvidence`", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", planningGovernance, StringComparison.Ordinal);
@@ -1581,7 +1581,7 @@ public sealed class DocumentationCoverageTests
             "supply-chain-release-support.json")));
 
         var root = supplyChainManifest.RootElement;
-        Assert.Equal("1.6.0", ReadRequiredJsonString(root, "$schemaVersion", "supply-chain release support manifest"));
+        Assert.Equal("1.7.0", ReadRequiredJsonString(root, "$schemaVersion", "supply-chain release support manifest"));
         Assert.True(
             root.TryGetProperty("signedReleaseDryRun", out var signedReleaseDryRun),
             "Expected supply-chain release support manifest to define signedReleaseDryRun.");

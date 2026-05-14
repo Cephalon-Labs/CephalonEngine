@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `May 14, 2026`.
+Backlog status in this document reflects the repository state as of `May 15, 2026`.
 
 ## Current planning reset (April 2026)
 
@@ -69,7 +69,7 @@ Current focus:
 - treat the event-dispatch remediation command-result filtered read path as benchmark-governed: `EventDispatchRemediationCatalogBenchmarks` now covers native Wolverine-free filtered summary, retention, latest, oldest, and compact dashboard selectors, and `scripts/validate-release.ps1` includes that benchmark class in the default guardrail lane
 - treat open GitHub issue drift as a planning-quality risk: `scripts/validate-planning-github-issues.ps1` now checks open `ENG-*` issues against backlog truth, detects duplicate open issue numbers for the same ENG id, and detects stale open duplicates for backlog rows that are already `done` or `shipped` at another issue number
 - treat missing GitHub Project 2 planning fields as a planning-quality risk: `scripts/validate-planning-project-fields.ps1` now verifies open `ENG-*` issue project items have populated `Status`, `Estimate`, `Iteration`, `Test`, and `Benchmark`, and the first live run corrected the missing `Iteration` field on `ENG-532` / issue `#1180`
-- treat signed-release dry-run dispatch proof as scorecard readback, not prose-only release context: `SupplyChainEvidence.SignedReleaseDryRun` now records the dry-run status, partial proof state, current `dispatch-identity-actions-disabled` blocker, required `-RequireRunCreated` command, output path, handoff output path, and required report fields, while `scripts/invoke-signed-release-dry-run.ps1` reports the dispatch actor, identity resolution status, exact dispatch command, required release-manager action, and release-manager handoff artifact, Pester validates the manifest-required report fields plus generated handoff content against generated in-memory and persisted JSON reports, and Tooling documentation coverage derives the same required field list plus `handoffOutputPath` into [`package-publishing.md`](package-publishing.md), [`release-checklist.md`](release-checklist.md), and [`release-checklist-template.md`](release-checklist-template.md) so `ENG-532` stays actionable until an Actions-enabled release-manager identity creates the workflow run
+- treat signed-release dry-run dispatch proof as scorecard readback, not prose-only release context: `SupplyChainEvidence.SignedReleaseDryRun` now records the dry-run status, partial proof state, current `dispatch-identity-actions-disabled` blocker, blocker scope, repository/workflow dispatch readiness, prerequisite status, diagnostic text, required `-RequireRunCreated` command, output path, handoff output path, and required report fields, while `scripts/invoke-signed-release-dry-run.ps1` reports the dispatch actor, identity resolution status, exact dispatch command, required release-manager action, and release-manager handoff artifact, Pester validates the manifest-required report fields plus generated handoff content against generated in-memory and persisted JSON reports, and Tooling documentation coverage derives the same required field list plus `handoffOutputPath` into [`package-publishing.md`](package-publishing.md), [`release-checklist.md`](release-checklist.md), and [`release-checklist-template.md`](release-checklist-template.md) so `ENG-532` stays actionable until an Actions-enabled release-manager identity creates the workflow run
 - treat `Cephalon.Analyzers` as current `M2` cephalon-managed adoption baseline: generated non-test projects and all template-pack app/module starters now include the analyzer meta-package as a private analyzer package, `cephalon doctor --app-root` requires it in the generated host project baseline before a starter can claim the scaffolded quality posture, and consumer default builds keep PublicApiAnalyzers public-surface tracking opt-in so fresh generated apps do not emit starter-owned analyzer warnings
 - treat component-page maturity badges as a completed adoption contract: every shipped source-project component page now carries a maturity label, ownership label, and `engine-surface-maturity-audit.md` back-pointer, and Tooling coverage blocks any new shipped component page from skipping that first-scan truth
 - treat the component catalog as a unique source-project map: every shipped `src/Cephalon.*` project must appear exactly once in `docs/components/README.md`, so future family re-grouping cannot leave duplicate component links behind
@@ -82,6 +82,40 @@ Current focus:
 - treat generated reference docs as a guarded generated API navigation layer: repo-local links across `docs/reference/**/*.md` must resolve inside `docs/reference`, and browser-view query links such as `browse.html?assembly=...` must resolve to the generated browser file while hand-authored docs remain the primary human contract
 - treat `docs/reference/reference-manifest.json` as the generated API bundle map: required browser/index/manifest assets must exist, assembly page files must be manifest-owned, namespace/type/member anchor ids must resolve in those pages, and orphan generated Markdown pages must fail Tooling coverage before hosted reference docs can drift
 - treat `docs/reference/browse.html` as the hosted reference-doc browser entry point: local `href` and `src` references must resolve inside `docs/reference` to existing generated bundle files so CSS, JavaScript, index links, and manifest links cannot drift after regeneration
+
+### ENG-707 Signed-release dry-run blocker diagnostics
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: release-readiness / supply-chain / operator diagnostics
+Quality dimensions: Reliability, Auditability, Compliance, Maintainability, Usability
+GitHub issue: `#1390`
+
+Why:
+
+- the signed-release dry-run blocker was actionable but still flattened repository/workflow readiness and dispatch identity policy into one blocker class
+- release managers need one generated report and handoff that says whether the workflow lane is ready and exactly which scope still blocks proof
+- scorecard, doctor, docs, and release checklists must not overclaim signed-release proof while the external identity cannot create a real workflow run URL
+
+Delivered:
+
+- `scripts/invoke-signed-release-dry-run.ps1` now emits report schema `1.2.0` with `DispatchBlockerScope`, `RepositoryWorkflowDispatchReady`, `WorkflowDispatchPrerequisitesStatus`, `ReadinessDiagnostic`, and workflow-dispatch declaration readback
+- current live state remains `blocked` / `dispatch-identity-actions-disabled`, but the report now distinguishes repository/workflow readiness from the identity-level blocker
+- `scripts/supply-chain-release-support.json` is schema `1.7.0` and requires the new diagnostic fields in generated JSON and handoff evidence
+- scorecard generation and `cephalon doctor --scorecard` now read and print blocker scope, repository/workflow dispatch readiness, prerequisite status, diagnostic text, required command, output path, handoff path, and required report-field count from `SupplyChainEvidence.SignedReleaseDryRun`
+- package-publishing docs, release checklist docs, component CLI docs, roadmap, and project memory now describe the diagnostic contract without closing `ENG-532`
+- the Agentics additive public API baseline for `ExecutionIdempotencyDurability` is promoted into `PublicAPI.Shipped.txt` so scorecard public-API evidence remains `104` baselines, `0` pending packages, `0` additions, and `0` removals
+
+Validation:
+
+- `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/invoke-signed-release-dry-run.Tests.ps1 -Output Detailed`
+- `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/publish-engine-completion-scorecard.Tests.ps1 -Output Detailed`
+- `dotnet build tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj -m:1`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-build --filter "FullyQualifiedName=Cephalon.Tests.Tooling.CliApplicationTests.RunAsyncDoctorReportsEngineCompletionScorecardSummary|FullyQualifiedName=Cephalon.Tests.Tooling.CliApplicationTests.RunAsyncDoctorFailsWhenScorecardSupplyChainEvidenceDriftsFromSummary|FullyQualifiedName=Cephalon.Tests.Tooling.CliApplicationTests.RunAsyncDoctorFailsWhenScorecardPublicApiEvidenceDriftsFromSummary"`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-build --filter "FullyQualifiedName=Cephalon.Tests.Tooling.DocumentationCoverageTests.PackagePublishingDocsStayAlignedWithSignedReleaseDryRunReportContract|FullyQualifiedName=Cephalon.Tests.Tooling.DocumentationCoverageTests.ReleaseChecklistDocsStayAlignedWithSignedReleaseDryRunReportContract|FullyQualifiedName=Cephalon.Tests.Tooling.DocumentationCoverageTests.CompletionScorecardDocsStayAlignedWithDoctorSummary|FullyQualifiedName=Cephalon.Tests.Tooling.DocumentationCoverageTests.AdoptionGuideAndPackageReadmesStayAlignedWithDoctorPath"`
+- `pwsh ./scripts/invoke-signed-release-dry-run.ps1`
+- `git diff --check`
 
 ### ENG-706 Agentics durable inbox idempotency proof
 
