@@ -29,6 +29,7 @@ public sealed class ModularMonolithAdoptionAssetsTests
         Assert.Contains("validate-modular-monolith-adoption.ps1", cliComponent, StringComparison.Ordinal);
         Assert.Contains("\"CQRS\"", validationScript, StringComparison.Ordinal);
         Assert.Contains("\"Outbox\"", validationScript, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Analyzers", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Data", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Ids.Sfid", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Worker", validationScript, StringComparison.Ordinal);

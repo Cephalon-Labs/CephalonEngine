@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Cephalon.Analyzers" Version="0.1.0-preview" PrivateAssets="all" />
     <PackageReference Include="Cephalon.AspNetCore" Version="0.1.0-preview" />
     <PackageReference Include="Cephalon.Audit" Version="0.1.0-preview" />
     <PackageReference Include="Cephalon.Behaviors.Http" Version="0.1.0-preview" />

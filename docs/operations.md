@@ -28,7 +28,7 @@ See `docs/getting-started.md` for the corresponding install, doctor, scaffold, s
 
 ## Template-pack cold-start adoption smoke
 
-For a repo-native external-adoption replay that publishes a temporary package feed plus the generated app package closure including `Cephalon.Diagnostics` and `Cephalon.Resilience`, installs `Cephalon.Cli`, installs `Cephalon.TemplatePack` into an isolated custom hive, reruns `cephalon doctor` with that custom hive visible, scaffolds a fresh `dotnet new cephalon-monolith` starter outside the repository, seeds the generated local package feed, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/health/ready`, `/engine`, `/engine/snapshot`, and `/scalar`, run:
+For a repo-native external-adoption replay that publishes a temporary package feed plus the generated app package closure including `Cephalon.Analyzers`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`, installs `Cephalon.Cli`, installs `Cephalon.TemplatePack` into an isolated custom hive, reruns `cephalon doctor` with that custom hive visible, scaffolds a fresh `dotnet new cephalon-monolith` starter outside the repository, seeds the generated local package feed, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/health/ready`, `/engine`, `/engine/snapshot`, and `/scalar`, run:
 
 ```powershell
 pwsh ./scripts/validate-template-pack-adoption.ps1
@@ -88,7 +88,7 @@ See `docs/getting-started.md`, `docs/app-models.md`, `docs/components/audit.md`,
 
 ## Out-of-tree package parity smoke
 
-For a repo-native external-adoption replay that publishes a temporary package feed with the generated app package closure including `Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`, installs `Cephalon.Cli`, scaffolds a fresh app outside the repository, packs and stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/api/operations/status`, `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot`, run:
+For a repo-native external-adoption replay that publishes a temporary package feed with the generated app package closure including `Cephalon.Analyzers`, `Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`, installs `Cephalon.Cli`, scaffolds a fresh app outside the repository, packs and stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/api/operations/status`, `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot`, run:
 
 ```powershell
 pwsh ./scripts/validate-out-of-tree-package-adoption.ps1

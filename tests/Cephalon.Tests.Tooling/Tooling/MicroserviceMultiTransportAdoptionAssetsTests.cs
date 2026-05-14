@@ -39,6 +39,7 @@ public sealed class MicroserviceMultiTransportAdoptionAssetsTests
         Assert.Contains("validate-microservice-multi-transport-adoption.ps1", jsonRpcComponent, StringComparison.Ordinal);
         Assert.Contains("validate-microservice-multi-transport-adoption.ps1", grpcComponent, StringComparison.Ordinal);
         Assert.Contains("validate-microservice-multi-transport-adoption.ps1", httpDependenciesComponent, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Analyzers", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.AspNetCore.JsonRpc", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.AspNetCore.Grpc", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Observability.HttpDependencies", validationScript, StringComparison.Ordinal);

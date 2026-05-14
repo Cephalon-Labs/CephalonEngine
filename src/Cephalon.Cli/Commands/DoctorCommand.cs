@@ -90,6 +90,7 @@ internal static class DoctorCommand
 
     private static readonly string[] RequiredGeneratedHostProjectPackageReferences =
     [
+        "Cephalon.Analyzers",
         "Cephalon.AspNetCore",
         "Cephalon.Engine.SourceGen",
         "Cephalon.Observability",
@@ -4246,7 +4247,7 @@ internal static class DoctorCommand
                 .Select(package => $"{package.Include} {package.Version}")
                 .Distinct(StringComparer.Ordinal)
                 .OrderBy(value => value, StringComparer.Ordinal)
-                .Take(4)
+                .Take(5)
                 .ToArray();
         }
         catch
@@ -4281,7 +4282,7 @@ internal static class DoctorCommand
                 .Select(package => $"{package.Include} {package.Version}")
                 .Distinct(StringComparer.Ordinal)
                 .OrderBy(value => value, StringComparer.Ordinal)
-                .Take(4)
+                .Take(5)
                 .ToArray();
         }
         catch

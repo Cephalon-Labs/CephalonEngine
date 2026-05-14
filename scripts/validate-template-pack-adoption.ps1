@@ -26,6 +26,7 @@ $stdoutLogPath = Join-Path $tempRoot "template-app.stdout.log"
 $stderrLogPath = Join-Path $tempRoot "template-app.stderr.log"
 $initialPackageProjectPaths = @(
     "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+    "src/Cephalon.Analyzers/Cephalon.Analyzers.csproj",
     "src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj",
     "src/Cephalon.Engine/Cephalon.Engine.csproj",
     "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",
@@ -46,6 +47,7 @@ $initialPackageProjectPaths = @(
 )
 $generatedPackageProjectPaths = @(
     "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+    "src/Cephalon.Analyzers/Cephalon.Analyzers.csproj",
     "src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj",
     "src/Cephalon.Engine/Cephalon.Engine.csproj",
     "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",

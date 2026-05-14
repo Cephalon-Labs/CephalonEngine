@@ -30,6 +30,7 @@ public sealed class OutOfTreePackageAdoptionAssetsTests
         Assert.Contains("\"tool\"", validationScript, StringComparison.Ordinal);
         Assert.Contains("\"install\"", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Cli", validationScript, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Analyzers", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Behaviors.SourceGen", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Diagnostics", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Resilience", validationScript, StringComparison.Ordinal);
@@ -67,6 +68,7 @@ public sealed class OutOfTreePackageAdoptionAssetsTests
         Assert.Contains("validate-vertical-slice-eventing-adoption.ps1", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("validate-microservice-multi-transport-adoption.ps1", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("validate-saas-tenant-governance-audit-adoption.ps1", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Analyzers", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Behaviors.SourceGen", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Diagnostics", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Resilience", adoptionSmokeManifest, StringComparison.Ordinal);

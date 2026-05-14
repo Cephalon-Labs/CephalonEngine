@@ -31,6 +31,7 @@ $grpcProbeStdoutLogPath = Join-Path $tempRoot "saas-tenant-governance-grpc-probe
 $grpcProbeStderrLogPath = Join-Path $tempRoot "saas-tenant-governance-grpc-probe.stderr.log"
 $packageProjectPaths = @(
     "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+    "src/Cephalon.Analyzers/Cephalon.Analyzers.csproj",
     "src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj",
     "src/Cephalon.Engine/Cephalon.Engine.csproj",
     "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",

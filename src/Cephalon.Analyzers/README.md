@@ -7,7 +7,7 @@ Curated meta-package that gives Cephalon-engine consumers a single `<PackageRefe
 - [Meziantou.Analyzer](https://github.com/meziantou/Meziantou.Analyzer) — pragmatic modern-C# rules (async, perf, nullability)
 - [Microsoft.CodeAnalysis.BannedApiAnalyzers](https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Microsoft.CodeAnalysis.BannedApiAnalyzers.md) — paired with the curated `BannedSymbols.txt` shipped in this package
 - [Microsoft.VisualStudio.Threading.Analyzers](https://github.com/Microsoft/vs-threading) — async / threading correctness for engine and module code
-- [Microsoft.CodeAnalysis.PublicApiAnalyzers](https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.md) — pair with `PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt` to track public-API drift as a reviewable artefact
+- [Microsoft.CodeAnalysis.PublicApiAnalyzers](https://github.com/dotnet/roslyn-analyzers/blob/main/src/PublicApiAnalyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.md) — available for package authors that opt into `PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt` drift tracking
 
 ## Usage
 
@@ -26,6 +26,16 @@ The bundled `BannedSymbols.txt` is wired up automatically through the package's
 ```xml
 <PropertyGroup>
   <CephalonAnalyzersUseBannedSymbols>false</CephalonAnalyzersUseBannedSymbols>
+</PropertyGroup>
+```
+
+Public API drift tracking is opt-in for consumer projects so fresh apps do not get
+`RS0016` / `RS0037` warnings before they have decided to maintain public API files.
+Package authors that want that contract can enable it explicitly:
+
+```xml
+<PropertyGroup>
+  <CephalonAnalyzersEnablePublicApiTracking>true</CephalonAnalyzersEnablePublicApiTracking>
 </PropertyGroup>
 ```
 

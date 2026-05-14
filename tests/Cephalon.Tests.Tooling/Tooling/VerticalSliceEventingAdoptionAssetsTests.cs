@@ -35,6 +35,7 @@ public sealed class VerticalSliceEventingAdoptionAssetsTests
         Assert.Contains("EventDrivenIntegration", validationScript, StringComparison.Ordinal);
         Assert.Contains("\"CQRS\"", validationScript, StringComparison.Ordinal);
         Assert.Contains("\"Outbox\"", validationScript, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Analyzers", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Eventing", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Eventing.Behaviors", validationScript, StringComparison.Ordinal);
         Assert.Contains("engine.AddEventingFromConfiguration(builder.Configuration);", validationScript, StringComparison.Ordinal);

@@ -1375,7 +1375,9 @@ public sealed record GreetingContract(string Message, DateTimeOffset CreatedAtUt
         var generatedModuleMembers = BuildGeneratedModuleMembers(appProfile, moduleId, moduleName, moduleTypeName);
         var generatedModuleTypes = BuildGeneratedModuleTypes(appProfile, moduleId, moduleName, moduleTypeName, appProfile.BlueprintDisplayName);
 
-        return $@"using Cephalon.Abstractions.Capabilities;
+        return $@"#pragma warning disable MA0048 // Starter keeps small generated helper types beside the module for adoption clarity.
+
+using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 {generatedModuleUsings}
 
@@ -1418,7 +1420,9 @@ public sealed class {moduleTypeName}Module : ModuleBase{generatedModuleInterface
         var generatedModuleMembers = BuildGeneratedModuleMembers(appProfile, moduleId, moduleName, moduleTypeName);
         var generatedModuleTypes = BuildGeneratedModuleTypes(appProfile, moduleId, moduleName, moduleTypeName, appProfile.BlueprintDisplayName);
 
-        return $@"using Cephalon.Abstractions.Behaviors;
+        return $@"#pragma warning disable MA0048 // Starter keeps small generated helper types beside the module for adoption clarity.
+
+using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Behaviors.Http.Abstractions;
@@ -3881,6 +3885,11 @@ service:
 
         var effectivePackages = packages.ToList();
 
+        if (template != "cephalon-tests")
+        {
+            effectivePackages.Add("Cephalon.Analyzers");
+        }
+
         if (template is "cephalon-web-host" or "cephalon-service-host")
         {
             effectivePackages.Add("Cephalon.Observability.Serilog");
@@ -3921,7 +3930,8 @@ service:
 
     private static bool IsPrivateAnalyzerPackage(string package)
     {
-        return string.Equals(package, "Cephalon.Engine.SourceGen", StringComparison.OrdinalIgnoreCase) ||
+        return string.Equals(package, "Cephalon.Analyzers", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(package, "Cephalon.Engine.SourceGen", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(package, "Cephalon.Behaviors.SourceGen", StringComparison.OrdinalIgnoreCase);
     }
 }

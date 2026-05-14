@@ -1,3 +1,5 @@
+#pragma warning disable MA0048 // Starter keeps the service and small response DTO together for adoption clarity.
+
 using System.Collections.Generic;
 using CephalonTemplateApp.Modules.Catalog.Domain;
 

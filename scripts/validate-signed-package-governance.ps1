@@ -34,6 +34,7 @@ $tamperedStdoutLogPath = Join-Path $tempRoot "tampered.stdout.log"
 $tamperedStderrLogPath = Join-Path $tempRoot "tampered.stderr.log"
 $packageProjectPaths = @(
     "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+    "src/Cephalon.Analyzers/Cephalon.Analyzers.csproj",
     "src/Cephalon.Engine/Cephalon.Engine.csproj",
     "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",
     "src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj",
