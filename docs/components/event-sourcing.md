@@ -13,7 +13,7 @@
 - a merged `IEventTypeRegistry` that maps stable persisted event names to serializer/deserializer descriptors
 - aggregate hydration through `AggregateHydrator<TAggregate, TState>` on top of `IEventStore`
 - an on-demand managed replay worker through `IEventStreamReplayWorker`
-- snapshot lifecycle through the existing `ISnapshotStore` contract: process-local by default, or provider-durable when an active provider such as Entity Framework registers a durable store
+- snapshot lifecycle through the existing `ISnapshotStore` contract: process-local by default, or provider-durable when an active provider such as Entity Framework or MongoDB registers a durable store
 - projection rebuild over registered `IProjection<IDomainEvent>` services during managed replay
 - a truthful `event-sourcing` runtime surface that reports active provider/store count, active provider ids, default provider, snapshot/replay toggle state, provider-durable snapshot providers, the `event-sourcing-managed-replay-worker` entry, latest replay evidence, explicit non-claims, and one sanitized runtime entry per contributed provider store
 
@@ -48,7 +48,7 @@ The host-agnostic contracts live under `Cephalon.Abstractions.EventSourcing`.
 
 ## Managed replay proof
 
-`ENG-704` adds the first Cephalon-managed EventSourcing execution proof without promoting provider packs beyond append/read truth. `ENG-708` keeps the same replay contract but proves the first provider-durable snapshot path through Entity Framework.
+`ENG-704` adds the first Cephalon-managed EventSourcing execution proof without promoting provider packs beyond append/read truth. `ENG-708` keeps the same replay contract but proves the first provider-durable snapshot path through Entity Framework, and `ENG-709` adds the same durable latest-snapshot lifecycle for MongoDB.
 
 ```csharp
 builder.Services.AddCephalonEventSourcing(options =>
@@ -75,7 +75,7 @@ The worker:
 - saves the final aggregate state back through `ISnapshotStore` when `SaveSnapshot` is enabled
 - records `EventStreamReplayReport` evidence for `/engine/technology-surfaces` and `/engine/snapshot`
 
-The default snapshot implementation is deliberately process-local. It proves the lifecycle and keeps low-ceremony hosts useful. When a provider registers a durable `ISnapshotStore`, the same worker starts from that provider snapshot, replays the remaining events, saves the final state back through the provider store, and reports `snapshotLifecycle = provider-durable`, `providerDurableSnapshots = claimed`, and the provider id through the `event-sourcing` runtime surface. Entity Framework is the first provider with that proof; retention, archival, distributed replay, and hosted background replay/projection runners remain future work.
+The default snapshot implementation is deliberately process-local. It proves the lifecycle and keeps low-ceremony hosts useful. When a provider registers a durable `ISnapshotStore`, the same worker starts from that provider snapshot, replays the remaining events, saves the final state back through the provider store, and reports `snapshotLifecycle = provider-durable`, `providerDurableSnapshots = claimed`, and the provider id through the `event-sourcing` runtime surface. Entity Framework and MongoDB now have that provider-durable latest-snapshot proof; retention, archival, distributed replay, and hosted background replay/projection runners remain future work.
 
 ## Event-type registry
 
@@ -99,7 +99,7 @@ Provider service-registration helpers wire the registry automatically. If a host
 
 ## Entity Framework provider usage
 
-The first provider-backed follow-through is [`Cephalon.EventSourcing.EntityFramework`](event-sourcing-entityframework.md).
+One provider-backed follow-through is [`Cephalon.EventSourcing.EntityFramework`](event-sourcing-entityframework.md). [`Cephalon.EventSourcing.MongoDB`](event-sourcing-mongodb.md) now carries the same provider-durable latest-snapshot lifecycle over MongoDB collections.
 
 Typical host wiring is:
 
@@ -138,7 +138,7 @@ var (state, version) = await hydrator.HydrateAsync(eventStore, streamId, cancell
 
 This baseline intentionally does not claim:
 
-- provider-durable snapshot persistence outside the Entity Framework provider
+- provider-durable snapshot persistence outside the Entity Framework and MongoDB providers
 - distributed or named projection rebuild orchestration
 - stream archival, retention, or compaction
 - hosted background projection or replay runners
@@ -151,5 +151,6 @@ Those remain later slices until Cephalon can ship them truthfully.
 - [Cephalon.Abstractions](abstractions.md)
 - [Cephalon.Engine](engine.md)
 - [Cephalon.EventSourcing.EntityFramework](event-sourcing-entityframework.md)
+- [Cephalon.EventSourcing.MongoDB](event-sourcing-mongodb.md)
 - [Cephalon.Eventing](eventing.md)
 - [Technology packs](../technology-packs.md)

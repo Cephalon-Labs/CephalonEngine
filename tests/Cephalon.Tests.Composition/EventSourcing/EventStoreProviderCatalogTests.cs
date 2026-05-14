@@ -121,7 +121,7 @@ public sealed class EventStoreProviderCatalogTests
         Assert.Equal("true", summary.Metadata["enableInMemorySnapshotStore"]);
         Assert.Equal("true", summary.Metadata["enableReplayWorker"]);
         Assert.Equal("provider-durable", summary.Metadata["snapshotLifecycle"]);
-        Assert.Equal("entity-framework", summary.Metadata["providerDurableSnapshotProviders"]);
+        Assert.Equal("entity-framework,mongodb", summary.Metadata["providerDurableSnapshotProviders"]);
         Assert.Equal("on-demand-domain-event-projections", summary.Metadata["projectionRebuild"]);
         Assert.Equal("not-claimed", summary.Metadata["hostedBackgroundRunner"]);
 
@@ -131,7 +131,7 @@ public sealed class EventStoreProviderCatalogTests
         Assert.Equal("provider-durable", replayWorker.Metadata["snapshotAssistedReplay"]);
         Assert.Equal("not-claimed", replayWorker.Metadata["hostedBackgroundRunner"]);
         Assert.Equal("claimed", replayWorker.Metadata["providerDurableSnapshots"]);
-        Assert.Equal("entity-framework", replayWorker.Metadata["providerDurableSnapshotProviders"]);
+        Assert.Equal("entity-framework,mongodb", replayWorker.Metadata["providerDurableSnapshotProviders"]);
 
         foreach (var expectedProvider in ExpectedProviders)
         {
@@ -151,6 +151,12 @@ public sealed class EventStoreProviderCatalogTests
             provider == "entity-framework");
         Assert.Equal("provider-durable", entityFrameworkEntry.Metadata["provider.snapshotLifecycle"]);
         Assert.Equal("CephalonEventSnapshots", entityFrameworkEntry.Metadata["provider.snapshotStorage"]);
+
+        var mongoDbEntry = Assert.Single(surface.Entries, entry =>
+            entry.Metadata.TryGetValue("provider", out var provider) &&
+            provider == "mongodb");
+        Assert.Equal("provider-durable", mongoDbEntry.Metadata["provider.snapshotLifecycle"]);
+        Assert.Equal("order_events_snapshots", mongoDbEntry.Metadata["provider.snapshotStorage"]);
     }
 
     private static bool ContainsSecret(string value)

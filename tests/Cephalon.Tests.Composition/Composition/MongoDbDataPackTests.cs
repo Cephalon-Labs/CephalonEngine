@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.MongoDB.Configuration;
 using Cephalon.Data.MongoDB.Registration;
 using Cephalon.Engine.Composition;
@@ -9,10 +10,13 @@ using Cephalon.Eventing.Services;
 using Cephalon.EventSourcing.MongoDB;
 using Cephalon.EventSourcing.MongoDB.Hosting;
 using Cephalon.EventSourcing.Hosting;
+using Cephalon.EventSourcing.Services;
 using Cephalon.Tests.Support;
 using EphemeralMongo;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace Cephalon.Tests.Composition;
 
@@ -375,6 +379,96 @@ public sealed class MongoDbDataPackTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task MongoDbSnapshotStore_PersistsSnapshotsAcrossServiceProviders_AndFeedsManagedReplay()
+    {
+        var databaseName = $"cephalon_snapshots_{Guid.NewGuid():N}";
+        const string collectionName = "domain_events";
+        const string streamId = "stream-snapshots-01";
+
+        try
+        {
+            using (var provider = BuildMongoDbEventSourcingProvider(databaseName, collectionName))
+            using (var scope = provider.CreateScope())
+            {
+                var eventStore = scope.ServiceProvider.GetRequiredService<IEventStore>();
+                var snapshotStore = scope.ServiceProvider.GetRequiredService<ISnapshotStore>();
+
+                await eventStore.AppendAsync(
+                    streamId,
+                    [
+                        new MongoTestEvent(streamId, 0, new DateTime(2026, 5, 15, 0, 0, 0, DateTimeKind.Utc)),
+                        new MongoTestEvent(streamId, 1, new DateTime(2026, 5, 15, 0, 1, 0, DateTimeKind.Utc))
+                    ],
+                    -1);
+                await snapshotStore.SaveSnapshotAsync(streamId, 1, 2);
+                await eventStore.AppendAsync(
+                    streamId,
+                    [
+                        new MongoTestEvent(streamId, 2, new DateTime(2026, 5, 15, 0, 2, 0, DateTimeKind.Utc)),
+                        new MongoTestEvent(streamId, 3, new DateTime(2026, 5, 15, 0, 3, 0, DateTimeKind.Utc))
+                    ],
+                    1);
+            }
+
+            using (var provider = BuildMongoDbEventSourcingProvider(databaseName, collectionName, includeProjection: true))
+            using (var scope = provider.CreateScope())
+            {
+                var eventStore = scope.ServiceProvider.GetRequiredService<IEventStore>();
+                var snapshotStore = scope.ServiceProvider.GetRequiredService<ISnapshotStore>();
+                var replayWorker = scope.ServiceProvider.GetRequiredService<IEventStreamReplayWorker>();
+
+                var loadedSnapshot = await snapshotStore.LoadSnapshotAsync<int>(streamId);
+                Assert.Equal(2, loadedSnapshot.State);
+                Assert.Equal(1, loadedSnapshot.Version);
+
+                var result = await replayWorker.ReplayAggregateAsync<MongoTestAggregate, int>(
+                    eventStore,
+                    new EventStreamReplayRequest(streamId));
+
+                Assert.Equal(4, result.State);
+                Assert.Equal("passed", result.Report.Status);
+                Assert.True(result.Report.UsedSnapshot);
+                Assert.Equal(1, result.Report.SnapshotVersion);
+                Assert.Equal(2, result.Report.ReplayFromVersion);
+                Assert.Equal(2, result.Report.ReplayedEventCount);
+                Assert.True(result.Report.SnapshotSaved);
+
+                var projection = scope.ServiceProvider.GetRequiredService<RecordingMongoProjection>();
+                Assert.Equal([2L, 3L], projection.StreamVersions);
+
+                var database = provider.GetRequiredService<IMongoDatabase>();
+                var snapshots = database.GetCollection<BsonDocument>($"{collectionName}_snapshots");
+                var persistedSnapshot = await snapshots
+                    .Find(Builders<BsonDocument>.Filter.Eq("StreamId", streamId))
+                    .SingleAsync();
+                Assert.Equal(3L, persistedSnapshot["StreamVersion"].AsInt64);
+                Assert.Equal("4", persistedSnapshot["Payload"].AsString);
+
+                var eventSourcingSurface = scope.ServiceProvider
+                    .GetServices<ITechnologyRuntimeContributor>()
+                    .Select(static contributor => contributor.DescribeRuntimeSurface())
+                    .Single(static surface => surface.TechnologyId == "event-sourcing");
+                var summary = Assert.Single(eventSourcingSurface.Entries, static entry => entry.Id == "event-sourcing-runtime");
+                Assert.Equal("provider-durable", summary.Metadata["snapshotLifecycle"]);
+                Assert.Equal("mongodb", summary.Metadata["providerDurableSnapshotProviders"]);
+
+                var replayEntry = Assert.Single(eventSourcingSurface.Entries, static entry => entry.Id == "event-sourcing-managed-replay-worker");
+                Assert.Equal("provider-durable", replayEntry.Metadata["snapshotAssistedReplay"]);
+                Assert.Equal("claimed", replayEntry.Metadata["providerDurableSnapshots"]);
+                Assert.Equal("mongodb", replayEntry.Metadata["providerDurableSnapshotProviders"]);
+
+                await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                    snapshotStore.SaveSnapshotAsync(streamId, 2, 3));
+            }
+        }
+        finally
+        {
+            var client = new MongoClient(ConnectionString);
+            await client.DropDatabaseAsync(databaseName);
+        }
+    }
+
+    [Fact]
     public void MongoDbDataModule_ExposesCapabilities()
     {
         var services = new ServiceCollection();
@@ -407,4 +501,53 @@ public sealed class MongoDbDataPackTests : IAsyncLifetime
         string StreamId,
         long StreamVersion,
         DateTime OccurredAtUtc) : DomainEvent(StreamId, StreamVersion, OccurredAtUtc);
+
+    private ServiceProvider BuildMongoDbEventSourcingProvider(
+        string databaseName,
+        string collectionName,
+        bool includeProjection = false)
+    {
+        var services = new ServiceCollection();
+        services.AddCephalonEventSourcing(options =>
+        {
+            options.DefaultProvider = "mongodb";
+            options.EnableSnapshots = true;
+        });
+        services.AddCephalonEventType<MongoTestEvent>("tests.mongo-event");
+
+        if (includeProjection)
+        {
+            services.AddSingleton<RecordingMongoProjection>();
+            services.AddSingleton<IProjection<IDomainEvent>>(static serviceProvider =>
+                serviceProvider.GetRequiredService<RecordingMongoProjection>());
+        }
+
+        services.AddCephalonMongoDbEventSourcing(ConnectionString, databaseName, collectionName);
+        return services.BuildServiceProvider();
+    }
+
+    private sealed class MongoTestAggregate : IAggregate<int>
+    {
+        public int Apply(int current, IDomainEvent evt)
+        {
+            ArgumentNullException.ThrowIfNull(evt);
+            return current + 1;
+        }
+    }
+
+    private sealed class RecordingMongoProjection : IProjection<IDomainEvent>
+    {
+        private readonly List<long> streamVersions = [];
+
+        public IReadOnlyList<long> StreamVersions => streamVersions;
+
+        public ValueTask ProjectAsync(IDomainEvent message, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(message);
+
+            cancellationToken.ThrowIfCancellationRequested();
+            streamVersions.Add(message.StreamVersion);
+            return ValueTask.CompletedTask;
+        }
+    }
 }

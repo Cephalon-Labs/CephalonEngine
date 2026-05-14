@@ -33,17 +33,22 @@ public static class MongoDbEventSourcingServiceCollectionExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(databaseName);
         ArgumentException.ThrowIfNullOrWhiteSpace(collectionName);
 
+        var snapshotCollectionName = MongoDbEventSourcingConfiguration.SnapshotCollectionName(collectionName);
+
         services.TryAddSingleton<IMongoClient>(_ => new MongoClient(connectionString));
         services.TryAddSingleton(serviceProvider =>
             serviceProvider.GetRequiredService<IMongoClient>().GetDatabase(databaseName));
 
         services.TryAddSingleton(serviceProvider =>
             serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<MongoDbEventEntry>(collectionName));
+        services.TryAddSingleton(serviceProvider =>
+            serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<MongoDbEventSnapshotEntry>(snapshotCollectionName));
 
         services.AddCephalonEventTypeRegistry();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreContributor>(
-            new MongoDbEventStoreContributor(connectionString, databaseName, collectionName)));
+            new MongoDbEventStoreContributor(connectionString, databaseName, collectionName, snapshotCollectionName)));
         services.TryAddSingleton<IEventStore, MongoDbEventStore>();
+        services.AddScoped<ISnapshotStore, MongoDbSnapshotStore>();
 
         return services;
     }

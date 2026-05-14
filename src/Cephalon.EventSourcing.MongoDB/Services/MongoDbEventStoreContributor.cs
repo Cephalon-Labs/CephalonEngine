@@ -5,7 +5,8 @@ namespace Cephalon.EventSourcing.MongoDB.Services;
 internal sealed class MongoDbEventStoreContributor(
     string connectionString,
     string databaseName,
-    string collectionName) : IEventStoreContributor
+    string collectionName,
+    string snapshotCollectionName) : IEventStoreContributor
 {
     public IReadOnlyList<EventStreamDescriptor> Contribute()
     {
@@ -25,7 +26,9 @@ internal sealed class MongoDbEventStoreContributor(
                     ["collectionName"] = collectionName,
                     ["connectionStringConfigured"] = string.IsNullOrWhiteSpace(connectionString) ? "false" : "true",
                     ["connectionStringProjection"] = "redacted",
-                    ["secretProjection"] = "redacted"
+                    ["secretProjection"] = "redacted",
+                    ["snapshotStorage"] = snapshotCollectionName,
+                    ["snapshotLifecycle"] = "provider-durable"
                 })
         ];
     }
