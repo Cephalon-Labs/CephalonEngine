@@ -49,7 +49,7 @@ Current focus:
 - treat process-manager state ownership as a separate provider-neutral superiority claim: `process-manager-state-ownership` stays `not-claimed` until live `EventSubscriptionProcessManagerStateMetadata` proof shows a provider/runtime owns durable process-manager state, saga persistence, saga correlation, timeout scheduling, compensation workflow, process-manager concurrency, and recovery instead of inheriting those claims from declared subscriptions, direct in-process execution, code-first middleware, choreography bridge handoff, outbox publication, hosted bindings, or optional provider binding evidence
 - treat choreography handoff ownership as a separate provider-neutral superiority claim: `choreography-handoff-ownership` can be `claimed` only when behavior choreography catalogs, publication-state observations, the explicit Eventing behavior bridge, and outbox-backed handoff are active, and it must not imply durable saga/process-manager state ownership
 - treat the `Cephalon.Behaviors.Http` profile/generated REST lane as a mixed `M2` proof: profile metadata stays application-authored and non-publishing, while explicit module-owned activation flows through Cephalon-managed materialization, governance, runtime catalogs, and ownership metadata
-- treat the `Cephalon.Agentics` dispatcher/run-state lane plus bounded process-local retry, duplicate-completed idempotency posture, approval-required filtering, terminal-failure filtering, and the abstraction-level `/engine/agent-tool-runs`, `/engine/agent-tool-runs/retry-pending`, `/engine/agent-tool-runs/idempotency-duplicates`, `/engine/agent-tool-runs/approval-required`, `/engine/agent-tool-runs/terminal-failures`, `POST /engine/agent-tools/{toolId}/runs`, and `snapshot.AgentToolRuns` seams as the first agentics-family managed/operator proof instead of widening descriptor breadth there again
+- treat the `Cephalon.Agentics` dispatcher/run-state lane plus bounded process-local retry, process-local or opt-in active `IInbox`-backed duplicate-completed idempotency posture, approval-required filtering, terminal-failure filtering, and the abstraction-level `/engine/agent-tool-runs`, `/engine/agent-tool-runs/retry-pending`, `/engine/agent-tool-runs/idempotency-duplicates`, `/engine/agent-tool-runs/approval-required`, `/engine/agent-tool-runs/terminal-failures`, `POST /engine/agent-tools/{toolId}/runs`, and `snapshot.AgentToolRuns` seams as the first agentics-family managed/operator proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane plus the abstraction-level `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/queries`, `POST /engine/knowledge-indexes/{collectionId}/reindex`, `snapshot.KnowledgeIndexes`, and opt-in background reindex scheduler seams as the first retrieval-family managed/operator proof instead of widening catalog breadth there again
 - keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, local durable stores, invitation delivery dispatch/retry/status reconciliation, delivery-status observation storage, tenant administration, declared domain ownership, proof collection/polling, and governance-action proofs; `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional fail-closed governance endpoints plus provider-neutral callback signature/replay protection, filtered observation rollup summaries, attention-category drill-down filters, provider-message drill-down filters, remediation-action filters, and deterministic remediation hints over stored observations; HTTP, SMTP, SendGrid, Mailgun, Amazon SES, and Microsoft Graph sender companions own outbound delivery handoff; `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity` owns the optional Azure Identity access-token provider for the Graph sender; the seven outbound sender/token-provider packs now project sanitized runtime truth through `tenant-invitation-delivery-*` technology surfaces without exposing secrets; SendGrid ASP.NET Core owns callback translation/signature/replay/event-id hardening; Mailgun ASP.NET Core owns callback translation/signature/replay-token/event-id hardening; and Amazon SES ASP.NET Core owns SNS-wrapped SES event callback translation plus opt-in SNS signature verification, bounded process-local SNS replay protection, observation-store-backed SNS message-id idempotency, opt-in verified SNS subscription confirmation, and opt-in verified SNS unsubscribe-confirmation observation. Distributed or provider-backed membership/invitation/domain/action-store backends, additional provider-specific email API senders beyond the shipped SMTP/SendGrid/Mailgun/Amazon SES/Microsoft Graph set, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, cross-node retry leases, provider-specific or distributed callback inboxes, cross-node callback replay protection, distributed event-id ledgers, provider-specific delivery-status callback payload translation beyond shipped SendGrid/Mailgun/Amazon SES translators, provider-specific callback signature verification beyond shipped SendGrid/Mailgun/Amazon SNS hardening, provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, Microsoft Entra app registration/permission consent/mailbox access policy, AWS account/IAM/identity verification, DKIM/SPF/DMARC, SES sandbox/configuration-set event destination setup, SNS topic/subscription creation, automatic resubscribe/restore, subscription lifecycle governance, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
@@ -82,6 +82,42 @@ Current focus:
 - treat generated reference docs as a guarded generated API navigation layer: repo-local links across `docs/reference/**/*.md` must resolve inside `docs/reference`, and browser-view query links such as `browse.html?assembly=...` must resolve to the generated browser file while hand-authored docs remain the primary human contract
 - treat `docs/reference/reference-manifest.json` as the generated API bundle map: required browser/index/manifest assets must exist, assembly page files must be manifest-owned, namespace/type/member anchor ids must resolve in those pages, and orphan generated Markdown pages must fail Tooling coverage before hosted reference docs can drift
 - treat `docs/reference/browse.html` as the hosted reference-doc browser entry point: local `href` and `src` references must resolve inside `docs/reference` to existing generated bundle files so CSS, JavaScript, index links, and manifest links cannot drift after regeneration
+
+### ENG-706 Agentics durable inbox idempotency proof
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: agentics / provider interop / runtime truth / data integrity
+Quality dimensions: Reliability, Data Integrity, Auditability, Maintainability, Flexibility, Compatibility
+GitHub issue: `#1388`
+
+Why:
+
+- `Cephalon.Agentics` already proved process-local duplicate-completed run suppression, but agentic workloads need a provider-backed marker lane before durable queue or memory claims become credible
+- the data family already exposes a host-agnostic `IInbox`; Agentics should reuse that provider contract instead of inventing a parallel store or forcing consumer projects to rewrite tool code
+- inbox-backed duplicate suppression must be explicit, fail-closed, and introspectable so runtime truth can distinguish `process-local`, active provider-backed marker, missing provider, and ambiguous provider states
+
+Delivered:
+
+- added `AgenticRuntimeOptions.ExecutionIdempotencyDurability`, defaulting to `process-local`, with opt-in `inbox` durability for completed-run duplicate suppression
+- `AgentToolDispatcher` now requires exactly one active `IInbox` in inbox mode, records successful `toolId + runId` completions as processed messages, skips later duplicates from that provider marker, and fails closed when the inbox binding is missing or ambiguous
+- Agentics capability metadata and technology surfaces now report idempotency durability, scope, inbox configuration/count, provider interop, and active inbox descriptor metadata when available
+- composition coverage proves the full EF-backed inbox loop: run the tool once, persist the processed marker, rerun the same `toolId + runId`, skip without re-invoking the executor, and expose the provider metadata through the runtime surface
+- component docs, technology-pack guidance, architecture docs, conformance matrix, maturity audit, roadmap, project memory, and public API baseline now state the claim as a provider-backed completed-run marker, not durable retry, broker deduplication, cross-node exactly-once, or durable agent memory
+
+Validation:
+
+- `dotnet build tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj -m:1`
+- `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-build --filter "FullyQualifiedName~AgenticsDurableIdempotencyTests"`
+- `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-build --filter "FullyQualifiedName~AddTechnologyPacksSkipDuplicateCompletedAgentToolRunsWhenIdempotencyIsEnabled|FullyQualifiedName~AddTechnologyPacksExecuteAgentToolsAndProjectRunState|FullyQualifiedName~AddTechnologyPacksRetryAgentToolExecutorFailuresWhenConfigured"`
+- `dotnet test tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName=Cephalon.Tests.Hosting.AspNetCoreHostingTests.MapCephalonExposesAgentToolRunRoutes"`
+- `dotnet test tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj --filter "FullyQualifiedName~AgenticsToolDispatchActivityTests"`
+- `pwsh ./scripts/publish-reference-docs.ps1 -SkipBuild`
+- `dotnet build tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj -m:1`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-build --filter "FullyQualifiedName~DocumentationCoverageTests"`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-build --filter "FullyQualifiedName~PackageSurfaceTests"`
+- `git diff --check`
 
 ### ENG-705 Cephalon.Analyzers template-pack adoption baseline
 
@@ -7421,9 +7457,10 @@ Why:
 - after `ENG-280`, Agentics could retry transient executor failures inside the bounded dispatcher
   lane, but duplicate operator/client requests with the same completed run id still reached the
   executor unless the consumer app owned its own guard
-- the smallest honest follow-through is opt-in process-local duplicate-completed suppression over
-  the run-state catalog Cephalon already owns, not a durable inbox, distributed exactly-once layer,
-  autonomous planner, or provider-specific AI orchestration claim
+- the smallest honest follow-through at that checkpoint was opt-in process-local duplicate-completed
+  suppression over the run-state catalog Cephalon already owned; `ENG-706` later added an active
+  `IInbox`-backed completed-run marker without turning Agentics into a distributed exactly-once
+  layer, autonomous planner, or provider-specific AI orchestration claim
 
 Delivered:
 
@@ -7438,9 +7475,10 @@ Delivered:
 
 Follow-up later:
 
-- durable inboxes, cross-node exactly-once delivery, durable retry queues, autonomous planning,
-  memory persistence, distributed scheduling, provider-specific AI orchestration, and broader agent
-  operator workflows remain future package-owned work until a package truly owns those paths
+- provider-owned durable inbox command processing beyond the `ENG-706` completed-run marker,
+  cross-node exactly-once delivery, durable retry queues, autonomous planning, memory persistence,
+  distributed scheduling, provider-specific AI orchestration, and broader agent operator workflows
+  remain future package-owned work until a package truly owns those paths
 
 ### ENG-282 Agentics approval-required and terminal-failure operator posture
 
@@ -7467,10 +7505,11 @@ Delivered:
 
 Follow-up later:
 
-- durable approval workflows, dead-letter systems, durable retry queues, durable inboxes, cross-node
-  exactly-once delivery, autonomous planning, memory persistence, distributed scheduling,
-  provider-specific AI orchestration, and broader agent operator workflows remain future
-  package-owned work until a package truly owns those paths
+- durable approval workflows, dead-letter systems, durable retry queues, provider-owned durable
+  inbox command processing beyond the `ENG-706` completed-run marker, cross-node exactly-once
+  delivery, autonomous planning, memory persistence, distributed scheduling, provider-specific AI
+  orchestration, and broader agent operator workflows remain future package-owned work until a
+  package truly owns those paths
 
 ### ENG-283 Retrieval query operator action seam
 

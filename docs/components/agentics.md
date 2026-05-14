@@ -12,7 +12,7 @@
 - orchestration-link validation for tool descriptors that point back to capabilities, execution graphs, or hosted executions
 - Cephalon-managed agent-tool dispatch through registered executors
 - bounded process-local retry for executor failures when explicitly configured
-- process-local duplicate-completed run suppression when explicitly configured
+- process-local or opt-in active `IInbox`-backed duplicate-completed run suppression when explicitly configured
 - run-state reporting for tool executions, including retry-scheduled, approval-required, duplicate-completed, and terminal-failure posture
 - policy and observer hooks for approval, denial, audit, and operational projection
 - runtime-surface contribution for introspection
@@ -62,7 +62,7 @@ When `AgenticRuntimeOptions.EnableExecution` is enabled, the pack also owns a na
 
 - the abstraction-level `IAgentToolDispatcher` contract resolves the selected `AgentToolDescriptor`, reports a `started` observation, evaluates `IAgentToolExecutionPolicy` hooks, invokes the matching `IAgentToolExecutor`, and reports the final outcome through the `Cephalon.Agentics` implementation.
 - when `AgenticRuntimeOptions.ExecutionMaxAttempts` is greater than `1`, the dispatcher retries failed executor attempts inside the same process, reports `retry-scheduled` observations, and publishes `retryPolicy = bounded-in-process`, max-attempt, delay, durability, scope, and next-attempt metadata without claiming durable retry queues.
-- when `AgenticRuntimeOptions.EnableExecutionIdempotency` is enabled, the dispatcher suppresses duplicate `toolId + runId` executions that already completed successfully inside the current process, reports the duplicate as `skipped`, and publishes `idempotencyPolicy = completed-run`, `idempotencyKey = tool-run`, retention, durability, scope, and `idempotencyOutcome = duplicate-skipped` metadata without claiming a durable inbox, broker deduplication, cross-node exactly-once delivery, or provider AI orchestration.
+- when `AgenticRuntimeOptions.EnableExecutionIdempotency` is enabled, the dispatcher suppresses duplicate `toolId + runId` executions that already completed successfully. The default `ExecutionIdempotencyDurability = process-local` mode keeps the original bounded run-catalog retention behavior. The opt-in `ExecutionIdempotencyDurability = inbox` mode requires exactly one active `IInbox`, records a processed-message marker for successful runs, uses that marker to skip later duplicate completed runs, and fails closed when no inbox or multiple inboxes are registered. The dispatcher publishes `idempotencyPolicy = completed-run`, `idempotencyKey = tool-run`, retention, durability, scope, provider interop, and `idempotencyOutcome` metadata without claiming durable retry queues, broker deduplication, cross-node exactly-once delivery, durable agent memory, or provider AI orchestration.
 - `IAgentToolRunCatalog` exposes the latest run-state truth for each tool run through `Cephalon.Abstractions.Agentics`, including outcome counts, retry-scheduled counts, skipped counts, actor/correlation details, approval-required posture, retry-pending posture, duplicate-completed posture, terminal-failure posture, terminal-state posture, and the latest operator metadata.
 - `IAgentToolExecutionObserver` receives every report after it is recorded so modules can attach audit, telemetry, or projection behavior without replacing the dispatcher.
 
@@ -77,7 +77,9 @@ execution readiness (`executionEnabled`, `executionOwnership`, `executorConfigur
 `executorCount`) and run-state metadata (`runtimeState`, `runCount`, `lastOutcome`,
 `retryPolicy`, `retryMaxAttempts`, `retryDelayMilliseconds`, `retryScheduledCount`,
 `retryPending`, `idempotencyPolicy`, `idempotencyKey`, `idempotencyRetentionMinutes`,
-`idempotencyDurability`, `idempotencyScope`, `duplicateCompleted`, `terminalFailure`,
+`idempotencyDurability`, `idempotencyScope`, `idempotencyInboxConfigured`,
+`idempotencyInboxCount`, `idempotencyProviderInterop`, optional `idempotencyInboxId`,
+`idempotencyInboxProvider`, optional `idempotencyInboxMode`, `duplicateCompleted`, `terminalFailure`,
 `totalReports`, approval/denial counters, and `reported.*` metadata). A tool without a registered executor remains
 truthful as `awaiting-executor` rather than being described as fully managed.
 
@@ -88,9 +90,10 @@ metadata, adds safe `trigger` and `route` metadata, and returns `404` when the a
 not expose the dispatcher or the selected tool does not exist.
 
 This is still intentionally not an autonomous agent planner, durable approval workflow, durable
-retry queue, durable inbox, memory store, distributed scheduler, cross-node exactly-once layer,
-dead-letter system, or provider-specific AI orchestration layer. Those should land only when a
-package owns those runtime paths explicitly.
+retry queue, durable agent memory store, distributed scheduler, cross-node exactly-once layer,
+dead-letter system, provider-owned durable inbox command processor, or provider-specific AI
+orchestration layer. The inbox mode is only a provider-backed completed-run marker for
+`toolId + runId`, and broader runtime paths should land only when a package owns them explicitly.
 
 The showcase sample now includes `ShowcaseAgenticsModule`, which contributes a catalog-inspection tool, a matching executor, an approval policy, and an observer hook so the dispatcher/run-state loop is proven end to end in an adoption-quality host.
 

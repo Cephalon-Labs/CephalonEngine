@@ -72,6 +72,18 @@ bool EnableMemory { get; set; }
 
 Gets or sets a value indicating whether agent memory features are enabled.
 
+<a id="member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionidempotencydurability"></a>
+
+##### `ExecutionIdempotencyDurability`
+
+```csharp
+string ExecutionIdempotencyDurability { get; set; }
+```
+
+Gets or sets the idempotency durability mode used when completed run suppression is enabled.
+
+Remarks: The default `process-local` mode preserves the original in-memory run-catalog behavior. Set this value to `inbox` to require exactly one active `IInbox` provider and use it as the durable duplicate-completed run marker. The inbox mode does not claim distributed exactly-once execution; it only reuses a provider-backed processed-message store for `toolId + runId` idempotency.
+
 <a id="member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionidempotencyretentionminutes"></a>
 
 ##### `ExecutionIdempotencyRetentionMinutes`

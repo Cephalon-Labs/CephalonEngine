@@ -2552,11 +2552,14 @@ Current note:
   and `ExecutionRetryDelayMilliseconds`; durable retry queues, autonomous planning, memory
   persistence, distributed scheduling, and provider-specific AI orchestration remain outside this
   proof until a package truly owns those paths
-- idempotency posture is opt-in and process-local through
-  `AgenticRuntimeOptions.EnableExecutionIdempotency` and
-  `ExecutionIdempotencyRetentionMinutes`; it suppresses duplicate completed tool runs observed by the
-  in-memory run catalog but does not claim a durable inbox, cross-node exactly-once delivery, broker
-  deduplication, durable retry queues, distributed scheduling, or provider-specific AI orchestration
+- idempotency posture is opt-in through `AgenticRuntimeOptions.EnableExecutionIdempotency`.
+  The default `ExecutionIdempotencyDurability = process-local` mode uses
+  `ExecutionIdempotencyRetentionMinutes` and the in-memory run catalog. The opt-in
+  `ExecutionIdempotencyDurability = inbox` mode requires exactly one active `IInbox`, records
+  successful `toolId + runId` completions as processed-message markers, and skips duplicates from
+  that provider-backed marker; it does not claim durable retry queues, broker deduplication,
+  cross-node exactly-once delivery, distributed scheduling, durable agent memory, or
+  provider-specific AI orchestration
 - approval-required and terminal-failure filters are read-only operator seams over the latest
   run-state catalog; they do not claim a durable approval workflow, dead-letter system, durable
   retry queue, distributed scheduler, or provider-specific AI orchestration
@@ -2800,7 +2803,7 @@ Current `Cephalon.Agentics` highlights:
 - invalid linked capability, execution-graph, or hosted-execution references fail when the agentic tool catalog is resolved instead of leaking broken operator metadata
 - managed tool execution now flows through `IAgentToolDispatcher` when `AgenticRuntimeOptions.EnableExecution` is enabled
 - bounded process-local retry is opt-in through `ExecutionMaxAttempts` and `ExecutionRetryDelayMilliseconds`, with `retryPolicy`, `retryMaxAttempts`, `retryDelayMilliseconds`, `retryDurability`, and `retryScope` metadata on the execution capability and tool surface
-- process-local duplicate-completed suppression is opt-in through `EnableExecutionIdempotency` and `ExecutionIdempotencyRetentionMinutes`, with `idempotencyPolicy`, `idempotencyKey`, `idempotencyRetentionMinutes`, `idempotencyDurability`, and `idempotencyScope` metadata on the execution capability and tool surface
+- duplicate-completed suppression is opt-in through `EnableExecutionIdempotency`, `ExecutionIdempotencyRetentionMinutes`, and `ExecutionIdempotencyDurability`; process-local mode uses the run catalog, while inbox mode requires exactly one active `IInbox` and publishes `idempotencyPolicy`, `idempotencyKey`, `idempotencyRetentionMinutes`, `idempotencyDurability`, `idempotencyScope`, inbox configuration/count, provider interop, and active inbox descriptor metadata on the execution capability and tool surface
 - each tool entry reports execution readiness through `executionEnabled`, `executionOwnership`, `executorConfigured`, and `executorCount`; tools without an executor are reported as `awaiting-executor` instead of being described as fully managed
 - reported runs flow into `IAgentToolRunCatalog` and surface `runtimeState`, `runCount`, `lastRunId`, `lastOutcome`, retry-scheduled count, retry-pending posture, approval-required posture, duplicate-completed posture, terminal-failure posture, `totalReports`, approval/denial counters, actor/correlation details, and `reported.*` metadata on the same technology surface, while `/engine/agent-tool-runs*` and `snapshot.AgentToolRuns` expose the direct run-state read seam
 - operators can now request one bounded managed tool run through

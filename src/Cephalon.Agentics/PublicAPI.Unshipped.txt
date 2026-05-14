@@ -1,1 +1,3 @@
 #nullable enable
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.ExecutionIdempotencyDurability.get -> string!
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.ExecutionIdempotencyDurability.set -> void
