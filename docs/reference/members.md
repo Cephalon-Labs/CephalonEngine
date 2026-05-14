@@ -10218,6 +10218,9 @@ Browse the published API surface by public member.
 - [ExecutionHardened](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-executionhardened): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionHardened&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Scheduler execution truth currently looks hardened enough for truthful bounded execution on the shared lane.
   - `const string ExecutionHardened`
+- [ExecutionIdempotencyDurability](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionidempotencydurability): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=ExecutionIdempotencyDurability&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
+  - Gets or sets the idempotency durability mode used when completed run suppression is enabled.
+  - `string ExecutionIdempotencyDurability { get; set; }`
 - [ExecutionIdempotencyRetentionMinutes](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionidempotencyretentionminutes): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=ExecutionIdempotencyRetentionMinutes&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
   - Gets or sets the process-local retention window, in minutes, for completed run-id suppression.
   - `int ExecutionIdempotencyRetentionMinutes { get; set; }`

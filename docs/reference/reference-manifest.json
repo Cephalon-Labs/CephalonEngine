@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-14T14:38:52.3742739+00:00",
+  "GeneratedAtUtc": "2026-05-14T16:43:23.6226875+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -2155,7 +2155,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 8,
+        "Properties": 9,
         "Methods": 0
       }
     },
@@ -57643,6 +57643,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-executionhardened",
       "Signature": "const string ExecutionHardened",
       "Summary": "Scheduler execution truth currently looks hardened enough for truthful bounded execution on the shared lane."
+    },
+    {
+      "DisplayName": "ExecutionIdempotencyDurability",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgenticRuntimeOptions",
+      "NamespaceName": "Cephalon.Agentics.Configuration",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-p-cephalon-agentics-configuration-agenticruntimeoptions-executionidempotencydurability",
+      "Signature": "string ExecutionIdempotencyDurability { get; set; }",
+      "Summary": "Gets or sets the idempotency durability mode used when completed run suppression is enabled."
     },
     {
       "DisplayName": "ExecutionIdempotencyRetentionMinutes",

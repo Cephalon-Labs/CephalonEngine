@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Agentics;
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Agentics.Configuration;
@@ -26,6 +27,7 @@ internal sealed class AgenticsModule : ModuleBase, ITechnologyServiceContributor
 
     private readonly AgenticRuntimeOptions options;
     private bool hasToolContributors;
+    private bool hasInboxProviders;
 
     public AgenticsModule(AgenticRuntimeOptions options)
     {
@@ -53,6 +55,7 @@ internal sealed class AgenticsModule : ModuleBase, ITechnologyServiceContributor
         }
 
         hasToolContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IAgentToolContributor));
+        hasInboxProviders = services.Any(static descriptor => descriptor.ServiceType == typeof(IInbox));
         services.TryAddSingleton(options);
         services.TryAddSingleton<IAgentToolCatalog, AgentToolCatalog>();
         if (options.EnableExecution)
@@ -85,6 +88,7 @@ internal sealed class AgenticsModule : ModuleBase, ITechnologyServiceContributor
 
         if (options.EnableExecution)
         {
+            var idempotencyDurability = ResolveIdempotencyDurability();
             capabilities.Add(new Capability(
                 key: "agentics.execution",
                 displayName: "Agent Execution",
@@ -102,8 +106,13 @@ internal sealed class AgenticsModule : ModuleBase, ITechnologyServiceContributor
                     ["idempotencyPolicy"] = options.EnableExecutionIdempotency ? "completed-run" : "none",
                     ["idempotencyKey"] = options.EnableExecutionIdempotency ? "tool-run" : "none",
                     ["idempotencyRetentionMinutes"] = Math.Max(1, options.ExecutionIdempotencyRetentionMinutes).ToString(CultureInfo.InvariantCulture),
-                    ["idempotencyDurability"] = "none",
-                    ["idempotencyScope"] = options.EnableExecutionIdempotency ? "process-local" : "none"
+                    ["idempotencyDurability"] = options.EnableExecutionIdempotency
+                        ? ResolveIdempotencyDurabilityMetadata(idempotencyDurability)
+                        : "none",
+                    ["idempotencyScope"] = options.EnableExecutionIdempotency
+                        ? ResolveIdempotencyScopeMetadata(idempotencyDurability)
+                        : "none",
+                    ["idempotencyInboxConfigured"] = hasInboxProviders.ToString().ToLowerInvariant()
                 }));
         }
 
@@ -131,5 +140,22 @@ internal sealed class AgenticsModule : ModuleBase, ITechnologyServiceContributor
                     ["toolCount"] = options.Tools.Count.ToString(CultureInfo.InvariantCulture)
                 }));
         }
+    }
+
+    private string ResolveIdempotencyDurability()
+    {
+        return options.EnableExecutionIdempotency
+            ? AgentToolExecutionIdempotencyDurabilityModes.Normalize(options.ExecutionIdempotencyDurability)
+            : AgentToolExecutionIdempotencyDurabilityModes.ProcessLocal;
+    }
+
+    private static string ResolveIdempotencyDurabilityMetadata(string durability)
+    {
+        return durability == AgentToolExecutionIdempotencyDurabilityModes.Inbox ? "inbox" : "none";
+    }
+
+    private static string ResolveIdempotencyScopeMetadata(string durability)
+    {
+        return durability == AgentToolExecutionIdempotencyDurabilityModes.Inbox ? "durable-inbox" : "process-local";
     }
 }

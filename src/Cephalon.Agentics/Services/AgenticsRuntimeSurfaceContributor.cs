@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Agentics;
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Agentics.Configuration;
 using Cephalon.Engine.Runtime;
@@ -13,6 +14,8 @@ internal sealed class AgenticsRuntimeSurfaceContributor(
     AgenticRuntimeOptions options,
     IEnumerable<IAgentToolExecutor> executors,
     IEnumerable<IAgentToolRunCatalog> runCatalogs,
+    IEnumerable<IInbox> inboxes,
+    IEnumerable<IInboxCatalog> inboxCatalogs,
     IRuntime runtime,
     IExecutionRuntimeCatalog executionGraphs,
     IHostedExecutionRuntimeCatalog hostedExecutions) : ITechnologyRuntimeContributor
@@ -29,6 +32,8 @@ internal sealed class AgenticsRuntimeSurfaceContributor(
             static execution => execution.HostedExecutionId,
             StringComparer.OrdinalIgnoreCase);
         var runCatalog = runCatalogs.FirstOrDefault();
+        var inboxArray = inboxes.ToArray();
+        var inboxCatalog = inboxCatalogs.FirstOrDefault();
         var executorIndex = executors
             .GroupBy(static executor => executor.ToolId, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(
@@ -47,6 +52,8 @@ internal sealed class AgenticsRuntimeSurfaceContributor(
                     options,
                     executorIndex,
                     runCatalog,
+                    inboxArray,
+                    inboxCatalog,
                     capabilityIndex,
                     graphStateIndex,
                     hostedExecutionStateIndex,
@@ -60,6 +67,8 @@ internal sealed class AgenticsRuntimeSurfaceContributor(
         AgenticRuntimeOptions options,
         Dictionary<string, int> executorIndex,
         IAgentToolRunCatalog? runCatalog,
+        IInbox[] inboxes,
+        IInboxCatalog? inboxCatalog,
         Dictionary<string, CapabilityManifest> capabilityIndex,
         Dictionary<string, RuntimeExecutionGraphState> graphStateIndex,
         Dictionary<string, RuntimeHostedExecutionState> hostedExecutionStateIndex,
@@ -74,6 +83,9 @@ internal sealed class AgenticsRuntimeSurfaceContributor(
 
         var executorCount = executorIndex.GetValueOrDefault(tool.Id);
         var runs = runCatalog?.GetByToolId(tool.Id) ?? [];
+        var idempotencyDurability = options.EnableExecutionIdempotency
+            ? AgentToolExecutionIdempotencyDurabilityModes.Normalize(options.ExecutionIdempotencyDurability)
+            : AgentToolExecutionIdempotencyDurabilityModes.ProcessLocal;
         var latestRun = runs
             .OrderByDescending(static run => run.LastObservedAtUtc)
             .ThenBy(static run => run.RunId, StringComparer.OrdinalIgnoreCase)
@@ -94,8 +106,26 @@ internal sealed class AgenticsRuntimeSurfaceContributor(
         metadata["idempotencyPolicy"] = options.EnableExecutionIdempotency ? "completed-run" : "none";
         metadata["idempotencyKey"] = options.EnableExecutionIdempotency ? "tool-run" : "none";
         metadata["idempotencyRetentionMinutes"] = Math.Max(1, options.ExecutionIdempotencyRetentionMinutes).ToString(CultureInfo.InvariantCulture);
-        metadata["idempotencyDurability"] = "none";
-        metadata["idempotencyScope"] = options.EnableExecutionIdempotency ? "process-local" : "none";
+        metadata["idempotencyDurability"] = options.EnableExecutionIdempotency && idempotencyDurability == AgentToolExecutionIdempotencyDurabilityModes.Inbox
+            ? "inbox"
+            : "none";
+        metadata["idempotencyScope"] = options.EnableExecutionIdempotency
+            ? idempotencyDurability == AgentToolExecutionIdempotencyDurabilityModes.Inbox ? "durable-inbox" : "process-local"
+            : "none";
+        metadata["idempotencyInboxConfigured"] = (inboxes.Length > 0).ToString().ToLowerInvariant();
+        metadata["idempotencyInboxCount"] = inboxes.Length.ToString(CultureInfo.InvariantCulture);
+        metadata["idempotencyProviderInterop"] = idempotencyDurability == AgentToolExecutionIdempotencyDurabilityModes.Inbox
+            ? "active-inbox"
+            : "none";
+        if (idempotencyDurability == AgentToolExecutionIdempotencyDurabilityModes.Inbox &&
+            inboxCatalog?.Inboxes.Count == 1)
+        {
+            var inbox = inboxCatalog.Inboxes[0];
+            metadata["idempotencyInboxId"] = inbox.Id;
+            metadata["idempotencyInboxProvider"] = inbox.Provider;
+            metadata["idempotencyInboxMode"] = inbox.Mode;
+        }
+
         metadata["runtimeState"] = latestRun is null ? "not-reported" : "reported";
         metadata["runCount"] = runs.Count.ToString(CultureInfo.InvariantCulture);
 

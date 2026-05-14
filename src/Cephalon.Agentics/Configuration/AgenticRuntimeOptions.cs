@@ -59,6 +59,18 @@ public sealed class AgenticRuntimeOptions
     public bool EnableExecutionIdempotency { get; set; }
 
     /// <summary>
+    /// Gets or sets the idempotency durability mode used when completed run suppression is enabled.
+    /// </summary>
+    /// <remarks>
+    /// The default <c>process-local</c> mode preserves the original in-memory run-catalog behavior.
+    /// Set this value to <c>inbox</c> to require exactly one active <c>IInbox</c> provider and use it
+    /// as the durable duplicate-completed run marker. The inbox mode does not claim distributed
+    /// exactly-once execution; it only reuses a provider-backed processed-message store for
+    /// <c>toolId + runId</c> idempotency.
+    /// </remarks>
+    public string ExecutionIdempotencyDurability { get; set; } = "process-local";
+
+    /// <summary>
     /// Gets or sets the process-local retention window, in minutes, for completed run-id suppression.
     /// </summary>
     /// <remarks>

@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Agentics;
+using Cephalon.Abstractions.Data;
 using Cephalon.Agentics.Configuration;
 using Cephalon.Diagnostics.Redaction;
 using System.Diagnostics;
@@ -15,11 +16,13 @@ internal sealed class AgentToolDispatcher(
     IEnumerable<IAgentToolExecutionPolicy> policies,
     IAgentToolRunReporter reporter,
     IEnumerable<IAgentToolExecutionObserver> observers,
+    IEnumerable<IInbox> inboxes,
     RedactionPipeline? redactionPipeline = null) : IAgentToolDispatcher
 {
     private readonly IAgentToolExecutor[] executors = executors.ToArray();
     private readonly IAgentToolExecutionPolicy[] policies = policies.ToArray();
     private readonly IAgentToolExecutionObserver[] observers = observers.ToArray();
+    private readonly IInbox[] inboxes = inboxes.ToArray();
 
     public async ValueTask<AgentToolExecutionResult> ExecuteAsync(
         AgentToolExecutionRequest request,
@@ -55,12 +58,11 @@ internal sealed class AgentToolDispatcher(
             throw new InvalidOperationException(missingError);
         }
 
-        if (TryResolveDuplicateCompletedRun(
+        var duplicateRun = await TryResolveDuplicateCompletedRunAsync(
             tool.Id,
             request.RunId,
-            out var completedRun,
-            out var completedObservedAtUtc,
-            out var idempotencyRetention))
+            cancellationToken).ConfigureAwait(false);
+        if (duplicateRun is not null)
         {
             var duplicateContext = new AgentToolExecutionContext(
                 tool,
@@ -73,11 +75,8 @@ internal sealed class AgentToolDispatcher(
             var duplicateResult = WithRequestMetadata(
                 duplicateContext,
                 AgentToolExecutionResult.Skipped(
-                    "Agent-tool run already completed in this process.",
-                    CreateIdempotencyMetadata(
-                        completedRun!,
-                        completedObservedAtUtc,
-                        idempotencyRetention)));
+                    duplicateRun.OutputSummary,
+                    duplicateRun.Metadata));
 
             await RecordResultAsync(
                 duplicateContext,
@@ -199,6 +198,35 @@ internal sealed class AgentToolDispatcher(
                         cancellationToken).ConfigureAwait(false);
                     await DelayBeforeRetryAsync(retryDelay, cancellationToken).ConfigureAwait(false);
                     continue;
+                }
+
+                if (string.Equals(mergedResult.Outcome, AgentToolExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+                    IsDurableInboxIdempotencyEnabled())
+                {
+                    var durableIdempotency = await TryRecordDurableCompletedRunAsync(
+                        context,
+                        cancellationToken).ConfigureAwait(false);
+                    if (!durableIdempotency.Succeeded)
+                    {
+                        var durableFailure = WithRequestMetadata(
+                            context,
+                            AgentToolExecutionResult.Failed(
+                                durableIdempotency.Error!,
+                                durableIdempotency.Metadata));
+                        await RecordResultAsync(context, durableFailure, cancellationToken).ConfigureAwait(false);
+                        CompleteDispatchActivity(
+                            dispatchActivity,
+                            tool.Id,
+                            durableFailure.Outcome,
+                            error: durableFailure.Error);
+                        return durableFailure;
+                    }
+
+                    mergedResult = new AgentToolExecutionResult(
+                        mergedResult.Outcome,
+                        mergedResult.OutputSummary,
+                        mergedResult.Error,
+                        MergeMetadata(mergedResult.Metadata, durableIdempotency.Metadata));
                 }
 
                 await RecordResultAsync(context, mergedResult, cancellationToken).ConfigureAwait(false);
@@ -420,40 +448,57 @@ internal sealed class AgentToolDispatcher(
         return new ValueTask(Task.Delay(retryDelay, cancellationToken));
     }
 
-    private bool TryResolveDuplicateCompletedRun(
+    private async ValueTask<DuplicateCompletedRun?> TryResolveDuplicateCompletedRunAsync(
         string toolId,
         string runId,
-        out AgentToolRunState? completedRun,
-        out DateTimeOffset completedObservedAtUtc,
-        out TimeSpan retention)
+        CancellationToken cancellationToken)
     {
-        completedRun = null;
-        completedObservedAtUtc = default;
-        retention = NormalizeIdempotencyRetention(options.ExecutionIdempotencyRetentionMinutes);
+        var retention = NormalizeIdempotencyRetention(options.ExecutionIdempotencyRetentionMinutes);
 
-        if (!options.EnableExecutionIdempotency ||
-            !runCatalog.TryGet(runId, out var state) ||
+        if (!options.EnableExecutionIdempotency)
+        {
+            return null;
+        }
+
+        if (IsDurableInboxIdempotencyEnabled())
+        {
+            var inbox = ResolveDurableIdempotencyInbox();
+            var messageId = CreateDurableIdempotencyMessageId(toolId, runId);
+            if (!await inbox.HasProcessedAsync(messageId, cancellationToken).ConfigureAwait(false))
+            {
+                return null;
+            }
+
+            return new DuplicateCompletedRun(
+                "Agent-tool run already completed in the active inbox provider.",
+                CreateDurableDuplicateMetadata(toolId, runId, messageId));
+        }
+
+        if (!runCatalog.TryGet(runId, out var state) ||
             state is null ||
             state.SucceededCount <= 0 ||
             !string.Equals(state.ToolId, toolId, StringComparison.OrdinalIgnoreCase))
         {
-            return false;
+            return null;
         }
 
         var completedAt = ResolveCompletedObservedAtUtc(state);
         if (completedAt is null)
         {
-            return false;
+            return null;
         }
 
         if (DateTimeOffset.UtcNow - completedAt.Value > retention)
         {
-            return false;
+            return null;
         }
 
-        completedRun = state;
-        completedObservedAtUtc = completedAt.Value;
-        return true;
+        return new DuplicateCompletedRun(
+            "Agent-tool run already completed in this process.",
+            CreateProcessLocalIdempotencyMetadata(
+                state,
+                completedAt.Value,
+                retention));
     }
 
     private static DateTimeOffset? ResolveCompletedObservedAtUtc(AgentToolRunState state)
@@ -473,7 +518,70 @@ internal sealed class AgentToolDispatcher(
             : null;
     }
 
-    private static Dictionary<string, string> CreateIdempotencyMetadata(
+    private async ValueTask<DurableIdempotencyRecordResult> TryRecordDurableCompletedRunAsync(
+        AgentToolExecutionContext context,
+        CancellationToken cancellationToken)
+    {
+        var messageId = CreateDurableIdempotencyMessageId(context.Tool.Id, context.RunId);
+        var metadata = CreateDurableIdempotencyMetadata(context.Tool.Id, context.RunId, messageId, "completed-marked");
+        try
+        {
+            var inbox = ResolveDurableIdempotencyInbox();
+            await inbox.MarkProcessedAsync(
+                new InboxMessage(
+                    id: messageId,
+                    channelId: "agentics.tool-runs",
+                    messageType: "agentics.tool-run.completed",
+                    payload: "{}",
+                    receivedAtUtc: DateTimeOffset.UtcNow,
+                    contentType: "application/json",
+                    correlationId: context.CorrelationId,
+                    metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        ["toolId"] = context.Tool.Id,
+                        ["runId"] = context.RunId,
+                        ["idempotencyPolicy"] = "completed-run"
+                    }),
+                cancellationToken).ConfigureAwait(false);
+
+            return new DurableIdempotencyRecordResult(true, null, metadata);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            metadata["idempotencyOutcome"] = "durable-record-failed";
+            metadata["idempotencyErrorType"] = exception.GetType().Name;
+            return new DurableIdempotencyRecordResult(
+                false,
+                $"Agent-tool durable idempotency inbox mark failed: {exception.Message}",
+                metadata);
+        }
+    }
+
+    private IInbox ResolveDurableIdempotencyInbox()
+    {
+        return inboxes.Length switch
+        {
+            1 => inboxes[0],
+            0 => throw new InvalidOperationException(
+                "Agentics durable inbox idempotency requires exactly one active IInbox provider, but none are registered."),
+            _ => throw new InvalidOperationException(
+                "Agentics durable inbox idempotency requires exactly one active IInbox provider, but multiple inbox providers are registered.")
+        };
+    }
+
+    private bool IsDurableInboxIdempotencyEnabled()
+    {
+        return options.EnableExecutionIdempotency &&
+            AgentToolExecutionIdempotencyDurabilityModes.Normalize(options.ExecutionIdempotencyDurability) ==
+                AgentToolExecutionIdempotencyDurabilityModes.Inbox;
+    }
+
+    private static string CreateDurableIdempotencyMessageId(string toolId, string runId)
+    {
+        return $"agentics:{toolId.Trim()}:{runId.Trim()}";
+    }
+
+    private static Dictionary<string, string> CreateProcessLocalIdempotencyMetadata(
         AgentToolRunState completedRun,
         DateTimeOffset completedObservedAtUtc,
         TimeSpan retention)
@@ -490,6 +598,36 @@ internal sealed class AgentToolDispatcher(
             ["completedRunId"] = completedRun.RunId,
             ["completedOutcome"] = AgentToolExecutionOutcomes.Succeeded,
             ["completedObservedAtUtc"] = completedObservedAtUtc.ToString("O", CultureInfo.InvariantCulture)
+        };
+    }
+
+    private static Dictionary<string, string> CreateDurableDuplicateMetadata(
+        string toolId,
+        string runId,
+        string messageId)
+    {
+        return CreateDurableIdempotencyMetadata(toolId, runId, messageId, "duplicate-skipped");
+    }
+
+    private static Dictionary<string, string> CreateDurableIdempotencyMetadata(
+        string toolId,
+        string runId,
+        string messageId,
+        string outcome)
+    {
+        return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["idempotencyPolicy"] = "completed-run",
+            ["idempotencyKey"] = "tool-run",
+            ["idempotencyRetentionMinutes"] = "unbounded",
+            ["idempotencyDurability"] = "inbox",
+            ["idempotencyScope"] = "durable-inbox",
+            ["idempotencyStore"] = "IInbox",
+            ["idempotencyOutcome"] = outcome,
+            ["completedToolId"] = toolId,
+            ["completedRunId"] = runId,
+            ["completedOutcome"] = AgentToolExecutionOutcomes.Succeeded,
+            ["completedInboxMessageId"] = messageId
         };
     }
 
@@ -557,4 +695,13 @@ internal sealed class AgentToolDispatcher(
 
         return metadata;
     }
+
+    private sealed record DuplicateCompletedRun(
+        string OutputSummary,
+        IReadOnlyDictionary<string, string> Metadata);
+
+    private sealed record DurableIdempotencyRecordResult(
+        bool Succeeded,
+        string? Error,
+        IReadOnlyDictionary<string, string> Metadata);
 }
