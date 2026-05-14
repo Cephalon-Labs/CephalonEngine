@@ -191,6 +191,14 @@ pwsh ./scripts/validate-template-pack-adoption.ps1
 
 That script publishes the same temporary feed plus `Cephalon.TemplatePack` and the generated app package closure including `Cephalon.Diagnostics` and `Cephalon.Resilience`, installs the template pack into an isolated custom hive, reruns `cephalon doctor` with `CEPHALON_DOCTOR_TEMPLATE_HIVE` set, scaffolds a fresh project-root starter outside the repository, seeds the generated `./.cephalon/packages` folder, reruns `cephalon doctor --app-root <path>`, restores, builds, runs, probes the generated host from the template-pack path, and writes `artifacts/adoption-smoke/template-pack-adoption.json` unless `-ReportPath` overrides it.
 
+For the modular-monolith REST/Worker/data replay, run:
+
+```powershell
+pwsh ./scripts/validate-modular-monolith-adoption.ps1
+```
+
+That script publishes the same temporary feed including `Cephalon.Data`, `Cephalon.Ids.Sfid`, and `Cephalon.Worker`, installs the CLI, scaffolds a modular-monolith host with `CQRS`, `Outbox`, and `RestApi`, validates the generated data/Sfid split configuration and package references, runs the ASP.NET Core host, probes `/health/ready`, `/engine`, `/engine/snapshot`, `/engine/dependencies`, `/engine/runtime-story`, and `/scalar`, then builds and runs a generic-host Worker probe against the same generated configuration. It writes `artifacts/adoption-smoke/modular-monolith-adoption.json` unless `-ReportPath` overrides it.
+
 ## Optional Published-Output Path
 
 Generated host projects now also include `Properties/PublishProfiles/CephalonFolder.pubxml`.

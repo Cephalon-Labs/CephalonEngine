@@ -1,12 +1,13 @@
 {
-  "$schemaVersion": "1.4.0",
+  "$schemaVersion": "1.5.0",
   "scenarioId": "out-of-tree-generated-app-package-stage",
   "status": "execution-report-ready",
-  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, writes machine-readable execution reports for generated-app, template-pack, and out-of-tree package adoption, and tracks the broader golden use-case map.",
+  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, writes machine-readable execution reports for generated-app, template-pack, modular-monolith REST/Worker/data, and out-of-tree package adoption, and tracks the broader golden use-case map.",
   "validationScript": "scripts/validate-out-of-tree-package-adoption.ps1",
   "supportingScripts": [
     "scripts/validate-generated-app-adoption.ps1",
-    "scripts/validate-template-pack-adoption.ps1"
+    "scripts/validate-template-pack-adoption.ps1",
+    "scripts/validate-modular-monolith-adoption.ps1"
   ],
   "sourceDocs": [
     "docs/getting-started.md",
@@ -227,29 +228,39 @@
       "id": "modular-monolith-rest-worker-data",
       "title": "Modular monolith REST, Worker, and data foundation",
       "appShape": "modular-monolith",
-      "status": "planned",
-      "proofLevel": "contract-defined",
-      "primaryValidationPath": "scripts/validate-generated-app-adoption.ps1",
+      "status": "execution-report-ready",
+      "proofLevel": "executable-smoke",
+      "primaryValidationPath": "scripts/validate-modular-monolith-adoption.ps1",
       "sourceDocs": [
+        "docs/getting-started.md",
         "docs/app-models.md",
         "docs/operations.md",
+        "docs/components/cli.md",
         "docs/components/README.md"
       ],
       "qualityDimensions": [
+        "Usability",
         "Performance",
         "Reliability",
         "Maintainability",
         "Data Integrity",
-        "Availability"
+        "Availability",
+        "Compatibility",
+        "Auditability"
       ],
       "requiredEngineCapabilities": [
         "configuration-driven blueprint selection",
+        "CQRS and outbox data foundation",
         "thin ASP.NET Core host",
         "thin Worker host",
         "dependency health catalog",
         "runtime snapshot"
       ],
       "proofTargets": [
+        {
+          "kind": "runtime-probe",
+          "reference": "/health/ready"
+        },
         {
           "kind": "operator-surface",
           "reference": "/engine/snapshot"
@@ -261,8 +272,31 @@
         {
           "kind": "operator-surface",
           "reference": "/engine/runtime-story"
+        },
+        {
+          "kind": "worker-host",
+          "reference": "generic-host-worker-probe"
         }
-      ]
+      ],
+      "executionReport": {
+        "schemaVersion": "1.0.0",
+        "defaultPath": "artifacts/adoption-smoke/modular-monolith-adoption.json",
+        "statusValues": [
+          "passed",
+          "failed"
+        ],
+        "requiredFields": [
+          "$schemaVersion",
+          "ScenarioId",
+          "Status",
+          "StartedAtUtc",
+          "CompletedAtUtc",
+          "DurationMilliseconds",
+          "Assertions",
+          "RuntimeProbes",
+          "Paths"
+        ]
+      }
     },
     {
       "id": "vertical-slice-eventing-outbox",
