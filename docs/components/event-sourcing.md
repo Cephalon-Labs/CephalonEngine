@@ -4,6 +4,8 @@
 
 `Cephalon.EventSourcing` is the runtime-neutral event-sourcing baseline for Cephalon.
 
+See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), [Conformance matrix](../conformance-matrix.md), and [Runtime contract index](../runtime-contract-index.md) for the per-package adoption-truth, maturity (`M2`, mixed application- and Cephalon-managed), ownership, and the `IEventStoreCatalog` / `IEventTypeRegistry` / `snapshot.*` runtime-key inventory that the event-sourcing baseline projects against — including the `event-sourcing-managed-replay-worker` entry and provider-durable snapshot claims for Entity Framework, MongoDB, Redis, and NATS that landed in ENG-704 and ENG-708..711. [Engineering standards](../engineering-standards.md) records the library-design and code-quality baseline the contract layer ships against; [Long-range engine direction](../long-range-direction.md) frames why event-sourcing stays a host-agnostic baseline with a separate `ISnapshotStore` contract and a stable `IEventTypeRegistry` (no reflection-based name resolution), so provider packs plug into managed replay additively without fusing stream and snapshot persistence into a single provider.
+
 ## What it owns
 
 - host-agnostic contracts for domain events, event stores, aggregate replay, snapshots, and event-stream catalogs
@@ -150,6 +152,12 @@ Those remain later slices until Cephalon can ship them truthfully.
 
 - [Cephalon.Abstractions](abstractions.md)
 - [Cephalon.Engine](engine.md)
+- [Engine surface maturity audit](../engine-surface-maturity-audit.md)
+- [Conformance matrix](../conformance-matrix.md)
+- [Runtime contract index](../runtime-contract-index.md)
+- [Long-range engine direction](../long-range-direction.md)
+- [Engineering standards](../engineering-standards.md)
+- [Architecture review (May 2026)](../architecture-review-2026-05.md)
 - [Cephalon.EventSourcing.EntityFramework](event-sourcing-entityframework.md)
 - [Cephalon.EventSourcing.MongoDB](event-sourcing-mongodb.md)
 - [Cephalon.EventSourcing.Nats](event-sourcing-nats.md)
