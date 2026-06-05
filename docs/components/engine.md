@@ -2,8 +2,6 @@
 
 `Cephalon.Engine` is the composition and runtime core of Cephalon.
 
-See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), [Conformance matrix](../conformance-matrix.md), and [Runtime contract index](../runtime-contract-index.md) for the per-package adoption-truth, maturity, ownership, and `/engine/*` route / `snapshot.*` key inventory that this component contributes to. [Long-range engine direction](../long-range-direction.md) frames why the engine stays composition-first and additive across multi-decade horizons; [Engineering standards](../engineering-standards.md) records the quality baseline the engine ships against.
-
 ## What it owns
 
 - module registration and dependency ordering

@@ -16,7 +16,7 @@
       "src/Cephalon.EventSourcing.Redis/Cephalon.EventSourcing.Redis.csproj",
       "src/Cephalon.EventSourcing.Cassandra/Cephalon.EventSourcing.Cassandra.csproj",
       "src/Cephalon.EventSourcing.ClickHouse/Cephalon.EventSourcing.ClickHouse.csproj",
-      "tests/Cephalon.Tests/Cephalon.Tests.csproj"
+      "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj"
     ]
   }
 }

@@ -53,7 +53,7 @@ $docsDir         = Join-Path $repoRoot "docs" "components"
 $dataDocFile     = Join-Path $docsDir "data-$slug.md"
 $esDocFile       = Join-Path $docsDir "event-sourcing-$slug.md"
 $catalogFile     = Join-Path $docsDir "README.md"
-$testsCsproj     = Join-Path $repoRoot "tests" "Cephalon.Tests" "Cephalon.Tests.csproj"
+$testsCsproj     = Join-Path $repoRoot "tests" "Cephalon.Tests.Support" "Cephalon.Tests.Support.csproj"
 
 # ---------------------------------------------------------------------------
 # Guard: abort if projects already exist
@@ -209,14 +209,14 @@ if ($catalogContent -notcontains $dataEntry -and $catalogContent.Contains($phase
 }
 
 # ---------------------------------------------------------------------------
-# 6. ProjectReference entries in Cephalon.Tests.csproj
+# 6. ProjectReference entries in Cephalon.Tests.Support.csproj
 # ---------------------------------------------------------------------------
 $testsContent = Get-Content -Path $testsCsproj -Raw
 
 $dataRef = "    <ProjectReference Include=""..\..\..\src\Cephalon.Data.$ProviderName\Cephalon.Data.$ProviderName.csproj"" />"
 $esRef   = "    <ProjectReference Include=""..\..\..\src\Cephalon.EventSourcing.$ProviderName\Cephalon.EventSourcing.$ProviderName.csproj"" />"
 
-# The test csproj uses relative paths from tests/Cephalon.Tests/ so prefix is ..\..\src
+# The support test csproj uses relative paths from tests/Cephalon.Tests.Support/ so prefix is ..\..\src
 $dataRef = "    <ProjectReference Include=""..\..\src\Cephalon.Data.$ProviderName\Cephalon.Data.$ProviderName.csproj"" />"
 $esRef   = "    <ProjectReference Include=""..\..\src\Cephalon.EventSourcing.$ProviderName\Cephalon.EventSourcing.$ProviderName.csproj"" />"
 
@@ -263,7 +263,7 @@ Write-Host "       - Modules/${ProviderName}EventSourcingModule.cs"
 Write-Host "       - Registration/${ProviderName}EventSourcingEngineBuilderExtensions.cs"
 Write-Host "       - Services/${ProviderName}EventStore.cs (IEventStore)"
 Write-Host ""
-Write-Host " [ ] Write integration tests in Cephalon.Tests for both packs."
+Write-Host " [ ] Write integration tests in Cephalon.Tests.Composition and/or Cephalon.Tests.Hosting for both packs."
 Write-Host ""
 Write-Host " [ ] Fill in the stub doc files:"
 Write-Host "       - docs/components/data-$slug.md"

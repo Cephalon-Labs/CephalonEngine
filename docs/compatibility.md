@@ -26,6 +26,7 @@ See also: [Engineering standards](engineering-standards.md) is the broader quali
 - when the supported target framework changes, update shipped `src/Cephalon.*` projects together with CLI defaults, scaffolded output, template projects, sample/reference-module manifests, and docs examples
 - keep the shipping framework baseline separate from the readiness lane: `net10.0` remains the current shipping floor until an intentional migration updates repo truth across code, docs, templates, and package metadata together
 - keep scaffolded package references aligned with the repository package catalog so generated test infrastructure dependencies do not drift from `Directory.Packages.props`
+- keep central transitive dependency pinning enabled in `Directory.Packages.props` so vulnerability remediations for shared transitive chains can be applied once at the repo level and validated across all solution lanes
 
 ### Framework readiness and deployment-mode claims
 

@@ -37,7 +37,7 @@
       "src/Cephalon.Observability.OpenShift/Cephalon.Observability.OpenShift.csproj",
       "src/Cephalon.Observability.Tanzu/Cephalon.Observability.Tanzu.csproj",
       "src/Cephalon.Observability.Serilog/Cephalon.Observability.Serilog.csproj",
-      "tests/Cephalon.Tests/Cephalon.Tests.csproj"
+      "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj"
     ]
   }
 }

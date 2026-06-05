@@ -646,15 +646,6 @@ try {
                 ClaimProjects = $singleFileClaimProjects
             }
         }
-        DeploymentModeClaimValidation = [pscustomobject]@{
-            HarnessPath = 'scripts/validate-deployment-mode-claims.ps1'
-            HarnessTestsPath = 'tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1'
-            ManifestSchemaTestsPath = 'tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1'
-            ExpectedReportDirectory = 'artifacts/deployment-mode-claims-release'
-            ExpectedReportPath = 'artifacts/deployment-mode-claims-release/claim-validation-report.json'
-            VerdictGate = 'claim-truthful is the only verdict that promotes a deployment mode from not-claimed to claimed'
-            Note = 'Run scripts/validate-deployment-mode-claims.ps1 (or scripts/validate-release.ps1 without -SkipDeploymentModeClaims) to produce this report; this readiness pass does not invoke the harness.'
-        }
         Checks = $checks
         Steps = $stepResults
     }
@@ -708,14 +699,6 @@ try {
         '- Manifest-backed support statements and project-detected statuses now travel together in the readiness report.'
         '- Analyzer-only flags do not become support claims by themselves.'
         ""
-        "## Deployment-mode claim validation harness"
-        ""
-        ('- Harness script: `{0}`' -f $report.DeploymentModeClaimValidation.HarnessPath)
-        ('- Harness Pester suite: `{0}`' -f $report.DeploymentModeClaimValidation.HarnessTestsPath)
-        ('- Manifest schema Pester suite: `{0}`' -f $report.DeploymentModeClaimValidation.ManifestSchemaTestsPath)
-        ('- Report path when the harness runs: `{0}`' -f $report.DeploymentModeClaimValidation.ExpectedReportPath)
-        ('- Verdict gate: {0}' -f $report.DeploymentModeClaimValidation.VerdictGate)
-        '- This readiness pass does not invoke the harness; run `scripts/validate-deployment-mode-claims.ps1` directly or via `scripts/validate-release.ps1`.'
         "## Checks"
         ""
         $checkLines

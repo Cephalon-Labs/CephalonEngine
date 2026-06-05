@@ -25,7 +25,7 @@
       "src/Cephalon.Cli/Cephalon.Cli.csproj",
       "src/Cephalon.Agentics/Cephalon.Agentics.csproj",
       "src/Cephalon.ReferenceDocs/Cephalon.ReferenceDocs.csproj",
-      "tests/Cephalon.Tests/Cephalon.Tests.csproj",
+      "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
       "benchmarks/Cephalon.Benchmarks/Cephalon.Benchmarks.csproj"
     ]
   }

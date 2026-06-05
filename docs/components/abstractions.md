@@ -2,8 +2,6 @@
 
 `Cephalon.Abstractions` is the stable contract layer that modules, hosts, and companion packages build against.
 
-See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), [Conformance matrix](../conformance-matrix.md), and [Runtime contract index](../runtime-contract-index.md) for the per-package adoption-truth, maturity, ownership, and `I*Catalog` interface inventory that this contract layer ships. [Long-range engine direction](../long-range-direction.md) frames why these contracts stay host-agnostic and additive across multi-decade horizons; [Engineering standards](../engineering-standards.md) records the library-design and binary-stability baseline these public contracts ship against.
-
 ## What it owns
 
 - module contracts such as `IModule`, `IModuleLifecycle`, `ModuleBase`, `ModuleDescriptor`, and `ModuleContext`
@@ -688,12 +686,5 @@ compatibility-only metadata.
 ## Related docs
 
 - [Architecture](../architecture.md)
-- [Engine surface maturity audit](../engine-surface-maturity-audit.md)
-- [Conformance matrix](../conformance-matrix.md)
-- [Runtime contract index](../runtime-contract-index.md)
-- [Long-range engine direction](../long-range-direction.md)
-- [Engineering standards](../engineering-standards.md)
-- [Architecture review (May 2026)](../architecture-review-2026-05.md)
-- [Compatibility](../compatibility.md)
 - [App models](../app-models.md)
 - [Module authoring](../module-authoring.md)
