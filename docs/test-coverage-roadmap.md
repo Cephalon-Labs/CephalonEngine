@@ -58,7 +58,7 @@ The list below records, per family, the current layered coverage and what kind o
 
 ### Behaviors — covered
 
-`Cephalon.Behaviors` and `Cephalon.Behaviors.Http` are heavily exercised by both composition and hosting test projects (behavior topology, REST projection, resilience policies, durable execution, saga choreography, feature-flag-aware behavior). `Cephalon.Behaviors.Messaging`, `Cephalon.Behaviors.Patterns`, `Cephalon.Behaviors.SourceGen` are descriptor/utility surfaces with composition-time coverage. Adequate.
+`Cephalon.Behaviors` and `Cephalon.Behaviors.Http` are heavily exercised by both composition and hosting test projects (behavior topology, REST projection, resilience policies, durable execution, saga choreography, feature-flag-aware behavior). `Cephalon.Tests.Hosting/BehaviorHttpTransportResilienceHostingTests.cs` now also asserts GraphQL-over-WebSocket session contracts for init-timeout close semantics, explicit `connection_terminate` closure, and malformed-frame recovery. `Cephalon.Behaviors.Messaging`, `Cephalon.Behaviors.Patterns`, `Cephalon.Behaviors.SourceGen` are descriptor/utility surfaces with composition-time coverage. Adequate.
 
 ### Eventing — covered
 
