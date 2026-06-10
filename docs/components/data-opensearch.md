@@ -1,5 +1,7 @@
 # Cephalon.Data.OpenSearch
 
+> **Maturity:** `M1` · **Ownership:** provider-managed · **Family:** `data-and-cdc` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Data.OpenSearch` is the OpenSearch search-store companion pack for Cephalon, mirroring the pattern established by `Cephalon.Data.Elasticsearch` against the OpenSearch.Client 1.9.0 API surface.
 
 ## What it owns

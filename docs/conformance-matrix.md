@@ -15,7 +15,7 @@ Each row describes one shipped Cephalon package along these dimensions:
 - **Engine routes** — `/engine/*` HTTP routes the package contributes when active
 - **Snapshot keys** — `snapshot.*` keys the package contributes to `RuntimeIntrospectionSnapshot`
 - **Catalog interfaces** — `I*Catalog` / `I*RuntimeCatalog` interfaces the package owns
-- **Notes** — one-line summary; "(audit pending)" flags rows where the maturity audit is currently silent or where component docs and audit doc disagree
+- **Notes** — one-line summary; "(audit pending)" flags rows where the maturity audit is currently silent or where component docs and audit doc disagree, while "(family-covered by maturity audit)" flags rows where the audit declares maturity through a consolidated family-level entry rather than per-package detail
 
 Maturity recap (full definitions in the maturity audit):
 
@@ -71,7 +71,7 @@ Transport adapters are narrow execution proofs. REST is base in `Cephalon.AspNet
 | Package | Maturity | Ownership | Engine routes | Snapshot keys | Catalog interfaces | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | `Cephalon.Behaviors` | M4 | cephalon-managed | — | `ExecutionGraphs`, `HostedExecutions`, `BehaviorResiliencePolicies`, `DurableExecutions`, `DurableExecutionStates`, `SagaChoreographies`, `SagaChoreographyPublicationStates` | `IBehaviorCatalog`, `IBehaviorRegistry`, `ISagaChoreographyRuntimeCatalog`, `ISagaChoreographyPublicationRuntimeStateCatalog`, `IBehaviorResilienceRuntimeCatalog`, `IDurableExecutionRuntimeCatalog`, `IDurableExecutionRuntimeStateCatalog` | adaptive behavior topology (ABT) dispatch, topology resolution, compatibility validation |
-| `Cephalon.Behaviors.Http` | M2 | mixed: application-managed + cephalon-managed | — (publishes through `Cephalon.AspNetCore`) | — | — | REST profile metadata plus module-owned REST activation; Cephalon-managed materialization (audit pending — see inconsistency #1) |
+| `Cephalon.Behaviors.Http` | M2 | mixed: `application-managed` profile/publication activation + `cephalon-managed` materialization, governance, and runtime catalogs | — (publishes through `Cephalon.AspNetCore`) | — | — | REST profile metadata plus explicit module-owned public REST activation; Cephalon-managed materialization, governance, and runtime catalogs |
 | `Cephalon.Behaviors.Messaging` | M1 | application-managed | — | — | — | messaging transport bindings, descriptors only |
 | `Cephalon.Behaviors.Patterns` | M1 | application-managed | — | — | — | pattern composition helpers (saga publisher contracts, durable execution helpers) |
 | `Cephalon.Behaviors.SourceGen` | M1 | cephalon-managed | — | — | — | source generator for behavior registration and topology helpers |
@@ -124,17 +124,17 @@ Both agentic surfaces are managed vertical proofs. Cephalon-managed dispatch and
 
 | Package | Maturity | Ownership | Engine routes | Snapshot keys | Catalog interfaces | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| `Cephalon.EventSourcing` | M1 | application-managed | — | — | — | event-sourced aggregate contracts and descriptors (audit pending) |
-| `Cephalon.EventSourcing.EntityFramework` | M1 | provider-managed | — | — | — | Entity Framework event store (audit pending) |
-| `Cephalon.EventSourcing.MongoDB` | M1 | provider-managed | — | — | — | MongoDB event store (audit pending) |
-| `Cephalon.EventSourcing.Redis` | M1 | provider-managed | — | — | — | Redis event store (audit pending) |
-| `Cephalon.EventSourcing.Neo4j` | M1 | provider-managed | — | — | — | Neo4j event store (audit pending) |
-| `Cephalon.EventSourcing.Cassandra` | M1 | provider-managed | — | — | — | Cassandra event store (audit pending) |
-| `Cephalon.EventSourcing.ClickHouse` | M1 | provider-managed | — | — | — | ClickHouse event store (audit pending) |
-| `Cephalon.EventSourcing.Elasticsearch` | M1 | provider-managed | — | — | — | Elasticsearch event store (audit pending) |
-| `Cephalon.EventSourcing.OpenSearch` | M1 | provider-managed | — | — | — | OpenSearch event store (audit pending) |
-| `Cephalon.EventSourcing.Qdrant` | M1 | provider-managed | — | — | — | Qdrant event store (audit pending) |
-| `Cephalon.EventSourcing.Nats` | M1 | provider-managed | — | — | — | NATS event store (audit pending) |
+| `Cephalon.EventSourcing` | M1 | application-managed | — | — | — | event-sourced aggregate contracts and descriptors (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.EntityFramework` | M1 | provider-managed | — | — | — | Entity Framework event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.MongoDB` | M1 | provider-managed | — | — | — | MongoDB event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.Redis` | M1 | provider-managed | — | — | — | Redis event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.Neo4j` | M1 | provider-managed | — | — | — | Neo4j event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.Cassandra` | M1 | provider-managed | — | — | — | Cassandra event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.ClickHouse` | M1 | provider-managed | — | — | — | ClickHouse event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.Elasticsearch` | M1 | provider-managed | — | — | — | Elasticsearch event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.OpenSearch` | M1 | provider-managed | — | — | — | OpenSearch event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.Qdrant` | M1 | provider-managed | — | — | — | Qdrant event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.Nats` | M1 | provider-managed | — | — | — | NATS event store (family-covered by maturity audit) |
 
 The event-sourcing family is currently catalog-only. The maturity audit does not yet enumerate each pack individually; broad managed-execution proof remains future work.
 
@@ -162,13 +162,13 @@ Multi-tenancy is one of the deepest companion proofs in the repo: 21 governance 
 
 | Package | Maturity | Ownership | Engine routes | Snapshot keys | Catalog interfaces | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| `Cephalon.Audit` | M1 | application-managed | `/engine/audit-stores`, `/engine/audit-history`, `/engine/audit-history/export` | `AuditStores` | `IAuditStoreCatalog` | audit store contracts and runtime surfaces (audit pending — see inconsistency #5) |
-| `Cephalon.Audit.EntityFramework` | M1 | cephalon-managed | — | — | — | Entity Framework audit store (audit pending) |
-| `Cephalon.Identity` | M1 | application-managed | `/engine/authorization-policies` | `AuthorizationPolicies` | `IAuthorizationPolicyCatalog` | host-agnostic identity and authorization contracts (audit pending) |
-| `Cephalon.Identity.AspNetCore` | M1 | application-managed | — | — | — | ASP.NET Core identity integration (audit pending) |
+| `Cephalon.Audit` | M1 | mixed: `cephalon-managed` in-memory writer baseline, catalog projection, ambient actor resolution + `application-managed` consumer actor accessors and durable storage | `/engine/audit-stores`, `/engine/audit-history`, `/engine/audit-history/export` | `AuditStores` | `IAuditStoreCatalog` | host-agnostic audit-recording baseline; `/engine/audit-*` routes are M1 catalog projections of `IAuditStoreCatalog`/`IAuditHistoryReader`/`IAuditHistoryExporter` truth |
+| `Cephalon.Audit.EntityFramework` | M1 | provider-managed | — | — | — | Entity Framework audit history: queryable `IAuditHistoryReader` plus bounded NDJSON `IAuditHistoryExporter` over `Engine:Audit:History` configuration |
+| `Cephalon.Identity` | M1 | mixed: `cephalon-managed` default metadata-driven evaluator, runtime surface, catalog projection, diagnostics + `application-managed` identity scheme and principal flow | `/engine/authorization-policies` | `AuthorizationPolicies` | `IAuthorizationPolicyCatalog` | host-agnostic identity and authorization baseline; `/engine/authorization-policies` is the M1 catalog projection of `IAuthorizationPolicyCatalog` truth, and `identity-authorization` is the runtime surface |
+| `Cephalon.Identity.AspNetCore` | M1 | application-managed | — | — | — | ASP.NET Core integration: minimal-API and controller policy mapping over the host-agnostic evaluator, optional `ClaimsPrincipal` projection into the ambient `IAuditActorAccessor` contract |
 | `Cephalon.Ids.Sfid` | M2 | cephalon-managed | — | — | — | Snowflake ID (Sfid) generator with canonical sorting |
 
-Audit and identity ship as host-agnostic descriptors at M1, with their `/engine/*` routes already in place via the host adapter. Sfid is the only fully managed surface in this family today. Durable audit history backends and authorization enforcement primitives remain future work.
+Audit and identity ship as host-agnostic baselines at M1: each pack contributes truthful catalog projections (`/engine/audit-*`, `/engine/authorization-policies`) plus narrow Cephalon-managed defaults (in-memory audit writer, metadata-driven authorization evaluator, identity runtime surface) without forcing one durable storage opinion or one identity scheme onto consumers. The Entity Framework audit pack is the first durable provider follow-through. Sfid stands alone at M2 as a fully managed identifier-generator surface. Distributed audit ledgers, broader authorization-decision proof, durable policy stores, and provider-specific identity-provider sync remain future work.
 
 ## Edge
 
@@ -185,21 +185,21 @@ Edge already has two real provider-native control-plane materializers running on
 | Package | Maturity | Ownership | Engine routes | Snapshot keys | Catalog interfaces | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | `Cephalon.Observability` | M2 | cephalon-managed | (startup summary projects via `/manifest`) | `Manifest` (startup summary) | — | observability options, startup summaries, shared telemetry contract |
-| `Cephalon.Observability.OpenTelemetry` | M1 | cephalon-managed | — | — | — | OTLP exporter configuration (audit pending) |
-| `Cephalon.Observability.Kubernetes` | M1 | cephalon-managed | — | — | — | Kubernetes collector configuration (audit pending) |
-| `Cephalon.Observability.Aws` | M1 | cephalon-managed | — | — | — | AWS X-Ray and CloudWatch configuration (audit pending) |
-| `Cephalon.Observability.Gcp` | M1 | cephalon-managed | — | — | — | GCP Cloud Trace and Monitoring configuration (audit pending) |
-| `Cephalon.Observability.AzureMonitor` | M1 | cephalon-managed | — | — | — | Azure Monitor configuration (audit pending) |
-| `Cephalon.Observability.NewRelic` | M1 | cephalon-managed | — | — | — | New Relic OTLP configuration (audit pending) |
-| `Cephalon.Observability.GrafanaCloud` | M1 | cephalon-managed | — | — | — | Grafana Cloud configuration (audit pending) |
-| `Cephalon.Observability.AlibabaCloud` | M1 | cephalon-managed | — | — | — | Alibaba Cloud configuration (audit pending) |
-| `Cephalon.Observability.OracleCloud` | M1 | cephalon-managed | — | — | — | Oracle Cloud APM configuration (audit pending) |
-| `Cephalon.Observability.DigitalOcean` | M1 | cephalon-managed | — | — | — | DigitalOcean App Platform configuration (audit pending) |
-| `Cephalon.Observability.HuaweiCloud` | M1 | cephalon-managed | — | — | — | Huawei Cloud APM configuration (audit pending) |
-| `Cephalon.Observability.OpenShift` | M1 | cephalon-managed | — | — | — | OpenShift in-cluster collector configuration (audit pending) |
-| `Cephalon.Observability.Tanzu` | M1 | cephalon-managed | — | — | — | VMware Tanzu configuration (audit pending) |
-| `Cephalon.Observability.Serilog` | M1 | cephalon-managed | — | — | — | Serilog provider integration (audit pending) |
-| `Cephalon.Observability.DependencyHealth.Core` | M1 | cephalon-managed | — | — | — | dependency-health probe infrastructure (audit pending) |
+| `Cephalon.Observability.OpenTelemetry` | M1 | cephalon-managed | — | — | — | OTLP exporter configuration (family-covered by maturity audit) |
+| `Cephalon.Observability.Kubernetes` | M1 | cephalon-managed | — | — | — | Kubernetes collector configuration (family-covered by maturity audit) |
+| `Cephalon.Observability.Aws` | M1 | cephalon-managed | — | — | — | AWS X-Ray and CloudWatch configuration (family-covered by maturity audit) |
+| `Cephalon.Observability.Gcp` | M1 | cephalon-managed | — | — | — | GCP Cloud Trace and Monitoring configuration (family-covered by maturity audit) |
+| `Cephalon.Observability.AzureMonitor` | M1 | cephalon-managed | — | — | — | Azure Monitor configuration (family-covered by maturity audit) |
+| `Cephalon.Observability.NewRelic` | M1 | cephalon-managed | — | — | — | New Relic OTLP configuration (family-covered by maturity audit) |
+| `Cephalon.Observability.GrafanaCloud` | M1 | cephalon-managed | — | — | — | Grafana Cloud configuration (family-covered by maturity audit) |
+| `Cephalon.Observability.AlibabaCloud` | M1 | cephalon-managed | — | — | — | Alibaba Cloud configuration (family-covered by maturity audit) |
+| `Cephalon.Observability.OracleCloud` | M1 | cephalon-managed | — | — | — | Oracle Cloud APM configuration (family-covered by maturity audit) |
+| `Cephalon.Observability.DigitalOcean` | M1 | cephalon-managed | — | — | — | DigitalOcean App Platform configuration (family-covered by maturity audit) |
+| `Cephalon.Observability.HuaweiCloud` | M1 | cephalon-managed | — | — | — | Huawei Cloud APM configuration (family-covered by maturity audit) |
+| `Cephalon.Observability.OpenShift` | M1 | cephalon-managed | — | — | — | OpenShift in-cluster collector configuration (family-covered by maturity audit) |
+| `Cephalon.Observability.Tanzu` | M1 | cephalon-managed | — | — | — | VMware Tanzu configuration (family-covered by maturity audit) |
+| `Cephalon.Observability.Serilog` | M1 | cephalon-managed | — | — | — | Serilog provider integration (family-covered by maturity audit) |
+| `Cephalon.Observability.DependencyHealth.Core` | M1 | cephalon-managed | — | — | — | dependency-health probe infrastructure (family-covered by maturity audit) |
 | `Cephalon.Observability.*Dependencies` (Cassandra / ClickHouse / Consul / Elasticsearch / Http / Kafka / Memcached / MongoDB / MQTT / MySQL / NATS / Neo4j / OpenSearch / Oracle / PostgreSQL / RabbitMQ / Redis / SqlServer) | M0 | taxonomy-only | — | — | — | provider-specific dependency-health probe catalogs |
 
 The observability family is broad but shallow on purpose: configuration packs bind options, dependency health probes ship as taxonomy. Genuine telemetry collection happens in the host runtime's OpenTelemetry stack.
@@ -224,13 +224,16 @@ The tooling family ships adoption-ready CLI plus scaffolding and an XML-doc refe
 
 ## Inconsistencies observed (potential next ENG-* cards)
 
-These rows surfaced during the matrix build and may warrant follow-up cards. They are not blockers — they are alignment opportunities.
+No open inconsistencies remain at this snapshot. The list below records the alignment items resolved in May 2026 so the durable history stays visible.
 
-1. **`Cephalon.Behaviors.Http` REST publication ownership.** Maturity audit labels it M2 / mixed-ownership. The component doc states "explicit module-owned public REST activation" with "Cephalon-managed materialization, governance, and runtime catalogs." Clarify whether REST publication is application-owned or Cephalon-owned at the publication layer, and whether the matrix should label this as `application-managed` (authoring) plus `cephalon-managed` (materialization).
-2. **Event-sourcing family audit coverage.** All `Cephalon.EventSourcing.*` packs show M1 (catalog-only) here, but the maturity audit does not yet enumerate them individually. Confirm whether the catalog-only stance is intentional or whether managed-execution proof has shipped for any provider.
-3. **Observability provider audit closure.** Cloud platform packs (AWS, GCP, Azure Monitor, etc.) are listed as M1 configuration-binding packs, but the audit doc does not enumerate each one. Confirm maturity and ownership boundaries are stable, or schedule an audit refresh.
-4. **Multi-tenancy delivery sender maturity granularity.** Each of the six invitation-delivery sender packs is at M2. Adoption-quality proof requirements differ per integration (HTTP webhook vs. SMTP relay vs. SaaS API vs. Microsoft Graph). Consider per-sender maturity granularity if any single integration needs to advance independently.
-5. **`Cephalon.Audit` and `Cephalon.Identity` route projection.** Both are marked M1 (taxonomy-only descriptors) yet expose `/engine/audit-*` and `/engine/authorization-policies` routes through `Cephalon.AspNetCore`. Clarify whether the routes are M1 projections of M1 contracts or whether some runtime truth has shipped for either pack.
+### Resolved alignment items (kept as durable history)
+
+- **`Cephalon.Behaviors.Http` REST publication ownership** (resolved May 2026): the matrix row now records the explicit `application-managed` profile/publication activation plus `cephalon-managed` materialization/runtime-catalog split, mirroring the maturity audit row. The shared component doc remains the per-package detail source.
+- **Event-sourcing family audit coverage** (resolved May 2026): the maturity audit now records the catalog-only stance for the event-sourcing family and confirms no provider pack has shipped managed-execution proof yet. See the audit's "Event sourcing" group entry.
+- **Observability provider audit closure** (resolved May 2026): the maturity audit now records the cloud-platform configuration-pack baseline plus the dependency-health pack family stance. Each cloud pack stays M1 cephalon-managed configuration binding; deeper telemetry collection remains in the host runtime's OpenTelemetry stack.
+- **`Cephalon.Audit` and `Cephalon.Identity` route projection** (resolved May 2026): the maturity audit now records explicit Audit, Audit.EntityFramework, Identity, Identity.AspNetCore, and Ids.Sfid rows, and the matrix Notes field for each row reflects whether `/engine/*` routes are M1 catalog projections or runtime-surface projections.
+- **Multi-tenancy delivery sender maturity granularity** (resolved May 2026): the maturity audit now records a consolidated invitation-delivery sender family row that captures the deliberate shared-M2 stance across HttpDelivery, SmtpDelivery, SendGridDelivery, MailgunDelivery, AmazonSesDelivery, and MicrosoftGraphDelivery (plus their AspNetCore and AzureIdentity companions). The family floor stays M2 because each sender owns the same managed dispatch, callback handling shape, replay protection, and idempotency hygiene over a different upstream API. Per-sender promotion above the floor requires sender-specific adoption proof plus matching matrix/component-doc/planning updates in one slice.
+- **EventSourcing and Observability "(audit pending)" Notes-field accuracy** (resolved May 2026): the audit's family-level rows already enumerate every shipped `Cephalon.EventSourcing` pack (core plus 10 provider packs at `M1` family-level) and every shipped `Cephalon.Observability` configuration / dependency-health-core pack (cloud/exporter family at `M1` `cephalon-managed`). The Notes-field tag on those 26 matrix rows now reads "(family-covered by maturity audit)" instead of "(audit pending)" so the matrix reflects that the audit is no longer silent on those packs. The "(audit pending)" tag remains on Notes only when the audit is genuinely silent — currently the 9 non-relational `Cephalon.Data.*` rows whose individual audit lines are still pending.
 
 When a row in this matrix becomes inaccurate, update both this page and the [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) entry in the same slice. Do not let one page drift while the other is updated.
 

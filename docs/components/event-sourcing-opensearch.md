@@ -1,5 +1,7 @@
 # Cephalon.EventSourcing.OpenSearch
 
+> **Maturity:** `M1` · **Ownership:** provider-managed · **Family:** `event-sourcing` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.EventSourcing.OpenSearch` is the OpenSearch event-store provider for Cephalon, mirroring the pattern established by `Cephalon.EventSourcing.Elasticsearch` against the OpenSearch.Client 1.9.0 API surface.
 
 ## What it owns

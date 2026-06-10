@@ -1,5 +1,7 @@
 # Cephalon.Data.Debezium
 
+> **Maturity:** `M1` · **Ownership:** provider-managed · **Family:** `data-and-cdc` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, desired-versus-observed managed-connector drift posture, managed-connector action-planning posture, managed-connector write-path readiness posture, managed-connector preflight posture, managed-connector dry-run posture, managed-connector execution-intent posture, managed-connector execution-approval posture, managed-connector command-envelope posture, managed-connector command-issuance posture, managed-connector execution-adapter posture, managed-connector command-execution outcome/history, managed-connector command-retry posture, managed-connector retry-execution-policy posture, managed-connector bounded command-journal posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
 
 ## What it owns

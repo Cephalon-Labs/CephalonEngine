@@ -1,5 +1,7 @@
 # Cephalon.Observability.OpenShift
 
+> **Maturity:** `M1` · **Ownership:** cephalon-managed · **Family:** `observability` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Observability.OpenShift` adds Red Hat OpenShift collector defaults for Cephalon hosts.
 
 ## What it owns

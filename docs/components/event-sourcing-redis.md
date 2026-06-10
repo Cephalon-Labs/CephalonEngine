@@ -1,5 +1,7 @@
 # Cephalon.EventSourcing.Redis
 
+> **Maturity:** `M1` · **Ownership:** provider-managed · **Family:** `event-sourcing` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.EventSourcing.Redis` is the Redis Streams event-store provider for Cephalon, following the same provider pattern as `Cephalon.EventSourcing.MongoDB`. It delivers the `IEventStore` contract against Redis Streams (`XADD`/`XRANGE`) instead of a document collection or relational table.
 
 ## What it owns

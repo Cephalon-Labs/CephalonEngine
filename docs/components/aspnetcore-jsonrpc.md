@@ -1,5 +1,7 @@
 # Cephalon.AspNetCore.JsonRpc
 
+> **Maturity:** `M2` · **Ownership:** cephalon-managed · **Family:** `transport-adapter` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.AspNetCore.JsonRpc` adds JSON-RPC transport support to the ASP.NET Core host.
 
 ## What it owns

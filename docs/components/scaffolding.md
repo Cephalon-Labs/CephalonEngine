@@ -1,5 +1,7 @@
 # Cephalon.Scaffolding
 
+> **Maturity:** `M4` · **Ownership:** cephalon-managed · **Family:** `scaffolding-and-tooling` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Scaffolding` turns the app-model scaffold contract into concrete files and folders.
 
 ## What it owns

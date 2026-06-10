@@ -1,5 +1,7 @@
 # Cephalon.EventSourcing.Nats
 
+> **Maturity:** `M1` · **Ownership:** provider-managed · **Family:** `event-sourcing` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.EventSourcing.Nats` is the NATS JetStream KV event-store provider for Cephalon, implementing `IEventStore` against a NATS JetStream KV bucket using zero-padded keys for lexicographically safe ordering.
 
 ## What it owns

@@ -1,5 +1,7 @@
 # Cephalon.EventSourcing.EntityFramework
 
+> **Maturity:** `M1` · **Ownership:** provider-managed · **Family:** `event-sourcing` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.EventSourcing.EntityFramework` is the first provider-backed event-store baseline for Cephalon event-sourcing workloads.
 
 ## What it owns

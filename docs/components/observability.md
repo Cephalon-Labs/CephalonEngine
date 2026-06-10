@@ -1,5 +1,7 @@
 # Cephalon.Observability
 
+> **Maturity:** `M2` · **Ownership:** cephalon-managed · **Family:** `observability` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Observability` is the diagnostics companion package for Cephalon hosts.
 
 ## What it owns

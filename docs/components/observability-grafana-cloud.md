@@ -1,5 +1,7 @@
 # Cephalon.Observability.GrafanaCloud
 
+> **Maturity:** `M1` · **Ownership:** cephalon-managed · **Family:** `observability` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Observability.GrafanaCloud` adds Grafana Cloud OTLP endpoint defaults and access-policy authentication guidance for Cephalon hosts.
 
 ## What it owns

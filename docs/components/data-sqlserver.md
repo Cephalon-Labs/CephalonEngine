@@ -1,5 +1,7 @@
 # Cephalon.Data.SqlServer
 
+> **Maturity:** `M2` · **Ownership:** provider-managed · **Family:** `data-and-cdc` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Data.SqlServer` is the SQL Server provider-native CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC execution/runtime catalog family also fits a relational provider with durable LSN checkpoints, change-table polling, and module-preserving ownership truth without any SQL Server-specific registry in `Cephalon.Engine`.
 
 ## What it owns

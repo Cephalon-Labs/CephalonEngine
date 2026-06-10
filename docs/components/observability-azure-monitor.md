@@ -1,5 +1,7 @@
 # Cephalon.Observability.AzureMonitor
 
+> **Maturity:** `M1` · **Ownership:** cephalon-managed · **Family:** `observability` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Observability.AzureMonitor` adds a supported Azure Monitor / Application Insights export path for Cephalon hosts.
 
 ## What it owns

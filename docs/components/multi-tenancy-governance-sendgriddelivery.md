@@ -1,5 +1,7 @@
 # Cephalon.MultiTenancy.Governance.SendGridDelivery
 
+> **Maturity:** `M2` · **Ownership:** cephalon-managed · **Family:** `multi-tenancy` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.MultiTenancy.Governance.SendGridDelivery` is the optional SendGrid Mail Send API sender companion for tenant-invitation delivery.
 
 ## What it owns

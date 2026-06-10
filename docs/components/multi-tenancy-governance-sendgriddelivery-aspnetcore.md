@@ -1,5 +1,7 @@
 # Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore
 
+> **Maturity:** `M2` · **Ownership:** cephalon-managed · **Family:** `multi-tenancy` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore` is the optional ASP.NET Core SendGrid Event Webhook callback translator for tenant-invitation delivery status reconciliation.
 
 ## What it owns

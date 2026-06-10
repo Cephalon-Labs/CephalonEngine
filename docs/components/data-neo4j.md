@@ -1,5 +1,7 @@
 # Cephalon.Data.Neo4j
 
+> **Maturity:** `M1` · **Ownership:** provider-managed · **Family:** `data-and-cdc` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Data.Neo4j` is the Neo4j graph-store companion pack for Cephalon, proving that the companion-pack pattern established by `Cephalon.Data.MongoDB` and `Cephalon.Data.Redis` extends cleanly to graph-oriented databases without any changes to `Cephalon.Engine` or `Cephalon.Abstractions`.
 
 ## What it owns

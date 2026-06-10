@@ -1,5 +1,7 @@
 # Cephalon.Data.ClickHouse
 
+> **Maturity:** `M1` · **Ownership:** provider-managed · **Family:** `data-and-cdc` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Data.ClickHouse` is the ClickHouse analytics store companion pack for Cephalon, following the same companion-pack pattern established by `Cephalon.Data.MongoDB`, `Cephalon.Data.Redis`, `Cephalon.Data.Neo4j`, and `Cephalon.Data.Cassandra` without any changes to `Cephalon.Engine` or `Cephalon.Abstractions`.
 
 ## What it owns

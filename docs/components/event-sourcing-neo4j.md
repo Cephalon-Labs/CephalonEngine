@@ -1,5 +1,7 @@
 # Cephalon.EventSourcing.Neo4j
 
+> **Maturity:** `M1` · **Ownership:** provider-managed · **Family:** `event-sourcing` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.EventSourcing.Neo4j` is the Neo4j event-store provider for Cephalon, following the same provider pattern as `Cephalon.EventSourcing.MongoDB` and `Cephalon.EventSourcing.Redis`. It delivers the `IEventStore` contract against Neo4j graph nodes instead of a document collection or stream, with optimistic concurrency enforced by a compound node key constraint on `(streamId, streamVersion)`.
 
 ## What it owns

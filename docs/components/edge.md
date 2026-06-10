@@ -1,5 +1,7 @@
 # Cephalon.Edge
 
+> **Maturity:** `M2` · **Ownership:** cephalon-managed · **Family:** `edge` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Edge` is the baseline technology pack for edge-native delivery scenarios.
 
 ## What it owns

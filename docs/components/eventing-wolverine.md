@@ -1,5 +1,7 @@
 # Cephalon.Eventing.Wolverine
 
+> **Maturity:** `M3` · **Ownership:** provider-managed · **Family:** `eventing` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Eventing.Wolverine` is an optional Wolverine companion package for Cephalon event-driven workloads.
 
 ## What it owns

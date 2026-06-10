@@ -1,5 +1,7 @@
 # Cephalon.Data.MySql
 
+> **Maturity:** `M2` · **Ownership:** provider-managed · **Family:** `data-and-cdc` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Data.MySql` is the MySQL provider-native CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC execution and runtime catalog family also fits a binlog-backed relational source with durable file-plus-position checkpoints, provider-owned execution, source-server identity plus binlog lifecycle validation, and module-preserving capture ownership truth without a MySQL-specific registry in `Cephalon.Engine`.
 
 ## What it owns

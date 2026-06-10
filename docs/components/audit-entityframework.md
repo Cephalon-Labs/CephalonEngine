@@ -1,5 +1,7 @@
 # Cephalon.Audit.EntityFramework
 
+> **Maturity:** `M1` · **Ownership:** provider-managed · **Family:** `audit-and-identity` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Audit.EntityFramework` is the first durable audit-history provider pack for Cephalon.
 
 ## What it owns

@@ -1,5 +1,7 @@
 # Cephalon.Data.Qdrant
 
+> **Maturity:** `M1` · **Ownership:** provider-managed · **Family:** `data-and-cdc` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Data.Qdrant` is the Qdrant vector-store companion pack for Cephalon, proving that the companion-pack pattern extends cleanly to vector databases without any changes to `Cephalon.Engine` or `Cephalon.Abstractions`.
 
 ## What it owns

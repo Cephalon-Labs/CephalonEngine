@@ -1,5 +1,7 @@
 # Cephalon.Data
 
+> **Maturity:** `M3` · **Ownership:** mixed: cephalon-managed + provider-managed · **Family:** `data-and-cdc` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Data` is the runtime-neutral data execution companion package for Cephalon.
 
 ## What it owns

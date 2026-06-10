@@ -1,5 +1,7 @@
 # Cephalon.ReferenceDocs
 
+> **Maturity:** `M2` · **Ownership:** cephalon-managed · **Family:** `scaffolding-and-tooling` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.ReferenceDocs` is the optional repo-local publishing tool that turns compiled assemblies plus XML comments into browsable API reference output.
 
 Stable public surface:

@@ -1,5 +1,7 @@
 # Cephalon.Observability.RedisDependencies
 
+> **Maturity:** `M0` · **Ownership:** taxonomy-only · **Family:** `observability` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Observability.RedisDependencies` adds a supported Redis and cache dependency-health path for Cephalon hosts.
 
 ## What it owns

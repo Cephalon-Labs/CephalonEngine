@@ -1,5 +1,7 @@
 # Cephalon.Audit
 
+> **Maturity:** `M1` · **Ownership:** mixed: `cephalon-managed` in-memory writer baseline, catalog projection, ambient actor resolution + `application-managed` consumer actor accessors and durable storage · **Family:** `audit-and-identity` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Audit` is the host-agnostic audit-recording companion pack for Cephalon phase 8 workloads.
 
 ## What it owns

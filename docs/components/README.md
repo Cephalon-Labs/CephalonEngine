@@ -16,6 +16,22 @@ Each shipped package carries a maturity label (`M0` through `M4`) and an ownersh
 
 When a component-page maturity label and the maturity audit disagree, the audit is the authoritative truth. When in doubt, follow the cross-reference into the conformance matrix.
 
+### Reading the per-package banner
+
+Every component page below carries a one-line maturity banner directly under its `H1` heading. The banner format is:
+
+```
+> **Maturity:** `Mx` · **Ownership:** <ownership-mode> · **Family:** `<family>` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+```
+
+What each field means:
+
+- **Maturity** — the package's current target on the `M0`-`M4` scale. `M0` taxonomy-only; `M1` catalog/runtime-truth; `M2` narrow managed execution; `M3` broader managed execution; `M4` adoption-ready.
+- **Ownership** — who actually executes the work: `taxonomy-only` (no behavior claim), `application-managed` (consumer code or another runtime), `cephalon-managed` (the engine itself), or `provider-managed` (a specific provider companion pack). A package may declare a mixed ownership when one part is engine-owned and another is consumer-owned; in that case the banner spells out the split.
+- **Family** — one of the 12 shipping families (`core-runtime`, `host-adapter`, `transport-adapter`, `behaviors`, `eventing`, `agentics`, `data-and-cdc`, `event-sourcing`, `multi-tenancy`, `audit-and-identity`, `edge`, `observability`, `scaffolding-and-tooling`).
+
+The banner is a read-only consolidation of the audit + matrix. When promoting a package's maturity or splitting its ownership label, update the audit + matrix in the same slice; the per-component banner is regenerated against those sources rather than edited in isolation.
+
 
 ## Core runtime
 

@@ -1,5 +1,7 @@
 # Cephalon.Identity
 
+> **Maturity:** `M1` · **Ownership:** mixed: `cephalon-managed` default metadata-driven evaluator, runtime surface, catalog projection, diagnostics + `application-managed` identity scheme and principal flow · **Family:** `audit-and-identity` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Identity` is the host-agnostic identity and authorization companion package for Cephalon.
 
 ## What it owns

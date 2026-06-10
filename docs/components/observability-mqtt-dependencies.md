@@ -1,5 +1,7 @@
 # Cephalon.Observability.MqttDependencies
 
+> **Maturity:** `M0` · **Ownership:** taxonomy-only · **Family:** `observability` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Observability.MqttDependencies` is the reusable dependency-health companion package for MQTT brokers and edge messaging endpoints.
 
 ## What it owns

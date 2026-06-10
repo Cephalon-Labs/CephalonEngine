@@ -127,6 +127,11 @@ This first cut focuses on the core shape we can keep growing:
 - component catalog: `docs/components/README.md`
 - per-package docs cover every `src/Cephalon.*` project in the current engine/runtime/tooling surface
 - cross-cutting docs stay in `docs/` for topics such as architecture, app models, operations, technology packs, benchmarking, and reference-doc publishing
+- consolidated per-package adoption-truth: `docs/conformance-matrix.md`
+- consolidated `/engine/*` route + `snapshot.*` key + catalog interface inventory: `docs/runtime-contract-index.md`
+- multi-decade engine direction frame: `docs/long-range-direction.md`
+- engineering standards baseline: `docs/engineering-standards.md`
+- monthly architecture-review snapshots: `docs/architecture-review-2026-04.md`, `docs/architecture-review-2026-05.md`
 
 ## Documentation model
 

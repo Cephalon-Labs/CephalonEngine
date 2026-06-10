@@ -90,6 +90,7 @@ internal sealed class GetCheckoutPreviewBehavior : IAppBehavior<GetCheckoutPrevi
     public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
     {
         builder.AsDirect();
+        builder.ViaHttpGraphQl();
     }
 }
 

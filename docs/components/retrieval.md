@@ -1,5 +1,7 @@
 # Cephalon.Retrieval
 
+> **Maturity:** `M3` · **Ownership:** mixed: application-managed + cephalon-managed · **Family:** `agentics` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Retrieval` is the baseline technology pack for knowledge retrieval workloads.
 
 ## What it owns

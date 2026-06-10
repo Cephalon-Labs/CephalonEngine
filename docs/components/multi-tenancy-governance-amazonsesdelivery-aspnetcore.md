@@ -1,5 +1,7 @@
 # Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore
 
+> **Maturity:** `M2` · **Ownership:** cephalon-managed · **Family:** `multi-tenancy` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore` is the optional ASP.NET Core Amazon SES over SNS callback translator, SNS signature verifier, process-local SNS replay guard, observation-store-backed SNS message-id idempotency guard, verified SNS subscription-confirmation seam, and verified SNS unsubscribe-confirmation observation seam for tenant-invitation delivery status reconciliation.
 
 ## What it owns

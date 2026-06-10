@@ -1,5 +1,7 @@
 # Cephalon.MultiTenancy.Governance
 
+> **Maturity:** `M2` · **Ownership:** mixed: cephalon-managed + provider-managed · **Family:** `multi-tenancy` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.MultiTenancy.Governance` is the tenant-governance companion package for Cephalon multi-tenancy workloads.
 
 ## What it owns

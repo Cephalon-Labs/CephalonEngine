@@ -1,5 +1,7 @@
 # Cephalon.Observability.HttpDependencies
 
+> **Maturity:** `M0` · **Ownership:** taxonomy-only · **Family:** `observability` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Observability.HttpDependencies` adds a supported external HTTP/API dependency-health path for Cephalon hosts.
 
 ## What it owns

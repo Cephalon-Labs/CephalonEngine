@@ -1,5 +1,7 @@
 # Cephalon.Observability.Neo4jDependencies
 
+> **Maturity:** `M0` · **Ownership:** taxonomy-only · **Family:** `observability` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Observability.Neo4jDependencies` adds a supported Neo4j dependency-health path for Cephalon hosts.
 
 ## What it owns

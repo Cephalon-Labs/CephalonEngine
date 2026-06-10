@@ -1,5 +1,7 @@
 # Cephalon.Observability.MySqlDependencies
 
+> **Maturity:** `M0` · **Ownership:** taxonomy-only · **Family:** `observability` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Observability.MySqlDependencies` adds a supported MySQL and MariaDB dependency-health path for Cephalon hosts.
 
 ## What it owns

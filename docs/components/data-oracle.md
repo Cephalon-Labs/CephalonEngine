@@ -1,5 +1,7 @@
 # Cephalon.Data.Oracle
 
+> **Maturity:** `M2` · **Ownership:** provider-managed · **Family:** `data-and-cdc` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Data.Oracle` is the Oracle provider-native CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC execution and runtime catalog family also fits redo-log style relational capture through Oracle LogMiner with SCN-backed progress, provider-owned execution, durable `commitScn|changeScn|rsId|ssn` checkpoints, source-database identity truth, archive-log lifecycle validation, and module-preserving capture ownership without an Oracle-specific registry in `Cephalon.Engine`.
 
 ## What it owns

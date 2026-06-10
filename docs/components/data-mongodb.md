@@ -1,5 +1,7 @@
 # Cephalon.Data.MongoDB
 
+> **Maturity:** `M2` · **Ownership:** provider-managed · **Family:** `data-and-cdc` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Data.MongoDB` is the MongoDB document-store companion pack for Cephalon. It proves that the companion-pack pattern established by `Cephalon.Data.EntityFramework` extends cleanly to non-relational providers without any changes to `Cephalon.Engine` or `Cephalon.Abstractions`, and it now also proves the first concrete provider-native CDC runner on top of the shared `Cephalon.Data` execution/runtime catalog family.
 
 ## What it owns

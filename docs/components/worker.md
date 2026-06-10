@@ -1,5 +1,7 @@
 # Cephalon.Worker
 
+> **Maturity:** `M4` · **Ownership:** cephalon-managed · **Family:** `host-adapter` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Worker` hosts the same Cephalon runtime inside the generic host without HTTP.
 
 ## What it owns

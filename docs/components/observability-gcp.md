@@ -1,5 +1,7 @@
 # Cephalon.Observability.Gcp
 
+> **Maturity:** `M1` · **Ownership:** cephalon-managed · **Family:** `observability` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Observability.Gcp` adds GCP-hosted OTLP defaults for Cephalon hosts.
 
 ## What it owns

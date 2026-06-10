@@ -1,5 +1,7 @@
 # Cephalon.Data.EntityFramework
 
+> **Maturity:** `M2` · **Ownership:** cephalon-managed · **Family:** `data-and-cdc` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Data.EntityFramework` is the first provider-backed data companion pack for Cephalon.
 
 ## What it owns

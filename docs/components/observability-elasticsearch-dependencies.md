@@ -1,5 +1,7 @@
 # Cephalon.Observability.ElasticsearchDependencies
 
+> **Maturity:** `M0` · **Ownership:** taxonomy-only · **Family:** `observability` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Observability.ElasticsearchDependencies` adds a supported Elasticsearch dependency-health path for Cephalon hosts.
 
 ## What it owns

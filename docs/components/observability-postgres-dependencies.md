@@ -1,5 +1,7 @@
 # Cephalon.Observability.PostgresDependencies
 
+> **Maturity:** `M0` · **Ownership:** taxonomy-only · **Family:** `observability` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Observability.PostgresDependencies` adds a supported Postgres dependency-health path for Cephalon hosts.
 
 ## What it owns

@@ -1,5 +1,7 @@
 # Cephalon.Data.Cassandra
 
+> **Maturity:** `M1` · **Ownership:** provider-managed · **Family:** `data-and-cdc` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Data.Cassandra` is the Apache Cassandra wide-column store companion pack for Cephalon, following the same companion-pack pattern established by `Cephalon.Data.MongoDB`, `Cephalon.Data.Redis`, and `Cephalon.Data.Neo4j` without any changes to `Cephalon.Engine` or `Cephalon.Abstractions`.
 
 ## What it owns

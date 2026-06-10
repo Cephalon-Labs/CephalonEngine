@@ -1,5 +1,7 @@
 # Cephalon.Observability.CassandraDependencies
 
+> **Maturity:** `M0` · **Ownership:** taxonomy-only · **Family:** `observability` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Observability.CassandraDependencies` adds a supported Cassandra dependency-health path for Cephalon hosts.
 
 ## What it owns

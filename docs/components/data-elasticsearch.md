@@ -1,5 +1,7 @@
 # Cephalon.Data.Elasticsearch
 
+> **Maturity:** `M1` · **Ownership:** provider-managed · **Family:** `data-and-cdc` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Data.Elasticsearch` is the Elasticsearch search-store companion pack for Cephalon, proving that the companion-pack pattern established by `Cephalon.Data.MongoDB` extends cleanly to search-oriented document stores without any changes to `Cephalon.Engine` or `Cephalon.Abstractions`.
 
 ## What it owns

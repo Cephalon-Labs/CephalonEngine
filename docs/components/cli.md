@@ -1,6 +1,10 @@
 # Cephalon.Cli
 
+> **Maturity:** `M4` · **Ownership:** cephalon-managed · **Family:** `scaffolding-and-tooling` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Cli` is the user-facing command-line surface for Cephalon scaffolding, external package staging, first-run environment verification, and documentation workflows.
+
+See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), [Conformance matrix](../conformance-matrix.md), and [Runtime contract index](../runtime-contract-index.md) for what the CLI's `cephalon doctor` and `cephalon new` ultimately project against. [Engineering standards](../engineering-standards.md) records the library-design and code-quality baseline; [Long-range engine direction](../long-range-direction.md) frames why the CLI stays a thin scaffolding/verification surface over the engine's host-agnostic catalogs rather than owning runtime truth itself.
 
 Stable public surface:
 
@@ -61,6 +65,12 @@ For package-surface hardening, the command handlers, parsed option objects, cons
 ## Related docs
 
 - [Reference docs publishing](../reference-docs.md)
+- [Engine surface maturity audit](../engine-surface-maturity-audit.md)
+- [Conformance matrix](../conformance-matrix.md)
+- [Runtime contract index](../runtime-contract-index.md)
+- [Long-range engine direction](../long-range-direction.md)
+- [Engineering standards](../engineering-standards.md)
+- [Architecture review (May 2026)](../architecture-review-2026-05.md)
 - [Getting started](../getting-started.md)
 - [Generated app publishing](../generated-app-publishing.md)
 - [Windows Service deployment](../windows-service-deployment.md)

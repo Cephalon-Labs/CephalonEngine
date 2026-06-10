@@ -1,5 +1,7 @@
 # Cephalon.Agentics
 
+> **Maturity:** `M3` · **Ownership:** mixed: application-managed + cephalon-managed · **Family:** `agentics` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Agentics` is the baseline technology pack for agentic workloads.
 
 ## What it owns

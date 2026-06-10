@@ -1,5 +1,7 @@
 # Cephalon.Ids.Sfid
 
+> **Maturity:** `M2` · **Ownership:** cephalon-managed · **Family:** `audit-and-identity` · See [audit](../engine-surface-maturity-audit.md), [matrix](../conformance-matrix.md).
+
 `Cephalon.Ids.Sfid` is the official `Sfid.Net`-backed id-strategy companion package for Cephalon.
 
 ## What it owns
