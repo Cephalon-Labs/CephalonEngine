@@ -248,6 +248,25 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
     }
 
     [Fact]
+    public async Task BehaviorHttpGraphQlWsClosesWithInitTimeoutAfterMalformedFrameWhenConnectionInitIsStillMissing()
+    {
+        await using var app = await BuildRateLimitedBehaviorHttpAppAsync("http.graphql-ws");
+        var webSocketClient = app.GetTestServer().CreateWebSocketClient();
+        webSocketClient.SubProtocols.Add("graphql-transport-ws");
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        using var socket = await webSocketClient.ConnectAsync(
+            new Uri("ws://localhost/graphql-ws/v1/tests/rate-limited"),
+            cts.Token);
+
+        await SendWebSocketTextAsync(socket, "{ malformed", cts.Token);
+        var close = await ReceiveWebSocketCloseFrameAsync(socket, cts.Token);
+
+        Assert.Equal(WebSocketMessageType.Close, close.MessageType);
+        Assert.Equal((WebSocketCloseStatus)4408, close.CloseStatus);
+        Assert.Contains("initialisation timeout", close.CloseStatusDescription, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task BehaviorHttpGraphQlWsReturnsBadRequestWhenRequestIsNotWebSocketUpgrade()
     {
         await using var app = await BuildRateLimitedBehaviorHttpAppAsync("http.graphql-ws");
