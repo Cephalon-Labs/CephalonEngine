@@ -105,11 +105,7 @@ These are the concrete cards a planning seat should consider allocating against 
 
 ### High priority — proves maturity floor
 
-| # | Slice | Lands in | Theme | Rationale |
-| --- | --- | --- | --- | --- |
-| 1 | gRPC streaming and error-mode coverage for `Cephalon.AspNetCore.Grpc` | `Cephalon.Tests.Hosting` | Reliability, Compatibility | M2 transport adapter; current happy-path coverage does not exercise streaming or error frames |
-
-The three high-priority slices originally listed alongside `#1` (JSON-RPC error-response coverage, `MetadataDrivenAuthorizationEvaluator` decision-matrix coverage, `IAuditActorAccessor` ambient-context fallback coverage) shipped before this roadmap was authored. Their resolution is recorded in [`architecture-review-2026-05-followups.md` § Test coverage roadmap](architecture-review-2026-05-followups.md#test-coverage-roadmap) per the maintenance rule below; the family-section prose above already reflects the new coverage.
+No open high-priority slices at this time. The original high-priority transport and contract slices (gRPC streaming/error-mode, JSON-RPC error responses, metadata-driven authorization decision matrix, and audit actor fallback) are closed and tracked in [`architecture-review-2026-05-followups.md` § Test coverage roadmap](architecture-review-2026-05-followups.md#test-coverage-roadmap).
 
 ### Medium priority — provider-native scenarios
 
