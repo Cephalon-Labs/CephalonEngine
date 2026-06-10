@@ -266,7 +266,7 @@ Describe "Get-DeploymentModeConfigFromManifest" {
         $cfg = Get-DeploymentModeConfigFromManifest -Manifest $script:manifestFull -Mode "trim"
         $cfg.WarningRegex | Should -Match "IL2026"
         $cfg.WarningRegex | Should -Match "IL2099"
-        $cfg.WarningRegex | Should -Match "trim warning"
+        $cfg.WarningRegex | Should -Be "(?i)IL2026|IL2099|trim\ warning"
         $cfg.WarningRegex | Should -BeLike "(?i)*"
     }
 
@@ -291,10 +291,8 @@ Describe "Get-DeploymentModeConfigFromManifest" {
         $cfg.WarningRegex | Should -Match "IL2"
     }
 
-    It "returns the hardcoded fallback when the manifest is null" {
-        $cfg = Get-DeploymentModeConfigFromManifest -Manifest $null -Mode "trim"
-        $cfg.ProjectProperty | Should -Be "PublishTrimmed"
-        $cfg.AnalyzerProperty | Should -Be "EnableTrimAnalyzer"
+    It "throws when the manifest argument is null" {
+        { Get-DeploymentModeConfigFromManifest -Manifest $null -Mode "trim" } | Should -Throw "*Cannot bind argument to parameter 'Manifest'*"
     }
 
     It "returns hardcoded fallback when the manifest does not declare the mode" {
@@ -320,7 +318,7 @@ Describe "Get-DeploymentModeConfigFromManifest" {
             }
         }
         $cfg = Get-DeploymentModeConfigFromManifest -Manifest $manifestWeird -Mode "trim"
-        $cfg.WarningRegex | Should -Match "weird\\.literal\\[chars\\]"
+        $cfg.WarningRegex | Should -Be "(?i)IL2026|weird\.literal\[chars]"
     }
 }
 
@@ -361,6 +359,36 @@ Describe "Test-CsprojProperty" {
         $result = Test-CsprojProperty -CsprojPath $path -Property "PublishTrimmed"
         $result.Found | Should -BeFalse
         $result.Error | Should -Not -BeNullOrEmpty
+    }
+}
+
+Describe "Get-DefaultProjectPaths" {
+    It "returns an empty list when the src directory is missing" {
+        $repoRoot = Join-Path $script:tempRoot "repo-no-src-$(Get-Random)"
+        New-Item -Path $repoRoot -ItemType Directory -Force | Out-Null
+
+        $paths = Get-DefaultProjectPaths -RepoRoot $repoRoot
+
+        @($paths).Count | Should -Be 0
+    }
+
+    It "returns only Cephalon.*.csproj files under src recursively" {
+        $repoRoot = Join-Path $script:tempRoot "repo-default-paths-$(Get-Random)"
+        $srcRoot = Join-Path $repoRoot "src"
+        $cephalonDir = Join-Path $srcRoot "Cephalon.Alpha"
+        $otherDir = Join-Path $srcRoot "Other.Project"
+        New-Item -Path $cephalonDir -ItemType Directory -Force | Out-Null
+        New-Item -Path $otherDir -ItemType Directory -Force | Out-Null
+
+        $included = Join-Path $cephalonDir "Cephalon.Alpha.csproj"
+        $excludedByPattern = Join-Path $otherDir "Other.Project.csproj"
+        Set-Content -LiteralPath $included -Value "<Project Sdk='Microsoft.NET.Sdk'></Project>" -Encoding UTF8
+        Set-Content -LiteralPath $excludedByPattern -Value "<Project Sdk='Microsoft.NET.Sdk'></Project>" -Encoding UTF8
+
+        $paths = @(Get-DefaultProjectPaths -RepoRoot $repoRoot)
+
+        $paths.Count | Should -Be 1
+        $paths[0] | Should -Be $included
     }
 }
 
@@ -757,5 +785,37 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
         $result.Report.Modes.Count | Should -Be 1
         $result.Report.Modes[0].Mode | Should -Be "trim"
         $result.Report.Modes[0].Verdict | Should -Be "claim-truthful"
+    }
+
+    It "resolves relative manifest and output paths against RepoRoot" {
+        $repo = New-TempRepoRoot -Projects @(
+            @{ Name = "Cephalon.AlphaPack"; Properties = @{ TargetFramework = "net10.0" } }
+        )
+        $manifestFileName = "deployment-mode-support.json"
+        $manifestPath = Join-Path $repo.Root $manifestFileName
+        @{
+            deploymentModes = @{
+                trim       = @{ status = "not-claimed" }
+                nativeAot  = @{ status = "not-claimed" }
+                singleFile = @{ status = "not-claimed" }
+            }
+        } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        $relativeOutputPath = "artifacts\claims-out"
+        $result = Invoke-DeploymentModeClaimValidation `
+            -DeploymentMode "all" `
+            -ManifestPath $manifestFileName `
+            -OutputPath $relativeOutputPath `
+            -RepoRoot $repo.Root `
+            -SkipPublish
+
+        $expectedManifestPath = Join-Path $repo.Root $manifestFileName
+        $expectedOutputPath = Join-Path $repo.Root $relativeOutputPath
+
+        $result.Report.ManifestPath | Should -Be $expectedManifestPath
+        $result.Paths.JsonPath | Should -Match ([regex]::Escape($expectedOutputPath))
+        $result.Paths.MarkdownPath | Should -Match ([regex]::Escape($expectedOutputPath))
+        Test-Path -LiteralPath $result.Paths.JsonPath | Should -BeTrue
+        Test-Path -LiteralPath $result.Paths.MarkdownPath | Should -BeTrue
     }
 }
