@@ -221,6 +221,34 @@ public sealed class GraphQLTransportHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonGraphQlWebSocketRejectsNonWebSocketRequests()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "GraphQL";
+        builder.Configuration["ApiRoutes:Prefixes:GraphQLWs"] = "/graph-socket";
+        builder.AddGraphQLTransport();
+        builder.ConfigureGraphQLTransport(graphql => graphql.AddInMemorySubscriptions());
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync("/graph-socket");
+
+        Assert.False(response.IsSuccessStatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
     public async Task MapCephalonMergesGraphQlContributionsFromMultipleModulesIntoSharedRoots()
     {
         var builder = WebApplication.CreateSlimBuilder();

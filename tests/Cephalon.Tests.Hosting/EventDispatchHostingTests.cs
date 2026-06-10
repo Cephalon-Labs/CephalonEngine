@@ -63,6 +63,7 @@ public sealed class EventDispatchHostingTests
         var client = app.GetTestClient();
         var runtimeDescriptors = await client.GetFromJsonAsync<EventDispatchRuntimeDescriptor[]>("/engine/event-dispatch-runtimes");
         var runtimeDescriptor = await client.GetFromJsonAsync<EventDispatchRuntimeDescriptor>("/engine/event-dispatch-runtimes/wolverine-dispatch-loop");
+        var missingRuntimeResponse = await client.GetAsync("/engine/event-dispatch-runtimes/missing-runtime");
         var outboxes = await client.GetFromJsonAsync<OutboxDescriptor[]>("/engine/outboxes");
         var initialStates = await client.GetFromJsonAsync<EventDispatchRuntimeState[]>("/engine/event-dispatches");
         var initialTerminalFailures = await client.GetFromJsonAsync<EventDispatchRuntimeState[]>("/engine/event-dispatches/terminal-failures");
@@ -80,6 +81,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(["entity-framework-outbox"], descriptor.OutboxIds);
         Assert.NotNull(runtimeDescriptor);
         Assert.Equal("wolverine-dispatch-loop", runtimeDescriptor.Id);
+        Assert.Equal(HttpStatusCode.NotFound, missingRuntimeResponse.StatusCode);
         Assert.NotNull(outboxes);
         var outbox = Assert.Single(outboxes);
         Assert.Equal("wolverine-managed", outbox.DispatchPolicy.PolicyId);
