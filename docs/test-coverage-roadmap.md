@@ -85,7 +85,7 @@ The list below records, per family, the current layered coverage and what kind o
 
 ### Audit and identity — covered
 
-`Cephalon.Audit` and `Cephalon.Audit.EntityFramework` have hosting coverage (audit history endpoints, export) plus direct fallback-chain coverage for `IAuditActorAccessor` and `DefaultAuditRecorder` shipped via `ENG-404` (`tests/Cephalon.Tests.Composition/Composition/AuditActorAndRecorderFallbackTests.cs`, exercising the no-principal, principal-without-claims, and tenant-scoped-principal cases). `Cephalon.Identity` and `Cephalon.Identity.AspNetCore` have hosting coverage for the metadata-driven evaluator and policy mapping plus direct decision-matrix coverage shipped via `ENG-403` (`tests/Cephalon.Tests.Composition/Composition/MetadataDrivenAuthorizationDecisionMatrixTests.cs`, exercising RBAC, ABAC, and tenant-boundary edge cases). Adequate at the family floor.
+`Cephalon.Audit` and `Cephalon.Audit.EntityFramework` have hosting coverage (audit history endpoints, export) plus direct fallback-chain coverage for `IAuditActorAccessor` and `DefaultAuditRecorder` shipped via `ENG-404` (`tests/Cephalon.Tests.Composition/Composition/AuditActorAndRecorderFallbackTests.cs`, exercising the no-principal, principal-without-claims, and tenant-scoped-principal cases). `Cephalon.Identity` and `Cephalon.Identity.AspNetCore` have hosting coverage for policy mapping and metadata-driven evaluator decisions in `tests/Cephalon.Tests.Composition/Composition/IdentityPackTests.cs`, including RBAC/ABAC/tenant-boundary outcomes plus unknown-policy, required-role-match-all, and misconfigured-required-roles denial contracts. Adequate at the family floor.
 
 ### Edge — covered
 
