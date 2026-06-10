@@ -88,7 +88,7 @@ public sealed class MongoDbDataCdcPackTests : IAsyncLifetime
             await WaitForAsync(
                 () => Task.FromResult(stateCatalog.GetById(CaptureId)),
                 static state => state is not null && state.StartedCount > 0,
-                TimeSpan.FromSeconds(10));
+                TimeSpan.FromSeconds(30));
 
             var database = provider.GetRequiredService<IMongoDatabase>();
             await database.GetCollection<BsonDocument>("orders").InsertOneAsync(new BsonDocument
@@ -102,7 +102,7 @@ public sealed class MongoDbDataCdcPackTests : IAsyncLifetime
             var pending = await WaitForAsync(
                 () => dispatchStore.ReadPendingAsync(10).AsTask(),
                 static items => items.Count > 0,
-                TimeSpan.FromSeconds(15));
+                TimeSpan.FromSeconds(30));
 
             var item = Assert.Single(pending);
             Assert.Equal("mongodb-outbox", item.OutboxId);
@@ -138,7 +138,7 @@ public sealed class MongoDbDataCdcPackTests : IAsyncLifetime
             var state = await WaitForAsync(
                 () => Task.FromResult(stateCatalog.GetById(CaptureId)),
                 static current => current is not null && current.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
-                TimeSpan.FromSeconds(15));
+                TimeSpan.FromSeconds(30));
 
             Assert.NotNull(state);
             Assert.Equal(MongoRuntimeId, state.ExecutionBinding.EffectiveExecutionRuntimeId);

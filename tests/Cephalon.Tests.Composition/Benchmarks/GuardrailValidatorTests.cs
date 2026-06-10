@@ -14,30 +14,100 @@ public sealed class GuardrailValidatorTests
             "performance-guardrails.json"));
 
         Assert.Equal("1.0", catalog.Version);
-        Assert.Equal(23, catalog.Entries.Count);
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifest");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifestWithStrictTrustPolicy");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildPhase8RuntimeManifest");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "InitializeStartStopRuntime");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "InitializeStartStopPhase8Runtime");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "HandleLoggedJsonRequest");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "HandleTruncatedJsonRequest");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "HandleConcurrentLoggedJsonRequest");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "GenerateBlueprintScaffold");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "GeneratePhase8BlueprintScaffold");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchQuery");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchCommand");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchCommandWithResult");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchBehavior");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "EvaluateRbacAllow");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "EvaluateRbacDeny");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ResolveByTenantId");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ResolveByHostName");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ResolveDefaultTenant");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "AppendSingleEvent");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ReadStream");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "GetStreamVersion");
-        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "StageOutboxMessage");
+        var actualBenchmarkIds = catalog.Entries
+            .Select(entry => entry.Benchmark)
+            .ToHashSet(StringComparer.Ordinal);
+        var actualBenchmarkEntryIds = catalog.Entries
+            .Select(entry => $"{entry.ReportFileName}|{entry.Benchmark}")
+            .ToHashSet(StringComparer.Ordinal);
+
+        var expectedBenchmarkIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "BuildRuntimeManifest",
+            "BuildRuntimeManifestWithStrictTrustPolicy",
+            "BuildPhase8RuntimeManifest",
+            "InitializeStartStopRuntime",
+            "InitializeStartStopPhase8Runtime",
+            "HandleLoggedJsonRequest",
+            "HandleTruncatedJsonRequest",
+            "HandleConcurrentLoggedJsonRequest",
+            "BuildMapGovernedRestCatalogs",
+            "GenerateBlueprintScaffold",
+            "GeneratePhase8BlueprintScaffold",
+            "DispatchQuery",
+            "DispatchCommand",
+            "DispatchCommandWithResult",
+            "DispatchBehavior",
+            "EvaluateRbacAllow",
+            "EvaluateRbacDeny",
+            "ResolveByTenantId",
+            "ResolveByHostName",
+            "ResolveDefaultTenant",
+            "AppendSingleEvent",
+            "ReadStream",
+            "GetStreamVersion",
+            "StageOutboxMessage"
+        };
+        var expectedBenchmarkEntryIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv|BuildRuntimeManifest",
+            "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv|BuildRuntimeManifestWithStrictTrustPolicy",
+            "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv|BuildPhase8RuntimeManifest",
+            "Cephalon.Benchmarks.Runtime.EngineRuntimeBenchmarks-report.csv|InitializeStartStopRuntime",
+            "Cephalon.Benchmarks.Runtime.EngineRuntimeBenchmarks-report.csv|InitializeStartStopPhase8Runtime",
+            "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv|HandleLoggedJsonRequest",
+            "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv|HandleTruncatedJsonRequest",
+            "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv|HandleConcurrentLoggedJsonRequest",
+            "Cephalon.Benchmarks.Runtime.RestEndpointProjectionGovernanceBenchmarks-report.csv|BuildMapGovernedRestCatalogs",
+            "Cephalon.Benchmarks.Scaffolding.ScaffoldGeneratorBenchmarks-report.csv|GenerateBlueprintScaffold",
+            "Cephalon.Benchmarks.Scaffolding.ScaffoldGeneratorBenchmarks-report.csv|GeneratePhase8BlueprintScaffold",
+            "Cephalon.Benchmarks.HotPath.DataDispatchBenchmarks-report.csv|DispatchQuery",
+            "Cephalon.Benchmarks.HotPath.DataDispatchBenchmarks-report.csv|DispatchCommand",
+            "Cephalon.Benchmarks.HotPath.DataDispatchBenchmarks-report.csv|DispatchCommandWithResult",
+            "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv|DispatchBehavior",
+            "Cephalon.Benchmarks.HotPath.AuthorizationEvaluationBenchmarks-report.csv|EvaluateRbacAllow",
+            "Cephalon.Benchmarks.HotPath.AuthorizationEvaluationBenchmarks-report.csv|EvaluateRbacDeny",
+            "Cephalon.Benchmarks.HotPath.TenantResolutionBenchmarks-report.csv|ResolveByTenantId",
+            "Cephalon.Benchmarks.HotPath.TenantResolutionBenchmarks-report.csv|ResolveByHostName",
+            "Cephalon.Benchmarks.HotPath.TenantResolutionBenchmarks-report.csv|ResolveDefaultTenant",
+            "Cephalon.Benchmarks.HotPath.EventSourcingBenchmarks-report.csv|AppendSingleEvent",
+            "Cephalon.Benchmarks.HotPath.EventSourcingBenchmarks-report.csv|ReadStream",
+            "Cephalon.Benchmarks.HotPath.EventSourcingBenchmarks-report.csv|GetStreamVersion",
+            "Cephalon.Benchmarks.HotPath.OutboxStagingBenchmarks-report.csv|StageOutboxMessage"
+        };
+
+        var missingBenchmarkIds = expectedBenchmarkIds
+            .Except(actualBenchmarkIds)
+            .OrderBy(id => id)
+            .ToArray();
+        var unexpectedBenchmarkIds = actualBenchmarkIds
+            .Except(expectedBenchmarkIds)
+            .OrderBy(id => id)
+            .ToArray();
+        var missingBenchmarkEntryIds = expectedBenchmarkEntryIds
+            .Except(actualBenchmarkEntryIds)
+            .OrderBy(id => id)
+            .ToArray();
+        var unexpectedBenchmarkEntryIds = actualBenchmarkEntryIds
+            .Except(expectedBenchmarkEntryIds)
+            .OrderBy(id => id)
+            .ToArray();
+
+        Assert.True(
+            missingBenchmarkIds.Length == 0,
+            $"Guardrail catalog is missing expected benchmarks: {string.Join(", ", missingBenchmarkIds)}");
+        Assert.True(
+            unexpectedBenchmarkIds.Length == 0,
+            $"Guardrail catalog has undocumented benchmark entries: {string.Join(", ", unexpectedBenchmarkIds)}");
+        Assert.True(
+            missingBenchmarkEntryIds.Length == 0,
+            $"Guardrail catalog is missing expected report+benchmark pairs: {string.Join(", ", missingBenchmarkEntryIds)}");
+        Assert.True(
+            unexpectedBenchmarkEntryIds.Length == 0,
+            $"Guardrail catalog has unexpected report+benchmark pairs: {string.Join(", ", unexpectedBenchmarkEntryIds)}");
+
+        Assert.Equal(expectedBenchmarkIds.Count, actualBenchmarkIds.Count);
+        Assert.Equal(expectedBenchmarkEntryIds.Count, actualBenchmarkEntryIds.Count);
     }
 
     [Fact]

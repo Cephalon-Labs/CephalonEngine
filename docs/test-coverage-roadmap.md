@@ -52,10 +52,9 @@ The list below records, per family, the current layered coverage and what kind o
 
 ### Transport adapters — partial
 
-`Cephalon.AspNetCore.Grpc`, `Cephalon.AspNetCore.JsonRpc`, `Cephalon.AspNetCore.GraphQL` are at `M2`. `Cephalon.Tests.Hosting` exercises the route mapping and basic happy paths. `Cephalon.AspNetCore.JsonRpc` now has direct error-mode coverage shipped via `ENG-405` (`tests/Cephalon.Tests.Hosting/JsonRpcErrorResponseHostingTests.cs`, covering method-not-found, parse-error, invalid-request, and internal-error responses). Open work:
+`Cephalon.AspNetCore.Grpc`, `Cephalon.AspNetCore.JsonRpc`, `Cephalon.AspNetCore.GraphQL` are at `M2`. `Cephalon.Tests.Hosting` exercises route mapping, happy paths, and selected non-happy-path contracts. `Cephalon.AspNetCore.JsonRpc` has direct error-mode coverage shipped via `ENG-405` (`tests/Cephalon.Tests.Hosting/JsonRpcErrorResponseHostingTests.cs`, covering method-not-found, parse-error, invalid-request, and internal-error responses). `Cephalon.AspNetCore.Grpc` now has explicit unimplemented-method error-mode coverage in `tests/Cephalon.Tests.Hosting/AspNetCoreHostingTests.cs` (`MapCephalonGrpcReturnsUnimplementedForUnknownMethod`) and streaming execution-path coverage in `MapCephalonExposesRuntimeAndModuleRoutes`. `Cephalon.AspNetCore.GraphQL` now includes malformed-query envelope coverage in `tests/Cephalon.Tests.Hosting/GraphQLTransportHostingTests.cs` (`MapCephalonReturnsGraphQlErrorEnvelopeForMalformedQuery`). Open work:
 
-- Add streaming behavior coverage for gRPC bi-directional and server-streaming patterns to `Cephalon.Tests.Hosting`.
-- Add a small set of GraphQL transport mapping tests to `Cephalon.Tests.Hosting` once the GraphQL runtime claim widens beyond route mapping.
+- Add deeper protocol-level GraphQL SSE/WebSocket invalid-frame and session error-shape assertions in `Cephalon.Tests.Hosting` when transport-claim scope widens.
 
 ### Behaviors — covered
 

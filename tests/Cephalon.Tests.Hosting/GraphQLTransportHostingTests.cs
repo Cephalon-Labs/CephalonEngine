@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Net.Http.Headers;
 using System.Net.WebSockets;
+using System.Text.Json;
 using System.Text;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.AspNetCore.GraphQL.Hosting;
@@ -212,6 +213,46 @@ public sealed class GraphQLTransportHostingTests
         Assert.Contains("publishFarewell(", schemaPayload, StringComparison.Ordinal);
         Assert.Contains("greetingPublished(", schemaPayload, StringComparison.Ordinal);
         Assert.Contains("farewellPublished(", schemaPayload, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task MapCephalonReturnsGraphQlErrorEnvelopeForMalformedQuery()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "GraphQL";
+        builder.Configuration["ApiRoutes:Prefixes:GraphQL"] = "/graph-http";
+        builder.AddGraphQLTransport();
+        builder.ConfigureGraphQLTransport(graphql => graphql.AddInMemorySubscriptions());
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.PostAsJsonAsync("/graph-http", new
+        {
+            query = "query { hello( }"
+        });
+        var payload = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.True(payload.TryGetProperty("errors", out var errors));
+        Assert.True(errors.ValueKind == JsonValueKind.Array);
+        Assert.True(errors.GetArrayLength() > 0);
+        var message = errors[0].GetProperty("message").GetString();
+        Assert.False(string.IsNullOrWhiteSpace(message));
+        if (payload.TryGetProperty("data", out var dataElement))
+        {
+            Assert.Equal(JsonValueKind.Null, dataElement.ValueKind);
+        }
     }
 
     [Fact]

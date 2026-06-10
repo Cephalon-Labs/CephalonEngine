@@ -209,6 +209,51 @@ public sealed class HttpBehaviorBindingTests
     }
 
     [Fact]
+    public async Task JsonRpcBindingReturnsParseErrorWithNullIdForMalformedPayload()
+    {
+        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.jsonrpc"]);
+        var (app, client) = await BuildAppAsync(descriptor, new JsonRpcHttpBehaviorBinding());
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/json-rpc/v1/object/echo")
+        {
+            Content = new StringContent("{\"jsonrpc\":\"2.0\",\"method\":", System.Text.Encoding.UTF8, "application/json")
+        };
+
+        var response = await client.SendAsync(request);
+        var payload = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("2.0", payload.GetProperty("jsonrpc").GetString());
+        Assert.Equal(-32700, payload.GetProperty("error").GetProperty("code").GetInt32());
+        Assert.Equal("Parse error", payload.GetProperty("error").GetProperty("message").GetString());
+        Assert.True(payload.TryGetProperty("id", out var id));
+        Assert.Equal(JsonValueKind.Null, id.ValueKind);
+
+        await app.StopAsync();
+    }
+
+    [Fact]
+    public async Task JsonRpcBindingReturnsInvalidRequestAndEchoesIdWhenVersionIsNot20()
+    {
+        var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.jsonrpc"]);
+        var (app, client) = await BuildAppAsync(descriptor, new JsonRpcHttpBehaviorBinding());
+
+        var response = await client.PostAsJsonAsync(
+            "/json-rpc/v1/object/echo",
+            new { jsonrpc = "1.0", method = "handle", @params = "test-input", id = "req-9" });
+        var payload = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("2.0", payload.GetProperty("jsonrpc").GetString());
+        Assert.Equal(-32600, payload.GetProperty("error").GetProperty("code").GetInt32());
+        Assert.Equal("Invalid Request", payload.GetProperty("error").GetProperty("message").GetString());
+        Assert.Contains("jsonrpc must be", payload.GetProperty("error").GetProperty("data").GetString(), StringComparison.Ordinal);
+        Assert.Equal("req-9", payload.GetProperty("id").GetString());
+
+        await app.StopAsync();
+    }
+
+    [Fact]
     public async Task GraphqlBindingMapsCanonicalApiSurfaceRoute()
     {
         var descriptor = new BehaviorTopologyDescriptor("object.echo", "direct", ["http.graphql"]);

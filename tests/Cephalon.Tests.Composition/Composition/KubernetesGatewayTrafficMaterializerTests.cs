@@ -424,7 +424,13 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Pending, initial.ProviderMaterializationState);
         Assert.Equal("missing-httproute", initial.RuntimeMetadata["providerMaterialization.resourceState"]);
 
-        await Task.Delay(TimeSpan.FromMilliseconds(1400));
+        await WaitUntilAsync(() =>
+        {
+            var current = catalog.GetByRouteId("orders-to-public-ingress");
+            return current is not null &&
+                current.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
+                current.MaterializationState == CellTrafficAutomationMaterializationStates.Applied;
+        });
 
         var refreshed = catalog.GetByRouteId("orders-to-public-ingress");
         Assert.NotNull(refreshed);
@@ -478,7 +484,14 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Equal("apply-and-reconcile", initial.RuntimeMetadata["providerMaterialization.providerAction"]);
         Assert.Equal("created", initial.RuntimeMetadata["providerMaterialization.httpRouteWriteAction"]);
 
-        await Task.Delay(TimeSpan.FromMilliseconds(1400));
+        await WaitUntilAsync(() =>
+        {
+            var current = catalog.GetByRouteId("orders-to-public-ingress");
+            return current is not null &&
+                current.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
+                current.MaterializationState == CellTrafficAutomationMaterializationStates.Applied &&
+                string.Equals(current.RuntimeMetadata["providerMaterialization.httpRouteWriteAction"], "replaced", StringComparison.Ordinal);
+        });
 
         var refreshed = catalog.GetByRouteId("orders-to-public-ingress");
         Assert.NotNull(refreshed);
@@ -522,7 +535,12 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Equal("true", initial.RuntimeMetadata["providerMaterialization.cleanupSweepEnabled"]);
         Assert.Equal("pending", initial.RuntimeMetadata["providerMaterialization.cleanupState"]);
 
-        await Task.Delay(TimeSpan.FromMilliseconds(1400));
+        await WaitUntilAsync(() =>
+        {
+            var current = catalog.GetByRouteId("orders-to-public-ingress");
+            return current is not null &&
+                string.Equals(current.RuntimeMetadata["providerMaterialization.cleanupState"], "applied", StringComparison.Ordinal);
+        });
 
         var refreshed = catalog.GetByRouteId("orders-to-public-ingress");
         Assert.NotNull(refreshed);
@@ -553,6 +571,21 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         configureServices?.Invoke(services);
         services.AddCephalon(engine => ConfigureEngine(engine, includeAdminProjection, controlPlaneMode, pollingIntervalSeconds, enableCleanupSweep));
         return services;
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        for (var attempt = 0; attempt < 60; attempt++)
+        {
+            if (condition())
+            {
+                return;
+            }
+
+            await Task.Delay(TimeSpan.FromMilliseconds(100));
+        }
+
+        Assert.True(condition());
     }
 
     private static void ConfigureEngine(
