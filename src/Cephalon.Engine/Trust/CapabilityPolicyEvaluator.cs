@@ -77,8 +77,19 @@ public sealed class CapabilityPolicyEvaluator
         var capabilityDecisions = capabilities
             .Select(capability =>
             {
-                var module = moduleLookup[capability.SourceModuleId];
                 var access = policy.ResolveCapabilityAccess(capability.Key);
+                if (!moduleLookup.TryGetValue(capability.SourceModuleId, out var module))
+                {
+                    return new CapabilityPolicyDecision(
+                        CapabilityKey: capability.Key,
+                        SourceModuleId: capability.SourceModuleId,
+                        SourcePackageId: null,
+                        Access: access,
+                        SourceTrusted: false,
+                        IsAllowed: false,
+                        Reason: "Capability source module is not registered in the runtime manifest.");
+                }
+
                 var sourceTrusted = module.IsTrusted;
                 var isAllowed = access switch
                 {

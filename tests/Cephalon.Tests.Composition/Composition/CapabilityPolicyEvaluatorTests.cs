@@ -91,4 +91,32 @@ public sealed class CapabilityPolicyEvaluatorTests
         Assert.False(decision.IsAllowed);
         Assert.Contains("not registered", decision.Reason, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public void CreateSnapshotDeniesCapabilityWhenSourceModuleIsMissing()
+    {
+        var policy = new TrustPolicy(defaultCapabilityAccess: CapabilityAccess.Allowed);
+        var capabilities = new[]
+        {
+            new CapabilityManifest(
+                key: "orphan.capability",
+                displayName: "Orphan Capability",
+                description: "Capability with a missing source module.",
+                sourceModuleId: "missing.module")
+        };
+
+        var snapshot = CapabilityPolicyEvaluator.CreateSnapshot(
+            policy,
+            packages: [],
+            modules: [],
+            capabilities);
+
+        var decision = Assert.Single(snapshot.Capabilities);
+        Assert.Equal("orphan.capability", decision.CapabilityKey);
+        Assert.Equal("missing.module", decision.SourceModuleId);
+        Assert.Equal(CapabilityAccess.Allowed, decision.Access);
+        Assert.False(decision.SourceTrusted);
+        Assert.False(decision.IsAllowed);
+        Assert.Contains("not registered", decision.Reason, StringComparison.OrdinalIgnoreCase);
+    }
 }
