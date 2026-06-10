@@ -199,10 +199,10 @@ Edge already has two real provider-native control-plane materializers running on
 | `Cephalon.Observability.OpenShift` | M1 | cephalon-managed | — | — | — | OpenShift in-cluster collector configuration (family-covered by maturity audit) |
 | `Cephalon.Observability.Tanzu` | M1 | cephalon-managed | — | — | — | VMware Tanzu configuration (family-covered by maturity audit) |
 | `Cephalon.Observability.Serilog` | M1 | cephalon-managed | — | — | — | Serilog provider integration (family-covered by maturity audit) |
-| `Cephalon.Observability.DependencyHealth.Core` | M1 | cephalon-managed | — | — | — | dependency-health probe infrastructure (family-covered by maturity audit) |
-| `Cephalon.Observability.*Dependencies` (Cassandra / ClickHouse / Consul / Elasticsearch / Http / Kafka / Memcached / MongoDB / MQTT / MySQL / NATS / Neo4j / OpenSearch / Oracle / PostgreSQL / RabbitMQ / Redis / SqlServer) | M0 | taxonomy-only | — | — | — | provider-specific dependency-health probe catalogs |
+| `Cephalon.Observability.DependencyHealth.Core` | M3 | cephalon-managed | `/engine/dependencies` | — | `IDependencyHealthContributor` | dependency-health probe infrastructure with operator metadata (freshness/duration/failure tracking) |
+| `Cephalon.Observability.*Dependencies` (Cassandra / ClickHouse / Consul / Elasticsearch / Http / Kafka / Memcached / MongoDB / MQTT / MySQL / NATS / Neo4j / OpenSearch / Oracle / PostgreSQL / RabbitMQ / Redis / SqlServer) | M3 | provider-managed | (projects via `/engine/dependencies`) | — | `IDependencyHealthContributor` | provider-specific dependency-health probe execution with operator-facing freshness/duration/failure-count metadata
 
-The observability family is broad but shallow on purpose: configuration packs bind options, dependency health probes ship as taxonomy. Genuine telemetry collection happens in the host runtime's OpenTelemetry stack.
+The observability family ships adoption-ready telemetry configuration packs and dependency-health probe execution with operator automation support. Genuine telemetry collection happens in the host runtime's OpenTelemetry stack; dependency-health probes now support operator workflows through freshness, duration, and failure-count tracking.
 
 ## Scaffolding and tooling
 
@@ -217,10 +217,10 @@ The tooling family ships adoption-ready CLI plus scaffolding and an XML-doc refe
 ## Family summary at a glance
 
 - **Adoption-ready (M4):** core runtime, host adapters, behaviors core, scaffolding, CLI
-- **Broad managed execution (M3):** eventing core, eventing Wolverine bridge, agentics, retrieval, data core, edge providers (Kubernetes Gateway, Traefik)
+- **Broad managed execution (M3):** eventing core, eventing Wolverine bridge, agentics, retrieval, data core, edge providers (Kubernetes Gateway, Traefik), observability dependency-health core + provider probes
 - **Narrow managed execution (M2):** transport adapters, behaviors HTTP, EntityFramework data, relational data providers (SqlServer, Postgres, MySql, Oracle, MongoDB), multi-tenancy core + governance + delivery senders, edge core, observability core, Sfid, ReferenceDocs
 - **Catalog-only (M1):** behaviors messaging/patterns/sourcegen, eventing behaviors bridge, non-relational data providers (Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, Nats, Debezium), event-sourcing family, audit, identity, observability provider configuration packs
-- **Taxonomy-only (M0):** observability dependency-health provider packs
+- **Taxonomy-only (M0):** (none in current audit)
 
 ## Inconsistencies observed (potential next ENG-* cards)
 
@@ -228,6 +228,7 @@ No open inconsistencies remain at this snapshot. The list below records the alig
 
 ### Resolved alignment items (kept as durable history)
 
+- **Dependency-health probe maturity uplift from M0 → M3 (May 2026):** added operator-facing runtime metadata (CheckedAtUtc, ProbeDurationMilliseconds, ConsecutiveFailureCount) to support observability loops and health trending. Core probe infrastructure and all 18 per-provider probes promoted from M0 (taxonomy-only) to M3 (managed execution) with genuine probe runtime, operator automation support, and 68 hosting test coverage across 14 providers.
 - **`Cephalon.Behaviors.Http` REST publication ownership** (resolved May 2026): the matrix row now records the explicit `application-managed` profile/publication activation plus `cephalon-managed` materialization/runtime-catalog split, mirroring the maturity audit row. The shared component doc remains the per-package detail source.
 - **Event-sourcing family audit coverage** (resolved May 2026): the maturity audit now records the catalog-only stance for the event-sourcing family and confirms no provider pack has shipped managed-execution proof yet. See the audit's "Event sourcing" group entry.
 - **Observability provider audit closure** (resolved May 2026): the maturity audit now records the cloud-platform configuration-pack baseline plus the dependency-health pack family stance. Each cloud pack stays M1 cephalon-managed configuration binding; deeper telemetry collection remains in the host runtime's OpenTelemetry stack.
