@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Cephalon.Abstractions.Health;
 using Cephalon.Observability.DependencyHealth.Core.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -17,6 +18,8 @@ internal abstract class DependencyHealthProbeHostedServiceBase<TOptions, TDefini
     private readonly TOptions options;
     private readonly DependencyHealthStore store;
     private readonly ILogger logger;
+    private readonly object failureCountGate = new();
+    private readonly Dictionary<string, int> consecutiveFailureCounts = new(StringComparer.OrdinalIgnoreCase);
     private CancellationTokenSource? loopCancellation;
     private Task? loopTask;
 
@@ -104,13 +107,24 @@ internal abstract class DependencyHealthProbeHostedServiceBase<TOptions, TDefini
         var id = string.IsNullOrWhiteSpace(dependency.Id) ? DefaultDependencyId : dependency.Id.Trim();
         var displayName = string.IsNullOrWhiteSpace(dependency.DisplayName) ? id : dependency.DisplayName.Trim();
         var timeoutSeconds = Math.Max(1, dependency.TimeoutSeconds);
+        var checkedAtUtc = DateTimeOffset.UtcNow;
+        var probeStopwatch = Stopwatch.StartNew();
 
         var validationError = ValidateDependency(dependency);
         if (validationError is not null)
         {
+            probeStopwatch.Stop();
+            var failureCount = UpdateConsecutiveFailureCount(id, isHealthy: false);
             return new DependencyHealthReport(
-                Id: id, DisplayName: displayName, State: HealthState.Unhealthy,
-                Description: validationError, Required: dependency.Required, Source: SourceName);
+                Id: id,
+                DisplayName: displayName,
+                State: HealthState.Unhealthy,
+                Description: validationError,
+                Required: dependency.Required,
+                Source: SourceName,
+                CheckedAtUtc: checkedAtUtc,
+                ProbeDurationMilliseconds: (int)probeStopwatch.ElapsedMilliseconds,
+                ConsecutiveFailureCount: failureCount);
         }
 
         try
@@ -118,25 +132,74 @@ internal abstract class DependencyHealthProbeHostedServiceBase<TOptions, TDefini
             using var timeoutSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             timeoutSource.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
             var description = await ProbeAsync(dependency, timeoutSource.Token).ConfigureAwait(false);
+            probeStopwatch.Stop();
+            var failureCount = UpdateConsecutiveFailureCount(id, isHealthy: true);
+
             return new DependencyHealthReport(
-                Id: id, DisplayName: displayName, State: HealthState.Healthy,
-                Description: description, Required: dependency.Required, Source: SourceName);
+                Id: id,
+                DisplayName: displayName,
+                State: HealthState.Healthy,
+                Description: description,
+                Required: dependency.Required,
+                Source: SourceName,
+                CheckedAtUtc: checkedAtUtc,
+                ProbeDurationMilliseconds: (int)probeStopwatch.ElapsedMilliseconds,
+                ConsecutiveFailureCount: failureCount);
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
             LogProbeTimedOut(id, timeoutSeconds);
+            probeStopwatch.Stop();
+            var failureCount = UpdateConsecutiveFailureCount(id, isHealthy: false);
+
             return new DependencyHealthReport(
-                Id: id, DisplayName: displayName, State: HealthState.Unhealthy,
+                Id: id,
+                DisplayName: displayName,
+                State: HealthState.Unhealthy,
                 Description: $"{ProviderLabel} dependency '{displayName}' timed out after {timeoutSeconds} seconds.",
-                Required: dependency.Required, Source: SourceName);
+                Required: dependency.Required,
+                Source: SourceName,
+                CheckedAtUtc: checkedAtUtc,
+                ProbeDurationMilliseconds: (int)probeStopwatch.ElapsedMilliseconds,
+                ConsecutiveFailureCount: failureCount);
         }
         catch (Exception exception)
         {
             LogProbeFailed(exception, id);
+            probeStopwatch.Stop();
+            var failureCount = UpdateConsecutiveFailureCount(id, isHealthy: false);
+
             return new DependencyHealthReport(
-                Id: id, DisplayName: displayName, State: HealthState.Unhealthy,
+                Id: id,
+                DisplayName: displayName,
+                State: HealthState.Unhealthy,
                 Description: $"{ProviderLabel} dependency '{displayName}' failed: {exception.Message}",
-                Required: dependency.Required, Source: SourceName);
+                Required: dependency.Required,
+                Source: SourceName,
+                CheckedAtUtc: checkedAtUtc,
+                ProbeDurationMilliseconds: (int)probeStopwatch.ElapsedMilliseconds,
+                ConsecutiveFailureCount: failureCount);
+        }
+    }
+
+    private int UpdateConsecutiveFailureCount(string dependencyId, bool isHealthy)
+    {
+        lock (failureCountGate)
+        {
+            if (isHealthy)
+            {
+                consecutiveFailureCounts[dependencyId] = 0;
+                return 0;
+            }
+
+            var next = 1;
+            if (consecutiveFailureCounts.TryGetValue(dependencyId, out var current))
+            {
+                next = current + 1;
+            }
+
+            consecutiveFailureCounts[dependencyId] = next;
+            return next;
         }
     }
 }
