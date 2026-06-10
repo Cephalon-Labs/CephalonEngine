@@ -231,6 +231,43 @@ function Get-ManifestModeStatus {
     return [string]$entry.status
 }
 
+function Get-ManifestValidationStrategy {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)] $Manifest)
+
+    if ($null -eq $Manifest -or -not $Manifest.PSObject.Properties.Match('validationStrategy').Count) {
+        return $null
+    }
+
+    $strategy = [string]$Manifest.validationStrategy
+    if ([string]::IsNullOrWhiteSpace($strategy)) {
+        return $null
+    }
+
+    return $strategy
+}
+
+function Get-ManifestRepresentativePublishTargets {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)] $Manifest)
+
+    if ($null -eq $Manifest -or -not $Manifest.PSObject.Properties.Match('representativePublishTargets').Count) {
+        return @()
+    }
+
+    $targets = @()
+    $entry = $Manifest.representativePublishTargets
+    if ($null -eq $entry) {
+        return @()
+    }
+
+    if ($entry.PSObject.Properties.Match('projects').Count) {
+        $targets = @($entry.projects | Where-Object { $_ -and -not [string]::IsNullOrWhiteSpace($_) } | ForEach-Object { [string]$_ })
+    }
+
+    return @($targets)
+}
+
 function Get-DeploymentModeConfigFromManifest {
     <#
     .SYNOPSIS
@@ -471,7 +508,7 @@ function Invoke-PublishProbe {
     }
 }
 
-function Compute-ModeVerdict {
+function Resolve-ModeVerdict {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)] [string]$Mode,
@@ -580,7 +617,7 @@ function Compute-ModeVerdict {
     }
 }
 
-function Compute-AggregateVerdict {
+function Resolve-AggregateVerdict {
     [CmdletBinding()]
     param([Parameter(Mandatory)] $ModeVerdicts)
 
@@ -673,6 +710,8 @@ function Invoke-DeploymentModeClaimValidation {
 
     Invoke-Step -Title "Loading manifest" -Detail $ManifestPath
     $manifest = Read-DeploymentModeManifest -Path $ManifestPath
+    $manifestValidationStrategy = Get-ManifestValidationStrategy -Manifest $manifest
+    $manifestRepresentativePublishTargets = Get-ManifestRepresentativePublishTargets -Manifest $manifest
 
     $modesToCheck = if ($DeploymentMode -eq "all") {
         @("trim", "nativeAot", "singleFile")
@@ -687,6 +726,13 @@ function Invoke-DeploymentModeClaimValidation {
         $cfg = Get-DeploymentModeConfigFromManifest -Manifest $manifest -Mode $mode
         $manifestStatus = Get-ManifestModeStatus -Manifest $manifest -Mode $mode
 
+        $effectivePublishTargets = if ($PublishTargets -and $PublishTargets.Count -gt 0) {
+            @($PublishTargets)
+        }
+        else {
+            @($manifestRepresentativePublishTargets)
+        }
+
         $propAudit = $null
         if (-not $SkipPropertyAudit) {
             $propAudit = Get-ProjectPropertyAudit -RepoRoot $RepoRoot -Property $cfg.ProjectProperty -ProjectPaths $ProjectPaths
@@ -699,10 +745,20 @@ function Invoke-DeploymentModeClaimValidation {
 
         $publishProbe = $null
         if (-not $SkipPublish) {
-            $publishProbe = Invoke-PublishProbe -ModeConfig $cfg -Targets $PublishTargets -Configuration $Configuration -DotnetCommand $DotnetCommand
+            $publishProbe = Invoke-PublishProbe -ModeConfig $cfg -Targets $effectivePublishTargets -Configuration $Configuration -DotnetCommand $DotnetCommand
         }
 
-        $verdict = Compute-ModeVerdict -Mode $mode -ManifestStatus $manifestStatus `
+        $effectiveValidationStrategy = if ($SkipPublish) {
+            'audit-only'
+        }
+        elseif ($manifestValidationStrategy) {
+            $manifestValidationStrategy
+        }
+        else {
+            'publish-required'
+        }
+
+        $verdict = Resolve-ModeVerdict -Mode $mode -ManifestStatus $manifestStatus `
             -PropertyAudit $propAudit -AnalyzerAudit $analyzerAudit -PublishProbe $publishProbe `
             -PropertyAuditSkipped:$SkipPropertyAudit `
             -AnalyzerSkipped:$SkipAnalyzerCheck `
@@ -711,6 +767,8 @@ function Invoke-DeploymentModeClaimValidation {
         $modeReports += [pscustomobject]@{
             Mode           = $mode
             ManifestStatus = $manifestStatus
+            ValidationStrategy = $effectiveValidationStrategy
+            PublishTargets  = @($effectivePublishTargets)
             PropertyAudit  = $propAudit
             AnalyzerAudit  = $analyzerAudit
             PublishProbe   = $publishProbe
@@ -719,7 +777,7 @@ function Invoke-DeploymentModeClaimValidation {
         }
     }
 
-    $aggregateVerdict = Compute-AggregateVerdict -ModeVerdicts $modeReports
+    $aggregateVerdict = Resolve-AggregateVerdict -ModeVerdicts $modeReports
 
     $report = [ordered]@{
         GeneratedAtUtc      = (Get-Date).ToUniversalTime().ToString("o")
@@ -728,11 +786,13 @@ function Invoke-DeploymentModeClaimValidation {
         RepoRoot            = $RepoRoot
         ManifestPath        = $ManifestPath
         ManifestSnapshot    = $manifest
+        ManifestValidationStrategy = $manifestValidationStrategy
+        RepresentativePublishTargets = @($manifestRepresentativePublishTargets)
         Modes               = $modeReports
         Verdicts            = @($modeReports | ForEach-Object { [pscustomobject]@{ Mode = $_.Mode; Verdict = $_.Verdict; Reasons = $_.Reasons } })
         AggregateVerdict    = $aggregateVerdict
         ValidVerdicts       = $Script:ValidVerdicts
-        ValidationStrategy  = if ($SkipPublish) { "audit-only" } else { "publish-required" }
+        ValidationStrategy  = if ($SkipPublish) { "audit-only" } elseif ($manifestValidationStrategy) { $manifestValidationStrategy } else { "publish-required" }
     }
     $reportObj = [pscustomobject]$report
 

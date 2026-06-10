@@ -213,6 +213,45 @@ Describe "Get-ManifestModeStatus" {
     }
 }
 
+Describe "Get-ManifestValidationStrategy" {
+    It "returns the declared validation strategy when present" {
+        $manifest = [pscustomobject]@{ validationStrategy = "analyzer-only" }
+
+        Get-ManifestValidationStrategy -Manifest $manifest | Should -Be "analyzer-only"
+    }
+
+    It "returns null when the manifest does not declare a validation strategy" {
+        $manifest = [pscustomobject]@{}
+
+        Get-ManifestValidationStrategy -Manifest $manifest | Should -BeNullOrEmpty
+    }
+}
+
+Describe "Get-ManifestRepresentativePublishTargets" {
+    It "returns the manifest publish project list when present" {
+        $manifest = [pscustomobject]@{
+            representativePublishTargets = [pscustomobject]@{
+                projects = @(
+                    "src/Cephalon.Engine/Cephalon.Engine.csproj",
+                    "src/Cephalon.Cli/Cephalon.Cli.csproj"
+                )
+            }
+        }
+
+        $targets = @(Get-ManifestRepresentativePublishTargets -Manifest $manifest)
+
+        $targets.Count | Should -Be 2
+        $targets[0] | Should -Be "src/Cephalon.Engine/Cephalon.Engine.csproj"
+        $targets[1] | Should -Be "src/Cephalon.Cli/Cephalon.Cli.csproj"
+    }
+
+    It "returns an empty list when the manifest does not declare publish targets" {
+        $manifest = [pscustomobject]@{}
+
+        @(Get-ManifestRepresentativePublishTargets -Manifest $manifest).Count | Should -Be 0
+    }
+}
+
 Describe "Get-DeploymentModeConfigFromManifest" {
     BeforeAll {
         # build a synthesized manifest with full schema 1.1.0 fields for trim
@@ -260,6 +299,21 @@ Describe "Get-DeploymentModeConfigFromManifest" {
     It "uses the manifest-driven AnalyzerProperty when schema 1.1.0 fields are present" {
         $cfg = Get-DeploymentModeConfigFromManifest -Manifest $script:manifestFull -Mode "trim"
         $cfg.AnalyzerProperty | Should -Be "EnableTrimAnalyzer"
+    }
+
+    It "reads manifest validation strategy and representative publish targets from the root manifest" {
+        $manifest = [pscustomobject]@{
+            validationStrategy = "publish-required"
+            representativePublishTargets = [pscustomobject]@{
+                projects = @("src/Cephalon.Engine/Cephalon.Engine.csproj")
+            }
+            deploymentModes = [pscustomobject]@{
+                trim = [pscustomobject]@{ status = "not-claimed" }
+            }
+        }
+
+        Get-ManifestValidationStrategy -Manifest $manifest | Should -Be "publish-required"
+        @(Get-ManifestRepresentativePublishTargets -Manifest $manifest).Count | Should -Be 1
     }
 
     It "joins manifest warningPatterns into a regex alternation" {
@@ -503,7 +557,7 @@ exit 1
     }
 }
 
-Describe "Compute-ModeVerdict" {
+Describe "Resolve-ModeVerdict" {
     BeforeAll {
         function script:New-PropertyAudit {
             param([int]$PassedCount = 0, [int]$Total = 0, [string]$Property = "PublishTrimmed")
@@ -549,22 +603,22 @@ Describe "Compute-ModeVerdict" {
     }
 
     It "returns 'unknown' when manifest status is null or empty" {
-        (Compute-ModeVerdict -Mode "trim" -ManifestStatus $null `
+        (Resolve-ModeVerdict -Mode "trim" -ManifestStatus $null `
             -PropertyAudit (New-PropertyAudit) -AnalyzerAudit (New-AnalyzerAudit) -PublishProbe (New-PublishProbe -Skipped $true)).Verdict |
             Should -Be "unknown"
-        (Compute-ModeVerdict -Mode "trim" -ManifestStatus "" `
+        (Resolve-ModeVerdict -Mode "trim" -ManifestStatus "" `
             -PropertyAudit (New-PropertyAudit) -AnalyzerAudit (New-AnalyzerAudit) -PublishProbe (New-PublishProbe -Skipped $true)).Verdict |
             Should -Be "unknown"
     }
 
     It "returns 'unknown' for a status the harness does not recognize" {
-        (Compute-ModeVerdict -Mode "trim" -ManifestStatus "weird-value" `
+        (Resolve-ModeVerdict -Mode "trim" -ManifestStatus "weird-value" `
             -PropertyAudit (New-PropertyAudit) -AnalyzerAudit (New-AnalyzerAudit) -PublishProbe (New-PublishProbe -Skipped $true)).Verdict |
             Should -Be "unknown"
     }
 
     It "returns 'not-claimed' when manifest is not-claimed and no project sets the property" {
-        (Compute-ModeVerdict -Mode "trim" -ManifestStatus "not-claimed" `
+        (Resolve-ModeVerdict -Mode "trim" -ManifestStatus "not-claimed" `
             -PropertyAudit (New-PropertyAudit -Total 5 -PassedCount 0) `
             -AnalyzerAudit (New-AnalyzerAudit -Total 5 -EnabledCount 0) `
             -PublishProbe (New-PublishProbe -Skipped $true)).Verdict |
@@ -572,7 +626,7 @@ Describe "Compute-ModeVerdict" {
     }
 
     It "returns 'not-claimed-with-property-drift' when manifest is not-claimed but a project DOES set the property" {
-        (Compute-ModeVerdict -Mode "trim" -ManifestStatus "not-claimed" `
+        (Resolve-ModeVerdict -Mode "trim" -ManifestStatus "not-claimed" `
             -PropertyAudit (New-PropertyAudit -Total 5 -PassedCount 1) `
             -AnalyzerAudit (New-AnalyzerAudit -Total 5 -EnabledCount 1) `
             -PublishProbe (New-PublishProbe -Skipped $true)).Verdict |
@@ -580,7 +634,7 @@ Describe "Compute-ModeVerdict" {
     }
 
     It "returns 'claim-truthful' when manifest claims the mode and every check passes" {
-        (Compute-ModeVerdict -Mode "trim" -ManifestStatus "claimed" `
+        (Resolve-ModeVerdict -Mode "trim" -ManifestStatus "claimed" `
             -PropertyAudit (New-PropertyAudit -Total 5 -PassedCount 3) `
             -AnalyzerAudit (New-AnalyzerAudit -Total 5 -EnabledCount 3) `
             -PublishProbe (New-PublishProbe -Total 1 -Failures 0 -Warnings 0)).Verdict |
@@ -588,7 +642,7 @@ Describe "Compute-ModeVerdict" {
     }
 
     It "returns 'claim-overstated' when manifest claims the mode but no project sets the property" {
-        (Compute-ModeVerdict -Mode "trim" -ManifestStatus "claimed" `
+        (Resolve-ModeVerdict -Mode "trim" -ManifestStatus "claimed" `
             -PropertyAudit (New-PropertyAudit -Total 5 -PassedCount 0) `
             -AnalyzerAudit (New-AnalyzerAudit -Total 5 -EnabledCount 0) `
             -PublishProbe (New-PublishProbe -Total 1)).Verdict |
@@ -596,7 +650,7 @@ Describe "Compute-ModeVerdict" {
     }
 
     It "returns 'claim-overstated' when claim is set but analyzers are not enabled on every claiming project" {
-        (Compute-ModeVerdict -Mode "trim" -ManifestStatus "claimed" `
+        (Resolve-ModeVerdict -Mode "trim" -ManifestStatus "claimed" `
             -PropertyAudit (New-PropertyAudit -Total 5 -PassedCount 3) `
             -AnalyzerAudit (New-AnalyzerAudit -Total 5 -EnabledCount 1) `
             -PublishProbe (New-PublishProbe -Total 1)).Verdict |
@@ -604,7 +658,7 @@ Describe "Compute-ModeVerdict" {
     }
 
     It "returns 'claim-overstated' when publish probe has failures" {
-        (Compute-ModeVerdict -Mode "trim" -ManifestStatus "claimed" `
+        (Resolve-ModeVerdict -Mode "trim" -ManifestStatus "claimed" `
             -PropertyAudit (New-PropertyAudit -Total 5 -PassedCount 3) `
             -AnalyzerAudit (New-AnalyzerAudit -Total 5 -EnabledCount 3) `
             -PublishProbe (New-PublishProbe -Total 2 -Failures 1)).Verdict |
@@ -612,7 +666,7 @@ Describe "Compute-ModeVerdict" {
     }
 
     It "returns 'claim-overstated' when publish probe has warnings" {
-        (Compute-ModeVerdict -Mode "trim" -ManifestStatus "claimed" `
+        (Resolve-ModeVerdict -Mode "trim" -ManifestStatus "claimed" `
             -PropertyAudit (New-PropertyAudit -Total 5 -PassedCount 3) `
             -AnalyzerAudit (New-AnalyzerAudit -Total 5 -EnabledCount 3) `
             -PublishProbe (New-PublishProbe -Total 2 -Warnings 1)).Verdict |
@@ -620,23 +674,23 @@ Describe "Compute-ModeVerdict" {
     }
 
     It "still returns 'not-claimed' when audit is skipped and manifest is not-claimed (no drift detection possible)" {
-        (Compute-ModeVerdict -Mode "trim" -ManifestStatus "not-claimed" `
+        (Resolve-ModeVerdict -Mode "trim" -ManifestStatus "not-claimed" `
             -PropertyAudit $null -AnalyzerAudit $null -PublishProbe $null `
             -PropertyAuditSkipped:$true -AnalyzerSkipped:$true -PublishSkipped:$true).Verdict |
             Should -Be "not-claimed"
     }
 
     It "returns 'claim-overstated' when claim is set but property audit was skipped" {
-        (Compute-ModeVerdict -Mode "trim" -ManifestStatus "claimed" `
+        (Resolve-ModeVerdict -Mode "trim" -ManifestStatus "claimed" `
             -PropertyAudit $null -AnalyzerAudit $null -PublishProbe $null `
             -PropertyAuditSkipped:$true).Verdict |
             Should -Be "claim-overstated"
     }
 }
 
-Describe "Compute-AggregateVerdict" {
+    Describe "Resolve-AggregateVerdict" {
     It "returns 'not-claimed' for an empty mode-verdict list" {
-        Compute-AggregateVerdict -ModeVerdicts @() | Should -Be "not-claimed"
+        Resolve-AggregateVerdict -ModeVerdicts @() | Should -Be "not-claimed"
     }
     It "returns the single verdict when all modes agree" {
         $list = @(
@@ -644,7 +698,7 @@ Describe "Compute-AggregateVerdict" {
             [pscustomobject]@{ Mode = "nativeAot"; Verdict = "not-claimed" },
             [pscustomobject]@{ Mode = "singleFile"; Verdict = "not-claimed" }
         )
-        Compute-AggregateVerdict -ModeVerdicts $list | Should -Be "not-claimed"
+        Resolve-AggregateVerdict -ModeVerdicts $list | Should -Be "not-claimed"
     }
     It "returns 'claim-overstated' if ANY mode is claim-overstated" {
         $list = @(
@@ -652,35 +706,35 @@ Describe "Compute-AggregateVerdict" {
             [pscustomobject]@{ Mode = "nativeAot"; Verdict = "claim-overstated" },
             [pscustomobject]@{ Mode = "singleFile"; Verdict = "not-claimed" }
         )
-        Compute-AggregateVerdict -ModeVerdicts $list | Should -Be "claim-overstated"
+        Resolve-AggregateVerdict -ModeVerdicts $list | Should -Be "claim-overstated"
     }
     It "returns 'mixed' when truthful and not-claimed coexist without overstatement" {
         $list = @(
             [pscustomobject]@{ Mode = "trim"; Verdict = "claim-truthful" },
             [pscustomobject]@{ Mode = "nativeAot"; Verdict = "not-claimed" }
         )
-        Compute-AggregateVerdict -ModeVerdicts $list | Should -Be "mixed"
+        Resolve-AggregateVerdict -ModeVerdicts $list | Should -Be "mixed"
     }
     It "returns 'unknown' if any mode verdict is unknown (and no overstatement)" {
         $list = @(
             [pscustomobject]@{ Mode = "trim"; Verdict = "unknown" },
             [pscustomobject]@{ Mode = "nativeAot"; Verdict = "not-claimed" }
         )
-        Compute-AggregateVerdict -ModeVerdicts $list | Should -Be "unknown"
+        Resolve-AggregateVerdict -ModeVerdicts $list | Should -Be "unknown"
     }
     It "returns 'not-claimed-with-property-drift' when present without overstatement" {
         $list = @(
             [pscustomobject]@{ Mode = "trim"; Verdict = "not-claimed-with-property-drift" },
             [pscustomobject]@{ Mode = "nativeAot"; Verdict = "not-claimed" }
         )
-        Compute-AggregateVerdict -ModeVerdicts $list | Should -Be "not-claimed-with-property-drift"
+        Resolve-AggregateVerdict -ModeVerdicts $list | Should -Be "not-claimed-with-property-drift"
     }
     It "prefers claim-overstated over not-claimed-with-property-drift" {
         $list = @(
             [pscustomobject]@{ Mode = "trim"; Verdict = "not-claimed-with-property-drift" },
             [pscustomobject]@{ Mode = "nativeAot"; Verdict = "claim-overstated" }
         )
-        Compute-AggregateVerdict -ModeVerdicts $list | Should -Be "claim-overstated"
+        Resolve-AggregateVerdict -ModeVerdicts $list | Should -Be "claim-overstated"
     }
 }
 
@@ -817,5 +871,35 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
         $result.Paths.MarkdownPath | Should -Match ([regex]::Escape($expectedOutputPath))
         Test-Path -LiteralPath $result.Paths.JsonPath | Should -BeTrue
         Test-Path -LiteralPath $result.Paths.MarkdownPath | Should -BeTrue
+    }
+
+    It "records manifest validation strategy and representative publish targets in the report" {
+        $repo = New-TempRepoRoot -Projects @(
+            @{ Name = "Cephalon.AlphaPack"; Properties = @{ PublishTrimmed = "true"; EnableTrimAnalyzer = "true" } }
+        )
+        $manifestPath = Join-Path $repo.Root "deployment-mode-support.json"
+        @{ 
+            validationStrategy = "analyzer-only"
+            representativePublishTargets = @{ projects = @("src/Cephalon.AlphaPack/Cephalon.AlphaPack.csproj") }
+            deploymentModes = @{
+                trim       = @{ status = "claimed" }
+                nativeAot  = @{ status = "not-claimed" }
+                singleFile = @{ status = "not-claimed" }
+            }
+        } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        $outDir = Join-Path $repo.Root "out"
+        $result = Invoke-DeploymentModeClaimValidation `
+            -DeploymentMode "trim" `
+            -ManifestPath $manifestPath `
+            -OutputPath $outDir `
+            -RepoRoot $repo.Root `
+            -SkipPublish
+
+        $result.Report.ValidationStrategy | Should -Be "audit-only"
+        $result.Report.ManifestValidationStrategy | Should -Be "analyzer-only"
+        $result.Report.RepresentativePublishTargets.Count | Should -Be 1
+        $result.Report.Modes[0].ValidationStrategy | Should -Be "audit-only"
+        $result.Report.Modes[0].PublishTargets.Count | Should -Be 1
     }
 }

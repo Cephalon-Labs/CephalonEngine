@@ -58,11 +58,13 @@ Today the support claim is `not-claimed` across trim, Native AOT, and single-fil
 
 The shipped harness now runs as part of `scripts/validate-release.ps1` through the opt-out `-SkipDeploymentModeClaims` switch (audit-only by default until `representativePublishTargets.projects` is populated), so framework readiness and deployment-mode claim truth are reportable in one release-validation flow. The harness also now reads its per-mode `requiredProjectProperties`, `requiredAnalyzerProperties`, and `warningPatterns` from `scripts/deployment-mode-support.json` schema `1.1.0` directly through `Get-DeploymentModeConfigFromManifest`, with the hardcoded `$Script:DeploymentModeConfigs` table kept as a fallback for legacy manifests; manifest edits to those fields take effect on the next harness run without code changes.
 
-Planned manifest schema additions in `scripts/deployment-mode-support.json`:
+The harness now also reads the root-level `validationStrategy` and `representativePublishTargets.projects` metadata from `scripts/deployment-mode-support.json` and records both in the validation report. The manifest still keeps `deploymentModeEligibility` and `expectedPublishOutputShape` available for later claim-audit expansion, but those fields remain empty until the repo deliberately stages a real publish-backed claim audit.
+
+Current manifest metadata in `scripts/deployment-mode-support.json`:
 
 - `validationStrategy`: `analyzer-only`, `publish-required`, or `full-flow`
+- `representativePublishTargets.projects`: the small set of packages the harness can publish during a claim audit when that list is populated
 - per-package `deploymentModeEligibility`: `packageName`, `nugetId`, `supportedModes` per claim, `requiredProjectProperties` per claim, `minimumAnalyzerPackVersion`, and `knownHazards: []` (reflection, native interop, dynamic dispatch, third-party transitive risk)
-- `representativePublishTargets: []`: the small set of packages the harness actually publishes during validation so the claim is anchored in real binary output
 - `expectedPublishOutputShape`: shape constraints (single-file binary signature, allowed warning categories, allowed size bounds)
 
 Planned harness phases:
