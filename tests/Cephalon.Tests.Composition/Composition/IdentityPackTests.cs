@@ -402,6 +402,74 @@ public sealed class IdentityPackTests
         Assert.Equal("1", allowedDecision.Metadata["ruleCount"]);
     }
 
+    [Fact]
+    public async Task AddIdentityAccessDeniesPoliciesWithoutMetadataDrivenRules()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["IdentityAccess"],
+                identity: new IdentitySettings(
+                    enabled: true,
+                    authorizationModes: ["Policy", "RBAC", "ABAC"])));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new IdentityAuthorizationEvaluatorEdgeCaseModule());
+            engine.AddIdentityAccess();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var evaluator = provider.GetRequiredService<IAuthorizationEvaluator>();
+
+        var decision = await evaluator.EvaluateAsync(
+            new AuthorizationSubject(subjectId: "user-no-rules", roles: ["tenant-admin"], tenantIds: ["tenant-001"]),
+            new AuthorizationResource(resourceType: "document", resourceId: "doc-no-rules", tenantId: "tenant-001"),
+            new AuthorizationContext(action: "read", policyId: "no-metadata-rules", tenantId: "tenant-001"));
+
+        Assert.False(decision.IsAllowed);
+        Assert.Equal("no-metadata-rules", decision.PolicyId);
+        Assert.Equal("0", decision.Metadata["ruleCount"]);
+        Assert.Contains("does not declare any metadata-driven rules", decision.Reason!, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task AddIdentityAccessDeniesPoliciesWithEmptyRequiredAttributeValues()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                technologies: ["IdentityAccess"],
+                identity: new IdentitySettings(
+                    enabled: true,
+                    authorizationModes: ["Policy", "ABAC"])));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new IdentityAuthorizationEvaluatorEdgeCaseModule());
+            engine.AddIdentityAccess();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var evaluator = provider.GetRequiredService<IAuthorizationEvaluator>();
+
+        var decision = await evaluator.EvaluateAsync(
+            new AuthorizationSubject(
+                subjectId: "user-empty-attribute",
+                tenantIds: ["tenant-001"],
+                attributes: new Dictionary<string, string>
+                {
+                    ["region"] = "apac"
+                }),
+            new AuthorizationResource(resourceType: "document", resourceId: "doc-empty-attribute", tenantId: "tenant-001"),
+            new AuthorizationContext(action: "read", policyId: "empty-subject-attribute-value", tenantId: "tenant-001"));
+
+        Assert.False(decision.IsAllowed);
+        Assert.Equal("empty-subject-attribute-value", decision.PolicyId);
+        Assert.Equal("1", decision.Metadata["ruleCount"]);
+        Assert.Contains("empty required value", decision.Reason!, StringComparison.OrdinalIgnoreCase);
+    }
+
     private sealed class IdentityAuthorizationEvaluatorEdgeCaseModule : ModuleBase, IAuthorizationPolicyContributor
     {
         private static readonly ModuleDescriptor DescriptorInstance = new(
@@ -440,6 +508,25 @@ public sealed class IdentityPackTests
                 metadata: new Dictionary<string, string>
                 {
                     [IdentityPolicyMetadataKeys.RequiredRoles] = "  ,   "
+                }));
+
+            policies.Add(new AuthorizationPolicyDescriptor(
+                id: "no-metadata-rules",
+                displayName: "No Metadata Rules",
+                description: "Intentionally omits metadata rules to verify fail-closed behavior.",
+                modes: [AuthorizationMode.Policy],
+                tags: ["misconfigured", "rules"],
+                metadata: new Dictionary<string, string>()));
+
+            policies.Add(new AuthorizationPolicyDescriptor(
+                id: "empty-subject-attribute-value",
+                displayName: "Empty Subject Attribute Value",
+                description: "Declares a subject attribute rule with an empty required value.",
+                modes: [AuthorizationMode.Abac, AuthorizationMode.Policy],
+                tags: ["misconfigured", "attributes"],
+                metadata: new Dictionary<string, string>
+                {
+                    [$"{IdentityPolicyMetadataKeys.SubjectAttributePrefix}region"] = "   "
                 }));
         }
     }
