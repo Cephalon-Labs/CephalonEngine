@@ -54,12 +54,13 @@ public sealed class CapabilityPolicyEvaluator
 
     /// <summary>
     /// Creates a trust snapshot from the supplied policy, packages, modules, and capabilities.
+    /// Populates operator-facing metadata for freshness, performance visibility, and drift detection.
     /// </summary>
     /// <param name="policy">The trust policy to apply.</param>
     /// <param name="packages">The package manifests visible to the runtime.</param>
     /// <param name="modules">The module manifests visible to the runtime.</param>
     /// <param name="capabilities">The capability manifests visible to the runtime.</param>
-    /// <returns>A computed trust snapshot.</returns>
+    /// <returns>A computed trust snapshot with evaluation timestamps and performance metrics.</returns>
     public static TrustSnapshot CreateSnapshot(
         TrustPolicy policy,
         IReadOnlyList<PackageManifest> packages,
@@ -70,6 +71,9 @@ public sealed class CapabilityPolicyEvaluator
         ArgumentNullException.ThrowIfNull(packages);
         ArgumentNullException.ThrowIfNull(modules);
         ArgumentNullException.ThrowIfNull(capabilities);
+
+        var evaluatedAtUtc = DateTimeOffset.UtcNow;
+        var evaluationStopwatch = System.Diagnostics.Stopwatch.StartNew();
 
         var moduleLookup = modules.ToDictionary(static module => module.Id, StringComparer.OrdinalIgnoreCase);
         var packageLookup = packages.ToDictionary(static package => package.Id, StringComparer.OrdinalIgnoreCase);
@@ -87,7 +91,8 @@ public sealed class CapabilityPolicyEvaluator
                         Access: access,
                         SourceTrusted: false,
                         IsAllowed: false,
-                        Reason: "Capability source module is not registered in the runtime manifest.");
+                        Reason: "Capability source module is not registered in the runtime manifest.",
+                        EvaluatedAtUtc: evaluatedAtUtc);
                 }
 
                 var sourceTrusted = module.IsTrusted;
@@ -112,7 +117,8 @@ public sealed class CapabilityPolicyEvaluator
                     Access: access,
                     SourceTrusted: sourceTrusted,
                     IsAllowed: isAllowed,
-                    Reason: reason);
+                    Reason: reason,
+                    EvaluatedAtUtc: evaluatedAtUtc);
             })
             .OrderBy(static decision => decision.CapabilityKey, StringComparer.OrdinalIgnoreCase)
             .ToArray();
@@ -139,11 +145,14 @@ public sealed class CapabilityPolicyEvaluator
                 IsSignatureVerified: package.IsSignatureVerified,
                 SignatureVerificationReason: package.SignatureVerificationReason,
                 IsTrusted: package.IsTrusted,
-                Reason: package.TrustReason))
+                Reason: package.TrustReason,
+                VerifiedAtUtc: evaluatedAtUtc,
+                VerificationDurationMilliseconds: (int)evaluationStopwatch.ElapsedMilliseconds))
             .OrderBy(static decision => decision.PackageId, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
-        return new TrustSnapshot(policy, packageDecisions, capabilityDecisions);
+        evaluationStopwatch.Stop();
+        return new TrustSnapshot(policy, packageDecisions, capabilityDecisions, evaluatedAtUtc);
     }
 
     private CapabilityPolicyDecision CreateFallbackDecision(string capabilityKey)

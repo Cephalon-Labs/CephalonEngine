@@ -12,6 +12,7 @@ namespace Cephalon.Engine.Trust;
 /// <param name="SourceTrusted">Whether the contributing source is trusted.</param>
 /// <param name="IsAllowed">Whether the capability is allowed under the resolved policy.</param>
 /// <param name="Reason">The human-readable reason for the decision.</param>
+/// <param name="EvaluatedAtUtc">The UTC timestamp when this capability decision was evaluated, enabling operator freshness tracking and policy re-evaluation scheduling.</param>
 public sealed record CapabilityPolicyDecision(
     string CapabilityKey,
     string SourceModuleId,
@@ -19,4 +20,5 @@ public sealed record CapabilityPolicyDecision(
     CapabilityAccess Access,
     bool SourceTrusted,
     bool IsAllowed,
-    string Reason);
+    string Reason,
+    DateTimeOffset EvaluatedAtUtc = default);

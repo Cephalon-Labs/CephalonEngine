@@ -17,6 +17,8 @@ namespace Cephalon.Engine.Trust;
 /// <param name="SignatureVerificationReason">The aggregate signature verification outcome summary.</param>
 /// <param name="IsTrusted">Whether the package is trusted by the active runtime trust policy.</param>
 /// <param name="Reason">The reason the package was trusted or rejected.</param>
+/// <param name="VerifiedAtUtc">The UTC timestamp when this trust decision was made, enabling operator freshness tracking and re-verification scheduling.</param>
+/// <param name="VerificationDurationMilliseconds">The time in milliseconds spent verifying this package's signatures and trust status, enabling operator performance analysis and optimization.</param>
 public sealed record PackageTrustDecision(
     string PackageId,
     string AssemblyName,
@@ -29,4 +31,6 @@ public sealed record PackageTrustDecision(
     bool IsSignatureVerified,
     string SignatureVerificationReason,
     bool IsTrusted,
-    string Reason);
+    string Reason,
+    DateTimeOffset VerifiedAtUtc = default,
+    int VerificationDurationMilliseconds = 0);
