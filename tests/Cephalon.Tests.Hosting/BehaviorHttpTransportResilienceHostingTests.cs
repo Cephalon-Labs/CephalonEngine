@@ -248,6 +248,17 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
     }
 
     [Fact]
+    public async Task BehaviorHttpGraphQlWsReturnsBadRequestWhenRequestIsNotWebSocketUpgrade()
+    {
+        await using var app = await BuildRateLimitedBehaviorHttpAppAsync("http.graphql-ws");
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync("/graphql-ws/v1/tests/rate-limited");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
     public async Task BehaviorHttpSseReturnsProtocolRateLimitingEnvelopeWhenHostLimiterOverrideDisablesEndpointPolicy()
     {
         await using var app = await BuildRateLimitedBehaviorHttpAppAsync("http.sse");
