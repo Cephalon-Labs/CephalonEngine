@@ -81,7 +81,7 @@ The roadmap originally listed seven recommended slices (four high-priority, thre
 
 | # | Slice | Lands in | Status | Resolution anchor |
 | --- | --- | --- | --- | --- |
-| 1 | gRPC streaming and error-mode coverage for `Cephalon.AspNetCore.Grpc` | `Cephalon.Tests.Hosting` | closed | `tests/Cephalon.Tests.Hosting/AspNetCoreHostingTests.cs` (`MapCephalonExposesRuntimeAndModuleRoutes` streaming paths and `MapCephalonGrpcReturnsUnimplementedForUnknownMethod` error-mode path) |
+| 1 | gRPC streaming and error-mode coverage for `Cephalon.AspNetCore.Grpc` | `Cephalon.Tests.Hosting` | closed | `tests/Cephalon.Tests.Hosting/AspNetCoreHostingTests.cs` (`MapCephalonExposesRuntimeAndModuleRoutes` streaming paths plus `MapCephalonGrpcReturnsUnimplementedForUnknownService` and `MapCephalonGrpcReturnsUnimplementedForUnknownMethod` error-mode paths) |
 | 2 (was #2) | JSON-RPC error-response coverage for `Cephalon.AspNetCore.JsonRpc` | `Cephalon.Tests.Hosting` | closed | `ENG-405` — `tests/Cephalon.Tests.Hosting/JsonRpcErrorResponseHostingTests.cs` |
 | 3 (was #3) | Direct unit coverage of `MetadataDrivenAuthorizationEvaluator` decision matrix | `Cephalon.Tests.Composition` | closed | `ENG-403` — `tests/Cephalon.Tests.Composition/Composition/MetadataDrivenAuthorizationDecisionMatrixTests.cs` plus `tests/Cephalon.Tests.Support/IdentityDecisionMatrixTestModule.cs` |
 | 4 (was #4) | `IAuditActorAccessor` ambient-context fallback coverage | `Cephalon.Tests.Composition` | closed | `ENG-404` — `tests/Cephalon.Tests.Composition/Composition/AuditActorAndRecorderFallbackTests.cs` |

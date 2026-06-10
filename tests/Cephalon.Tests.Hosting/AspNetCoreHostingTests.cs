@@ -2117,6 +2117,67 @@ public sealed class AspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonGrpcReturnsUnimplementedForUnknownService()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "Grpc";
+        builder.AddGrpcTransport();
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var grpcHandler = new GrpcSubdirectoryHandler(app.GetTestServer().CreateHandler(), "/grpc");
+        using var grpcHttpClient = new HttpClient(grpcHandler)
+        {
+            BaseAddress = new Uri("http://localhost")
+        };
+        grpcHttpClient.DefaultRequestVersion = HttpVersion.Version20;
+        grpcHttpClient.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+
+        using var grpcChannel = GrpcChannel.ForAddress("http://localhost", new GrpcChannelOptions
+        {
+            HttpClient = grpcHttpClient
+        });
+
+        var unknownServiceMethod = new Method<HelloRequest, HelloReply>(
+            MethodType.Unary,
+            "cephalon.transports.grpc.discovery.MissingService",
+            "SayHello",
+            Marshallers.Create(
+                request => request.ToByteArray(),
+                payload => HelloRequest.Parser.ParseFrom(payload)),
+            Marshallers.Create(
+                response => response.ToByteArray(),
+                payload => HelloReply.Parser.ParseFrom(payload)));
+
+        var callInvoker = grpcChannel.CreateCallInvoker();
+        var exception = await Assert.ThrowsAsync<RpcException>(async () =>
+        {
+            var call = callInvoker.AsyncUnaryCall(
+                unknownServiceMethod,
+                host: null,
+                options: new CallOptions(),
+                request: new HelloRequest
+                {
+                    Name = "Codex"
+                });
+
+            await call.ResponseAsync;
+        });
+
+        Assert.Equal(StatusCode.Unimplemented, exception.StatusCode);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesGlobalOpenApiInfoVersionOverrideToSingleDocumentHosts()
     {
         var contentRootPath = Path.Combine(
