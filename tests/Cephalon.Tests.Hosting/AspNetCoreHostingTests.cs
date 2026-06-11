@@ -100,6 +100,7 @@ public sealed class AspNetCoreHostingTests
             var client = app.GetTestClient();
 
             var surface = await client.GetFromJsonAsync<ReferenceDocsSurface>("/engine/reference-docs");
+            var runtimeSurface = await client.GetFromJsonAsync<ReferenceDocsRuntimeSurface>("/engine/reference-docs/runtime");
             var browseResponse = await client.GetAsync("/reference/browse.html");
             var browsePayload = await browseResponse.Content.ReadAsStringAsync();
             var memberIndexResponse = await client.GetAsync("/reference/members.md");
@@ -113,6 +114,13 @@ public sealed class AspNetCoreHostingTests
             Assert.Equal("browse.html", surface.DefaultDocument);
             Assert.Equal("/reference/browse.html", surface.BrowserPath);
             Assert.Equal("/reference/members.md", surface.MemberIndexPath);
+
+            Assert.NotNull(runtimeSurface);
+            Assert.NotNull(runtimeSurface.Surface);
+            Assert.NotEqual(default, runtimeSurface.EvaluatedAtUtc);
+            Assert.True(runtimeSurface.EvaluationDurationMilliseconds >= 0);
+            Assert.Equal(surface.RoutePrefix, runtimeSurface.Surface.RoutePrefix);
+            Assert.Equal(surface.DefaultDocumentPath, runtimeSurface.Surface.DefaultDocumentPath);
 
             Assert.True(browseResponse.IsSuccessStatusCode);
             Assert.Equal("text/html", browseResponse.Content.Headers.ContentType?.MediaType);

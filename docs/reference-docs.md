@@ -63,6 +63,7 @@ Generated app roots now also emit `Configurations/AddReferenceDocs.json` with th
 When this is enabled, `MapCephalon()` exposes:
 
 - `/engine/reference-docs` for host-level introspection
+- `/engine/reference-docs/runtime` for host-level introspection with payload freshness and evaluation-duration metadata
 - `/reference/browse.html` for the browser UI
 - `/reference/README.md`, `/reference/namespaces.md`, `/reference/types.md`, and `/reference/members.md`
 - `/reference/reference-manifest.json` for tooling
@@ -77,7 +78,7 @@ dotnet run --project src/Cephalon.Cli -- docs enable-hosting `
 
 If the host already contains a `ReferenceDocs` section, the command preserves its current route prefix, directory path, and default document unless you explicitly override them with `--route-prefix`, `--directory`, or `--default-document`.
 The chained `docs publish --enable-hosting` flow follows the same override rules, but writes `DirectoryPath` relative to the publish output directory so custom docs destinations stay aligned with the host config.
-`docs validate-hosting` checks that the `ReferenceDocs` section exists, is enabled, resolves to a real directory, and contains the configured default document. When you pass `--host-url`, it also prints the expected browser, manifest, and `/engine/reference-docs` URLs for that host.
+`docs validate-hosting` checks that the `ReferenceDocs` section exists, is enabled, resolves to a real directory, and contains the configured default document. When you pass `--host-url`, it also prints the expected browser, manifest, `/engine/reference-docs`, and `/engine/reference-docs/runtime` URLs for that host.
 
 ## Publish flow
 

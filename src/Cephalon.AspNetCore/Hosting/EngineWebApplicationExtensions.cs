@@ -2785,6 +2785,18 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonLocalization");
         engineGroup.MapGet("/reference-docs", () => TypedResults.Ok(referenceDocsSurface))
             .WithName("GetCephalonReferenceDocs");
+        engineGroup.MapGet("/reference-docs/runtime", () =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var surface = referenceDocsSurface;
+                stopwatch.Stop();
+
+                return TypedResults.Ok(new ReferenceDocsRuntimeSurface(
+                    surface,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            })
+            .WithName("GetCephalonReferenceDocsRuntime");
         engineGroup.MapGet("/options", ([FromServices] EngineOptions options) => TypedResults.Ok(options))
             .WithName("GetCephalonOptions");
         engineGroup.MapGet("/package-policy", ([FromServices] PackagePolicy packagePolicy) => TypedResults.Ok(packagePolicy))
