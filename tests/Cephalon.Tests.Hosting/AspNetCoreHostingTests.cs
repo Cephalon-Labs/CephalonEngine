@@ -25,6 +25,7 @@ using Cephalon.Abstractions.Transports;
 using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;
 using Cephalon.Audit.Registration;
+using Cephalon.AspNetCore.Audit;
 using Cephalon.AspNetCore.Authorization;
 using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Hosting;
@@ -2709,6 +2710,7 @@ public sealed class AspNetCoreHostingTests
         var outboxes = await client.GetFromJsonAsync<OutboxDescriptor[]>("/engine/outboxes");
         var outbox = await client.GetFromJsonAsync<OutboxDescriptor>("/engine/outboxes/tenant-event-outbox");
         var auditStores = await client.GetFromJsonAsync<AuditStoreDescriptor[]>("/engine/audit-stores");
+        var auditRuntime = await client.GetFromJsonAsync<AuditStoreRuntimeSurface>("/engine/audit-stores/runtime");
         var auditStore = await client.GetFromJsonAsync<AuditStoreDescriptor>("/engine/audit-stores/tenant-audit-store");
         var policies = await client.GetFromJsonAsync<AuthorizationPolicyDescriptor[]>("/engine/authorization-policies");
         var policyRuntime = await client.GetFromJsonAsync<AuthorizationPolicyRuntimeSurface>("/engine/authorization-policies/runtime");
@@ -2754,6 +2756,10 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(auditStores);
         Assert.Single(auditStores);
+        Assert.NotNull(auditRuntime);
+        Assert.NotEqual(default, auditRuntime.EvaluatedAtUtc);
+        Assert.True(auditRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(auditStores.Length, auditRuntime.AuditStores.Count);
         Assert.NotNull(auditStore);
         Assert.Equal("phase8-runtime-catalogs", auditStore.SourceModuleId);
         Assert.Equal("memory", auditStore.Provider);
@@ -6383,6 +6389,8 @@ note: visible
         }
     }
 }
+
+
 
 
 

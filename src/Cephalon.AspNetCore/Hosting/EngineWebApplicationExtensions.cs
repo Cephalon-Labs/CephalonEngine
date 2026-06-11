@@ -1,5 +1,6 @@
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Diagnostics;
+using Cephalon.AspNetCore.Audit;
 using Cephalon.AspNetCore.Authorization;
 using Cephalon.AspNetCore.Health;
 using Cephalon.Abstractions.AppModel;
@@ -2239,6 +2240,18 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonInbox");
         engineGroup.MapGet("/audit-stores", ([FromServices] IAuditStoreCatalog catalog) => TypedResults.Ok(catalog.AuditStores))
             .WithName("GetCephalonAuditStores");
+        engineGroup.MapGet("/audit-stores/runtime", ([FromServices] IAuditStoreCatalog catalog) =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var stores = catalog.AuditStores;
+                stopwatch.Stop();
+
+                return TypedResults.Ok(new AuditStoreRuntimeSurface(
+                    stores,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            })
+            .WithName("GetCephalonAuditStoreRuntime");
         engineGroup.MapGet("/audit-stores/{auditStoreId}", (string auditStoreId, [FromServices] IAuditStoreCatalog catalog) =>
             {
                 var auditStore = catalog.GetById(auditStoreId);
@@ -3730,6 +3743,8 @@ public static class EngineWebApplicationExtensions
         return reader.ReadToEnd();
     }
 }
+
+
 
 
 
