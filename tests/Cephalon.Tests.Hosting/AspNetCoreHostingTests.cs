@@ -1154,7 +1154,9 @@ public sealed class AspNetCoreHostingTests
         Assert.NotNull(packages);
         Assert.Empty(packages);
         Assert.NotNull(trustPolicy);
+        Assert.NotEqual(default, trustPolicy.EvaluatedAtUtc);
         Assert.Empty(trustPolicy.Packages);
+        Assert.All(trustPolicy.Capabilities, decision => Assert.NotEqual(default, decision.EvaluatedAtUtc));
 
         Assert.NotNull(capabilities);
         Assert.DoesNotContain(capabilities, capability => capability.Key == "platform.clock");
@@ -5829,12 +5831,19 @@ note: visible
 
             Assert.NotNull(trustSnapshot);
             Assert.True(trustSnapshot.Policy.RequireTrustedPackages);
+            Assert.NotEqual(default, trustSnapshot.EvaluatedAtUtc);
             Assert.Contains(trustSnapshot.Policy.TrustedPublishers, publisher => string.Equals(publisher, "cephalon-labs", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(trustSnapshot.Packages, decision =>
                 decision.PackageId == "reference-operations" &&
                 decision.IsTrusted &&
                 decision.PublisherId == "cephalon-labs" &&
                 decision.Reason == "Package publisher is explicitly trusted by the current trust policy.");
+            Assert.All(trustSnapshot.Packages, decision =>
+            {
+                Assert.NotEqual(default, decision.VerifiedAtUtc);
+                Assert.True(decision.VerificationDurationMilliseconds >= 0);
+            });
+            Assert.All(trustSnapshot.Capabilities, decision => Assert.NotEqual(default, decision.EvaluatedAtUtc));
 
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.Manifest.Packages, staged =>
@@ -5888,10 +5897,12 @@ note: visible
         Assert.NotNull(capabilities);
         Assert.DoesNotContain(capabilities, capability => capability.Key == "restricted.secret");
         Assert.NotNull(trust);
+        Assert.NotEqual(default, trust.EvaluatedAtUtc);
         Assert.Contains(trust.Capabilities, decision =>
             decision.CapabilityKey == "restricted.secret" &&
             decision.Access == CapabilityAccess.Denied &&
             !decision.IsAllowed);
+        Assert.All(trust.Capabilities, decision => Assert.NotEqual(default, decision.EvaluatedAtUtc));
     }
 
     [Fact]
@@ -6366,3 +6377,4 @@ note: visible
         }
     }
 }
+
