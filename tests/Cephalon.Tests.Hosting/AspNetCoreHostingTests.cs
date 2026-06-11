@@ -30,6 +30,7 @@ using Cephalon.AspNetCore.Authorization;
 using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Documentation;
+using Cephalon.AspNetCore.Localization;
 using Cephalon.AspNetCore.Transports;
 using Cephalon.AspNetCore.GraphQL.Hosting;
 using Cephalon.AspNetCore.Grpc.Contracts.Discovery;
@@ -3593,6 +3594,7 @@ note: visible
         var client = app.GetTestClient();
 
         var thaiSnapshot = await client.GetFromJsonAsync<LocalizedResourcesSnapshot>("/engine/localization?culture=th");
+        var thaiRuntime = await client.GetFromJsonAsync<LocalizedResourcesRuntimeSurface>("/engine/localization/runtime?culture=th");
         var japaneseSnapshot = await client.GetFromJsonAsync<LocalizedResourcesSnapshot>("/engine/localization?culture=ja");
         var thaiOpenApiPayload = await client.GetStringAsync("/openapi/v1.json?culture=th&ui-culture=th");
         var japaneseOpenApiPayload = await client.GetStringAsync("/openapi/v1.json?culture=ja&ui-culture=ja");
@@ -3603,6 +3605,12 @@ note: visible
         Assert.Equal("th", thaiSnapshot.ResolvedCulture);
         Assert.Equal("เอกสาร REST ของ Cephalon", thaiSnapshot.Resources["engine.docs.rest.title"]);
         Assert.Contains("ja", thaiSnapshot.SupportedCultures);
+        Assert.NotNull(thaiRuntime);
+        Assert.NotNull(thaiRuntime.Snapshot);
+        Assert.Equal("th", thaiRuntime.RequestedCulture);
+        Assert.NotEqual(default, thaiRuntime.EvaluatedAtUtc);
+        Assert.True(thaiRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(thaiSnapshot.ResolvedCulture, thaiRuntime.Snapshot.ResolvedCulture);
 
         Assert.NotNull(japaneseSnapshot);
         Assert.Equal("ja", japaneseSnapshot.ResolvedCulture);
@@ -6403,6 +6411,7 @@ note: visible
         }
     }
 }
+
 
 
 

@@ -235,6 +235,7 @@ No open inconsistencies remain at this snapshot. The list below records the alig
 - **Audit store runtime metadata uplift (June 2026):** added `/engine/audit-stores/runtime` to project audit-store catalog freshness and evaluation timing (`evaluatedAtUtc`, `evaluationDurationMilliseconds`) without changing the existing descriptor route contract.
 - **Reference docs runtime metadata uplift (June 2026):** added `/engine/reference-docs/runtime` to project hosted-reference-doc surface freshness and evaluation timing (`evaluatedAtUtc`, `evaluationDurationMilliseconds`) without changing the existing descriptor route contract.
 - **Transport runtime metadata uplift (June 2026):** added `/engine/transports/runtime` to project active transport selection freshness and evaluation timing (`evaluatedAtUtc`, `evaluationDurationMilliseconds`) without changing the existing `/engine/transports` contract.
+- **Localization runtime metadata uplift (June 2026):** added `/engine/localization/runtime` to project localization snapshot freshness and evaluation timing (`evaluatedAtUtc`, `evaluationDurationMilliseconds`) without changing the existing `/engine/localization` contract.
 - **`Cephalon.Behaviors.Http` REST publication ownership** (resolved May 2026): the matrix row now records the explicit `application-managed` profile/publication activation plus `cephalon-managed` materialization/runtime-catalog split, mirroring the maturity audit row. The shared component doc remains the per-package detail source.
 - **Event-sourcing family audit coverage** (resolved May 2026): the maturity audit now records the catalog-only stance for the event-sourcing family and confirms no provider pack has shipped managed-execution proof yet. See the audit's "Event sourcing" group entry.
 - **Observability provider audit closure** (resolved May 2026): the maturity audit now records the cloud-platform configuration-pack baseline plus the dependency-health pack family stance. Each cloud pack stays M1 cephalon-managed configuration binding; deeper telemetry collection remains in the host runtime's OpenTelemetry stack.
@@ -255,6 +256,7 @@ This document is the consolidated read across maturity audit + component catalog
 - review the matrix at the end of each architecture-review cycle to confirm it still matches reality
 
 This page does not assign new policies or new requirements. It only consolidates what other docs already declare.
+
 
 
 

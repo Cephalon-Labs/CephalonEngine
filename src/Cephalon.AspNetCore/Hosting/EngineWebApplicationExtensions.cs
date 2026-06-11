@@ -3,6 +3,7 @@ using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Audit;
 using Cephalon.AspNetCore.Authorization;
 using Cephalon.AspNetCore.Health;
+using Cephalon.AspNetCore.Localization;
 using Cephalon.AspNetCore.Transports;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
@@ -2796,6 +2797,19 @@ public static class EngineWebApplicationExtensions
         engineGroup.MapGet("/localization", (string? culture, [FromServices] ILocalizedTextCatalog catalog) =>
                 TypedResults.Ok(catalog.CreateSnapshot(culture)))
             .WithName("GetCephalonLocalization");
+        engineGroup.MapGet("/localization/runtime", (string? culture, [FromServices] ILocalizedTextCatalog catalog) =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var snapshot = catalog.CreateSnapshot(culture);
+                stopwatch.Stop();
+
+                return TypedResults.Ok(new LocalizedResourcesRuntimeSurface(
+                    snapshot,
+                    culture,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            })
+            .WithName("GetCephalonLocalizationRuntime");
         engineGroup.MapGet("/reference-docs", () => TypedResults.Ok(referenceDocsSurface))
             .WithName("GetCephalonReferenceDocs");
         engineGroup.MapGet("/reference-docs/runtime", () =>
@@ -3768,6 +3782,7 @@ public static class EngineWebApplicationExtensions
         return reader.ReadToEnd();
     }
 }
+
 
 
 

@@ -66,7 +66,7 @@ Intentional `taxonomy-only` and `application-managed` surfaces are valid. They j
 
 | Surface | Primary role | Ownership mode | Current maturity | Next proof needed |
 | --- | --- | --- | --- | --- |
-| `Cephalon.Engine` app model, manifest, runtime introspection, policy composition | Core runtime contract and composition, including transport introspection through `/engine/transports` and `/engine/transports/runtime` | `cephalon-managed` | `M4` | Keep compatibility, docs, and generated surfaces aligned as new packs land |
+| `Cephalon.Engine` app model, manifest, runtime introspection, policy composition | Core runtime contract and composition, including transport introspection through `/engine/transports` and `/engine/transports/runtime`, and localization introspection through `/engine/localization` and `/engine/localization/runtime` | `cephalon-managed` | `M4` | Keep compatibility, docs, and generated surfaces aligned as new packs land |
 | `Cephalon.Cli`, `Cephalon.Scaffolding`, `Cephalon.TemplatePack`, `Cephalon.ReferenceDocs` | Adoption and packaging surface | `cephalon-managed` | `M4` | Maintain package/version/template/reference-doc alignment |
 | `Cephalon.Behaviors` core runtime and durable execution | Behavior execution substrate | `cephalon-managed` | `M4` | Continue adoption polish and guardrail coverage rather than adding parallel execution stories |
 | `Cephalon.Behaviors.Http` module-owned behavior REST projection | REST profile metadata plus explicit module-owned public REST activation, Cephalon-managed materialization, governance, and runtime catalogs | mixed: `application-managed` profile/publication activation plus `cephalon-managed` materialization/runtime catalog truth | `M2` | Keep profile metadata explicitly non-publishing and continue adoption/operator automation proof without inventing ambient REST publication |
@@ -455,4 +455,5 @@ When a new runtime or package surface lands, the same slice should update:
 The goal is not to force every surface to become `M4`.
 
 The goal is to make each surface honest, intentional, and easy to adopt.
+
 
