@@ -1,5 +1,6 @@
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Diagnostics;
+using Cephalon.AspNetCore.Authorization;
 using Cephalon.AspNetCore.Health;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
@@ -2403,6 +2404,18 @@ public static class EngineWebApplicationExtensions
         }
         engineGroup.MapGet("/authorization-policies", ([FromServices] IAuthorizationPolicyCatalog catalog) => TypedResults.Ok(catalog.Policies))
             .WithName("GetCephalonAuthorizationPolicies");
+        engineGroup.MapGet("/authorization-policies/runtime", ([FromServices] IAuthorizationPolicyCatalog catalog) =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var policies = catalog.Policies;
+                stopwatch.Stop();
+
+                return TypedResults.Ok(new AuthorizationPolicyRuntimeSurface(
+                    policies,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            })
+            .WithName("GetCephalonAuthorizationPolicyRuntime");
         engineGroup.MapGet("/authorization-policies/{policyId}", (string policyId, [FromServices] IAuthorizationPolicyCatalog catalog) =>
             {
                 var policy = catalog.GetById(policyId);
@@ -3717,4 +3730,7 @@ public static class EngineWebApplicationExtensions
         return reader.ReadToEnd();
     }
 }
+
+
+
 

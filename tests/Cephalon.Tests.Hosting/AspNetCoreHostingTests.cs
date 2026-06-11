@@ -25,6 +25,7 @@ using Cephalon.Abstractions.Transports;
 using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;
 using Cephalon.Audit.Registration;
+using Cephalon.AspNetCore.Authorization;
 using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Documentation;
@@ -2710,6 +2711,7 @@ public sealed class AspNetCoreHostingTests
         var auditStores = await client.GetFromJsonAsync<AuditStoreDescriptor[]>("/engine/audit-stores");
         var auditStore = await client.GetFromJsonAsync<AuditStoreDescriptor>("/engine/audit-stores/tenant-audit-store");
         var policies = await client.GetFromJsonAsync<AuthorizationPolicyDescriptor[]>("/engine/authorization-policies");
+        var policyRuntime = await client.GetFromJsonAsync<AuthorizationPolicyRuntimeSurface>("/engine/authorization-policies/runtime");
         var policy = await client.GetFromJsonAsync<AuthorizationPolicyDescriptor>("/engine/authorization-policies/tenant-admin");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
@@ -2759,6 +2761,10 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(policies);
         Assert.Equal(2, policies.Length);
+        Assert.NotNull(policyRuntime);
+        Assert.NotEqual(default, policyRuntime.EvaluatedAtUtc);
+        Assert.True(policyRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(policies.Length, policyRuntime.Policies.Count);
         Assert.NotNull(policy);
         Assert.Contains(AuthorizationMode.Rbac, policy.Modes);
         Assert.Equal("phase8-runtime-catalogs", policy.Metadata["sourceModuleId"]);
@@ -6377,4 +6383,7 @@ note: visible
         }
     }
 }
+
+
+
 
