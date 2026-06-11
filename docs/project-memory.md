@@ -6,6 +6,10 @@ This page is a repo-oriented orientation snapshot. It is meant to help contribut
 
 Cross-references: `README.md`, `docs/README.md`, `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`, `docs/compatibility.md`, `docs/long-range-direction.md`, `docs/engineering-standards.md`, `docs/dotnet11-readiness.md`, `docs/runtime-contract-index.md`, `docs/conformance-matrix.md`, `docs/architecture-review-2026-04.md`, `docs/architecture-review-2026-05.md`, `docs/planning-governance.md`, `docs/deployment-mode-support.md`
 
+## Update notes (June 2026)
+
+- Operator metadata waves now include runtime freshness/timing surfaces for `/engine/authorization-policies/runtime`, `/engine/audit-stores/runtime`, `/engine/reference-docs/runtime`, `/engine/transports/runtime`, `/engine/localization/runtime`, `/engine/rate-limiting/runtime`, and `/engine/data-products/runtime`.
+
 ## Identity
 
 Cephalon is not being positioned as a single application shell.

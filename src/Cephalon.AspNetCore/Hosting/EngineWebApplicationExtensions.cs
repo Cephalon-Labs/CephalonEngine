@@ -444,6 +444,18 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonExecutionGraph");
         engineGroup.MapGet("/data-products", ([FromServices] IDataProductCatalog catalog) => TypedResults.Ok(catalog.DataProducts))
             .WithName("GetCephalonDataProducts");
+        engineGroup.MapGet("/data-products/runtime", ([FromServices] IDataProductCatalog catalog) =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var dataProducts = catalog.DataProducts;
+                stopwatch.Stop();
+
+                return TypedResults.Ok(new DataProductRuntimeSurface(
+                    dataProducts,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            })
+            .WithName("GetCephalonDataProductsRuntime");
         engineGroup.MapGet("/data-products/{dataProductId}", (string dataProductId, [FromServices] IDataProductCatalog catalog) =>
             {
                 var dataProduct = catalog.GetById(dataProductId);

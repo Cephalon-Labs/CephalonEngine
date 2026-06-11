@@ -2735,6 +2735,7 @@ public sealed class AspNetCoreHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
         var dataProducts = await client.GetFromJsonAsync<DataProductDescriptor[]>("/engine/data-products");
+        var dataProductRuntime = await client.GetFromJsonAsync<DataProductRuntimeSurface>("/engine/data-products/runtime");
         var dataProduct = await client.GetFromJsonAsync<DataProductDescriptor>("/engine/data-products/tenant-profile");
         var cdcCaptures = await client.GetFromJsonAsync<CdcCaptureDescriptor[]>("/engine/cdc-captures");
         var cdcCapture = await client.GetFromJsonAsync<CdcCaptureDescriptor>("/engine/cdc-captures/tenant-profile-cdc");
@@ -2755,6 +2756,10 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(dataProducts);
         Assert.Single(dataProducts);
+        Assert.NotNull(dataProductRuntime);
+        Assert.NotEqual(default, dataProductRuntime.EvaluatedAtUtc);
+        Assert.True(dataProductRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(dataProducts.Length, dataProductRuntime.DataProducts.Count);
         Assert.NotNull(dataProduct);
         Assert.Equal("phase8-runtime-catalogs", dataProduct.SourceModuleId);
         Assert.Equal("tenant-management", dataProduct.DomainId);
