@@ -57,6 +57,14 @@ The route prefix `/engine` is reserved for Cephalon engine introspection. App-ow
 | `GET /execution-graphs` | `Cephalon.AspNetCore` | execution graph definitions | optional |
 | `GET /data-products` | `Cephalon.AspNetCore` | data product descriptors | optional |
 | `GET /data-products/runtime` | `Cephalon.AspNetCore` | data product descriptors with freshness/timing metadata | optional |
+| `GET /outboxes` | `Cephalon.AspNetCore` | outbox descriptors | optional |
+| `GET /outboxes/runtime` | `Cephalon.AspNetCore` | outbox descriptors with freshness/timing metadata | optional |
+| `GET /inboxes` | `Cephalon.AspNetCore` | inbox descriptors | optional |
+| `GET /inboxes/runtime` | `Cephalon.AspNetCore` | inbox descriptors with freshness/timing metadata | optional |
+| `GET /outboxes` | `Cephalon.AspNetCore` | outbox descriptors | optional |
+| `GET /outboxes/runtime` | `Cephalon.AspNetCore` | outbox descriptors with freshness/timing metadata | optional |
+| `GET /inboxes` | `Cephalon.AspNetCore` | inbox descriptors | optional |
+| `GET /inboxes/runtime` | `Cephalon.AspNetCore` | inbox descriptors with freshness/timing metadata | optional |
 | `GET /cdc-captures` | `Cephalon.AspNetCore` | CDC capture definitions | optional |
 | `GET /cdc-captures/runtime*` | `Cephalon.AspNetCore` | live CDC runtime state and per-runtime drilldowns | optional |
 | `GET /cdc-capture-runtimes` | `Cephalon.AspNetCore` | CDC execution-runtime catalog plus filter drilldowns by reporter, edge node, coordination, freshness, and governance | optional |

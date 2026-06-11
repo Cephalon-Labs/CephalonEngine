@@ -2743,8 +2743,10 @@ public sealed class AspNetCoreHostingTests
         var projections = await client.GetFromJsonAsync<ProjectionDescriptor[]>("/engine/projections");
         var projection = await client.GetFromJsonAsync<ProjectionDescriptor>("/engine/projections/tenant-summary");
         var inboxes = await client.GetFromJsonAsync<InboxDescriptor[]>("/engine/inboxes");
+        var inboxRuntime = await client.GetFromJsonAsync<InboxRuntimeSurface>("/engine/inboxes/runtime");
         var inbox = await client.GetFromJsonAsync<InboxDescriptor>("/engine/inboxes/tenant-event-inbox");
         var outboxes = await client.GetFromJsonAsync<OutboxDescriptor[]>("/engine/outboxes");
+        var outboxRuntime = await client.GetFromJsonAsync<OutboxRuntimeSurface>("/engine/outboxes/runtime");
         var outbox = await client.GetFromJsonAsync<OutboxDescriptor>("/engine/outboxes/tenant-event-outbox");
         var auditStores = await client.GetFromJsonAsync<AuditStoreDescriptor[]>("/engine/audit-stores");
         var auditRuntime = await client.GetFromJsonAsync<AuditStoreRuntimeSurface>("/engine/audit-stores/runtime");
@@ -2783,6 +2785,10 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(outboxes);
         Assert.Single(outboxes);
+        Assert.NotNull(outboxRuntime);
+        Assert.NotEqual(default, outboxRuntime.EvaluatedAtUtc);
+        Assert.True(outboxRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(outboxes.Length, outboxRuntime.Outboxes.Count);
         Assert.NotNull(outbox);
         Assert.Equal("phase8-runtime-catalogs", outbox.SourceModuleId);
         Assert.Equal("relational", outbox.Provider);
@@ -2790,6 +2796,10 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(inboxes);
         Assert.Single(inboxes);
+        Assert.NotNull(inboxRuntime);
+        Assert.NotEqual(default, inboxRuntime.EvaluatedAtUtc);
+        Assert.True(inboxRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(inboxes.Length, inboxRuntime.Inboxes.Count);
         Assert.NotNull(inbox);
         Assert.Equal("phase8-runtime-catalogs", inbox.SourceModuleId);
         Assert.Equal("relational", inbox.Provider);
@@ -6437,6 +6447,8 @@ note: visible
         }
     }
 }
+
+
 
 
 

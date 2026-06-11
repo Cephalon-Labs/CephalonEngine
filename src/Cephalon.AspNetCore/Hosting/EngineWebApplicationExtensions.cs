@@ -2000,6 +2000,18 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonProjection");
         engineGroup.MapGet("/outboxes", ([FromServices] IOutboxCatalog catalog) => TypedResults.Ok(catalog.Outboxes))
             .WithName("GetCephalonOutboxes");
+        engineGroup.MapGet("/outboxes/runtime", ([FromServices] IOutboxCatalog catalog) =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var outboxes = catalog.Outboxes;
+                stopwatch.Stop();
+
+                return TypedResults.Ok(new OutboxRuntimeSurface(
+                    outboxes,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            })
+            .WithName("GetCephalonOutboxRuntime");
         engineGroup.MapGet("/outboxes/{outboxId}", (string outboxId, [FromServices] IOutboxCatalog catalog) =>
             {
                 var outbox = catalog.GetById(outboxId);
@@ -2258,6 +2270,18 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonEventSubscriptionExecutionReadinessBySubscription");
         engineGroup.MapGet("/inboxes", ([FromServices] IInboxCatalog catalog) => TypedResults.Ok(catalog.Inboxes))
             .WithName("GetCephalonInboxes");
+        engineGroup.MapGet("/inboxes/runtime", ([FromServices] IInboxCatalog catalog) =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var inboxes = catalog.Inboxes;
+                stopwatch.Stop();
+
+                return TypedResults.Ok(new InboxRuntimeSurface(
+                    inboxes,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            })
+            .WithName("GetCephalonInboxRuntime");
         engineGroup.MapGet("/inboxes/{inboxId}", (string inboxId, [FromServices] IInboxCatalog catalog) =>
             {
                 var inbox = catalog.GetById(inboxId);

@@ -8,7 +8,7 @@ Cross-references: `README.md`, `docs/README.md`, `docs/architecture.md`, `docs/a
 
 ## Update notes (June 2026)
 
-- Operator metadata waves now include runtime freshness/timing surfaces for `/engine/authorization-policies/runtime`, `/engine/audit-stores/runtime`, `/engine/reference-docs/runtime`, `/engine/transports/runtime`, `/engine/localization/runtime`, `/engine/rate-limiting/runtime`, and `/engine/data-products/runtime`.
+- Operator metadata waves now include runtime freshness/timing surfaces for `/engine/authorization-policies/runtime`, `/engine/audit-stores/runtime`, `/engine/reference-docs/runtime`, `/engine/transports/runtime`, `/engine/localization/runtime`, `/engine/rate-limiting/runtime`, `/engine/data-products/runtime`, `/engine/outboxes/runtime`, and `/engine/inboxes/runtime`.
 
 ## Identity
 
