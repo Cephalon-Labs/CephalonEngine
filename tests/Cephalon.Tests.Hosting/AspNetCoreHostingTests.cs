@@ -30,6 +30,7 @@ using Cephalon.AspNetCore.Authorization;
 using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Documentation;
+using Cephalon.AspNetCore.Transports;
 using Cephalon.AspNetCore.GraphQL.Hosting;
 using Cephalon.AspNetCore.Grpc.Contracts.Discovery;
 using Cephalon.AspNetCore.Grpc.Hosting;
@@ -962,6 +963,7 @@ public sealed class AspNetCoreHostingTests
         var technologies = await client.GetFromJsonAsync<TechnologyDescriptor[]>("/engine/technologies");
         var technologyCatalog = await client.GetFromJsonAsync<TechnologyDescriptor[]>("/engine/technology-catalog");
         var transports = await client.GetFromJsonAsync<TransportDescriptor[]>("/engine/transports");
+        var transportRuntime = await client.GetFromJsonAsync<TransportRuntimeSurface>("/engine/transports/runtime");
         var dependencies = await client.GetFromJsonAsync<DependencyHealthReport[]>("/engine/dependencies");
         var trustPolicy = await client.GetFromJsonAsync<TrustSnapshot>("/engine/trust-policy");
         var failurePolicy = await client.GetFromJsonAsync<FailurePolicy>("/engine/failure-policy");
@@ -1186,6 +1188,10 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains(transports, transport => transport.Id == "graphql");
         Assert.Contains(transports, transport => transport.Id == "server-sent-events");
         Assert.Contains(transports, transport => transport.Id == "websocket");
+        Assert.NotNull(transportRuntime);
+        Assert.NotEqual(default, transportRuntime.EvaluatedAtUtc);
+        Assert.True(transportRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(transports.Length, transportRuntime.Transports.Count);
 
         Assert.NotNull(dependencies);
         Assert.Empty(dependencies);

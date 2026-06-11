@@ -3,6 +3,7 @@ using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Audit;
 using Cephalon.AspNetCore.Authorization;
 using Cephalon.AspNetCore.Health;
+using Cephalon.AspNetCore.Transports;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
@@ -2778,6 +2779,18 @@ public static class EngineWebApplicationExtensions
             .WithName("ReindexCephalonKnowledgeIndex");
         engineGroup.MapGet("/transports", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Transports))
             .WithName("GetCephalonTransports");
+        engineGroup.MapGet("/transports/runtime", (RuntimeManifest manifest) =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var transports = manifest.AppProfile.Transports;
+                stopwatch.Stop();
+
+                return TypedResults.Ok(new TransportRuntimeSurface(
+                    transports,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            })
+            .WithName("GetCephalonTransportRuntime");
         engineGroup.MapGet("/dependencies", ([FromServices] RuntimeHealthEvaluator health) => TypedResults.Ok(health.EvaluateDependencies()))
             .WithName("GetCephalonDependencies");
         engineGroup.MapGet("/localization", (string? culture, [FromServices] ILocalizedTextCatalog catalog) =>
