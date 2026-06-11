@@ -31,6 +31,7 @@ using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Localization;
+using Cephalon.AspNetCore.Resilience;
 using Cephalon.AspNetCore.Transports;
 using Cephalon.AspNetCore.GraphQL.Hosting;
 using Cephalon.AspNetCore.Grpc.Contracts.Discovery;
@@ -954,6 +955,7 @@ public sealed class AspNetCoreHostingTests
         var appModel = await client.GetFromJsonAsync<AppProfile>("/engine/app-model");
         var resilience = await client.GetFromJsonAsync<ResilienceSelection>("/engine/resilience");
         var rateLimitingPolicies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+        var rateLimitingRuntime = await client.GetFromJsonAsync<RateLimitingRuntimeSurface>("/engine/rate-limiting/runtime");
         var databases = await client.GetFromJsonAsync<DatabaseTopologySelection>("/engine/databases");
         var databaseRoles = await client.GetFromJsonAsync<DatabaseRoleDescriptor[]>("/engine/database-roles");
         var databaseMigrations = await client.GetFromJsonAsync<DatabaseMigrationDescriptor[]>("/engine/database-migrations");
@@ -1117,6 +1119,10 @@ public sealed class AspNetCoreHostingTests
         Assert.True(rateLimitingPolicy.Effective.Enabled);
         Assert.Equal("SlidingWindow", rateLimitingPolicy.Effective.Algorithm);
         Assert.Equal("subject-or-tenant-or-ip", rateLimitingPolicy.Metadata["partitionStrategy"]);
+        Assert.NotNull(rateLimitingRuntime);
+        Assert.NotEqual(default, rateLimitingRuntime.EvaluatedAtUtc);
+        Assert.True(rateLimitingRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(rateLimitingPolicies.Length, rateLimitingRuntime.Policies.Count);
 
         Assert.NotNull(databases);
         Assert.Equal("PostgreSql", databases.Write.Provider);
@@ -1603,6 +1609,7 @@ public sealed class AspNetCoreHostingTests
         var secondOpenApiResponse = await client.GetAsync("/openapi/v1.json");
         var rejectedPayload = await secondPublicResponse.Content.ReadAsStringAsync();
         var policies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+        var runtime = await client.GetFromJsonAsync<RateLimitingRuntimeSurface>("/engine/rate-limiting/runtime");
 
         Assert.Equal(HttpStatusCode.OK, firstPublicResponse.StatusCode);
         Assert.Equal(HttpStatusCode.TooManyRequests, secondPublicResponse.StatusCode);
@@ -1621,6 +1628,10 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains("/engine", policy.ExcludedPathPrefixes);
         Assert.Contains("/openapi", policy.ExcludedPathPrefixes);
         Assert.Contains("/scalar", policy.ExcludedPathPrefixes);
+        Assert.NotNull(runtime);
+        Assert.NotEqual(default, runtime.EvaluatedAtUtc);
+        Assert.True(runtime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(policies.Length, runtime.Policies.Count);
     }
 
     [Fact]
@@ -1650,6 +1661,7 @@ public sealed class AspNetCoreHostingTests
         var firstPublicResponse = await client.GetAsync("/api/platform/time");
         var secondPublicResponse = await client.GetAsync("/api/platform/time");
         var policies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+        var runtime = await client.GetFromJsonAsync<RateLimitingRuntimeSurface>("/engine/rate-limiting/runtime");
 
         Assert.Equal(HttpStatusCode.OK, firstPublicResponse.StatusCode);
         Assert.Equal(HttpStatusCode.TooManyRequests, secondPublicResponse.StatusCode);
@@ -1657,6 +1669,10 @@ public sealed class AspNetCoreHostingTests
         var policy = Assert.Single(policies);
         Assert.Equal("FixedWindow", policy.Effective.Algorithm);
         Assert.Contains("rest-api", policy.TransportIds);
+        Assert.NotNull(runtime);
+        Assert.NotEqual(default, runtime.EvaluatedAtUtc);
+        Assert.True(runtime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(policies.Length, runtime.Policies.Count);
     }
 
     [Fact]
@@ -1679,12 +1695,17 @@ public sealed class AspNetCoreHostingTests
         var client = app.GetTestClient();
 
         var policies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+        var runtime = await client.GetFromJsonAsync<RateLimitingRuntimeSurface>("/engine/rate-limiting/runtime");
         var policyResponse = await client.GetAsync("/engine/rate-limiting/cephalon-public-http");
         var firstPublicResponse = await client.GetAsync("/api/platform/time");
         var secondPublicResponse = await client.GetAsync("/api/platform/time");
 
         Assert.NotNull(policies);
         Assert.Empty(policies);
+        Assert.NotNull(runtime);
+        Assert.NotEqual(default, runtime.EvaluatedAtUtc);
+        Assert.True(runtime.EvaluationDurationMilliseconds >= 0);
+        Assert.Empty(runtime.Policies);
         Assert.Equal(HttpStatusCode.NotFound, policyResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, firstPublicResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, secondPublicResponse.StatusCode);

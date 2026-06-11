@@ -4,6 +4,7 @@ using Cephalon.AspNetCore.Audit;
 using Cephalon.AspNetCore.Authorization;
 using Cephalon.AspNetCore.Health;
 using Cephalon.AspNetCore.Localization;
+using Cephalon.AspNetCore.Resilience;
 using Cephalon.AspNetCore.Transports;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
@@ -313,6 +314,18 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonDurableExecutionState");
         engineGroup.MapGet("/rate-limiting", ([FromServices] IRateLimitingRuntimeCatalog catalog) => TypedResults.Ok(catalog.Policies))
             .WithName("GetCephalonRateLimiting");
+        engineGroup.MapGet("/rate-limiting/runtime", ([FromServices] IRateLimitingRuntimeCatalog catalog) =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var policies = catalog.Policies;
+                stopwatch.Stop();
+
+                return TypedResults.Ok(new RateLimitingRuntimeSurface(
+                    policies,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            })
+            .WithName("GetCephalonRateLimitingRuntime");
         engineGroup.MapGet("/rate-limiting/{policyId}", (string policyId, [FromServices] IRateLimitingRuntimeCatalog catalog) =>
             {
                 var policy = catalog.GetById(policyId);
