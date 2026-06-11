@@ -224,11 +224,13 @@ The tooling family ships adoption-ready CLI plus scaffolding and an XML-doc refe
 
 ## Inconsistencies observed (potential next ENG-* cards)
 
-No open inconsistencies remain at this snapshot. The list below records the alignment items resolved in May 2026 so the durable history stays visible.
+No open inconsistencies remain at this snapshot. The list below records the alignment items resolved in May-June 2026 so the durable history stays visible.
 
 ### Resolved alignment items (kept as durable history)
 
 - **Dependency-health probe maturity uplift from M0 → M3 (May 2026):** added operator-facing runtime metadata (CheckedAtUtc, ProbeDurationMilliseconds, ConsecutiveFailureCount) to support observability loops and health trending. Core probe infrastructure and all 18 per-provider probes promoted from M0 (taxonomy-only) to M3 (managed execution) with genuine probe runtime, operator automation support, and 68 hosting test coverage across 14 providers.
+- **Trust policy operator metadata uplift (June 2026):** added runtime freshness and performance metadata to trust surfaces (`TrustSnapshot.EvaluatedAtUtc`, `PackageTrustDecision.VerifiedAtUtc`, `PackageTrustDecision.VerificationDurationMilliseconds`, `CapabilityPolicyDecision.EvaluatedAtUtc`). This closes the operator-observability gap for `/engine/trust-policy` without changing ownership or compatibility posture.
+- **Diagnostics surface operator metadata uplift (June 2026):** added diagnostics payload freshness and evaluation timing metadata (`generatedAtUtc`, `livenessEvaluationDurationMilliseconds`, `readinessEvaluationDurationMilliseconds`) through `DiagnosticsSurface` and `/engine/diagnostics`, with targeted hosting assertions in both typed and JSON flows.
 - **`Cephalon.Behaviors.Http` REST publication ownership** (resolved May 2026): the matrix row now records the explicit `application-managed` profile/publication activation plus `cephalon-managed` materialization/runtime-catalog split, mirroring the maturity audit row. The shared component doc remains the per-package detail source.
 - **Event-sourcing family audit coverage** (resolved May 2026): the maturity audit now records the catalog-only stance for the event-sourcing family and confirms no provider pack has shipped managed-execution proof yet. See the audit's "Event sourcing" group entry.
 - **Observability provider audit closure** (resolved May 2026): the maturity audit now records the cloud-platform configuration-pack baseline plus the dependency-health pack family stance. Each cloud pack stays M1 cephalon-managed configuration binding; deeper telemetry collection remains in the host runtime's OpenTelemetry stack.
