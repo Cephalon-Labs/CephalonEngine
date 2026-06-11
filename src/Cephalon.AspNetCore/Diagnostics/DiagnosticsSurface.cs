@@ -15,6 +15,9 @@ namespace Cephalon.AspNetCore.Diagnostics;
 /// <param name="SummaryPath">The aggregate health endpoint path.</param>
 /// <param name="LivenessPath">The liveness endpoint path.</param>
 /// <param name="ReadinessPath">The readiness endpoint path.</param>
+/// <param name="GeneratedAtUtc">The UTC timestamp when this diagnostics surface payload was generated.</param>
+/// <param name="LivenessEvaluationDurationMilliseconds">The time in milliseconds spent evaluating liveness for this payload.</param>
+/// <param name="ReadinessEvaluationDurationMilliseconds">The time in milliseconds spent evaluating readiness for this payload.</param>
 public sealed record DiagnosticsSurface(
     string MeterName,
     string ActivitySourceName,
@@ -24,4 +27,7 @@ public sealed record DiagnosticsSurface(
     RuntimeHealthReport Readiness,
     string SummaryPath,
     string LivenessPath,
-    string ReadinessPath);
+    string ReadinessPath,
+    DateTimeOffset GeneratedAtUtc = default,
+    int LivenessEvaluationDurationMilliseconds = 0,
+    int ReadinessEvaluationDurationMilliseconds = 0);

@@ -2771,26 +2771,41 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonStatus");
         engineGroup.MapGet("/runtime-story", ([FromServices] IRuntime runtime) => TypedResults.Ok(runtime.OperationalStory))
             .WithName("GetCephalonRuntimeStory");
-        engineGroup.MapGet("/diagnostics", ([FromServices] RuntimeHealthEvaluator health, [FromServices] IRuntimeDiagnosticsCatalog diagnosticsCatalog) => TypedResults.Ok(new DiagnosticsSurface(
-                MeterName: EngineDiagnostics.MeterName,
-                ActivitySourceName: EngineDiagnostics.ActivitySourceName,
-                Counters:
-                [
-                    EngineDiagnostics.EngineBuildCounterName,
-                    EngineDiagnostics.RuntimeTransitionCounterName,
-                    EngineDiagnostics.ModuleTransitionCounterName,
-                    EngineDiagnostics.ExecutionGraphTransitionCounterName,
-                    EngineDiagnostics.HostedExecutionTransitionCounterName,
-                    EngineDiagnostics.RuntimeFailureCounterName,
-                    EngineDiagnostics.ModuleFailureCounterName,
-                    EngineDiagnostics.RuntimeRestartCounterName
-                ],
-                Conventions: diagnosticsCatalog.Conventions,
-                Liveness: health.EvaluateLiveness(),
-                Readiness: health.EvaluateReadiness(),
-                SummaryPath: "/health",
-                LivenessPath: "/health/live",
-                ReadinessPath: "/health/ready")))
+        engineGroup.MapGet("/diagnostics", ([FromServices] RuntimeHealthEvaluator health, [FromServices] IRuntimeDiagnosticsCatalog diagnosticsCatalog) =>
+            {
+                var generatedAtUtc = DateTimeOffset.UtcNow;
+                var livenessStopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var liveness = health.EvaluateLiveness();
+                livenessStopwatch.Stop();
+
+                var readinessStopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var readiness = health.EvaluateReadiness();
+                readinessStopwatch.Stop();
+
+                return TypedResults.Ok(new DiagnosticsSurface(
+                    MeterName: EngineDiagnostics.MeterName,
+                    ActivitySourceName: EngineDiagnostics.ActivitySourceName,
+                    Counters:
+                    [
+                        EngineDiagnostics.EngineBuildCounterName,
+                        EngineDiagnostics.RuntimeTransitionCounterName,
+                        EngineDiagnostics.ModuleTransitionCounterName,
+                        EngineDiagnostics.ExecutionGraphTransitionCounterName,
+                        EngineDiagnostics.HostedExecutionTransitionCounterName,
+                        EngineDiagnostics.RuntimeFailureCounterName,
+                        EngineDiagnostics.ModuleFailureCounterName,
+                        EngineDiagnostics.RuntimeRestartCounterName
+                    ],
+                    Conventions: diagnosticsCatalog.Conventions,
+                    Liveness: liveness,
+                    Readiness: readiness,
+                    SummaryPath: "/health",
+                    LivenessPath: "/health/live",
+                    ReadinessPath: "/health/ready",
+                    GeneratedAtUtc: generatedAtUtc,
+                    LivenessEvaluationDurationMilliseconds: (int)livenessStopwatch.ElapsedMilliseconds,
+                    ReadinessEvaluationDurationMilliseconds: (int)readinessStopwatch.ElapsedMilliseconds));
+            })
             .WithName("GetCephalonDiagnostics");
         engineGroup.MapGet("/modules/{moduleId}", (string moduleId, RuntimeManifest manifest) =>
             {
@@ -3702,3 +3717,4 @@ public static class EngineWebApplicationExtensions
         return reader.ReadToEnd();
     }
 }
+

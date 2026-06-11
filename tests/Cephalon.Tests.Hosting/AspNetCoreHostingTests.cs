@@ -1281,6 +1281,9 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal((int)RuntimeHealthState.Healthy, diagnosticsDocument.RootElement.GetProperty("readiness").GetProperty("state").GetInt32());
         Assert.Equal("/health/live", diagnosticsDocument.RootElement.GetProperty("livenessPath").GetString());
         Assert.Equal("/health/ready", diagnosticsDocument.RootElement.GetProperty("readinessPath").GetString());
+        Assert.NotEqual(default, diagnosticsDocument.RootElement.GetProperty("generatedAtUtc").GetDateTimeOffset());
+        Assert.True(diagnosticsDocument.RootElement.GetProperty("livenessEvaluationDurationMilliseconds").GetInt32() >= 0);
+        Assert.True(diagnosticsDocument.RootElement.GetProperty("readinessEvaluationDurationMilliseconds").GetInt32() >= 0);
 
         Assert.True(healthResponse.IsSuccessStatusCode, healthPayload);
         Assert.Equal("application/json", healthResponse.Content.Headers.ContentType?.MediaType);
@@ -2886,6 +2889,9 @@ public sealed class AspNetCoreHostingTests
         Assert.NotNull(diagnostics);
         Assert.Contains(diagnostics.Counters, counter => counter == "cephalon.execution-graphs.transitions");
         Assert.Contains(diagnostics.Counters, counter => counter == "cephalon.hosted-executions.transitions");
+        Assert.NotEqual(default, diagnostics.GeneratedAtUtc);
+        Assert.True(diagnostics.LivenessEvaluationDurationMilliseconds >= 0);
+        Assert.True(diagnostics.ReadinessEvaluationDurationMilliseconds >= 0);
         var engineConvention = Assert.Single(diagnostics.Conventions, convention => convention.Source == "Cephalon.Engine");
         Assert.Equal(2000, engineConvention.MinimumEventId);
         Assert.Equal(2005, engineConvention.MaximumEventId);
