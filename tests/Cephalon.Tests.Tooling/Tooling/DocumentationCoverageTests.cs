@@ -1671,6 +1671,12 @@ public sealed class DocumentationCoverageTests
 
         if (segments.Any(static segment =>
                 string.Equals(segment, ".git", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(segment, ".claude", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(segment, ".codex", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(segment, ".trunk", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(segment, ".vs", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(segment, "CephalonEngine", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(segment, "cephalonengine-docs", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(segment, "bin", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(segment, "obj", StringComparison.OrdinalIgnoreCase)))
         {

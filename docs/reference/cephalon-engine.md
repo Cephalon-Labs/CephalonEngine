@@ -8725,6 +8725,33 @@ Stops the runtime and all started lifecycle-aware modules.
 Parameters:
 - `cancellationToken`: A token that can cancel the stop operation.
 
+<a id="type-cephalon-engine-runtime-iruntimeintrospectionsectioncontributor"></a>
+
+### `IRuntimeIntrospectionSectionContributor`
+
+Contributes one versioned, operator-facing section to the combined runtime introspection snapshot.
+
+Remarks: Companion packages can implement this contract to extend `RuntimeIntrospectionSnapshot` without adding package-specific properties to the engine-owned snapshot contract.
+
+#### Declaration
+```csharp
+public interface IRuntimeIntrospectionSectionContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-engine-runtime-iruntimeintrospectionsectioncontributor-describesection"></a>
+
+##### `DescribeSection`
+
+```csharp
+RuntimeIntrospectionSection DescribeSection()
+```
+
+Creates the current operator-facing section projection.
+
+Returns: The versioned section contributed to the runtime snapshot.
+
 <a id="type-cephalon-engine-runtime-iruntimeintrospectionsnapshotprovider"></a>
 
 ### `IRuntimeIntrospectionSnapshotProvider`
@@ -9520,6 +9547,214 @@ bool StartsWithHost { get; set; }
 
 A value indicating whether the hosted execution is expected to become active when the runtime host starts.
 
+<a id="type-cephalon-engine-runtime-runtimeintrospectionsection"></a>
+
+### `RuntimeIntrospectionSection`
+
+Describes one versioned, operator-facing extension section in the combined runtime snapshot.
+
+#### Declaration
+```csharp
+public sealed class RuntimeIntrospectionSection
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-runtime-runtimeintrospectionsection-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimeintrospectionsectionentry"></a>
+
+##### `RuntimeIntrospectionSection`
+
+```csharp
+RuntimeIntrospectionSection(string id, string schemaVersion, string source, string displayName, string description, IReadOnlyList<RuntimeIntrospectionSectionEntry> entries)
+```
+
+Creates a runtime introspection extension section.
+
+Parameters:
+- `id`: The globally stable section identifier.
+- `schemaVersion`: The version of the section payload contract.
+- `source`: The package or subsystem that owns the section.
+- `displayName`: The operator-facing section name.
+- `description`: A human-readable explanation of the section.
+- `entries`: The current entries projected by the section.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsection-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable explanation of the section.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsection-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing section name.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsection-entries"></a>
+
+##### `Entries`
+
+```csharp
+IReadOnlyList<RuntimeIntrospectionSectionEntry> Entries { get; }
+```
+
+Gets the deterministically ordered entries projected by the section.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsection-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the globally stable section identifier.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsection-schemaversion"></a>
+
+##### `SchemaVersion`
+
+```csharp
+string SchemaVersion { get; }
+```
+
+Gets the version of the section payload contract.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsection-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the package or subsystem that owns the section.
+
+<a id="type-cephalon-engine-runtime-runtimeintrospectionsectionentry"></a>
+
+### `RuntimeIntrospectionSectionEntry`
+
+Describes one desired-versus-observed runtime entry inside an introspection extension section.
+
+#### Declaration
+```csharp
+public sealed class RuntimeIntrospectionSectionEntry
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-runtime-runtimeintrospectionsectionentry-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimeoperatorcondition-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimeoperatoraction-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `RuntimeIntrospectionSectionEntry`
+
+```csharp
+RuntimeIntrospectionSectionEntry(string id, string displayName, string description, string desiredState, string observedState, IReadOnlyList<RuntimeOperatorCondition> conditions, IReadOnlyList<RuntimeOperatorAction> actions, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a runtime introspection section entry.
+
+Parameters:
+- `id`: The stable entry identifier within its section.
+- `displayName`: The operator-facing entry name.
+- `description`: A human-readable explanation of the entry.
+- `desiredState`: The state the runtime is expected to maintain.
+- `observedState`: The state most recently observed by the contributor.
+- `conditions`: The current operator conditions for the entry.
+- `actions`: The actions the owning subsystem declares for the entry.
+- `metadata`: Additional stable metadata for operator tooling.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-actions"></a>
+
+##### `Actions`
+
+```csharp
+IReadOnlyList<RuntimeOperatorAction> Actions { get; }
+```
+
+Gets the deterministically ordered actions declared by the owning subsystem.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-conditions"></a>
+
+##### `Conditions`
+
+```csharp
+IReadOnlyList<RuntimeOperatorCondition> Conditions { get; }
+```
+
+Gets the deterministically ordered operator conditions for the entry.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable explanation of the entry.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-desiredstate"></a>
+
+##### `DesiredState`
+
+```csharp
+string DesiredState { get; }
+```
+
+Gets the state the runtime is expected to maintain.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing entry name.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable entry identifier within its section.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets additional stable metadata for operator tooling.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-observedstate"></a>
+
+##### `ObservedState`
+
+```csharp
+string ObservedState { get; }
+```
+
+Gets the state most recently observed by the contributor.
+
 <a id="type-cephalon-engine-runtime-runtimeintrospectionsnapshot"></a>
 
 ### `RuntimeIntrospectionSnapshot`
@@ -9826,6 +10061,18 @@ IReadOnlyList<ExecutionGraphDescriptor> ExecutionGraphs { get; set; }
 ```
 
 The execution graphs contributed by active modules and visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-extensionsections"></a>
+
+##### `ExtensionSections`
+
+```csharp
+IReadOnlyList<RuntimeIntrospectionSection> ExtensionSections { get; set; }
+```
+
+Gets the versioned operator-facing sections contributed by engine subsystems and companion packages.
+
+Remarks: Section identifiers are globally unique and ordered deterministically. Each section owns its schema version so companion packages can evolve their payload without expanding this top-level contract.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-featureflags"></a>
 
@@ -10569,6 +10816,172 @@ IReadOnlyList<RuntimeLifecycleEvent> Timeline { get; set; }
 ```
 
 The ordered lifecycle narrative for package load, execution-graph transitions, hosted-execution transitions, module transitions, runtime transitions, and failures.
+
+<a id="type-cephalon-engine-runtime-runtimeoperatoraction"></a>
+
+### `RuntimeOperatorAction`
+
+Describes an operator action declared by the subsystem that owns a runtime introspection entry.
+
+Remarks: This contract advertises an action without coupling the host-agnostic engine to an HTTP route or transport. The owning subsystem remains responsible for authorization, approval, idempotency, execution, and audit behavior.
+
+#### Declaration
+```csharp
+public sealed class RuntimeOperatorAction
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-runtime-runtimeoperatoraction-ctor-system-string-system-string-system-string-system-boolean"></a>
+
+##### `RuntimeOperatorAction`
+
+```csharp
+RuntimeOperatorAction(string id, string displayName, string description, bool requiresApproval)
+```
+
+Creates an operator action declaration.
+
+Parameters:
+- `id`: The stable action identifier within the owning section.
+- `displayName`: The operator-facing action name.
+- `description`: A human-readable explanation of the action.
+- `requiresApproval`: Whether execution requires an explicit approval step.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperatoraction-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable explanation of the action.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperatoraction-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing action name.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperatoraction-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable action identifier within the owning section.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperatoraction-requiresapproval"></a>
+
+##### `RequiresApproval`
+
+```csharp
+bool RequiresApproval { get; }
+```
+
+Gets whether execution requires an explicit approval step.
+
+<a id="type-cephalon-engine-runtime-runtimeoperatorcondition"></a>
+
+### `RuntimeOperatorCondition`
+
+Describes one operator-readable condition for a runtime introspection entry.
+
+#### Declaration
+```csharp
+public sealed class RuntimeOperatorCondition
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-runtime-runtimeoperatorcondition-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset"></a>
+
+##### `RuntimeOperatorCondition`
+
+```csharp
+RuntimeOperatorCondition(string type, string status, string severity, string reason, string message, DateTimeOffset? observedAtUtc)
+```
+
+Creates an operator-readable runtime condition.
+
+Parameters:
+- `type`: The stable condition type.
+- `status`: The normalized condition status, such as `true`, `false`, or `unknown`.
+- `severity`: The operator severity, such as `info`, `warning`, or `error`.
+- `reason`: The stable machine-readable reason.
+- `message`: The operator-facing condition message.
+- `observedAtUtc`: The UTC timestamp at which the condition was observed, when known.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperatorcondition-message"></a>
+
+##### `Message`
+
+```csharp
+string Message { get; }
+```
+
+Gets the operator-facing condition message.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperatorcondition-observedatutc"></a>
+
+##### `ObservedAtUtc`
+
+```csharp
+DateTimeOffset? ObservedAtUtc { get; }
+```
+
+Gets the UTC timestamp at which the condition was observed, when known.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperatorcondition-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the stable machine-readable reason.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperatorcondition-severity"></a>
+
+##### `Severity`
+
+```csharp
+string Severity { get; }
+```
+
+Gets the operator severity.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperatorcondition-status"></a>
+
+##### `Status`
+
+```csharp
+string Status { get; }
+```
+
+Gets the normalized condition status.
+
+<a id="member-p-cephalon-engine-runtime-runtimeoperatorcondition-type"></a>
+
+##### `Type`
+
+```csharp
+string Type { get; }
+```
+
+Gets the stable condition type.
 
 <a id="type-cephalon-engine-runtime-runtimestatus"></a>
 

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-14T18:04:26.3038105+00:00",
+  "GeneratedAtUtc": "2026-07-07T14:36:19.213932+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -160,7 +160,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 98
+      "TypeCount": 103
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -1180,7 +1180,7 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-runtime",
-      "TypeCount": 17
+      "TypeCount": 22
     },
     {
       "NamespaceName": "Cephalon.Engine.Technologies",
@@ -7525,7 +7525,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 6,
+        "Properties": 9,
         "Methods": 0
       }
     },
@@ -13245,6 +13245,21 @@
       }
     },
     {
+      "DisplayName": "IRuntimeIntrospectionSectionContributor",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-runtime-iruntimeintrospectionsectioncontributor",
+      "Declaration": "public interface IRuntimeIntrospectionSectionContributor",
+      "Summary": "Contributes one versioned, operator-facing section to the combined runtime introspection snapshot.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "IRuntimeIntrospectionSnapshotProvider",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -17445,6 +17460,36 @@
       }
     },
     {
+      "DisplayName": "RuntimeIntrospectionSection",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-runtime-runtimeintrospectionsection",
+      "Declaration": "public sealed class RuntimeIntrospectionSection",
+      "Summary": "Describes one versioned, operator-facing extension section in the combined runtime snapshot.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RuntimeIntrospectionSectionEntry",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-runtime-runtimeintrospectionsectionentry",
+      "Declaration": "public sealed class RuntimeIntrospectionSectionEntry",
+      "Summary": "Describes one desired-versus-observed runtime entry inside an introspection extension section.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "RuntimeIntrospectionSnapshot",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -17455,7 +17500,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 49,
+        "Properties": 50,
         "Methods": 0
       }
     },
@@ -17546,6 +17591,36 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RuntimeOperatorAction",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-runtime-runtimeoperatoraction",
+      "Declaration": "public sealed class RuntimeOperatorAction",
+      "Summary": "Describes an operator action declared by the subsystem that owns a runtime introspection entry.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "RuntimeOperatorCondition",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-runtime-runtimeoperatorcondition",
+      "Declaration": "public sealed class RuntimeOperatorCondition",
+      "Summary": "Describes one operator-readable condition for a runtime introspection entry.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
         "Methods": 0
       }
     },
@@ -21229,6 +21304,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-actions",
       "Signature": "IReadOnlyList\u003CTenantGovernanceActionDescriptor\u003E Actions { get; }",
       "Summary": "Gets the stored runtime tenant-governance actions."
+    },
+    {
+      "DisplayName": "Actions",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSectionEntry",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-actions",
+      "Signature": "IReadOnlyList\u003CRuntimeOperatorAction\u003E Actions { get; }",
+      "Summary": "Gets the deterministically ordered actions declared by the owning subsystem."
     },
     {
       "DisplayName": "ActivatedAtUtc",
@@ -35795,6 +35881,17 @@
       "Summary": "Checks the descriptor and returns a violation if the rule is violated, or \u0060null\u0060 if valid."
     },
     {
+      "DisplayName": "CheckedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "DependencyHealthReport",
+      "NamespaceName": "Cephalon.Abstractions.Health",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-health-dependencyhealthreport-checkedatutc",
+      "Signature": "DateTimeOffset? CheckedAtUtc { get; set; }",
+      "Summary": "Gets the UTC timestamp at which the dependency observation completed, when the contributor provides it."
+    },
+    {
       "DisplayName": "Checkpoint",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionAcknowledgement",
@@ -38875,6 +38972,17 @@
       "Summary": "Gets optional typed materialization conditions captured alongside the result."
     },
     {
+      "DisplayName": "Conditions",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSectionEntry",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-conditions",
+      "Signature": "IReadOnlyList\u003CRuntimeOperatorCondition\u003E Conditions { get; }",
+      "Summary": "Gets the deterministically ordered operator conditions for the entry."
+    },
+    {
       "DisplayName": "ConfidenceSourceId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus",
@@ -40160,6 +40268,17 @@
       "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumdataoptions-connectors",
       "Signature": "IList\u003CDebeziumConnectorOptions\u003E Connectors { get; }",
       "Summary": "Gets the Debezium-managed connector runtimes that should contribute captures and external execution ownership to the active runtime."
+    },
+    {
+      "DisplayName": "ConsecutiveFailureCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "DependencyHealthReport",
+      "NamespaceName": "Cephalon.Abstractions.Health",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-health-dependencyhealthreport-consecutivefailurecount",
+      "Signature": "int ConsecutiveFailureCount { get; set; }",
+      "Summary": "Gets the number of consecutive failed observations, or zero when the contributor does not track failure streaks."
     },
     {
       "DisplayName": "ConsulDependencyDefinition",
@@ -46627,6 +46746,17 @@
       "Summary": "Describes the runtime surface projected by the contributor."
     },
     {
+      "DisplayName": "DescribeSection",
+      "Category": "Methods",
+      "DeclaringTypeName": "IRuntimeIntrospectionSectionContributor",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-runtime-iruntimeintrospectionsectioncontributor-describesection",
+      "Signature": "RuntimeIntrospectionSection DescribeSection()",
+      "Summary": "Creates the current operator-facing section projection."
+    },
+    {
       "DisplayName": "Description",
       "Category": "Properties",
       "DeclaringTypeName": "AgentToolDescriptor",
@@ -47850,6 +47980,39 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSection",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsection-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable explanation of the section."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSectionEntry",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable explanation of the entry."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperatorAction",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperatoraction-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable explanation of the action."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -48099,6 +48262,17 @@
       "AnchorId": "member-f-cephalon-abstractions-patterns-patternkind-design",
       "Signature": "const PatternKind Design",
       "Summary": "Identifies a design pattern."
+    },
+    {
+      "DisplayName": "DesiredState",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSectionEntry",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-desiredstate",
+      "Signature": "string DesiredState { get; }",
+      "Summary": "Gets the state the runtime is expected to maintain."
     },
     {
       "DisplayName": "DestinationCommit",
@@ -49852,6 +50026,28 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSection",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsection-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing section name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSectionEntry",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing entry name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeModuleLifecycleState",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -49859,6 +50055,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "The operator-facing module display name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperatorAction",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperatoraction-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing action name."
     },
     {
       "DisplayName": "DisplayName",
@@ -55055,6 +55262,17 @@
     {
       "DisplayName": "Entries",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSection",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsection-entries",
+      "Signature": "IReadOnlyList\u003CRuntimeIntrospectionSectionEntry\u003E Entries { get; }",
+      "Summary": "Gets the deterministically ordered entries projected by the section."
+    },
+    {
+      "DisplayName": "Entries",
+      "Category": "Properties",
       "DeclaringTypeName": "TechnologyRuntimeSurface",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -59550,6 +59768,17 @@
       "AnchorId": "member-p-cephalon-observability-configuration-telemetryexportoptions-exporttraces",
       "Signature": "bool ExportTraces { get; set; }",
       "Summary": "Gets or sets a value indicating whether traces should be exported."
+    },
+    {
+      "DisplayName": "ExtensionSections",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-extensionsections",
+      "Signature": "IReadOnlyList\u003CRuntimeIntrospectionSection\u003E ExtensionSections { get; set; }",
+      "Summary": "Gets the versioned operator-facing sections contributed by engine subsystems and companion packages."
     },
     {
       "DisplayName": "ExternalDeliveryOwnership",
@@ -72541,6 +72770,39 @@
       "AnchorId": "member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable suppression identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSection",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsection-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the globally stable section identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSectionEntry",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable entry identifier within its section."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperatorAction",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperatoraction-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable action identifier within the owning section."
     },
     {
       "DisplayName": "Id",
@@ -86689,6 +86951,17 @@
       "Summary": "The operator-facing narrative for the event."
     },
     {
+      "DisplayName": "Message",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperatorCondition",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperatorcondition-message",
+      "Signature": "string Message { get; }",
+      "Summary": "Gets the operator-facing condition message."
+    },
+    {
       "DisplayName": "MessageDeduplication",
       "Category": "Fields",
       "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
@@ -88348,6 +88621,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional additive metadata. Stable REST endpoint keys are defined by \u0060RestEndpointRuntimeMetadataKeys\u0060."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSectionEntry",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets additional stable metadata for operator tooling."
     },
     {
       "DisplayName": "Metadata",
@@ -93553,6 +93837,17 @@
     {
       "DisplayName": "ObservedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperatorCondition",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperatorcondition-observedatutc",
+      "Signature": "DateTimeOffset? ObservedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp at which the condition was observed, when known."
+    },
+    {
+      "DisplayName": "ObservedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusCallbackRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
@@ -93681,6 +93976,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-observedprooffingerprint",
       "Signature": "string ObservedProofFingerprint { get; }",
       "Summary": "Gets the SHA-256 fingerprint of the observed proof value when present."
+    },
+    {
+      "DisplayName": "ObservedState",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSectionEntry",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-observedstate",
+      "Signature": "string ObservedState { get; }",
+      "Summary": "Gets the state most recently observed by the contributor."
     },
     {
       "DisplayName": "ObservedTxtRecordCount",
@@ -100741,6 +101047,17 @@
       "Summary": "The probe name that produced the report."
     },
     {
+      "DisplayName": "ProbeDurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DependencyHealthReport",
+      "NamespaceName": "Cephalon.Abstractions.Health",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-health-dependencyhealthreport-probedurationmilliseconds",
+      "Signature": "int ProbeDurationMilliseconds { get; set; }",
+      "Summary": "Gets the completed probe duration in milliseconds, or zero when the contributor does not provide it."
+    },
+    {
       "DisplayName": "ProcessedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "EntityFrameworkInboxEntry",
@@ -106452,6 +106769,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperatorCondition",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperatorcondition-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the stable machine-readable reason."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "SendGridInvitationDeliveryClientResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SendGridDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -111763,6 +112091,17 @@
       "Summary": "The managed connector currently has a future engine-execution candidate, but the next step would still require an approval gate."
     },
     {
+      "DisplayName": "RequiresApproval",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperatorAction",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperatoraction-requiresapproval",
+      "Signature": "bool RequiresApproval { get; }",
+      "Summary": "Gets whether execution requires an explicit approval step."
+    },
+    {
       "DisplayName": "RequiresAttention",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus",
@@ -116603,6 +116942,28 @@
       "Summary": "Gets the optional dispatch-runtime identifier that explicitly owns execution for the outbox."
     },
     {
+      "DisplayName": "RuntimeIntrospectionSection",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RuntimeIntrospectionSection",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimeintrospectionsection-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimeintrospectionsectionentry",
+      "Signature": "RuntimeIntrospectionSection(string id, string schemaVersion, string source, string displayName, string description, IReadOnlyList\u003CRuntimeIntrospectionSectionEntry\u003E entries)",
+      "Summary": "Creates a runtime introspection extension section."
+    },
+    {
+      "DisplayName": "RuntimeIntrospectionSectionEntry",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RuntimeIntrospectionSectionEntry",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimeintrospectionsectionentry-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimeoperatorcondition-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimeoperatoraction-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "RuntimeIntrospectionSectionEntry(string id, string displayName, string description, string desiredState, string observedState, IReadOnlyList\u003CRuntimeOperatorCondition\u003E conditions, IReadOnlyList\u003CRuntimeOperatorAction\u003E actions, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a runtime introspection section entry."
+    },
+    {
       "DisplayName": "RuntimeIntrospectionSnapshot",
       "Category": "Constructors",
       "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
@@ -116744,6 +117105,28 @@
       "AnchorId": "member-m-cephalon-engine-runtime-runtimeoperationalstory-ctor-system-datetimeoffset-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimemodulelifecyclestate-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimelifecycleevent",
       "Signature": "RuntimeOperationalStory(DateTimeOffset GeneratedAtUtc, RuntimeStatusSnapshot Status, IReadOnlyList\u003CPackageManifest\u003E LoadedPackages, IReadOnlyList\u003CRuntimeModuleLifecycleState\u003E Modules, IReadOnlyList\u003CRuntimeLifecycleEvent\u003E Timeline)",
       "Summary": "Combines the operator-facing runtime story into one payload that explains what loaded, started, failed, and why."
+    },
+    {
+      "DisplayName": "RuntimeOperatorAction",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RuntimeOperatorAction",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimeoperatoraction-ctor-system-string-system-string-system-string-system-boolean",
+      "Signature": "RuntimeOperatorAction(string id, string displayName, string description, bool requiresApproval)",
+      "Summary": "Creates an operator action declaration."
+    },
+    {
+      "DisplayName": "RuntimeOperatorCondition",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RuntimeOperatorCondition",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-runtime-runtimeoperatorcondition-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset",
+      "Signature": "RuntimeOperatorCondition(string type, string status, string severity, string reason, string message, DateTimeOffset? observedAtUtc)",
+      "Summary": "Creates an operator-readable runtime condition."
     },
     {
       "DisplayName": "RuntimeRemediation",
@@ -118042,6 +118425,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-schemaregistryid",
       "Signature": "string SchemaRegistryId { get; }",
       "Summary": "Gets the optional schema registry identifier required by the serializer."
+    },
+    {
+      "DisplayName": "SchemaVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSection",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsection-schemaversion",
+      "Signature": "string SchemaVersion { get; }",
+      "Summary": "Gets the version of the section payload contract."
     },
     {
       "DisplayName": "Scheme",
@@ -119384,6 +119778,17 @@
       "AnchorId": "member-p-cephalon-aspnetcore-transports-rest-resultmodelerrordetail-severity",
       "Signature": "BehaviorFaultSeverity Severity { get; set; }",
       "Summary": "Gets or sets the error severity."
+    },
+    {
+      "DisplayName": "Severity",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperatorCondition",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperatorcondition-severity",
+      "Signature": "string Severity { get; }",
+      "Summary": "Gets the operator severity."
     },
     {
       "DisplayName": "SfidIdOptions",
@@ -120813,6 +121218,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointbindingdescriptor-source",
       "Signature": "RestEndpointBindingSource Source { get; }",
       "Summary": "Gets the HTTP request source that supplies the value."
+    },
+    {
+      "DisplayName": "Source",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSection",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsection-source",
+      "Signature": "string Source { get; }",
+      "Summary": "Gets the package or subsystem that owns the section."
     },
     {
       "DisplayName": "Source",
@@ -123946,6 +124362,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperationalstory-status",
       "Signature": "RuntimeStatusSnapshot Status { get; set; }",
       "Summary": "The current runtime lifecycle status snapshot."
+    },
+    {
+      "DisplayName": "Status",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperatorCondition",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperatorcondition-status",
+      "Signature": "string Status { get; }",
+      "Summary": "Gets the normalized condition status."
     },
     {
       "DisplayName": "Status",
@@ -132339,6 +132766,17 @@
       "AnchorId": "member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-type",
       "Signature": "string Type { get; set; }",
       "Summary": "Gets or sets the optional problem type URI associated with the response."
+    },
+    {
+      "DisplayName": "Type",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeOperatorCondition",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeoperatorcondition-type",
+      "Signature": "string Type { get; }",
+      "Summary": "Gets the stable condition type."
     },
     {
       "DisplayName": "TypeIndexPath",

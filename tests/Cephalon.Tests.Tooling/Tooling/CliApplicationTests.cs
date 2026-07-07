@@ -2695,7 +2695,7 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated development observability baseline: ./src/Acme.Store.Host/Configurations/Observability/Development.json keeps the generated Serilog console sample explicit with Application=Acme.Store.Host.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated documentation surface assets: ./src/Acme.Store.Host/Configurations/AddOpenApi.json and ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated OpenAPI baseline: ./src/Acme.Store.Host/Configurations/AddOpenApi.json keeps the generated REST docs surface explicit with Title='Acme.Store API'.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[ok] Generated hosted reference docs baseline: ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json keeps hosted reference docs explicit with Enabled=false, RoutePrefix=/reference, DirectoryPath=..\\..\\docs\\reference, and DefaultDocument=browse.html.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains(GetGeneratedHostedReferenceDocsBaselineMessage(), stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated local orchestration assets: ./compose.yaml and ./otel-collector-config.yaml are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated compose baseline: ./compose.yaml keeps the generated local container-runtime baseline aligned with Dockerfile, OTLP collector handoff, and the current compose defaults.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated OpenTelemetry collector baseline: ./otel-collector-config.yaml keeps the generated OTLP collector baseline aligned with health_check, otlp/http on 4318, and debug exporter pipelines.", stdout.ToString(), StringComparison.Ordinal);
@@ -2880,7 +2880,7 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated development observability baseline: ./src/Acme.Store.Host/Configurations/Observability/Development.json keeps the generated Serilog console sample explicit with Application=Acme.Store.Host.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated documentation surface assets: ./src/Acme.Store.Host/Configurations/AddOpenApi.json and ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated OpenAPI baseline: ./src/Acme.Store.Host/Configurations/AddOpenApi.json keeps the generated REST docs surface explicit with Title='Acme.Store API'.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[ok] Generated hosted reference docs baseline: ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json keeps hosted reference docs explicit with Enabled=false, RoutePrefix=/reference, DirectoryPath=..\\..\\docs\\reference, and DefaultDocument=browse.html.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains(GetGeneratedHostedReferenceDocsBaselineMessage(), stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated local orchestration assets: ./compose.yaml and ./otel-collector-config.yaml are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated compose baseline: ./compose.yaml keeps the generated local container-runtime baseline aligned with Dockerfile, OTLP collector handoff, and the current compose defaults.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated OpenTelemetry collector baseline: ./otel-collector-config.yaml keeps the generated OTLP collector baseline aligned with health_check, otlp/http on 4318, and debug exporter pipelines.", stdout.ToString(), StringComparison.Ordinal);
@@ -4413,7 +4413,7 @@ public sealed class CliApplicationTests
 
             Assert.Equal(true, referenceDocs["Enabled"]?.GetValue<bool>());
             Assert.Equal("/reference", referenceDocs["RoutePrefix"]?.GetValue<string>());
-            Assert.Equal("..\\..\\published-docs", referenceDocs["DirectoryPath"]?.GetValue<string>());
+            Assert.Equal(GetReferenceDocsRelativePath("published-docs"), referenceDocs["DirectoryPath"]?.GetValue<string>());
             Assert.Equal("browse.html", referenceDocs["DefaultDocument"]?.GetValue<string>());
             Assert.Contains("Published", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("Enabled hosted reference docs", stdout.ToString(), StringComparison.Ordinal);
@@ -4635,7 +4635,7 @@ public sealed class CliApplicationTests
 
             Assert.Equal(true, referenceDocs["Enabled"]?.GetValue<bool>());
             Assert.Equal("/reference", referenceDocs["RoutePrefix"]?.GetValue<string>());
-            Assert.Equal("..\\..\\docs\\reference", referenceDocs["DirectoryPath"]?.GetValue<string>());
+            Assert.Equal(GetReferenceDocsRelativePath("docs", "reference"), referenceDocs["DirectoryPath"]?.GetValue<string>());
             Assert.Equal("browse.html", referenceDocs["DefaultDocument"]?.GetValue<string>());
             Assert.Contains("Enabled hosted reference docs", stdout.ToString(), StringComparison.Ordinal);
             Assert.Equal(string.Empty, stderr.ToString());
@@ -5391,12 +5391,12 @@ public sealed class CliApplicationTests
                 """);
             File.WriteAllText(
                 Path.Combine(configurationsPath, "AddReferenceDocs.json"),
-                referenceDocsSettingsContents ?? """
+                referenceDocsSettingsContents ?? $$"""
                 {
                   "ReferenceDocs": {
                     "Enabled": false,
                     "RoutePrefix": "/reference",
-                    "DirectoryPath": "..\\..\\docs\\reference",
+                    "DirectoryPath": "{{EscapeJsonString(GetReferenceDocsRelativePath("docs", "reference"))}}",
                     "DefaultDocument": "browse.html"
                   }
                 }
@@ -5963,6 +5963,23 @@ public sealed class CliApplicationTests
             ? "10.0"
             : new string(tagCharacters);
     }
+
+    private static string GetReferenceDocsRelativePath(params string[] pathSegments)
+    {
+        var segments = new string[pathSegments.Length + 2];
+        segments[0] = "..";
+        segments[1] = "..";
+        Array.Copy(pathSegments, 0, segments, 2, pathSegments.Length);
+
+        return Path.Combine(segments);
+    }
+
+    private static string EscapeJsonString(string value) =>
+        value.Replace("\\", "\\\\", StringComparison.Ordinal)
+            .Replace("\"", "\\\"", StringComparison.Ordinal);
+
+    private static string GetGeneratedHostedReferenceDocsBaselineMessage() =>
+        $"[ok] Generated hosted reference docs baseline: ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json keeps hosted reference docs explicit with Enabled=false, RoutePrefix=/reference, DirectoryPath={GetReferenceDocsRelativePath("docs", "reference")}, and DefaultDocument=browse.html.";
 
     private static string QuotePowerShellArgument(string value)
     {
