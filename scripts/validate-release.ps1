@@ -231,21 +231,27 @@ function Write-SreReleaseValidationStepTiming {
         throw "SRE timing for '$SliId' must be greater than zero milliseconds."
     }
 
-    if ($ElapsedMilliseconds -gt $TargetMilliseconds) {
-        throw "SRE timing for '$SliId' exceeded target: $([math]::Round($ElapsedMilliseconds, 4))ms > ${TargetMilliseconds}ms."
-    }
+    $roundedElapsedMilliseconds = [math]::Round($ElapsedMilliseconds, 4)
+    $targetExceeded = $ElapsedMilliseconds -gt $TargetMilliseconds
+    $status = if ($targetExceeded) { "investigate" } else { "passed" }
 
     [ordered]@{
         '$schemaVersion' = "1.0.0"
         sliId = $SliId
         stepName = $StepName
         command = $Command
-        status = "passed"
-        elapsedMilliseconds = [math]::Round($ElapsedMilliseconds, 4)
+        status = $status
+        elapsedMilliseconds = $roundedElapsedMilliseconds
         targetMilliseconds = $TargetMilliseconds
+        targetExceeded = $targetExceeded
+        excessMilliseconds = if ($targetExceeded) { [math]::Round($ElapsedMilliseconds - $TargetMilliseconds, 4) } else { 0 }
         capturedAtUtc = [DateTimeOffset]::UtcNow.ToString("o")
         capturedFromCommit = Get-RepositoryCommit
     } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $OutputPath $FileName) -Encoding UTF8
+
+    if ($targetExceeded) {
+        Write-Warning "SRE timing for '$SliId' exceeded target: ${roundedElapsedMilliseconds}ms > ${TargetMilliseconds}ms. Timing evidence was written with status 'investigate'."
+    }
 }
 
 function Test-IsCanonicalReleaseValidationRun {

@@ -14,7 +14,7 @@ Purpose: make package maturity and release prerequisites machine-checkable befor
 
 Scope: reconcile the branch against current `origin/master`; emit a fail-closed report across `107` source projects, component badges, conformance rows, maturity/backlog baselines, and the dependency-health provider manifest; wire it into release validation and artifact upload; keep GitHub Actions setup-dotnet caching aligned with project-level `packages.lock.json` files; close the discovered `Cephalon.ReferenceDocs` drift; pin the non-vulnerable SQLite native test bundle and patched Microsoft.OpenApi 2.x transitive line; normalize the Cassandra/ClickHouse raw-string public API baselines; normalize hosted reference-doc paths across operating systems; and keep Agentics singleton runtime services resolving scoped inbox providers only inside operation scopes.
 
-Validation: report drift count `0`; three Pester tests; release-validation step proof; GitHub Actions cache path resolves the repository's project-level lock files; clean NuGet restore; affected project builds; focused hosting configuration, technology-surface, and Showcase Agentics smoke tests.
+Validation: report drift count `0`; three Pester tests; release-validation step proof; GitHub Actions cache path resolves the repository's project-level lock files; clean NuGet restore; affected project builds; focused hosting configuration, technology-surface, and Showcase Agentics smoke tests; SRE wall-time overruns emit investigation evidence instead of aborting artifact publication.
 
 Quality dimensions: Security + Reliability + Maintainability + Compatibility + Auditability.
 
