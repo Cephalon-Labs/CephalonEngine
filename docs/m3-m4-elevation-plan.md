@@ -32,6 +32,7 @@ Status: `complete` through `ENG-712`.
 - emit `surface-maturity-report.json` from source projects, component badges, the conformance matrix, maturity audit, backlog baseline, and dependency-health provider manifest
 - fail release validation when source/document/package truth drifts
 - upload the maturity and engine-completion artifacts with fail-closed missing-file behavior
+- keep CI SDK setup and package-lock caching aligned with the repo's project-level lock-file layout
 - keep dependency restore audit clean; pin the safe SQLite native bundle used by test harnesses and the patched Microsoft.OpenApi 2.x line used by ASP.NET OpenAPI consumers
 - keep public API baselines stable across line-ending environments
 

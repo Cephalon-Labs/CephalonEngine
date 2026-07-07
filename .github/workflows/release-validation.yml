@@ -43,6 +43,7 @@ jobs:
         with:
           global-json-file: global.json
           cache: true
+          cache-dependency-path: '**/packages.lock.json'
 
       - name: Install Pester
         shell: pwsh
@@ -183,6 +184,7 @@ jobs:
           global-json-file: global.json
           dotnet-version: 11.0.x
           cache: true
+          cache-dependency-path: '**/packages.lock.json'
 
       - name: Run .NET 11 readiness validation
         shell: pwsh

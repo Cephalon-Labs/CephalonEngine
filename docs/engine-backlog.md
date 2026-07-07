@@ -12,9 +12,9 @@ Estimate: 12
 
 Purpose: make package maturity and release prerequisites machine-checkable before any further promotion.
 
-Scope: reconcile the branch against current `origin/master`; emit a fail-closed report across `107` source projects, component badges, conformance rows, maturity/backlog baselines, and the dependency-health provider manifest; wire it into release validation and artifact upload; close the discovered `Cephalon.ReferenceDocs` drift; pin the non-vulnerable SQLite native test bundle and patched Microsoft.OpenApi 2.x transitive line; and normalize the Cassandra/ClickHouse raw-string public API baselines.
+Scope: reconcile the branch against current `origin/master`; emit a fail-closed report across `107` source projects, component badges, conformance rows, maturity/backlog baselines, and the dependency-health provider manifest; wire it into release validation and artifact upload; keep GitHub Actions setup-dotnet caching aligned with project-level `packages.lock.json` files; close the discovered `Cephalon.ReferenceDocs` drift; pin the non-vulnerable SQLite native test bundle and patched Microsoft.OpenApi 2.x transitive line; and normalize the Cassandra/ClickHouse raw-string public API baselines.
 
-Validation: report drift count `0`; three Pester tests; release-validation step proof; clean NuGet restore; affected project builds.
+Validation: report drift count `0`; three Pester tests; release-validation step proof; GitHub Actions cache path resolves the repository's project-level lock files; clean NuGet restore; affected project builds.
 
 Quality dimensions: Security + Reliability + Maintainability + Compatibility + Auditability.
 
