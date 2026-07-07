@@ -131,7 +131,9 @@ Describe "summarise-public-api-deltas.ps1" {
         $report | Should -Match "Total removal entries: \*\*1\*\*"
         $json = Get-Content -LiteralPath $jsonOutputPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
         $json.RemovalGateWouldFail | Should -BeTrue
-        ($output | Out-String) | Should -Match "Public API removal entries detected: 1 removal\(s\) across 1 package\(s\): Cephalon\.Fixture"
+        $json.RemovalEntryCount | Should -Be 1
+        $json.PackageDeltas[0].PackageId | Should -Be "Cephalon.Fixture"
+        ($standardOutput | Out-String) | Should -Match "Total removal entries: 1"
     }
 
     It "passes the removal gate when only additive entries are pending" {
