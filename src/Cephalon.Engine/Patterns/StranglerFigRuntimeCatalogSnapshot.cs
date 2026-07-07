@@ -413,7 +413,7 @@ internal sealed class StranglerFigRuntimeCatalogSnapshot :
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(selectedEndpoint);
 
-        if (Uri.TryCreate(selectedEndpoint, UriKind.Absolute, out var absoluteUri))
+        if (TryCreateNonFileAbsoluteUri(selectedEndpoint, out var absoluteUri))
         {
             if (string.Equals(absoluteUri.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(absoluteUri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
@@ -479,7 +479,7 @@ internal sealed class StranglerFigRuntimeCatalogSnapshot :
         }
 
         var normalized = value.Trim();
-        if (Uri.TryCreate(normalized, UriKind.Absolute, out var absoluteUri))
+        if (TryCreateNonFileAbsoluteUri(normalized, out var absoluteUri))
         {
             normalized = absoluteUri.AbsolutePath;
         }
@@ -520,6 +520,18 @@ internal sealed class StranglerFigRuntimeCatalogSnapshot :
         return trimmed.StartsWith('?')
             ? trimmed
             : "?" + trimmed;
+    }
+
+    private static bool TryCreateNonFileAbsoluteUri(string value, out Uri uri)
+    {
+        if (Uri.TryCreate(value, UriKind.Absolute, out uri!) &&
+            !string.Equals(uri.Scheme, Uri.UriSchemeFile, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        uri = null!;
+        return false;
     }
 
     private sealed record ResolvedEndpoint(

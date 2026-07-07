@@ -293,7 +293,7 @@ public sealed class StranglerFigIngressRuntimeDescriptor
     private static string NormalizePathPrefix(string value)
     {
         var normalized = value.Trim();
-        if (Uri.TryCreate(normalized, UriKind.Absolute, out var absoluteUri))
+        if (TryCreateNonFileAbsoluteUri(normalized, out var absoluteUri))
         {
             normalized = absoluteUri.AbsolutePath;
         }
@@ -334,6 +334,18 @@ public sealed class StranglerFigIngressRuntimeDescriptor
         return trimmed.StartsWith('?')
             ? trimmed
             : "?" + trimmed;
+    }
+
+    private static bool TryCreateNonFileAbsoluteUri(string value, out Uri uri)
+    {
+        if (Uri.TryCreate(value, UriKind.Absolute, out uri!) &&
+            !string.Equals(uri.Scheme, Uri.UriSchemeFile, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        uri = null!;
+        return false;
     }
 
     private static string? NormalizeOptionalUri(string? value)
