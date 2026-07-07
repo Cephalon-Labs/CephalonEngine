@@ -102,6 +102,8 @@ The script writes:
 
 That baseline report stays on the shipping toolchain and exists to keep framework, docs, package, and claim metadata honest.
 
+The release-validation workflow uses the repository SDK roll-forward lane (`10.0.301` / runtime `10.0.9` as of the July 7, 2026 refresh), so project-level `packages.lock.json` files must be refreshed when SDK-carried packages such as `Microsoft.NET.ILLink.Tasks` move with that lane. A locked restore failure here is a release-readiness signal, not a CI-cache defect.
+
 GitHub Actions now adds a dedicated `.NET 11` readiness job that:
 
 - installs the current `11.0.x` SDK channel
