@@ -2703,19 +2703,7 @@ public sealed class ShowcaseSampleHostingTests
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        var descriptors = builder.Services
-            .Where(descriptor =>
-                descriptor.ServiceType == typeof(Microsoft.Extensions.Hosting.IHostedService) &&
-                string.Equals(
-                    descriptor.ImplementationType?.Name,
-                    "ShowcaseReadModelProjectionHostedService",
-                    StringComparison.Ordinal))
-            .ToArray();
-
-        foreach (var descriptor in descriptors)
-        {
-            builder.Services.Remove(descriptor);
-        }
+        builder.Configuration["Showcase:ReadModelProjection:HostedServiceEnabled"] = "false";
     }
 
     private static void ShareReadRoleWithWriteAndDisableStartupApply(WebApplicationBuilder builder)

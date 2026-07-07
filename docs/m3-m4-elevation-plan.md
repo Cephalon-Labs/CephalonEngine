@@ -36,8 +36,10 @@ Status: `complete` through `ENG-712`.
 - keep dependency restore audit clean; pin the safe SQLite native bundle used by test harnesses and the patched Microsoft.OpenApi 2.x line used by ASP.NET OpenAPI consumers
 - keep public API baselines stable across line-ending environments
 - keep generated reference-doc bundles, hosted reference-doc configuration, CLI/tooling path fixtures, ASP.NET Core sample boot, and Agentics singleton/scoped service lifetimes stable across Windows, Linux, and the `.NET 11` readiness lane
+- keep showcase read-model projection tests deterministic by making the background projection loop configuration-driven instead of removing services before the sample registers them
+- keep local adjacent checkouts such as the engine clone and docs-site clone out of the repo contract unless an explicit submodule/milestone decision promotes them
 
-Exit proof: report status `passed`, drift count `0`, focused Pester coverage passes, package restore has no High advisory, affected public-API projects build with deterministic baselines, generated reference-doc parity passes, focused hosting/tooling smoke tests pass, and release validation executes the report by default.
+Exit proof: report status `passed`, drift count `0`, focused Pester coverage passes, package restore has no High advisory, affected public-API projects build with deterministic baselines, generated reference-doc parity passes, focused hosting/tooling smoke tests pass, full hosting validation stays green, and release validation executes the report by default.
 
 ### Gate 1 — additive operator observation kernel
 

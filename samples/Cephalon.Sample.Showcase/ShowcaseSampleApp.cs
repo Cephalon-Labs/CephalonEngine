@@ -69,6 +69,8 @@ namespace Cephalon.Sample.Showcase;
 /// </remarks>
 public static class ShowcaseSampleApp
 {
+    private const string ReadModelProjectionHostedServiceEnabledKey = "Showcase:ReadModelProjection:HostedServiceEnabled";
+
     /// <summary>
     /// Builds the showcase sample application with the full Cephalon wiring.
     /// </summary>
@@ -239,7 +241,10 @@ public static class ShowcaseSampleApp
         builder.Services.AddScoped<ShowcaseReadModelSyncService>();
         builder.Services.AddScoped<ShowcaseResetService>();
         builder.Services.AddHostedService<ShowcaseDatabaseSeedHostedService>();
-        builder.Services.AddHostedService<ShowcaseReadModelProjectionHostedService>();
+        if (IsReadModelProjectionHostedServiceEnabled(config))
+        {
+            builder.Services.AddHostedService<ShowcaseReadModelProjectionHostedService>();
+        }
 
         var app = builder.Build();
         var apiRoutes = ApiRoutesOptions.FromConfiguration(app.Configuration);
@@ -340,6 +345,14 @@ public static class ShowcaseSampleApp
         ArgumentNullException.ThrowIfNull(configurationPaths);
 
         return configurationPaths.Any(path => !string.IsNullOrWhiteSpace(configuration[path]));
+    }
+
+    private static bool IsReadModelProjectionHostedServiceEnabled(ConfigurationManager configuration)
+    {
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        var configuredValue = configuration[ReadModelProjectionHostedServiceEnabledKey];
+        return !bool.TryParse(configuredValue, out var enabled) || enabled;
     }
 
     private static void ConfigureShowcaseDatabaseRole(

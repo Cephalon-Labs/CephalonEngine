@@ -116,6 +116,7 @@ Additional standards:
 - analyzer suppressions live next to the code being suppressed and include a `// reason: ...` comment so the suppression is reviewable
 - nullable annotations on public surface are part of the contract; weakening a nullable annotation on a public member is a binary break
 - `async` methods accept `CancellationToken` whenever they perform IO, host work, or could plausibly need cancellation later; cancellation tokens default to `default` only when the surface is intentionally non-cancelable
+- `.trunk/trunk.yaml` is the optional local/editor lint baseline for AI seats and contributors; it keeps markdown, YAML, Dockerfile, GitHub Actions, formatting, secret-scan, and diff-whitespace checks discoverable, while [`scripts/validate-release.ps1`](../scripts/validate-release.ps1) remains the authoritative release-validation source of truth
 
 Performance and allocation discipline:
 
