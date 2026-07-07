@@ -497,6 +497,8 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             var reporterTakeover = executionRuntime is null
                 ? null
                 : DetectReporterTakeover(executionRuntime, report, reporterSnapshot);
+            var lastChangeId = report.ChangeId ?? current.LastChangeId;
+            var lastCheckpoint = report.Checkpoint ?? current.LastCheckpoint;
 
             current = normalizedOutcome switch
             {
@@ -510,8 +512,8 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     StartedCount = current.StartedCount + 1,
                     TotalCapturedChangeCount = totalCapturedChangeCount,
                     TotalProducedMessageCount = totalProducedMessageCount,
-                    LastChangeId = report.ChangeId,
-                    LastCheckpoint = report.Checkpoint,
+                    LastChangeId = lastChangeId,
+                    LastCheckpoint = lastCheckpoint,
                     LastError = null,
                     LastReporterId = report.ReporterId,
                     ReporterLeaseExpiresAtUtc = reporterLeaseExpiresAtUtc,
@@ -538,8 +540,8 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     CapturedCount = current.CapturedCount + 1,
                     TotalCapturedChangeCount = totalCapturedChangeCount,
                     TotalProducedMessageCount = totalProducedMessageCount,
-                    LastChangeId = report.ChangeId,
-                    LastCheckpoint = report.Checkpoint,
+                    LastChangeId = lastChangeId,
+                    LastCheckpoint = lastCheckpoint,
                     LastError = null,
                     LastReporterId = report.ReporterId,
                     ReporterLeaseExpiresAtUtc = reporterLeaseExpiresAtUtc,
@@ -566,8 +568,8 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     IdleCount = current.IdleCount + 1,
                     TotalCapturedChangeCount = totalCapturedChangeCount,
                     TotalProducedMessageCount = totalProducedMessageCount,
-                    LastChangeId = report.ChangeId,
-                    LastCheckpoint = report.Checkpoint,
+                    LastChangeId = lastChangeId,
+                    LastCheckpoint = lastCheckpoint,
                     LastError = null,
                     LastReporterId = report.ReporterId,
                     ReporterLeaseExpiresAtUtc = reporterLeaseExpiresAtUtc,
@@ -594,8 +596,8 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     FailedCount = current.FailedCount + 1,
                     TotalCapturedChangeCount = totalCapturedChangeCount,
                     TotalProducedMessageCount = totalProducedMessageCount,
-                    LastChangeId = report.ChangeId,
-                    LastCheckpoint = report.Checkpoint,
+                    LastChangeId = lastChangeId,
+                    LastCheckpoint = lastCheckpoint,
                     LastError = report.Error,
                     LastReporterId = report.ReporterId,
                     ReporterLeaseExpiresAtUtc = reporterLeaseExpiresAtUtc,

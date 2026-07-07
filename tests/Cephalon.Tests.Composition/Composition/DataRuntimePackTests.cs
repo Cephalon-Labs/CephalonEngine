@@ -229,9 +229,22 @@ public sealed class DataRuntimePackTests
         Assert.Single(catalog.GetBySourceId("tenant-db"));
         Assert.Single(catalog.GetByResourceId("public.tenants"));
 
+        await reporter.ReportAsync(new CdcCaptureExecutionReport(
+            cdcCaptureId: "tenant-profile-cdc",
+            outcome: CdcCaptureRuntimeOutcomes.Idle,
+            observedAtUtc: DateTimeOffset.Parse("2026-04-20T10:06:00Z", CultureInfo.InvariantCulture)));
+
+        var idleState = catalog.GetById("tenant-profile-cdc");
+        Assert.NotNull(idleState);
+        Assert.Equal(CdcCaptureRuntimeOutcomes.Idle, idleState.LastOutcome);
+        Assert.Equal("lsn-0003", idleState.LastChangeId);
+        Assert.Equal("0/16B6C70", idleState.LastCheckpoint);
+
         var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
         var snapshotState = Assert.Single(snapshot.CdcCaptureStates);
         Assert.Equal("tenant-profile-cdc", snapshotState.CdcCaptureId);
+        Assert.Equal("lsn-0003", snapshotState.LastChangeId);
+        Assert.Equal("0/16B6C70", snapshotState.LastCheckpoint);
         Assert.Equal(CdcCapturePublicationStates.DispatchRetryPending, snapshotState.Publication.State);
         Assert.NotNull(snapshotState.OutboxDispatchState);
         Assert.Equal("retry-scheduled", snapshotState.OutboxDispatchState!.LastOutcome);
