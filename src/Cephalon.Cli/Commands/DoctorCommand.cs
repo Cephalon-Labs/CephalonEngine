@@ -2639,8 +2639,8 @@ internal static class DoctorCommand
         var generatedContainerImagePlaceholder = BuildGeneratedContainerImagePlaceholder(generatedAppId);
         var generatedContainerAppName = BuildGeneratedAzureContainerAppName(generatedAppId);
         var generatedHostProjectName = Path.GetFileNameWithoutExtension(hostProject.ProjectPath);
-        var generatedHostProjectRelativePath = Path.GetRelativePath(generatedAppRootPath, hostProject.ProjectPath)
-            .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+        var generatedHostProjectRelativePath = NormalizePortablePathSnippet(
+            Path.GetRelativePath(generatedAppRootPath, hostProject.ProjectPath));
 
         EvaluateGeneratedScriptBaseline(
             Path.Combine(generatedAppRootPath, "deploy", "container-image", "publish-image.ps1"),
@@ -2787,7 +2787,7 @@ internal static class DoctorCommand
         }
 
         var missingSnippets = requiredSnippets
-            .Where(snippet => assetContents.IndexOf(snippet, StringComparison.OrdinalIgnoreCase) < 0)
+            .Where(snippet => !ContainsGeneratedAssetSnippet(assetContents, snippet))
             .ToArray();
 
         if (missingSnippets.Length > 0)
@@ -3743,6 +3743,26 @@ internal static class DoctorCommand
             ? string.Empty
             : path.Replace('\\', '/').Trim();
     }
+
+    private static bool ContainsGeneratedAssetSnippet(string assetContents, string snippet)
+    {
+        if (assetContents.Contains(snippet, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (!snippet.Contains('\\', StringComparison.Ordinal) &&
+            !snippet.Contains('/', StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        return NormalizePortablePathSnippet(assetContents)
+            .Contains(NormalizePortablePathSnippet(snippet), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string NormalizePortablePathSnippet(string value) =>
+        value.Replace('\\', '/').Trim();
 
     private static GeneratedDeploymentBaseline? ResolveGeneratedDeploymentBaseline(
         string[] targetFrameworks,

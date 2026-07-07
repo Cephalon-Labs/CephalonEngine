@@ -84,7 +84,7 @@ dotnet run --project src/Cephalon.Cli -- docs enable-hosting `
 
 If the host already contains a `ReferenceDocs` section, the command preserves its current route prefix, directory path, and default document unless you explicitly override them with `--route-prefix`, `--directory`, or `--default-document`.
 The chained `docs publish --enable-hosting` flow follows the same override rules, but writes `DirectoryPath` relative to the publish output directory so custom docs destinations stay aligned with the host config.
-`docs validate-hosting` checks that the `ReferenceDocs` section exists, is enabled, resolves to a real directory, and contains the configured default document. When you pass `--host-url`, it also prints the expected browser, manifest, and `/engine/reference-docs` URLs for that host.
+`docs validate-hosting` checks that the `ReferenceDocs` section exists, is enabled, resolves to a real directory, and contains the configured default document. It normalizes Windows (`\`) and POSIX (`/`) directory separators before resolving `DirectoryPath`, so generated app configs remain valid when replayed from Linux CI, containers, or Windows workstations. When you pass `--host-url`, it also prints the expected browser, manifest, and `/engine/reference-docs` URLs for that host.
 
 ## Publish flow
 

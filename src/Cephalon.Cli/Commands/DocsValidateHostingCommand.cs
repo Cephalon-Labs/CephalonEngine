@@ -123,7 +123,7 @@ internal static class DocsValidateHostingCommand
         var configuredDirectoryPath = referenceDocs["DirectoryPath"]?.GetValue<string>();
         var directoryPath = string.IsNullOrWhiteSpace(configuredDirectoryPath)
             ? Path.Combine("docs", "reference")
-            : configuredDirectoryPath.Trim();
+            : NormalizeConfiguredFileSystemPath(configuredDirectoryPath);
         var resolvedDirectoryPath = Path.IsPathRooted(directoryPath)
             ? Path.GetFullPath(directoryPath)
             : Path.GetFullPath(Path.Combine(appSettingsDirectory, directoryPath));
@@ -240,6 +240,14 @@ internal static class DocsValidateHostingCommand
         return string.IsNullOrWhiteSpace(candidate)
             ? DocsEnableHostingCommand.DefaultDocument
             : candidate;
+    }
+
+    private static string NormalizeConfiguredFileSystemPath(string path)
+    {
+        var trimmedPath = path.Trim();
+        return trimmedPath
+            .Replace('\\', Path.DirectorySeparatorChar)
+            .Replace('/', Path.DirectorySeparatorChar);
     }
 
     private static bool TryReadValue(

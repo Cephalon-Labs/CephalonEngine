@@ -2745,6 +2745,86 @@ public sealed class CliApplicationTests
     }
 
     [Fact]
+    public async Task RunAsyncDoctorAcceptsGeneratedDeploymentScriptPathSeparators()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-path-separators-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            azureContainerAppsDeployScriptContents: """
+                param(
+                    [string]$AppName = "acme-store",
+                    [string[]]$EnvironmentVariables = @(
+                        "ASPNETCORE_HTTP_PORTS=8080",
+                        "DOTNET_ENVIRONMENT=Production"),
+                    [switch]$Preview
+                )
+
+                $resolvedSourceRoot = (Resolve-Path -LiteralPath ".").Path
+                $dockerfilePath = Join-Path $resolvedSourceRoot "Dockerfile"
+                $nuGetConfigPath = Join-Path $resolvedSourceRoot "NuGet.config"
+                $hostProjectPath = Join-Path $resolvedSourceRoot "src/Acme.Store.Host/Acme.Store.Host.csproj"
+                $upArguments = @("containerapp", "up", "--name", $AppName, "--source", $resolvedSourceRoot, "--env-vars") + $EnvironmentVariables
+
+                if ($Preview) {
+                    Write-Host "Detected generated host project: $hostProjectPath"
+                    Write-Host "az @upArguments"
+                    return
+                }
+
+                & az @upArguments
+                Write-Host "Azure Container Apps deployment completed successfully."
+                """);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(0, exitCode);
+            Assert.Contains("[ok] Generated Azure Container Apps script baseline: ./deploy/azure-container-apps/deploy-up.ps1 keeps the generated source-root, host-project, and az containerapp up defaults explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Equal(string.Empty, stderr.ToString());
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public async Task RunAsyncDoctorValidatesTemplatePackGeneratedAppBootstrap()
     {
         var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-template-app-{Guid.NewGuid():N}");
@@ -4768,8 +4848,10 @@ public sealed class CliApplicationTests
         Assert.Contains("Option '--host-url' requires '--open' or '--validate-hosting'.", stderr.ToString(), StringComparison.Ordinal);
     }
 
-    [Fact]
-    public async Task RunAsyncValidateHostingSucceedsWhenReferenceDocsAreReady()
+    [Theory]
+    [InlineData("..\\..\\docs\\reference")]
+    [InlineData("../../docs/reference")]
+    public async Task RunAsyncValidateHostingSucceedsWhenReferenceDocsAreReady(string configuredDirectoryPath)
     {
         var workspacePath = Path.Combine(Path.GetTempPath(), $"cephalon-cli-validate-hosting-{Guid.NewGuid():N}");
         var docsDirectory = Path.Combine(workspacePath, "docs", "reference");
@@ -4783,12 +4865,12 @@ public sealed class CliApplicationTests
         await File.WriteAllTextAsync(Path.Combine(docsDirectory, "browse.html"), "<html></html>");
         await File.WriteAllTextAsync(
             appSettingsPath,
-            """
+            $$"""
             {
               "ReferenceDocs": {
                 "Enabled": true,
                 "RoutePrefix": "/reference",
-                "DirectoryPath": "..\\..\\docs\\reference",
+                "DirectoryPath": "{{EscapeJsonString(configuredDirectoryPath)}}",
                 "DefaultDocument": "browse.html"
               }
             }
