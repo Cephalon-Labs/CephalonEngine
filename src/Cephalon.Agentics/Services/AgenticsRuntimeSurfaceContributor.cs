@@ -6,6 +6,7 @@ using Cephalon.Engine.Runtime;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Engine.Manifest;
 using System.Globalization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Agentics.Services;
 
@@ -14,7 +15,7 @@ internal sealed class AgenticsRuntimeSurfaceContributor(
     AgenticRuntimeOptions options,
     IEnumerable<IAgentToolExecutor> executors,
     IEnumerable<IAgentToolRunCatalog> runCatalogs,
-    IEnumerable<IInbox> inboxes,
+    IServiceScopeFactory scopeFactory,
     IEnumerable<IInboxCatalog> inboxCatalogs,
     IRuntime runtime,
     IExecutionRuntimeCatalog executionGraphs,
@@ -32,7 +33,8 @@ internal sealed class AgenticsRuntimeSurfaceContributor(
             static execution => execution.HostedExecutionId,
             StringComparer.OrdinalIgnoreCase);
         var runCatalog = runCatalogs.FirstOrDefault();
-        var inboxArray = inboxes.ToArray();
+        using var scope = scopeFactory.CreateScope();
+        var inboxArray = scope.ServiceProvider.GetServices<IInbox>().ToArray();
         var inboxCatalog = inboxCatalogs.FirstOrDefault();
         var executorIndex = executors
             .GroupBy(static executor => executor.ToolId, StringComparer.OrdinalIgnoreCase)

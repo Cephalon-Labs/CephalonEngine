@@ -5,6 +5,7 @@ using Cephalon.Diagnostics.Redaction;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Globalization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Agentics.Services;
 
@@ -16,13 +17,12 @@ internal sealed class AgentToolDispatcher(
     IEnumerable<IAgentToolExecutionPolicy> policies,
     IAgentToolRunReporter reporter,
     IEnumerable<IAgentToolExecutionObserver> observers,
-    IEnumerable<IInbox> inboxes,
+    IServiceScopeFactory scopeFactory,
     RedactionPipeline? redactionPipeline = null) : IAgentToolDispatcher
 {
     private readonly IAgentToolExecutor[] executors = executors.ToArray();
     private readonly IAgentToolExecutionPolicy[] policies = policies.ToArray();
     private readonly IAgentToolExecutionObserver[] observers = observers.ToArray();
-    private readonly IInbox[] inboxes = inboxes.ToArray();
 
     public async ValueTask<AgentToolExecutionResult> ExecuteAsync(
         AgentToolExecutionRequest request,
@@ -462,7 +462,8 @@ internal sealed class AgentToolDispatcher(
 
         if (IsDurableInboxIdempotencyEnabled())
         {
-            var inbox = ResolveDurableIdempotencyInbox();
+            using var scope = scopeFactory.CreateScope();
+            var inbox = ResolveDurableIdempotencyInbox(scope.ServiceProvider);
             var messageId = CreateDurableIdempotencyMessageId(toolId, runId);
             if (!await inbox.HasProcessedAsync(messageId, cancellationToken).ConfigureAwait(false))
             {
@@ -526,7 +527,8 @@ internal sealed class AgentToolDispatcher(
         var metadata = CreateDurableIdempotencyMetadata(context.Tool.Id, context.RunId, messageId, "completed-marked");
         try
         {
-            var inbox = ResolveDurableIdempotencyInbox();
+            using var scope = scopeFactory.CreateScope();
+            var inbox = ResolveDurableIdempotencyInbox(scope.ServiceProvider);
             await inbox.MarkProcessedAsync(
                 new InboxMessage(
                     id: messageId,
@@ -557,8 +559,10 @@ internal sealed class AgentToolDispatcher(
         }
     }
 
-    private IInbox ResolveDurableIdempotencyInbox()
+    private static IInbox ResolveDurableIdempotencyInbox(IServiceProvider serviceProvider)
     {
+        var inboxes = serviceProvider.GetServices<IInbox>().ToArray();
+
         return inboxes.Length switch
         {
             1 => inboxes[0],
