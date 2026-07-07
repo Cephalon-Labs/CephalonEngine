@@ -138,7 +138,9 @@ The top-level shape exposed by `/snapshot` is `RuntimeIntrospectionSnapshot`. It
 
 **Base composition**
 
-`Manifest`, `Status`, `OperationalStory`, `DiagnosticsConventions`.
+`Manifest`, `Status`, `OperationalStory`, `DiagnosticsConventions`, `ExtensionSections`.
+
+`ExtensionSections` is the versioned additive envelope for package-specific operator truth. Each `RuntimeIntrospectionSection` has a globally unique id, schema version, source, and deterministically ordered entries. Each entry can expose desired state, observed state, conditions, declared actions, and stable metadata. A declared action is discovery metadata only; authorization, approval, idempotency, execution, journaling, and audit remain owned by the contributing subsystem.
 
 **Behavior, execution, and resilience**
 
@@ -186,7 +188,7 @@ When a key is empty (`?? []`), that does not by itself mean the surface is inact
 
 ## Runtime catalog interface catalog
 
-These interfaces live in `Cephalon.Abstractions` and own the in-process truth that the routes and snapshots project from. New interfaces should follow the same `I{Surface}Catalog` or `I{Surface}RuntimeCatalog` naming pattern.
+Most catalog interfaces live in `Cephalon.Abstractions` and own the in-process truth that routes and typed snapshot fields project from. New catalogs should follow the same `I{Surface}Catalog` or `I{Surface}RuntimeCatalog` naming pattern. The package-extension seam `IRuntimeIntrospectionSectionContributor` lives in `Cephalon.Engine.Runtime` because it extends the engine-owned combined snapshot contract rather than defining a host-agnostic domain capability.
 
 **Behavior, execution, durable, resilience, REST**
 
@@ -322,7 +324,7 @@ The runtime contract follows a small number of conventions that operators and AI
 
 - routes under `/engine/*` are introspection-only by default; mutating routes (`POST`/`PUT`/`PATCH`) are explicit, named in the route catalog above, and only registered when their owning companion or workflow is active
 - catalog interfaces live in `Cephalon.Abstractions` so consumers can take a thin contract dependency without pulling the full engine; runtime services live in `Cephalon.Engine` or the relevant companion pack
-- snapshot composition is additive: each owner contributes through an `IRuntimeIntrospectionSnapshotContributor` (or equivalent) so adding a new runtime surface does not require changing `RuntimeIntrospectionSnapshot` itself outside its owning slice
+- existing typed snapshot fields remain compatibility contracts; new package-specific operator projections should contribute a versioned `RuntimeIntrospectionSection` through `IRuntimeIntrospectionSectionContributor`, and duplicate section ids fail closed
 - conditional routes are documented inline above (`conditional (...)`); when a configuration option toggles a route on, the same option is also referenced in the runtime catalog metadata so the route's existence stays explainable
 - the redaction surface is a cross-cutting contract that does not appear in any of the catalog tables above because it is consumer-registered through DI: `Cephalon.Diagnostics.Redaction.IRedactionFilter` (with `RedactionContext` and the orchestration helper `RedactionPipeline`) is registered against the consumer's `IServiceCollection` via `services.AddSingleton<IRedactionFilter>(...)` plus `services.AddRedactionPipeline()`; engine emission sites (`Cephalon.AspNetCore`'s HTTP request/response logging middleware, `Cephalon.Engine`'s module-phase activity tags, `Cephalon.Eventing.Wolverine`'s dispatch-time tags) resolve the pipeline lazily and route attribute values through it before exporter dispatch — see [`components/diagnostics.md`](components/diagnostics.md) *Redaction quick start* for the canonical adoption recipe
 

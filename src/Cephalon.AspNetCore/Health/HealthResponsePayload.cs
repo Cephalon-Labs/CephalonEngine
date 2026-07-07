@@ -37,4 +37,10 @@ internal sealed class HealthResponseDependencyPayload
     public bool Required { get; init; }
 
     public string? Source { get; init; }
+
+    public DateTimeOffset? CheckedAtUtc { get; init; }
+
+    public int ProbeDurationMilliseconds { get; init; }
+
+    public int ConsecutiveFailureCount { get; init; }
 }

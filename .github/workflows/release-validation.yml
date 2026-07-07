@@ -108,6 +108,22 @@ jobs:
           path: artifacts/deployment-mode-claims-release
           if-no-files-found: warn
 
+      - name: Upload surface maturity evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surface-maturity-report-${{ matrix.benchmark_artifact_suffix }}
+          path: artifacts/surface-maturity-report-release
+          if-no-files-found: error
+
+      - name: Upload engine completion scorecard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-completion-scorecard-${{ matrix.benchmark_artifact_suffix }}
+          path: artifacts/engine-completion-scorecard-release
+          if-no-files-found: warn
+
       - name: Upload NuGet vulnerability audit
         if: always()
         uses: actions/upload-artifact@v4

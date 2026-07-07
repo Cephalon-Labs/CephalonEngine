@@ -1,1 +1,7 @@
 #nullable enable
+Cephalon.Abstractions.Health.DependencyHealthReport.CheckedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Abstractions.Health.DependencyHealthReport.CheckedAtUtc.init -> void
+Cephalon.Abstractions.Health.DependencyHealthReport.ConsecutiveFailureCount.get -> int
+Cephalon.Abstractions.Health.DependencyHealthReport.ConsecutiveFailureCount.init -> void
+Cephalon.Abstractions.Health.DependencyHealthReport.ProbeDurationMilliseconds.get -> int
+Cephalon.Abstractions.Health.DependencyHealthReport.ProbeDurationMilliseconds.init -> void

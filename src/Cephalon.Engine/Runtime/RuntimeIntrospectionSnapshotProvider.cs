@@ -38,7 +38,8 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
     ICellHealthIsolationCatalog cellHealthIsolationCatalog,
     ICellTrafficAutomationRuntimeCatalog cellTrafficAutomationRuntimeCatalog,
     ITechnologyRuntimeCatalog technologyRuntimeCatalog,
-    IRuntimeDiagnosticsCatalog diagnosticsCatalog) : IRuntimeIntrospectionSnapshotProvider
+    IRuntimeDiagnosticsCatalog diagnosticsCatalog,
+    IEnumerable<IRuntimeIntrospectionSectionContributor> introspectionSectionContributors) : IRuntimeIntrospectionSnapshotProvider
 {
     public RuntimeIntrospectionSnapshot CreateSnapshot()
     {
@@ -116,7 +117,33 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             BackendForFrontendRestDocuments = backendForFrontendRestDocumentRuntimeCatalog?.Documents ?? [],
             StranglerFigRoutes = stranglerFigRuntimeCatalog.Routes,
             StranglerFigRoutePolicies = stranglerFigMigrationRuntimeCatalog.Routes,
-            StranglerFigIngressRoutes = stranglerFigIngressRuntimeCatalog.Routes
+            StranglerFigIngressRoutes = stranglerFigIngressRuntimeCatalog.Routes,
+            ExtensionSections = CreateExtensionSections()
         };
+    }
+
+    private RuntimeIntrospectionSection[] CreateExtensionSections()
+    {
+        var sections = introspectionSectionContributors
+            .OrderBy(static contributor => contributor.GetType().FullName, StringComparer.Ordinal)
+            .Select(static contributor => contributor.DescribeSection() ??
+                throw new InvalidOperationException(
+                    $"Runtime introspection section contributor '{contributor.GetType().FullName}' returned null."))
+            .OrderBy(static section => section.Id, StringComparer.Ordinal)
+            .ThenBy(static section => section.Source, StringComparer.Ordinal)
+            .ToArray();
+        var duplicateSection = sections
+            .GroupBy(static section => section.Id, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault(static group => group.Count() > 1);
+
+        if (duplicateSection is not null)
+        {
+            throw new InvalidOperationException(
+                $"Runtime introspection section id '{duplicateSection.Key}' is contributed more than once by: " +
+                string.Join(", ", duplicateSection.Select(static section => section.Source).OrderBy(static source => source, StringComparer.Ordinal)) +
+                ". Section ids must be globally unique.");
+        }
+
+        return sections;
     }
 }

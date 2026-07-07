@@ -195,7 +195,7 @@ ASP.NET Core hosts that call `app.MapCephalon()` now expose three health routes:
 - `/health/ready`
 
 Health responses are JSON and include the check status, duration, and runtime-specific details such as restart count and the most recent failure context.
-When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ClickHouseDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.Neo4jDependencies`, `Cephalon.Observability.OpenSearchDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
+When modules or installed packages register `IDependencyHealthContributor`, those responses also include dependency details. Managed provider probes populate `checkedAtUtc`, `probeDurationMilliseconds`, and `consecutiveFailureCount`; custom contributors that do not track those values remain source-compatible and report their defaults. `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ClickHouseDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.Neo4jDependencies`, `Cephalon.Observability.OpenSearchDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies` are the shipped companion packages for turning external upstreams into that dependency-health surface.
 
 Current semantics:
 
@@ -217,6 +217,8 @@ Optional tuning through `Engine:FailurePolicy`:
 ## Dependency surface
 
 `GET /engine/dependencies` exposes the dependency-health snapshot currently contributed to the runtime.
+
+The same reports appear in `/engine/snapshot` under the versioned `ExtensionSections` entry whose id is `dependency-health`. Each entry exposes desired state `healthy`, the observed state, a normalized condition, and stable probe metadata. Its action list is empty today: observation is shipped, but automatic reconciliation/remediation is not yet claimed.
 
 This keeps dependency visibility separate from the aggregate health routes:
 

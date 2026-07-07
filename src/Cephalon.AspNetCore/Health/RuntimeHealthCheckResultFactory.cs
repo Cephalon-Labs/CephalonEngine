@@ -38,7 +38,10 @@ internal static class RuntimeHealthCheckResultFactory
                 State = dependency.State.ToString(),
                 Description = dependency.Description,
                 Required = dependency.Required,
-                Source = dependency.Source
+                Source = dependency.Source,
+                CheckedAtUtc = dependency.CheckedAtUtc,
+                ProbeDurationMilliseconds = dependency.ProbeDurationMilliseconds,
+                ConsecutiveFailureCount = dependency.ConsecutiveFailureCount
             }).ToArray();
         }
 

@@ -3714,6 +3714,7 @@ note: visible
         var dependencies = await client.GetFromJsonAsync<DependencyHealthReport[]>("/engine/dependencies");
         var diagnosticsResponse = await client.GetAsync("/engine/diagnostics");
         var diagnosticsPayload = await diagnosticsResponse.Content.ReadAsStringAsync();
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
         var livenessResponse = await client.GetAsync("/health/live");
         var livenessPayload = await livenessResponse.Content.ReadAsStringAsync();
         var readinessResponse = await client.GetAsync("/health/ready");
@@ -3729,6 +3730,16 @@ note: visible
             dependency.Id == "search-index" &&
             dependency.State == HealthState.Degraded &&
             !dependency.Required);
+
+        Assert.NotNull(snapshot);
+        var dependencyHealthSection = Assert.Single(
+            snapshot.ExtensionSections,
+            static section => section.Id == "dependency-health");
+        Assert.Equal(["primary-sql", "search-index"], dependencyHealthSection.Entries.Select(static entry => entry.Id));
+        var primarySqlEntry = Assert.Single(dependencyHealthSection.Entries, static entry => entry.Id == "primary-sql");
+        Assert.Equal("healthy", primarySqlEntry.DesiredState);
+        Assert.Equal("unhealthy", primarySqlEntry.ObservedState);
+        Assert.Equal("error", Assert.Single(primarySqlEntry.Conditions).Severity);
 
         Assert.True(diagnosticsResponse.IsSuccessStatusCode);
         using var diagnosticsDocument = JsonDocument.Parse(diagnosticsPayload);

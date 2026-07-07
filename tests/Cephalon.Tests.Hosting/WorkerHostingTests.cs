@@ -211,6 +211,7 @@ public sealed class WorkerHostingTests
 
         Assert.Empty(auditStoreCatalog.AuditStores);
         Assert.Empty(snapshot.AuditStores);
+        Assert.Contains(snapshot.ExtensionSections, static section => section.Id == "dependency-health");
 
         await host.StopAsync();
     }

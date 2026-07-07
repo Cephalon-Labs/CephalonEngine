@@ -1,1 +1,37 @@
 #nullable enable
+Cephalon.Engine.Runtime.IRuntimeIntrospectionSectionContributor
+Cephalon.Engine.Runtime.IRuntimeIntrospectionSectionContributor.DescribeSection() -> Cephalon.Engine.Runtime.RuntimeIntrospectionSection!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSection
+Cephalon.Engine.Runtime.RuntimeIntrospectionSection.Description.get -> string!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSection.DisplayName.get -> string!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSection.Entries.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeIntrospectionSectionEntry!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSection.Id.get -> string!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSection.RuntimeIntrospectionSection(string! id, string! schemaVersion, string! source, string! displayName, string! description, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeIntrospectionSectionEntry!>? entries = null) -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSection.SchemaVersion.get -> string!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSection.Source.get -> string!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSectionEntry
+Cephalon.Engine.Runtime.RuntimeIntrospectionSectionEntry.Actions.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeOperatorAction!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSectionEntry.Conditions.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeOperatorCondition!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSectionEntry.Description.get -> string!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSectionEntry.DesiredState.get -> string!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSectionEntry.DisplayName.get -> string!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSectionEntry.Id.get -> string!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSectionEntry.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSectionEntry.ObservedState.get -> string!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSectionEntry.RuntimeIntrospectionSectionEntry(string! id, string! displayName, string! description, string! desiredState, string! observedState, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeOperatorCondition!>? conditions = null, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeOperatorAction!>? actions = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.ExtensionSections.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeIntrospectionSection!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.ExtensionSections.init -> void
+Cephalon.Engine.Runtime.RuntimeOperatorAction
+Cephalon.Engine.Runtime.RuntimeOperatorAction.Description.get -> string!
+Cephalon.Engine.Runtime.RuntimeOperatorAction.DisplayName.get -> string!
+Cephalon.Engine.Runtime.RuntimeOperatorAction.Id.get -> string!
+Cephalon.Engine.Runtime.RuntimeOperatorAction.RequiresApproval.get -> bool
+Cephalon.Engine.Runtime.RuntimeOperatorAction.RuntimeOperatorAction(string! id, string! displayName, string! description, bool requiresApproval) -> void
+Cephalon.Engine.Runtime.RuntimeOperatorCondition
+Cephalon.Engine.Runtime.RuntimeOperatorCondition.Message.get -> string!
+Cephalon.Engine.Runtime.RuntimeOperatorCondition.ObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeOperatorCondition.Reason.get -> string!
+Cephalon.Engine.Runtime.RuntimeOperatorCondition.RuntimeOperatorCondition(string! type, string! status, string! severity, string! reason, string! message, System.DateTimeOffset? observedAtUtc = null) -> void
+Cephalon.Engine.Runtime.RuntimeOperatorCondition.Severity.get -> string!
+Cephalon.Engine.Runtime.RuntimeOperatorCondition.Status.get -> string!
+Cephalon.Engine.Runtime.RuntimeOperatorCondition.Type.get -> string!

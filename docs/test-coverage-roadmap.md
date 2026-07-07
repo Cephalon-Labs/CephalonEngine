@@ -133,6 +133,14 @@ The closeout validation also hardened the surrounding provider/runtime suite: re
 
 Quality dimension: **Reliability + Compatibility + Auditability + Data Integrity** (provider contract).
 
+### #12 — Surface-maturity and additive operator-section contract coverage (high priority, **shipped through `ENG-712` and `ENG-713`**)
+
+`ENG-712` adds a Pester lane that reconciles all source projects, component documents, exact conformance rows, dependency-health provider rows, and maturity/backlog baseline dates. It proves a clean repository report, a deliberate badge/matrix mismatch that fails closed while leaving an inspectable artifact, and release-validation/workflow artifact wiring.
+
+`ENG-713` adds composition tests for package-owned versioned snapshot sections, deterministic entry ordering, and duplicate section-id rejection. Hosting tests prove the dependency-health section through ASP.NET Core JSON, Worker snapshots, all eighteen failure reports, and all eighteen live-success probes. Provider reports also prove observation time, probe duration, and consecutive-failure count without changing the existing positional record constructor.
+
+Quality dimension: **Reliability + Availability + Maintainability + Compatibility + Auditability** (maturity and operator-contract evidence).
+
 ## Test-flake quarantine queue
 
 When `engine.tests.flake-rate.7d` exceeds the target, the affected test enters a quarantine queue per the *Test flake budget* rule in [`sre-posture.md`](sre-posture.md): `[Skip]`-attribute the failing test with a tracking comment within 24 hours, then either fix or delete within 7 days.

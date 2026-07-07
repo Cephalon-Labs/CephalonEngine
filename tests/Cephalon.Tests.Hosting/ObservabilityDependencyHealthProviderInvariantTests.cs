@@ -122,6 +122,9 @@ public sealed class ObservabilityDependencyHealthProviderInvariantTests
             var readiness = evaluator.EvaluateReadiness();
             var diagnosticsCatalog = host.Services.GetRequiredService<IRuntimeDiagnosticsCatalog>();
             var snapshot = host.Services.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+            var dependencyHealthSection = Assert.Single(
+                snapshot.ExtensionSections,
+                static section => section.Id == "dependency-health");
 
             Assert.Equal(ProviderExpectations.Length, dependencies.Length);
             Assert.Equal(
@@ -129,6 +132,8 @@ public sealed class ObservabilityDependencyHealthProviderInvariantTests
                 dependencies.Select(static dependency => dependency.Source));
             Assert.Equal(RuntimeHealthState.Unhealthy, readiness.State);
             Assert.Equal(ProviderExpectations.Length, readiness.Dependencies.Count);
+            Assert.Equal("1.0.0", dependencyHealthSection.SchemaVersion);
+            Assert.Equal(ProviderExpectations.Length, dependencyHealthSection.Entries.Count);
 
             foreach (var provider in ProviderExpectations)
             {
@@ -138,6 +143,18 @@ public sealed class ObservabilityDependencyHealthProviderInvariantTests
                 Assert.True(dependency.Required);
                 Assert.Equal(HealthState.Unhealthy, dependency.State);
                 Assert.False(string.IsNullOrWhiteSpace(dependency.Description));
+                Assert.NotNull(dependency.CheckedAtUtc);
+                Assert.True(dependency.ProbeDurationMilliseconds >= 0);
+                Assert.Equal(1, dependency.ConsecutiveFailureCount);
+
+                var operatorEntry = Assert.Single(
+                    dependencyHealthSection.Entries,
+                    entry => entry.Id == dependency.Id);
+                Assert.Equal("healthy", operatorEntry.DesiredState);
+                Assert.Equal("unhealthy", operatorEntry.ObservedState);
+                Assert.Equal("false", Assert.Single(operatorEntry.Conditions).Status);
+                Assert.Equal("1", operatorEntry.Metadata["consecutiveFailureCount"]);
+                Assert.Equal(provider.Source, operatorEntry.Metadata["source"]);
 
                 var convention = Assert.Single(diagnosticsCatalog.GetBySource(provider.Source));
                 Assert.Contains(convention.Events, static entry => entry.Name == "ProbeTimedOut");
@@ -192,6 +209,9 @@ public sealed class ObservabilityDependencyHealthProviderInvariantTests
                 Assert.True(dependency.Required);
                 Assert.Equal(HealthState.Healthy, dependency.State);
                 Assert.False(string.IsNullOrWhiteSpace(dependency.Description));
+                Assert.NotNull(dependency.CheckedAtUtc);
+                Assert.True(dependency.ProbeDurationMilliseconds >= 0);
+                Assert.Equal(0, dependency.ConsecutiveFailureCount);
             }
 
             Assert.Equal(
