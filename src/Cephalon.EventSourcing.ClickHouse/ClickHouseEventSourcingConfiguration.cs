@@ -16,14 +16,14 @@ public static class ClickHouseEventSourcingConfiguration
     /// each stream partition. Unlike <c>ReplacingMergeTree</c>, <c>MergeTree</c> does not merge
     /// duplicate rows — each appended event row is preserved permanently.
     /// </remarks>
-    public const string CreateTableSql = @"
-        CREATE TABLE IF NOT EXISTS {0} (
-            stream_id String,
-            stream_version Int64,
-            event_type String,
-            payload String,
-            occurred_at_utc DateTime64(3, 'UTC'),
-            appended_at_utc DateTime64(3, 'UTC')
-        ) ENGINE = MergeTree()
-        ORDER BY (stream_id, stream_version)";
+    public const string CreateTableSql =
+        "\n        CREATE TABLE IF NOT EXISTS {0} (" +
+        "\n            stream_id String," +
+        "\n            stream_version Int64," +
+        "\n            event_type String," +
+        "\n            payload String," +
+        "\n            occurred_at_utc DateTime64(3, 'UTC')," +
+        "\n            appended_at_utc DateTime64(3, 'UTC')" +
+        "\n        ) ENGINE = MergeTree()" +
+        "\n        ORDER BY (stream_id, stream_version)";
 }

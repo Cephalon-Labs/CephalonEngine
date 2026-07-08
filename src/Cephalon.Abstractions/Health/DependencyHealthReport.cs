@@ -15,4 +15,20 @@ public sealed record DependencyHealthReport(
     HealthState State,
     string Description,
     bool Required,
-    string Source);
+    string Source)
+{
+    /// <summary>
+    /// Gets the UTC timestamp at which the dependency observation completed, when the contributor provides it.
+    /// </summary>
+    public DateTimeOffset? CheckedAtUtc { get; init; }
+
+    /// <summary>
+    /// Gets the completed probe duration in milliseconds, or zero when the contributor does not provide it.
+    /// </summary>
+    public int ProbeDurationMilliseconds { get; init; }
+
+    /// <summary>
+    /// Gets the number of consecutive failed observations, or zero when the contributor does not track failure streaks.
+    /// </summary>
+    public int ConsecutiveFailureCount { get; init; }
+}

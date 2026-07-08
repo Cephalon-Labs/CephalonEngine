@@ -144,7 +144,7 @@ public sealed class BehaviorResilienceTests
         var exception = await Assert.ThrowsAsync<TimeoutRejectedException>(() =>
             dispatcher.DispatchAsync(
                 "tests.resilience.slow",
-                new SlowInput(1500),
+                new SlowInput(5000),
                 new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
 
         Assert.Contains("timeout", exception.Message, StringComparison.OrdinalIgnoreCase);
@@ -734,7 +734,7 @@ public sealed class BehaviorResilienceTests
         await Assert.ThrowsAsync<TimeoutRejectedException>(() =>
             dispatcher.DispatchAsync(
                 "tests.resilience.slow",
-                new SlowInput(1500),
+                new SlowInput(5000),
                 new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
 
         var result = await dispatcher.DispatchAsync(

@@ -268,8 +268,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.TestCoverageRoadmap | Should -Be "docs/test-coverage-roadmap.md"
         $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
-        $json.EvidenceSources.Count | Should -Be 14
-        $json.EvidenceSourceReferences.Count | Should -Be 39
+        $json.EvidenceSources.Count | Should -Be 15
+        $json.EvidenceSourceReferences.Count | Should -Be 41
         $json.PlatformGates.Count | Should -Be 12
         $json.QualityDimensions.Count | Should -Be 12
         $json.PackageFamilies.Count | Should -Be 9
@@ -343,18 +343,18 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.SupplyChainBlockedCount | Should -Be 0
         $json.Summary.TestCoverageLayeredProjectCount | Should -Be 8
         $json.Summary.TestCoverageGapCriterionCount | Should -Be 4
-        $json.Summary.TestCoverageRecommendationCount | Should -Be 11
-        $json.Summary.TestCoverageShippedRecommendationCount | Should -Be 10
+        $json.Summary.TestCoverageRecommendationCount | Should -Be 12
+        $json.Summary.TestCoverageShippedRecommendationCount | Should -Be 11
         $json.Summary.TestCoverageGatedRecommendationCount | Should -Be 1
         $json.Summary.TestCoverageActiveGapRecommendationCount | Should -Be 0
         $json.Summary.TestCoverageQuarantineEntryCount | Should -Be 2
         $json.Summary.TestCoverageOpenQuarantineEntryCount | Should -Be 0
         $json.Summary.PublicApiPackageCount | Should -Be 104
-        $json.Summary.PublicApiPendingPackageCount | Should -Be 0
-        $json.Summary.PublicApiAdditiveEntryCount | Should -Be 0
+        $json.Summary.PublicApiPendingPackageCount | Should -Be 2
+        $json.Summary.PublicApiAdditiveEntryCount | Should -Be 42
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
-        $json.Summary.EvidenceSourceCount | Should -Be 14
-        $json.Summary.EvidenceSourceReferenceCount | Should -Be 39
+        $json.Summary.EvidenceSourceCount | Should -Be 15
+        $json.Summary.EvidenceSourceReferenceCount | Should -Be 41
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
         $json.Summary.PlatformStatusCounts.partial | Should -Be 8
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
@@ -496,8 +496,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.TestCoverageEvidence.Roadmap | Should -Be "docs/test-coverage-roadmap.md"
         $json.TestCoverageEvidence.LayeredProjectCount | Should -Be 8
         $json.TestCoverageEvidence.GapDefinitionCriterionCount | Should -Be 4
-        $json.TestCoverageEvidence.RecommendationCount | Should -Be 11
-        $json.TestCoverageEvidence.ShippedRecommendationCount | Should -Be 10
+        $json.TestCoverageEvidence.RecommendationCount | Should -Be 12
+        $json.TestCoverageEvidence.ShippedRecommendationCount | Should -Be 11
         $json.TestCoverageEvidence.GatedRecommendationCount | Should -Be 1
         $json.TestCoverageEvidence.ActiveGapRecommendationCount | Should -Be 0
         $json.TestCoverageEvidence.QuarantineEntryCount | Should -Be 2
@@ -791,9 +791,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json.PublicApiCompatibilityEvidence.DeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.PublicApiCompatibilityEvidence.PackageCount | Should -Be 104
-        $json.PublicApiCompatibilityEvidence.PendingPackageCount | Should -Be 0
-        $json.PublicApiCompatibilityEvidence.HeaderOnlyPackageCount | Should -Be 104
-        $json.PublicApiCompatibilityEvidence.AdditiveEntryCount | Should -Be 0
+        $json.PublicApiCompatibilityEvidence.PendingPackageCount | Should -Be 2
+        $json.PublicApiCompatibilityEvidence.HeaderOnlyPackageCount | Should -Be 102
+        $json.PublicApiCompatibilityEvidence.AdditiveEntryCount | Should -Be 42
         $json.PublicApiCompatibilityEvidence.RemovalEntryCount | Should -Be 0
         $json.PublicApiCompatibilityEvidence.HasRemovalEntries | Should -BeFalse
         $json.PublicApiCompatibilityEvidence.PackageDeltas.Count | Should -Be 104
@@ -801,9 +801,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $abstractionsDelta.Project | Should -Be "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj"
         $abstractionsDelta.Unshipped | Should -Be "src/Cephalon.Abstractions/PublicAPI.Unshipped.txt"
         $abstractionsDelta.Shipped | Should -Be "src/Cephalon.Abstractions/PublicAPI.Shipped.txt"
-        $abstractionsDelta.AdditiveEntryCount | Should -Be 0
+        $abstractionsDelta.AdditiveEntryCount | Should -Be 6
         $abstractionsDelta.RemovalEntryCount | Should -Be 0
-        $abstractionsDelta.HasPendingChanges | Should -BeFalse
+        $abstractionsDelta.HasPendingChanges | Should -BeTrue
 
         $corePackage = $json.PackageGAReadiness | Where-Object { $_.Package -eq "Cephalon.Abstractions" }
         $corePackage.Family | Should -Be "Core runtime"
@@ -853,9 +853,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "External-policy preflight checks: 3"
         $markdown | Should -Match "external-policy-pending"
         $markdown | Should -Match "Public API Compatibility Evidence"
-        $markdown | Should -Match "Public API packages with pending changes: 0"
-        $markdown | Should -Match "Public API additive entries: 0"
-        $markdown | Should -Match "Header-only packages: 104"
+        $markdown | Should -Match "Public API packages with pending changes: 2"
+        $markdown | Should -Match "Public API additive entries: 42"
+        $markdown | Should -Match "Header-only packages: 102"
         $markdown | Should -Match "Cephalon.Abstractions"
         $markdown | Should -Match "Adoption Smoke Evidence"
         $markdown | Should -Match "out-of-tree-generated-app-package-stage"
@@ -1341,6 +1341,112 @@ artifacts/adoption-smoke/out-of-tree-package-adoption.json
                 -ResolvedManifestPath $manifestPath `
                 -ResolvedRepoRoot $fixtureRoot
         } | Should -Throw "*stable baseline row references SLI 'engine.fixture.other'*"
+    }
+
+    It "accepts investigate timing reports for current release-validation wall-time overruns" {
+        $fixtureRoot = Join-Path $script:tempRoot "sre-wall-time-investigate-fixture"
+        $scriptsRoot = Join-Path $fixtureRoot "scripts"
+        $docsRoot = Join-Path $fixtureRoot "docs"
+        $guardrailRoot = Join-Path $fixtureRoot "benchmarks\Cephalon.Benchmarks\guardrails"
+        $timingReportRoot = Join-Path $fixtureRoot "artifacts\sre-release-validation"
+        New-Item -ItemType Directory -Path $scriptsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $docsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $guardrailRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $timingReportRoot -Force | Out-Null
+
+        $sliId = "engine.fixture.restore.wall-time"
+        $stepName = "Restore solution (locked mode)"
+        $timingReportPath = "artifacts/sre-release-validation/restore-wall-time.json"
+
+        Set-Content -LiteralPath (Join-Path $docsRoot "sre-posture.md") -Value "# SRE posture fixture`n$sliId" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $docsRoot "benchmarking.md") -Value "# Benchmarking fixture" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $scriptsRoot "validate-release.ps1") -Value "# release validation fixture" -Encoding UTF8
+        @{
+            version = "1.0"
+            entries = @(
+                @{
+                    reportFileName = "fixture.csv"
+                    benchmark = "Fixture"
+                    maxMeanNanoseconds = 10
+                    maxAllocatedBytes = 20
+                }
+            )
+        } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $guardrailRoot "performance-guardrails.json") -Encoding UTF8
+
+        @{
+            sliId = $sliId
+            stepName = $stepName
+            status = "investigate"
+            elapsedMilliseconds = 95000
+            targetMilliseconds = 90000
+        } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $timingReportRoot "restore-wall-time.json") -Encoding UTF8
+
+        @{
+            '$schemaVersion' = "1.0.0"
+            status = "benchmark-baseline-published"
+            capturedAtUtc = "2026-05-08T09:08:04.9633564Z"
+            capturedFromCommit = "fixture"
+            publishedBaselineSliIds = @($sliId)
+            pendingBaselineSliIds = @()
+            baselineRows = @(
+                @{
+                    sliId = $sliId
+                    status = "stable-baseline-published"
+                    measurementKind = "release-validation-step-wall-time-baseline"
+                    measurements = @(
+                        @{
+                            timingReportPath = $timingReportPath
+                            stepName = $stepName
+                            command = "dotnet restore --locked-mode"
+                            status = "passed"
+                            elapsedMilliseconds = 60000
+                            targetMilliseconds = 90000
+                            capturedAtUtc = "2026-05-08T09:08:04.9633564Z"
+                            capturedFromCommit = "fixture"
+                        }
+                    )
+                }
+            )
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $scriptsRoot "sre-stable-baselines.json") -Encoding UTF8
+
+        $manifestPath = Join-Path $scriptsRoot "sre-posture-support.json"
+        @{
+            '$schemaVersion' = "1.2.0"
+            status = "partial-stable-baseline-published"
+            summary = "fixture"
+            releaseValidationSummaryMode = "scorecard-artifact"
+            stableBaselinesPublished = $true
+            stableBaselineManifest = "scripts/sre-stable-baselines.json"
+            sourceDocs = @(
+                "docs/sre-posture.md",
+                "docs/benchmarking.md"
+            )
+            validationScripts = @("scripts/validate-release.ps1")
+            guardrailCatalog = "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
+            slis = @(
+                @{
+                    id = $sliId
+                    category = "fixture"
+                    measurementSurface = "release-validation-wall-time"
+                    sourceDocument = "docs/sre-posture.md"
+                    sloTarget = "90 seconds"
+                    window = "per release validation run"
+                    targetStatus = "target-declared"
+                    baselineStatus = "stable-baseline-published"
+                    guardrailCoverageStatus = "not-applicable"
+                }
+            )
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        $evidence = Convert-SrePostureEvidence `
+            -ResolvedManifestPath $manifestPath `
+            -ResolvedRepoRoot $fixtureRoot
+
+        $wallTimeBaseline = $evidence.StableBaselineRows | Where-Object { $_.SliId -eq $sliId }
+        $wallTimeBaseline.MeasurementKind | Should -Be "release-validation-step-wall-time-baseline"
+        $wallTimeBaseline.Measurements.TimingReportPath | Should -Be $timingReportPath
+        $wallTimeBaseline.Measurements.Status | Should -Be "passed"
+        $wallTimeBaseline.Measurements.ElapsedMilliseconds | Should -Be 60000
     }
 
     It "fails when SRE pending baseline rows reference stable SLI rows" {

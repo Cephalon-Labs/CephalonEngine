@@ -273,6 +273,9 @@ Browse the published API surface by public member.
 - [Actions](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantgovernanceactionstore-actions): `Properties` on `ITenantGovernanceActionStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Actions&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the stored runtime tenant-governance actions.
   - `IReadOnlyList<TenantGovernanceActionDescriptor> Actions { get; }`
+- [Actions](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-actions): `Properties` on `RuntimeIntrospectionSectionEntry` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Actions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the deterministically ordered actions declared by the owning subsystem.
+  - `IReadOnlyList<RuntimeOperatorAction> Actions { get; }`
 - [ActivatedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-activatedatutc): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ActivatedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when the graph most recently became active with the runtime.
   - `DateTimeOffset? ActivatedAtUtc { get; set; }`
@@ -4251,6 +4254,9 @@ Browse the published API surface by public member.
 - [Check](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorcompatibilityrule-check-cephalon-abstractions-behaviors-behaviortopologydescriptor): `Methods` on `IBehaviorCompatibilityRule` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Check&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Checks the descriptor and returns a violation if the rule is violated, or `null` if valid.
   - `BehaviorCompatibilityViolation Check(BehaviorTopologyDescriptor descriptor)`
+- [CheckedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-checkedatutc): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=CheckedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - Gets the UTC timestamp at which the dependency observation completed, when the contributor provides it.
+  - `DateTimeOffset? CheckedAtUtc { get; set; }`
 - [Checkpoint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-checkpoint): `Properties` on `CdcCaptureExecutionAcknowledgement` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Checkpoint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest provider-facing checkpoint or cursor when one was reported.
   - `string Checkpoint { get; }`
@@ -5091,6 +5097,9 @@ Browse the published API surface by public member.
 - [Conditions](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationresult-conditions): `Properties` on `CellTrafficAutomationMaterializationResult` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Conditions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets optional typed materialization conditions captured alongside the result.
   - `IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> Conditions { get; }`
+- [Conditions](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-conditions): `Properties` on `RuntimeIntrospectionSectionEntry` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Conditions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the deterministically ordered operator conditions for the entry.
+  - `IReadOnlyList<RuntimeOperatorCondition> Conditions { get; }`
 - [ConfidenceSourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstatus-confidencesourceid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConfidenceSourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary confidence-source identifier Cephalon used to derive execution intent.
   - `string ConfidenceSourceId { get; set; }`
@@ -5442,6 +5451,9 @@ Browse the published API surface by public member.
 - [Connectors](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumdataoptions-connectors): `Properties` on `DebeziumDataOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=Connectors&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
   - Gets the Debezium-managed connector runtimes that should contribute captures and external execution ownership to the active runtime.
   - `IList<DebeziumConnectorOptions> Connectors { get; }`
+- [ConsecutiveFailureCount](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-consecutivefailurecount): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConsecutiveFailureCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - Gets the number of consecutive failed observations, or zero when the contributor does not track failure streaks.
+  - `int ConsecutiveFailureCount { get; set; }`
 - [ConsulDependencyDefinition](cephalon-observability-consuldependencies.md#member-m-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-ctor): `Constructors` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=ConsulDependencyDefinition&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Initializes a new instance of the `ConsulDependencyDefinition` class.
   - `ConsulDependencyDefinition()`
@@ -7206,6 +7218,9 @@ Browse the published API surface by public member.
 - [DescribeRuntimeSurface](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-itechnologyruntimecontributor-describeruntimesurface): `Methods` on `ITechnologyRuntimeContributor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DescribeRuntimeSurface&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Describes the runtime surface projected by the contributor.
   - `TechnologyRuntimeSurface DescribeRuntimeSurface()`
+- [DescribeSection](cephalon-engine.md#member-m-cephalon-engine-runtime-iruntimeintrospectionsectioncontributor-describesection): `Methods` on `IRuntimeIntrospectionSectionContributor` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DescribeSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Creates the current operator-facing section projection.
+  - `RuntimeIntrospectionSection DescribeSection()`
 - [Description](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttooldescriptor-description): `Properties` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Description&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the human-readable description of the tool.
   - `string Description { get; }`
@@ -7539,6 +7554,15 @@ Browse the published API surface by public member.
 - [Description](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehostedexecutionstate-description): `Properties` on `RuntimeHostedExecutionState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The operator-facing hosted-execution description when one was published.
   - `string Description { get; set; }`
+- [Description](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsection-description): `Properties` on `RuntimeIntrospectionSection` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the human-readable explanation of the section.
+  - `string Description { get; }`
+- [Description](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-description): `Properties` on `RuntimeIntrospectionSectionEntry` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the human-readable explanation of the entry.
+  - `string Description { get; }`
+- [Description](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperatoraction-description): `Properties` on `RuntimeOperatorAction` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the human-readable explanation of the action.
+  - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-description): `Properties` on `SagaChoreographyRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the human-readable choreography description.
   - `string Description { get; }`
@@ -7608,6 +7632,9 @@ Browse the published API surface by public member.
 - [Design](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-design): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Design&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Identifies a design pattern.
   - `const PatternKind Design`
+- [DesiredState](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-desiredstate): `Properties` on `RuntimeIntrospectionSectionEntry` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DesiredState&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the state the runtime is expected to maintain.
+  - `string DesiredState { get; }`
 - [DestinationCommit](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-destinationcommit): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DestinationCommit&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether destination commit proof was reported for the dispatch.
   - `const string DestinationCommit`
@@ -8085,9 +8112,18 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehostedexecutionstate-displayname): `Properties` on `RuntimeHostedExecutionState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The operator-facing hosted-execution display name.
   - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsection-displayname): `Properties` on `RuntimeIntrospectionSection` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the operator-facing section name.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-displayname): `Properties` on `RuntimeIntrospectionSectionEntry` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the operator-facing entry name.
+  - `string DisplayName { get; }`
 - [DisplayName](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-displayname): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The operator-facing module display name.
   - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperatoraction-displayname): `Properties` on `RuntimeOperatorAction` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the operator-facing action name.
+  - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-displayname): `Properties` on `SagaChoreographyRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the operator-facing choreography name.
   - `string DisplayName { get; }`
@@ -9507,6 +9543,9 @@ Browse the published API surface by public member.
 - [Entries](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-entries): `Properties` on `ITenantInvitationDeliveryRetryStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Entries&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets every retained retry entry.
   - `IReadOnlyList<TenantInvitationDeliveryRetryDescriptor> Entries { get; }`
+- [Entries](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsection-entries): `Properties` on `RuntimeIntrospectionSection` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Entries&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the deterministically ordered entries projected by the section.
+  - `IReadOnlyList<RuntimeIntrospectionSectionEntry> Entries { get; }`
 - [Entries](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyruntimesurface-entries): `Properties` on `TechnologyRuntimeSurface` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Entries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the entries currently projected by this surface.
   - `IReadOnlyList<TechnologyRuntimeEntry> Entries { get; }`
@@ -10734,6 +10773,9 @@ Browse the published API surface by public member.
 - [ExportTraces](cephalon-observability.md#member-p-cephalon-observability-configuration-telemetryexportoptions-exporttraces): `Properties` on `TelemetryExportOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=ExportTraces&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets a value indicating whether traces should be exported.
   - `bool ExportTraces { get; set; }`
+- [ExtensionSections](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-extensionsections): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ExtensionSections&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the versioned operator-facing sections contributed by engine subsystems and companion packages.
+  - `IReadOnlyList<RuntimeIntrospectionSection> ExtensionSections { get; set; }`
 - [ExternalDeliveryOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-externaldeliveryownership): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExternalDeliveryOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key describing who owns provider-specific external delivery.
   - `const string ExternalDeliveryOwnership`
@@ -14288,6 +14330,15 @@ Browse the published API surface by public member.
   - `string Id { get; }`
 - [Id](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-id): `Properties` on `RestEndpointSuppressionOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Id&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets the stable suppression identifier.
+  - `string Id { get; }`
+- [Id](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsection-id): `Properties` on `RuntimeIntrospectionSection` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the globally stable section identifier.
+  - `string Id { get; }`
+- [Id](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-id): `Properties` on `RuntimeIntrospectionSectionEntry` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the stable entry identifier within its section.
+  - `string Id { get; }`
+- [Id](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperatoraction-id): `Properties` on `RuntimeOperatorAction` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the stable action identifier within the owning section.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-id): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The stable runtime-state identifier for this observed choreography publication path.
@@ -18159,6 +18210,9 @@ Browse the published API surface by public member.
 - [Message](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimelifecycleevent-message): `Properties` on `RuntimeLifecycleEvent` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Message&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The operator-facing narrative for the event.
   - `string Message { get; set; }`
+- [Message](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperatorcondition-message): `Properties` on `RuntimeOperatorCondition` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Message&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the operator-facing condition message.
+  - `string Message { get; }`
 - [MessageDeduplication](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-messagededuplication): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=MessageDeduplication&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether message deduplication was proven by completed execution or provider-owned idempotency.
   - `const string MessageDeduplication`
@@ -18611,6 +18665,9 @@ Browse the published API surface by public member.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-metadata): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets optional additive metadata. Stable REST endpoint keys are defined by `RestEndpointRuntimeMetadataKeys`.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-metadata): `Properties` on `RuntimeIntrospectionSectionEntry` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets additional stable metadata for operator tooling.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-metadata): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The operator-facing metadata captured by the latest observation.
@@ -20035,6 +20092,9 @@ Browse the published API surface by public member.
 - [ObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-observedatutc): `Properties` on `KnowledgeIndexingResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The UTC timestamp when the outcome was observed.
   - `DateTimeOffset ObservedAtUtc { get; set; }`
+- [ObservedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperatorcondition-observedatutc): `Properties` on `RuntimeOperatorCondition` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the UTC timestamp at which the condition was observed, when known.
+  - `DateTimeOffset? ObservedAtUtc { get; }`
 - [ObservedAtUtc](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatuscallbackrequest-observedatutc): `Properties` on `TenantInvitationDeliveryStatusCallbackRequest` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets or sets the UTC timestamp when the status was observed. The runtime clock is used when omitted.
   - `DateTimeOffset? ObservedAtUtc { get; set; }`
@@ -20071,6 +20131,9 @@ Browse the published API surface by public member.
 - [ObservedProofFingerprint](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-observedprooffingerprint): `Properties` on `TenantDomainOwnershipProofEvaluationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ObservedProofFingerprint&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the SHA-256 fingerprint of the observed proof value when present.
   - `string ObservedProofFingerprint { get; }`
+- [ObservedState](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-observedstate): `Properties` on `RuntimeIntrospectionSectionEntry` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ObservedState&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the state most recently observed by the contributor.
+  - `string ObservedState { get; }`
 - [ObservedTxtRecordCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-observedtxtrecordcount): `Properties` on `TenantDomainOwnershipDnsTxtProofCollectionResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ObservedTxtRecordCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of TXT answers observed by collection.
   - `int ObservedTxtRecordCount { get; }`
@@ -21996,6 +22059,9 @@ Browse the published API surface by public member.
 - [Probe](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-probe): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Probe&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The probe name that produced the report.
   - `string Probe { get; set; }`
+- [ProbeDurationMilliseconds](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-probedurationmilliseconds): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProbeDurationMilliseconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
+  - Gets the completed probe duration in milliseconds, or zero when the contributor does not provide it.
+  - `int ProbeDurationMilliseconds { get; set; }`
 - [ProcessedAtUtc](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkinboxentry-processedatutc): `Properties` on `EntityFrameworkInboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ProcessedAtUtc&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the time at which the inbox row was marked as processed.
   - `DateTimeOffset ProcessedAtUtc { get; set; }`
@@ -23559,6 +23625,9 @@ Browse the published API surface by public member.
 - [Reason](cephalon-engine.md#member-p-cephalon-engine-trust-packagetrustdecision-reason): `Properties` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Reason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The reason the package was trusted or rejected.
   - `string Reason { get; set; }`
+- [Reason](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperatorcondition-reason): `Properties` on `RuntimeOperatorCondition` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Reason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the stable machine-readable reason.
+  - `string Reason { get; }`
 - [Reason](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliveryclientresult-reason): `Properties` on `SendGridInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Services&scope=members)
   - Gets the provider-facing outcome reason.
   - `string Reason { get; }`
@@ -25008,6 +25077,9 @@ Browse the published API surface by public member.
 - [RequiresApproval](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstates-requiresapproval): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector currently has a future engine-execution candidate, but the next step would still require an approval gate.
   - `const string RequiresApproval`
+- [RequiresApproval](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperatoraction-requiresapproval): `Properties` on `RuntimeOperatorAction` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RequiresApproval&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets whether execution requires an explicit approval step.
+  - `bool RequiresApproval { get; }`
 - [RequiresAttention](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-requiresattention): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresAttention&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the managed connector currently requires additional command-envelope attention.
   - `bool RequiresAttention { get; }`
@@ -26328,6 +26400,12 @@ Browse the published API surface by public member.
 - [RuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-runtimeid): `Properties` on `OutboxDispatchPolicyDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the optional dispatch-runtime identifier that explicitly owns execution for the outbox.
   - `string RuntimeId { get; }`
+- [RuntimeIntrospectionSection](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeintrospectionsection-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimeintrospectionsectionentry): `Constructors` on `RuntimeIntrospectionSection` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeIntrospectionSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Creates a runtime introspection extension section.
+  - `RuntimeIntrospectionSection(string id, string schemaVersion, string source, string displayName, string description, IReadOnlyList<RuntimeIntrospectionSectionEntry> entries)`
+- [RuntimeIntrospectionSectionEntry](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeintrospectionsectionentry-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimeoperatorcondition-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimeoperatoraction-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `RuntimeIntrospectionSectionEntry` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeIntrospectionSectionEntry&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Creates a runtime introspection section entry.
+  - `RuntimeIntrospectionSectionEntry(string id, string displayName, string description, string desiredState, string observedState, IReadOnlyList<RuntimeOperatorCondition> conditions, IReadOnlyList<RuntimeOperatorAction> actions, IReadOnlyDictionary<string, string> metadata)`
 - [RuntimeIntrospectionSnapshot](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimeoperationalstory): `Constructors` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeIntrospectionSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Combines the main operator-facing runtime views into a single payload.
   - `RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList<ExecutionGraphDescriptor> ExecutionGraphs, IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces, IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions, RuntimeOperationalStory OperationalStory)`
@@ -26367,6 +26445,12 @@ Browse the published API surface by public member.
 - [RuntimeOperationalStory](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeoperationalstory-ctor-system-datetimeoffset-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimemodulelifecyclestate-system-collections-generic-ireadonlylist-cephalon-engine-runtime-runtimelifecycleevent): `Constructors` on `RuntimeOperationalStory` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeOperationalStory&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Combines the operator-facing runtime story into one payload that explains what loaded, started, failed, and why.
   - `RuntimeOperationalStory(DateTimeOffset GeneratedAtUtc, RuntimeStatusSnapshot Status, IReadOnlyList<PackageManifest> LoadedPackages, IReadOnlyList<RuntimeModuleLifecycleState> Modules, IReadOnlyList<RuntimeLifecycleEvent> Timeline)`
+- [RuntimeOperatorAction](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeoperatoraction-ctor-system-string-system-string-system-string-system-boolean): `Constructors` on `RuntimeOperatorAction` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeOperatorAction&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Creates an operator action declaration.
+  - `RuntimeOperatorAction(string id, string displayName, string description, bool requiresApproval)`
+- [RuntimeOperatorCondition](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeoperatorcondition-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset): `Constructors` on `RuntimeOperatorCondition` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeOperatorCondition&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Creates an operator-readable runtime condition.
+  - `RuntimeOperatorCondition(string type, string status, string severity, string reason, string message, DateTimeOffset? observedAtUtc)`
 - [RuntimeRemediation](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-runtimeremediation): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuntimeRemediation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector currently needs non-blocking runtime remediation work.
   - `const string RuntimeRemediation`
@@ -26724,6 +26808,9 @@ Browse the published API surface by public member.
 - [SchemaRegistryId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventserializerdescriptor-schemaregistryid): `Properties` on `EventSerializerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SchemaRegistryId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the optional schema registry identifier required by the serializer.
   - `string SchemaRegistryId { get; }`
+- [SchemaVersion](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsection-schemaversion): `Properties` on `RuntimeIntrospectionSection` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=SchemaVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the version of the section payload contract.
+  - `string SchemaVersion { get; }`
 - [Scheme](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-scheme): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Scheme&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Gets or sets the URI scheme used when building a discrete endpoint, such as `neo4j`, `neo4j+s`, `bolt`, or `bolt+s`.
   - `string Scheme { get; set; }`
@@ -27090,6 +27177,9 @@ Browse the published API surface by public member.
 - [Severity](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodelerrordetail-severity): `Properties` on `ResultModelErrorDetail` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Severity&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Gets or sets the error severity.
   - `BehaviorFaultSeverity Severity { get; set; }`
+- [Severity](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperatorcondition-severity): `Properties` on `RuntimeOperatorCondition` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Severity&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the operator severity.
+  - `string Severity { get; }`
 - [SfidIdOptions](cephalon-ids-sfid.md#member-m-cephalon-ids-sfid-configuration-sfididoptions-ctor-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32): `Constructors` on `SfidIdOptions` in `Cephalon.Ids.Sfid.Configuration` (`Cephalon.Ids.Sfid`) [Browse](browse.html?q=SfidIdOptions&assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Configuration&scope=members)
   - Initializes a new instance of the `SfidIdOptions` class.
   - `SfidIdOptions(int? datacenterId, int? workerId, int? workerCapacity, int? clockRegressionToleranceMilliseconds)`
@@ -27479,6 +27569,9 @@ Browse the published API surface by public member.
 - [Source](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointbindingdescriptor-source): `Properties` on `RestEndpointBindingDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Source&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the HTTP request source that supplies the value.
   - `RestEndpointBindingSource Source { get; }`
+- [Source](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsection-source): `Properties` on `RuntimeIntrospectionSection` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Source&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the package or subsystem that owns the section.
+  - `string Source { get; }`
 - [Source](cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-source): `Properties` on `SendGridInvitationDeliveryAspNetCoreOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`) [Browse](browse.html?q=Source&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration&scope=members)
   - Gets or sets the source value recorded on translated SendGrid delivery status observations.
   - `string Source { get; set; }`
@@ -28332,6 +28425,9 @@ Browse the published API surface by public member.
 - [Status](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperationalstory-status): `Properties` on `RuntimeOperationalStory` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Status&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The current runtime lifecycle status snapshot.
   - `RuntimeStatusSnapshot Status { get; set; }`
+- [Status](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperatorcondition-status): `Properties` on `RuntimeOperatorCondition` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Status&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the normalized condition status.
+  - `string Status { get; }`
 - [Status](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-status): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Status&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The current lifecycle status.
   - `RuntimeStatus Status { get; set; }`
@@ -30624,6 +30720,9 @@ Browse the published API surface by public member.
 - [Type](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-type): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Type&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Gets or sets the optional problem type URI associated with the response.
   - `string Type { get; set; }`
+- [Type](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperatorcondition-type): `Properties` on `RuntimeOperatorCondition` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Type&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the stable condition type.
+  - `string Type { get; }`
 - [TypeIndexPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-typeindexpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=TypeIndexPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the type index.
   - `string TypeIndexPath { get; set; }`

@@ -2695,7 +2695,7 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated development observability baseline: ./src/Acme.Store.Host/Configurations/Observability/Development.json keeps the generated Serilog console sample explicit with Application=Acme.Store.Host.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated documentation surface assets: ./src/Acme.Store.Host/Configurations/AddOpenApi.json and ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated OpenAPI baseline: ./src/Acme.Store.Host/Configurations/AddOpenApi.json keeps the generated REST docs surface explicit with Title='Acme.Store API'.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[ok] Generated hosted reference docs baseline: ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json keeps hosted reference docs explicit with Enabled=false, RoutePrefix=/reference, DirectoryPath=..\\..\\docs\\reference, and DefaultDocument=browse.html.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains(GetGeneratedHostedReferenceDocsBaselineMessage(), stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated local orchestration assets: ./compose.yaml and ./otel-collector-config.yaml are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated compose baseline: ./compose.yaml keeps the generated local container-runtime baseline aligned with Dockerfile, OTLP collector handoff, and the current compose defaults.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated OpenTelemetry collector baseline: ./otel-collector-config.yaml keeps the generated OTLP collector baseline aligned with health_check, otlp/http on 4318, and debug exporter pipelines.", stdout.ToString(), StringComparison.Ordinal);
@@ -2731,6 +2731,86 @@ public sealed class CliApplicationTests
             Assert.Contains($"Set-Location {QuotePowerShellArgument(appRootPath)}", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("dotnet restore ./Acme.Store.slnx", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("dotnet run --project ./src/Acme.Store.Host/Acme.Store.Host.csproj", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Equal(string.Empty, stderr.ToString());
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (Directory.Exists(appRootPath))
+            {
+                Directory.Delete(appRootPath, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorAcceptsGeneratedDeploymentScriptPathSeparators()
+    {
+        var appRootPath = Path.Combine(Path.GetTempPath(), $"cephalon-doctor-path-separators-{Guid.NewGuid():N}");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        CreateGeneratedDoctorAppRoot(
+            appRootPath,
+            includeLocalPackages: true,
+            includePublishProfile: true,
+            azureContainerAppsDeployScriptContents: """
+                param(
+                    [string]$AppName = "acme-store",
+                    [string[]]$EnvironmentVariables = @(
+                        "ASPNETCORE_HTTP_PORTS=8080",
+                        "DOTNET_ENVIRONMENT=Production"),
+                    [switch]$Preview
+                )
+
+                $resolvedSourceRoot = (Resolve-Path -LiteralPath ".").Path
+                $dockerfilePath = Join-Path $resolvedSourceRoot "Dockerfile"
+                $nuGetConfigPath = Join-Path $resolvedSourceRoot "NuGet.config"
+                $hostProjectPath = Join-Path $resolvedSourceRoot "src/Acme.Store.Host/Acme.Store.Host.csproj"
+                $upArguments = @("containerapp", "up", "--name", $AppName, "--source", $resolvedSourceRoot, "--env-vars") + $EnvironmentVariables
+
+                if ($Preview) {
+                    Write-Host "Detected generated host project: $hostProjectPath"
+                    Write-Host "az @upArguments"
+                    return
+                }
+
+                & az @upArguments
+                Write-Host "Azure Container Apps deployment completed successfully."
+                """);
+
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(0, "cephalon-monolith", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--app-root", appRootPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(0, exitCode);
+            Assert.Contains("[ok] Generated Azure Container Apps script baseline: ./deploy/azure-container-apps/deploy-up.ps1 keeps the generated source-root, host-project, and az containerapp up defaults explicit for Acme.Store.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Equal(string.Empty, stderr.ToString());
         }
         finally
@@ -2880,7 +2960,7 @@ public sealed class CliApplicationTests
             Assert.Contains("[ok] Generated development observability baseline: ./src/Acme.Store.Host/Configurations/Observability/Development.json keeps the generated Serilog console sample explicit with Application=Acme.Store.Host.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated documentation surface assets: ./src/Acme.Store.Host/Configurations/AddOpenApi.json and ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated OpenAPI baseline: ./src/Acme.Store.Host/Configurations/AddOpenApi.json keeps the generated REST docs surface explicit with Title='Acme.Store API'.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[ok] Generated hosted reference docs baseline: ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json keeps hosted reference docs explicit with Enabled=false, RoutePrefix=/reference, DirectoryPath=..\\..\\docs\\reference, and DefaultDocument=browse.html.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains(GetGeneratedHostedReferenceDocsBaselineMessage(), stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated local orchestration assets: ./compose.yaml and ./otel-collector-config.yaml are present.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated compose baseline: ./compose.yaml keeps the generated local container-runtime baseline aligned with Dockerfile, OTLP collector handoff, and the current compose defaults.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated OpenTelemetry collector baseline: ./otel-collector-config.yaml keeps the generated OTLP collector baseline aligned with health_check, otlp/http on 4318, and debug exporter pipelines.", stdout.ToString(), StringComparison.Ordinal);
@@ -4413,7 +4493,7 @@ public sealed class CliApplicationTests
 
             Assert.Equal(true, referenceDocs["Enabled"]?.GetValue<bool>());
             Assert.Equal("/reference", referenceDocs["RoutePrefix"]?.GetValue<string>());
-            Assert.Equal("..\\..\\published-docs", referenceDocs["DirectoryPath"]?.GetValue<string>());
+            Assert.Equal(GetReferenceDocsRelativePath("published-docs"), referenceDocs["DirectoryPath"]?.GetValue<string>());
             Assert.Equal("browse.html", referenceDocs["DefaultDocument"]?.GetValue<string>());
             Assert.Contains("Published", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("Enabled hosted reference docs", stdout.ToString(), StringComparison.Ordinal);
@@ -4635,7 +4715,7 @@ public sealed class CliApplicationTests
 
             Assert.Equal(true, referenceDocs["Enabled"]?.GetValue<bool>());
             Assert.Equal("/reference", referenceDocs["RoutePrefix"]?.GetValue<string>());
-            Assert.Equal("..\\..\\docs\\reference", referenceDocs["DirectoryPath"]?.GetValue<string>());
+            Assert.Equal(GetReferenceDocsRelativePath("docs", "reference"), referenceDocs["DirectoryPath"]?.GetValue<string>());
             Assert.Equal("browse.html", referenceDocs["DefaultDocument"]?.GetValue<string>());
             Assert.Contains("Enabled hosted reference docs", stdout.ToString(), StringComparison.Ordinal);
             Assert.Equal(string.Empty, stderr.ToString());
@@ -4768,8 +4848,10 @@ public sealed class CliApplicationTests
         Assert.Contains("Option '--host-url' requires '--open' or '--validate-hosting'.", stderr.ToString(), StringComparison.Ordinal);
     }
 
-    [Fact]
-    public async Task RunAsyncValidateHostingSucceedsWhenReferenceDocsAreReady()
+    [Theory]
+    [InlineData("..\\..\\docs\\reference")]
+    [InlineData("../../docs/reference")]
+    public async Task RunAsyncValidateHostingSucceedsWhenReferenceDocsAreReady(string configuredDirectoryPath)
     {
         var workspacePath = Path.Combine(Path.GetTempPath(), $"cephalon-cli-validate-hosting-{Guid.NewGuid():N}");
         var docsDirectory = Path.Combine(workspacePath, "docs", "reference");
@@ -4783,12 +4865,12 @@ public sealed class CliApplicationTests
         await File.WriteAllTextAsync(Path.Combine(docsDirectory, "browse.html"), "<html></html>");
         await File.WriteAllTextAsync(
             appSettingsPath,
-            """
+            $$"""
             {
               "ReferenceDocs": {
                 "Enabled": true,
                 "RoutePrefix": "/reference",
-                "DirectoryPath": "..\\..\\docs\\reference",
+                "DirectoryPath": "{{EscapeJsonString(configuredDirectoryPath)}}",
                 "DefaultDocument": "browse.html"
               }
             }
@@ -5391,12 +5473,12 @@ public sealed class CliApplicationTests
                 """);
             File.WriteAllText(
                 Path.Combine(configurationsPath, "AddReferenceDocs.json"),
-                referenceDocsSettingsContents ?? """
+                referenceDocsSettingsContents ?? $$"""
                 {
                   "ReferenceDocs": {
                     "Enabled": false,
                     "RoutePrefix": "/reference",
-                    "DirectoryPath": "..\\..\\docs\\reference",
+                    "DirectoryPath": "{{EscapeJsonString(GetReferenceDocsRelativePath("docs", "reference"))}}",
                     "DefaultDocument": "browse.html"
                   }
                 }
@@ -5963,6 +6045,23 @@ public sealed class CliApplicationTests
             ? "10.0"
             : new string(tagCharacters);
     }
+
+    private static string GetReferenceDocsRelativePath(params string[] pathSegments)
+    {
+        var segments = new string[pathSegments.Length + 2];
+        segments[0] = "..";
+        segments[1] = "..";
+        Array.Copy(pathSegments, 0, segments, 2, pathSegments.Length);
+
+        return Path.Combine(segments);
+    }
+
+    private static string EscapeJsonString(string value) =>
+        value.Replace("\\", "\\\\", StringComparison.Ordinal)
+            .Replace("\"", "\\\"", StringComparison.Ordinal);
+
+    private static string GetGeneratedHostedReferenceDocsBaselineMessage() =>
+        $"[ok] Generated hosted reference docs baseline: ./src/Acme.Store.Host/Configurations/AddReferenceDocs.json keeps hosted reference docs explicit with Enabled=false, RoutePrefix=/reference, DirectoryPath={GetReferenceDocsRelativePath("docs", "reference")}, and DefaultDocument=browse.html.";
 
     private static string QuotePowerShellArgument(string value)
     {

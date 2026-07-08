@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
+using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Sample.ModularVerticalSlice.Modules.Orders.Features.Checkout.Commands;
@@ -90,6 +91,7 @@ internal sealed class GetCheckoutPreviewBehavior : IAppBehavior<GetCheckoutPrevi
     public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
     {
         builder.AsDirect();
+        builder.ViaGrpc();
     }
 }
 

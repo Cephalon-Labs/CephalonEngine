@@ -241,6 +241,27 @@ public sealed class PackagePublishingTests
 
             var packagePath = Directory.GetFiles(outputPath, "Cephalon.Cli.*.nupkg", SearchOption.TopDirectoryOnly)
                 .Single(path => !path.EndsWith(".symbols.nupkg", StringComparison.OrdinalIgnoreCase));
+            var nugetConfigPath = Path.Combine(outputPath, "NuGet.config");
+            File.WriteAllText(
+                nugetConfigPath,
+                $$"""
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                  <packageSources>
+                    <clear />
+                    <add key="cephalon-local" value="{{EscapeXmlAttribute(outputPath)}}" />
+                    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+                  </packageSources>
+                  <packageSourceMapping>
+                    <packageSource key="cephalon-local">
+                      <package pattern="Cephalon.Cli" />
+                    </packageSource>
+                    <packageSource key="nuget.org">
+                      <package pattern="*" />
+                    </packageSource>
+                  </packageSourceMapping>
+                </configuration>
+                """);
 
             using (var package = ZipFile.OpenRead(packagePath))
             {
@@ -250,7 +271,7 @@ public sealed class PackagePublishingTests
 
             var installResult = RunProcess(
                 "dotnet",
-                $"tool install --tool-path \"{toolPath}\" Cephalon.Cli --add-source \"{outputPath}\" --ignore-failed-sources --no-cache --prerelease",
+                $"tool install --tool-path \"{toolPath}\" Cephalon.Cli --configfile \"{nugetConfigPath}\" --ignore-failed-sources --no-cache --prerelease",
                 workingDirectory: repositoryRoot);
 
             Assert.Equal(0, installResult.ExitCode);
@@ -345,6 +366,12 @@ public sealed class PackagePublishingTests
         using var sha256 = System.Security.Cryptography.SHA256.Create();
         return Convert.ToHexString(sha256.ComputeHash(stream)).ToLowerInvariant();
     }
+
+    private static string EscapeXmlAttribute(string value) =>
+        value.Replace("&", "&amp;", StringComparison.Ordinal)
+            .Replace("\"", "&quot;", StringComparison.Ordinal)
+            .Replace("<", "&lt;", StringComparison.Ordinal)
+            .Replace(">", "&gt;", StringComparison.Ordinal);
 
     private sealed record ProcessResult(int ExitCode, string Output, string Error);
 }

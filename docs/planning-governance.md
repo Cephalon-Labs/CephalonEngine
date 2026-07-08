@@ -120,6 +120,7 @@ Anchor points so far:
 
 - [Architecture review (April 2026)](architecture-review-2026-04.md), dated `April 13, 2026`
 - [Architecture review (May 2026)](architecture-review-2026-05.md), dated `May 2, 2026`
+- [Architecture review (June 2026)](architecture-review-2026-06.md), dated `June 30, 2026`
 
 Cadence rules:
 

@@ -440,6 +440,12 @@ autom4te.cache/
 tarballs/
 test-results/
 
+# Local adjacent checkouts used during release/docs validation. Do not commit these
+# as embedded Git repositories; use an explicit submodule decision if they ever
+# become part of the supported repository contract.
+/CephalonEngine/
+/cephalonengine-docs/
+
 # content below from: https://github.com/github/gitignore/blob/main/Global/macOS.gitignore
 # General
 .DS_Store

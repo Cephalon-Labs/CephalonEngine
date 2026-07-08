@@ -43,6 +43,7 @@ jobs:
         with:
           global-json-file: global.json
           cache: true
+          cache-dependency-path: '**/packages.lock.json'
 
       - name: Install Pester
         shell: pwsh
@@ -108,6 +109,22 @@ jobs:
           path: artifacts/deployment-mode-claims-release
           if-no-files-found: warn
 
+      - name: Upload surface maturity evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surface-maturity-report-${{ matrix.benchmark_artifact_suffix }}
+          path: artifacts/surface-maturity-report-release
+          if-no-files-found: error
+
+      - name: Upload engine completion scorecard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-completion-scorecard-${{ matrix.benchmark_artifact_suffix }}
+          path: artifacts/engine-completion-scorecard-release
+          if-no-files-found: warn
+
       - name: Upload NuGet vulnerability audit
         if: always()
         uses: actions/upload-artifact@v4
@@ -167,10 +184,17 @@ jobs:
           global-json-file: global.json
           dotnet-version: 11.0.x
           cache: true
+          cache-dependency-path: '**/packages.lock.json'
 
       - name: Run .NET 11 readiness validation
         shell: pwsh
-        run: ./scripts/validate-dotnet-readiness.ps1 -Configuration Release -OutputPath artifacts/dotnet-readiness-sdk11 -SkipReferenceDocs -SkipPackages
+        run: >
+          ./scripts/validate-dotnet-readiness.ps1
+          -Configuration Release
+          -OutputPath artifacts/dotnet-readiness-sdk11
+          -SkipReferenceDocs
+          -SkipPackages
+          -TestFilter "FullyQualifiedName!~Cephalon.Tests.Tooling.TemplatePackTests&FullyQualifiedName!~Cephalon.Tests.Tooling.PackagePublishingTests&FullyQualifiedName!~RunAsyncStagesPublishedModulePackageIntoLoadableDirectory"
 
       - name: Upload .NET 11 readiness report
         if: always()

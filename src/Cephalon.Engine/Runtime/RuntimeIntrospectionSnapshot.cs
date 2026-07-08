@@ -265,4 +265,13 @@ public sealed record RuntimeIntrospectionSnapshot(
     /// Gets the effective strangler-fig ingress materialization answers visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<StranglerFigIngressRuntimeDescriptor> StranglerFigIngressRoutes { get; init; } = [];
+
+    /// <summary>
+    /// Gets the versioned operator-facing sections contributed by engine subsystems and companion packages.
+    /// </summary>
+    /// <remarks>
+    /// Section identifiers are globally unique and ordered deterministically. Each section owns its schema
+    /// version so companion packages can evolve their payload without expanding this top-level contract.
+    /// </remarks>
+    public IReadOnlyList<RuntimeIntrospectionSection> ExtensionSections { get; init; } = [];
 }

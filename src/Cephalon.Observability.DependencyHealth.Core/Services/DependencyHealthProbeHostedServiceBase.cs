@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using Cephalon.Abstractions.Health;
 using Cephalon.Observability.DependencyHealth.Core.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -17,6 +19,7 @@ internal abstract class DependencyHealthProbeHostedServiceBase<TOptions, TDefini
     private readonly TOptions options;
     private readonly DependencyHealthStore store;
     private readonly ILogger logger;
+    private readonly ConcurrentDictionary<string, int> consecutiveFailureCounts = new(StringComparer.OrdinalIgnoreCase);
     private CancellationTokenSource? loopCancellation;
     private Task? loopTask;
 
@@ -101,6 +104,7 @@ internal abstract class DependencyHealthProbeHostedServiceBase<TOptions, TDefini
 
     private async Task<DependencyHealthReport> ProbeDependencyAsync(TDefinition dependency, CancellationToken cancellationToken)
     {
+        var startedTimestamp = Stopwatch.GetTimestamp();
         var id = string.IsNullOrWhiteSpace(dependency.Id) ? DefaultDependencyId : dependency.Id.Trim();
         var displayName = string.IsNullOrWhiteSpace(dependency.DisplayName) ? id : dependency.DisplayName.Trim();
         var timeoutSeconds = Math.Max(1, dependency.TimeoutSeconds);
@@ -108,9 +112,9 @@ internal abstract class DependencyHealthProbeHostedServiceBase<TOptions, TDefini
         var validationError = ValidateDependency(dependency);
         if (validationError is not null)
         {
-            return new DependencyHealthReport(
-                Id: id, DisplayName: displayName, State: HealthState.Unhealthy,
-                Description: validationError, Required: dependency.Required, Source: SourceName);
+            return CreateReport(
+                id: id, displayName: displayName, state: HealthState.Unhealthy,
+                description: validationError, required: dependency.Required, startedTimestamp);
         }
 
         try
@@ -118,26 +122,64 @@ internal abstract class DependencyHealthProbeHostedServiceBase<TOptions, TDefini
             using var timeoutSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             timeoutSource.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
             var description = await ProbeAsync(dependency, timeoutSource.Token).ConfigureAwait(false);
-            return new DependencyHealthReport(
-                Id: id, DisplayName: displayName, State: HealthState.Healthy,
-                Description: description, Required: dependency.Required, Source: SourceName);
+            return CreateReport(
+                id: id, displayName: displayName, state: HealthState.Healthy,
+                description: description, required: dependency.Required, startedTimestamp);
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
             LogProbeTimedOut(id, timeoutSeconds);
-            return new DependencyHealthReport(
-                Id: id, DisplayName: displayName, State: HealthState.Unhealthy,
-                Description: $"{ProviderLabel} dependency '{displayName}' timed out after {timeoutSeconds} seconds.",
-                Required: dependency.Required, Source: SourceName);
+            return CreateReport(
+                id: id, displayName: displayName, state: HealthState.Unhealthy,
+                description: $"{ProviderLabel} dependency '{displayName}' timed out after {timeoutSeconds} seconds.",
+                required: dependency.Required, startedTimestamp);
         }
         catch (Exception exception)
         {
             LogProbeFailed(exception, id);
-            return new DependencyHealthReport(
-                Id: id, DisplayName: displayName, State: HealthState.Unhealthy,
-                Description: $"{ProviderLabel} dependency '{displayName}' failed: {exception.Message}",
-                Required: dependency.Required, Source: SourceName);
+            return CreateReport(
+                id: id, displayName: displayName, state: HealthState.Unhealthy,
+                description: $"{ProviderLabel} dependency '{displayName}' failed: {exception.Message}",
+                required: dependency.Required, startedTimestamp);
         }
+    }
+
+    private DependencyHealthReport CreateReport(
+        string id,
+        string displayName,
+        HealthState state,
+        string description,
+        bool required,
+        long startedTimestamp)
+    {
+        var consecutiveFailureCount = state == HealthState.Healthy
+            ? ResetFailureCount(id)
+            : consecutiveFailureCounts.AddOrUpdate(
+                id,
+                1,
+                static (_, current) => current == int.MaxValue ? current : current + 1);
+        var elapsedMilliseconds = Stopwatch.GetElapsedTime(startedTimestamp).TotalMilliseconds;
+
+        return new DependencyHealthReport(
+            id,
+            displayName,
+            state,
+            description,
+            required,
+            SourceName)
+        {
+            CheckedAtUtc = TimeProvider.System.GetUtcNow(),
+            ProbeDurationMilliseconds = elapsedMilliseconds >= int.MaxValue
+                ? int.MaxValue
+                : Math.Max(0, (int)Math.Round(elapsedMilliseconds, MidpointRounding.AwayFromZero)),
+            ConsecutiveFailureCount = consecutiveFailureCount
+        };
+    }
+
+    private int ResetFailureCount(string dependencyId)
+    {
+        consecutiveFailureCounts.TryRemove(dependencyId, out _);
+        return 0;
     }
 }
 

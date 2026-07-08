@@ -174,6 +174,8 @@ public sealed class PostgresDataCdcPackTests
             Assert.True(postgresRuntime.Summary.CapturedCount > 0);
             Assert.Equal(1, postgresRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, postgresRuntime.Summary.TotalProducedMessageCount);
+            Assert.Equal("lsn-0001", postgresRuntime.Summary.LastChangeId);
+            Assert.Equal("orders_slot|0/16B6E00|0/16B6E30", postgresRuntime.Summary.LastCheckpoint);
             Assert.Equal("provider-native", postgresRuntime.Summary.LastAcknowledgement);
         }
         finally
@@ -302,7 +304,9 @@ public sealed class PostgresDataCdcPackTests
             IsCapturedOrIdle(state.LastOutcome) &&
             state.CapturedCount > 0 &&
             state.TotalCapturedChangeCount == 1 &&
-            state.TotalProducedMessageCount == 1;
+            state.TotalProducedMessageCount == 1 &&
+            string.Equals(state.LastChangeId, "lsn-0001", StringComparison.Ordinal) &&
+            string.Equals(state.LastCheckpoint, "orders_slot|0/16B6E00|0/16B6E30", StringComparison.Ordinal);
     }
 
     private static bool IsCapturedOrIdle(string? outcome)

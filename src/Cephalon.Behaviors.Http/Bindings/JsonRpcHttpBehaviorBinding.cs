@@ -246,7 +246,7 @@ public sealed class JsonRpcHttpBehaviorBinding : IHttpBehaviorBinding
         var response = new JsonRpcSuccessResponse
         {
             Result = result,
-            Id = id is not null ? JsonDocument.Parse(id.ToJsonString()).RootElement : (JsonElement?)null
+            Id = id is not null ? JsonElement.Parse(id.ToJsonString()) : (JsonElement?)null
         };
         // Use default serializer (not source-gen context) because the Result property
         // contains domain types that are not registered in JsonRpcSerializerContext.
@@ -259,7 +259,7 @@ public sealed class JsonRpcHttpBehaviorBinding : IHttpBehaviorBinding
         var response = new JsonRpcErrorResponse
         {
             Error = new JsonRpcError { Code = code, Message = message, Data = data },
-            Id = id is not null ? JsonDocument.Parse(id.ToJsonString()).RootElement : (JsonElement?)null
+            Id = id is not null ? JsonElement.Parse(id.ToJsonString()) : (JsonElement?)null
         };
         var json = JsonSerializer.Serialize(response, JsonRpcSerializerContext.Default.JsonRpcErrorResponse);
         // G-RPC-06: HTTP status always 200

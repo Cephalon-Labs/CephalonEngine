@@ -1,6 +1,76 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `May 15, 2026`.
+Backlog status in this document reflects the repository state as of `July 7, 2026`.
+
+## M3/M4 elevation program (June 2026)
+
+### ENG-712 Gate 0 authoritative maturity evidence and release hygiene
+
+Status: done
+
+Estimate: 12
+
+Purpose: make package maturity and release prerequisites machine-checkable before any further promotion.
+
+Scope: reconcile the branch against current `origin/master`; emit a fail-closed report across `107` source projects, component badges, conformance rows, maturity/backlog baselines, and the dependency-health provider manifest; wire it into release validation and artifact upload; keep GitHub Actions setup-dotnet caching aligned with project-level `packages.lock.json` files; close the discovered `Cephalon.ReferenceDocs` drift; pin the non-vulnerable SQLite native test bundle and patched Microsoft.OpenApi 2.x transitive line; normalize the Cassandra/ClickHouse raw-string public API baselines; normalize hosted reference-doc config paths, CLI/tooling fixture paths, and generated deployment-script doctor audits across operating systems; keep generated reference-doc bundles aligned with the checked-in public API navigation; keep the showcase read-model projection loop configuration-driven for deterministic write/read-separation tests; keep behavior resilience timeout proofs resilient to `.NET 11` readiness scheduler variance; keep the `.NET 11` workflow lane scoped to future-SDK assessment by filtering SDK-preview package/template pack and install roundtrips while `net10.0` release validation remains the package-shipping authority; keep CDC runtime state preserving the latest provider change id and checkpoint across idle/start observations that omit replacement values; keep local adjacent engine/docs-site checkouts out of the repo contract unless a future explicit submodule decision promotes them; and keep Agentics singleton runtime services resolving scoped inbox providers only inside operation scopes.
+
+Validation: report drift count `0`; three Pester tests; release-validation step proof; GitHub Actions cache path resolves the repository's project-level lock files; clean NuGet restore; affected project builds; generated reference-doc parity; focused tooling path-separator, hosting configuration, technology-surface, behavior resilience timeout, CDC checkpoint preservation, Showcase Agentics smoke tests, deterministic showcase write/read-separation proof, and full hosting validation; SRE wall-time overruns emit investigation evidence instead of aborting artifact publication; the `.NET 11` readiness workflow records and applies the package/template roundtrip exclusion filter.
+
+Quality dimensions: Security + Reliability + Maintainability + Compatibility + Auditability.
+
+### ENG-713 Additive operator observation kernel and dependency-health projection
+
+Status: done
+
+Estimate: 16
+
+Purpose: let companion packages contribute versioned desired/observed operator truth without expanding `RuntimeIntrospectionSnapshot` for every package.
+
+Scope: add `IRuntimeIntrospectionSectionContributor`, versioned sections, entries, conditions, and declared actions; deterministic ordering and duplicate-id rejection; `snapshot.ExtensionSections`; dependency-health freshness, duration, and failure-streak data; ASP.NET Core health payload alignment; ASP.NET Core and Worker proof.
+
+Validation: focused composition tests, all-provider failure invariant, all-provider live-success invariant, ASP.NET Core snapshot/health test, source-generated JSON build, and Worker snapshot assertion.
+
+Non-goal: this does not promote dependency-health providers from M2. A declared action is not remediation execution.
+
+Quality dimensions: Reliability + Flexibility + Availability + Maintainability + Compatibility + Auditability.
+
+### ENG-714 Shared coordination kernel for operator automation
+
+Status: ready
+
+Estimate: 32
+
+Purpose: consolidate lease/fencing, idempotency, retry, journal, approval, reconciliation, and audit concepts before more families implement incompatible operator loops.
+
+Acceptance: host-agnostic contracts; deterministic state transitions; durable-provider seams; restart, duplicate-command, lost-lease, terminal-failure, and redaction tests; no transport dependency in engine core.
+
+Quality dimensions: Reliability + Scalability + Data integrity + Security + Auditability.
+
+### ENG-715 Three-family M3 pilots and selective M4 adoption proof
+
+Status: backlog
+
+Estimate: 64
+
+Purpose: prove the shared kernel in dependency health, eventing/CDC, and edge/governance before any family-wide maturity promotion.
+
+Acceptance: three owned reconciliation/remediation/recovery loops; live-provider or faithful failure-injection proof; operator readback; authorization/approval/idempotency/journal evidence; package-specific maturity updates only where proof passes; an out-of-repo adoption candidate for later M4 evaluation.
+
+Quality dimensions: Reliability + Availability + Scalability + Security + Usability + Auditability.
+
+### ENG-716 Refresh .NET 10/11 July readiness truth
+
+Status: done
+
+Estimate: 4
+
+Purpose: keep future-framework planning current while preserving the stable `net10.0` shipping floor.
+
+Scope: recheck official Microsoft sources on July 7, 2026; refresh `.NET 11 Preview 5` / SDK `11.0.100-preview.5.26302.115`, `dotnet/core` `preview5` release-note, Microsoft Learn Preview 5, and `.NET 10` LTS patch `10.0.9` / SDK `10.0.301` truth; update readiness docs, scorecard, roadmap, project memory, and the May architecture follow-up tracker without promoting a `.NET 11` baseline.
+
+Validation: readiness validation; focused docs/scorecard Pester coverage; stale current-truth search.
+
+Quality dimensions: Compatibility + Auditability + Maintainability + Usability.
 
 ## Current planning reset (April 2026)
 

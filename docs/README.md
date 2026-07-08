@@ -25,6 +25,8 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Architecture](architecture.md)
 - [Architecture review (April 2026)](architecture-review-2026-04.md)
 - [Architecture review (May 2026)](architecture-review-2026-05.md)
+- [Architecture review (June 2026)](architecture-review-2026-06.md)
+- [M3/M4 elevation plan](m3-m4-elevation-plan.md)
 - [REST endpoint authoring strategy](architecture/rest-endpoint-authoring-strategy.md)
 - [Database topology](database-topology.md)
 - [Component catalog](components/README.md)
@@ -64,6 +66,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 
 - [Architecture review (April 2026)](architecture-review-2026-04.md)
 - [Architecture review (May 2026)](architecture-review-2026-05.md)
+- [Architecture review (June 2026)](architecture-review-2026-06.md)
 - [Architecture patterns research](architecture-patterns-research.md)
 - [REST endpoint authoring strategy](architecture/rest-endpoint-authoring-strategy.md)
 - [Design patterns reference](architecture/design-patterns-reference.md)
@@ -91,6 +94,7 @@ Downstream provider and edge-runtime integrations that are not shipped as first-
 ## Planning
 
 - [Planning governance](planning-governance.md)
+- [M3/M4 elevation plan](m3-m4-elevation-plan.md)
 - [Engine completion scorecard](engine-completion-scorecard.md)
 - [Engine surface maturity audit](engine-surface-maturity-audit.md)
 - [Engine roadmap](engine-roadmap.md)
@@ -100,6 +104,7 @@ Downstream provider and edge-runtime integrations that are not shipped as first-
 - [Release checklist template (per-release working copy)](release-checklist-template.md)
 - [Release notes draft — `v0.1.0-preview`](releases/v0.1.0-preview-notes.md) — consolidated summary of substantive shipping arcs across Sprint 124-125 (public-API contract lock-in, redaction adoption arc, `Cephalon.Resilience` extraction, diagnostic-id registry, cleanup discipline, per-page maturity-badge convention) the release manager hands to the GitHub Release body when the tag is cut
 - [Architecture review 2026-05 follow-ups](architecture-review-2026-05-followups.md)
+- [Architecture review 2026-06 follow-ups](architecture-review-2026-06-followups.md)
 - [Test coverage roadmap](test-coverage-roadmap.md)
 - framework-baseline and support-claim changes should stay aligned with [.NET 11 readiness](dotnet11-readiness.md), [Deployment-mode support](deployment-mode-support.md), [Compatibility](compatibility.md), and [Package publishing](package-publishing.md)
 - planning issues and phase milestones can be synchronized from those docs through `scripts/sync-planning-github.ps1` and `.github/workflows/planning-sync.yml`

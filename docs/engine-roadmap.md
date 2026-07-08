@@ -2,7 +2,7 @@
 
 Editable roadmap diagram: `docs/cephalon-engine-roadmap.drawio`
 
-Planning baseline in this document reflects the repository state as of `May 15, 2026`.
+Planning baseline in this document reflects the repository state as of `June 30, 2026`.
 
 ## Target outcome
 
@@ -13,6 +13,14 @@ Cephalon should become a modular runtime platform that can:
 - generate opinionated app shapes from blueprints instead of ad-hoc setup
 - ship as reusable packages, templates, and samples for other teams
 - grow later into package loading, workflow, orchestration, and AI-driven runtime scenarios
+
+## Phase 14: M3/M4 evidence and operator-kernel elevation
+
+Status: active — Gate 0 and the Gate 1 foundation shipped; Gate 2 and Gate 3 remain planned.
+
+The [M3/M4 elevation plan](m3-m4-elevation-plan.md) is the execution contract for this phase. `ENG-712` ships machine-readable maturity reconciliation and release hygiene. `ENG-713` ships a versioned additive operator observation envelope with dependency health as its first real consumer. `ENG-714` will consolidate shared coordination primitives, and `ENG-715` will prove them through three family-owned operator loops before selective promotion.
+
+This phase preserves all long-range horizons: near-term release truth becomes machine-checkable; mid-term package families gain reusable coordination seams; far-term automation and AI consumers get stable desired/observed/condition/action data; very-far-term maintainers retain a reconstructable evidence chain. It does not force M0/M1/M2 packages to M4, change the `net10.0` shipping floor, or treat metadata as automation.
 
 ## Current status
 
@@ -522,6 +530,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 125 deployment-mode manifest truth addendum`: `ENG-551` keeps `scripts/deployment-mode-support.json` aligned with the `ENG-550` readback by recording `FrameworkEndpointBoundaryAuditStatus` and the counted-but-unclaimed framework health/OpenAPI/Scalar posture in the `Cephalon.AspNetCore` dynamic Minimal API hazard row. Deployment-mode manifest Pester coverage now fails if that row drops the framework boundary readback or starts claiming adapter support.
 - `Sprint 125 .NET 11 readiness refresh addendum`: `ENG-530` rechecks official Microsoft sources on May 9, 2026 and keeps `.NET 11` in the refreshed assessment lane rather than a stale `needs-refresh` scorecard gate. Microsoft Learn and the `.NET 11` download page still show Preview 3 / SDK `11.0.100-preview.3.26207.106`, and the `dotnet/core` release-notes folder still contains only `preview1`..`preview3`. Scorecard readback now has `needs-refresh=0` and `partial=8` platform gates while the shipping floor stays `net10.0`.
 - `Sprint 125 .NET 11 Preview 4 readiness addendum`: `ENG-643` rechecks official Microsoft sources on May 13, 2026 after Preview 4 published. The `.NET 11` download page now shows Preview 4 / SDK `11.0.100-preview.4.26230.115`, and `dotnet/core` now has the `release-notes/11.0/preview/preview4` folder. The Microsoft Learn overview still says it was last updated for Preview 3, so the readiness docs prefer the download page plus release notes for current-build identity until Learn catches up. The shipping floor stays `net10.0`, Preview 5 / RC / GA remain future refresh points, and the content-only `Cephalon.TemplatePack` `netstandard2.0` packaging exception stays unchanged because it does not consume `Microsoft.TemplateEngine.*` runtime APIs.
+- `Phase 14 .NET 11 Preview 5 readiness addendum`: `ENG-716` rechecks official Microsoft sources on July 7, 2026 after Preview 5 and the June .NET servicing wave published. The `.NET 11` download page now shows Preview 5 / SDK `11.0.100-preview.5.26302.115`, `dotnet/core` now has the `release-notes/11.0/preview/preview5` folder, Microsoft Learn's `.NET 11` overview and SDK/tooling pages say Preview 5, and the `.NET 10` support/download pages show latest LTS patch `10.0.9` / SDK `10.0.301` from June 9, 2026. The shipping floor stays `net10.0`, Preview 6 / RC / GA remain future refresh points, and the readiness lane stays separate from any baseline migration.
 - `Sprint 125 adoption-smoke execution-report addendum`: `ENG-534` makes `scripts/validate-out-of-tree-package-adoption.ps1` write a machine-readable report for the real generated-app package-stage replay, carries that contract through scorecard schema `1.13.0` at that checkpoint and `cephalon doctor --scorecard`, keeps CLI scaffolded host package references aligned with template-pack starters by including `Cephalon.Engine.SourceGen` as a private analyzer package in the generated host baseline checked by `cephalon doctor --app-root`, keeps generated REST behavior modules aligned by including `Cephalon.Behaviors.SourceGen` as a private analyzer package and packaging that generator under `analyzers/dotnet/cs`, and keeps the temporary package feed aligned with the generated app package closure by publishing `Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience` for restore/build replay.
 - `Sprint 125 generated-app adoption-report addendum`: `ENG-698` promotes `scripts/validate-generated-app-adoption.ps1` from console-only replay into an execution-report producer. It writes `artifacts/adoption-smoke/generated-app-adoption.json` by default, adds `generated-app-runtime-foundation` as an execution-ready golden use case, requires execution-report contracts for execution-ready golden use cases, raises scorecard schema `1.25.0`, and lets `cephalon doctor --scorecard` verify total, execution-ready, and per-use-case report counts before later adoption lanes are promoted.
 - `Sprint 125 template-pack adoption-report addendum`: `ENG-699` promotes `scripts/validate-template-pack-adoption.ps1` into the same execution-report lane. It writes `artifacts/adoption-smoke/template-pack-adoption.json` by default, raises `scripts/adoption-smoke-support.json` to schema `1.4.0`, adds `template-pack-dotnet-new-parity` as the third execution-ready golden use case, and keeps scorecard schema `1.25.0` while the scorecard, release validation, and `cephalon doctor --scorecard` read back seven total golden use cases, three execution-ready lanes, and three per-use-case reports.

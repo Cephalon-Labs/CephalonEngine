@@ -376,8 +376,8 @@
       "AWSSDK.Core": {
         "type": "CentralTransitive",
         "requested": "[4.0.5, )",
-        "resolved": "4.0.3.3",
-        "contentHash": "YQv10JuxnciWh0QwnkarSbge4gXQV1qTURf5jkBjNUH/3jYS9QrbxopA4TK1qdjfOfP37tqiJkLSrRRNqX81aw=="
+        "resolved": "4.0.5",
+        "contentHash": "MG+InWK0bakgwap95TLbqMdAebWOJy1LdCs3qreiIMK6GFRNz3uCTLbttwNOzd87xFId5ybYhor9Hn3kcJx/Ag=="
       },
       "Microsoft.Extensions.Configuration.Abstractions": {
         "type": "CentralTransitive",

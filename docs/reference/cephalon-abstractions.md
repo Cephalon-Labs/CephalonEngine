@@ -58095,6 +58095,26 @@ Parameters:
 
 #### Properties
 
+<a id="member-p-cephalon-abstractions-health-dependencyhealthreport-checkedatutc"></a>
+
+##### `CheckedAtUtc`
+
+```csharp
+DateTimeOffset? CheckedAtUtc { get; set; }
+```
+
+Gets the UTC timestamp at which the dependency observation completed, when the contributor provides it.
+
+<a id="member-p-cephalon-abstractions-health-dependencyhealthreport-consecutivefailurecount"></a>
+
+##### `ConsecutiveFailureCount`
+
+```csharp
+int ConsecutiveFailureCount { get; set; }
+```
+
+Gets the number of consecutive failed observations, or zero when the contributor does not track failure streaks.
+
 <a id="member-p-cephalon-abstractions-health-dependencyhealthreport-description"></a>
 
 ##### `Description`
@@ -58124,6 +58144,16 @@ string Id { get; set; }
 ```
 
 The stable dependency identifier.
+
+<a id="member-p-cephalon-abstractions-health-dependencyhealthreport-probedurationmilliseconds"></a>
+
+##### `ProbeDurationMilliseconds`
+
+```csharp
+int ProbeDurationMilliseconds { get; set; }
+```
+
+Gets the completed probe duration in milliseconds, or zero when the contributor does not provide it.
 
 <a id="member-p-cephalon-abstractions-health-dependencyhealthreport-required"></a>
 

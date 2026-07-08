@@ -264,19 +264,22 @@ Describe "validate-release.ps1 SRE timing output" {
         $report.capturedFromCommit | Should -Not -BeNullOrEmpty
     }
 
-    It "fails before writing a passed timing report when elapsed time exceeds target" {
-        {
-            Write-SreReleaseValidationStepTiming `
-                -FileName "validate-release-wall-time.json" `
-                -SliId "engine.validate-release.wall-time" `
-                -StepName "Validate release (canonical full run)" `
-                -Command "pwsh scripts/validate-release.ps1" `
-                -ElapsedMilliseconds 1500000.1 `
-                -TargetMilliseconds 1500000 `
-                -OutputPath $script:tempRoot
-        } | Should -Throw "*exceeded target*"
+    It "writes an investigation timing report when elapsed time exceeds target" {
+        Write-SreReleaseValidationStepTiming `
+            -FileName "validate-release-wall-time.json" `
+            -SliId "engine.validate-release.wall-time" `
+            -StepName "Validate release (canonical full run)" `
+            -Command "pwsh scripts/validate-release.ps1" `
+            -ElapsedMilliseconds 1500000.1 `
+            -TargetMilliseconds 1500000 `
+            -OutputPath $script:tempRoot
 
-        Test-Path -LiteralPath (Join-Path $script:tempRoot "validate-release-wall-time.json") | Should -BeFalse
+        $report = Get-Content -LiteralPath (Join-Path $script:tempRoot "validate-release-wall-time.json") -Raw | ConvertFrom-Json -Depth 8
+
+        $report.sliId | Should -Be "engine.validate-release.wall-time"
+        $report.status | Should -Be "investigate"
+        $report.targetExceeded | Should -BeTrue
+        $report.excessMilliseconds | Should -BeGreaterThan 0
     }
 }
 

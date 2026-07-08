@@ -3227,8 +3227,17 @@ function Convert-SrePostureEvidence {
                                         $timingReportStatus = [string](Get-ManifestPropertyValue -Object $timingReport -PropertyName "status" -DefaultValue "")
                                         $timingReportElapsedMilliseconds = [decimal](Get-ManifestPropertyValue -Object $timingReport -PropertyName "elapsedMilliseconds" -DefaultValue 0)
                                         $timingReportTargetMilliseconds = [decimal](Get-ManifestPropertyValue -Object $timingReport -PropertyName "targetMilliseconds" -DefaultValue 0)
-                                        if ($timingReportSliId -ne $sliId -or $timingReportStepName -ne $stepName -or $timingReportStatus -ne "passed" -or $timingReportElapsedMilliseconds -le 0 -or $timingReportTargetMilliseconds -ne $targetMilliseconds -or $timingReportElapsedMilliseconds -gt $targetMilliseconds) {
-                                            throw "SRE stable baseline release-validation wall-time timing report '$timingReportPath' does not match a passed timing below target for SLI '$sliId'."
+                                        $allowedTimingReportStatuses = @("passed", "investigate")
+                                        if ($timingReportSliId -ne $sliId -or $timingReportStepName -ne $stepName -or $allowedTimingReportStatuses -notcontains $timingReportStatus -or $timingReportElapsedMilliseconds -le 0 -or $timingReportTargetMilliseconds -ne $targetMilliseconds) {
+                                            throw "SRE stable baseline release-validation wall-time timing report '$timingReportPath' does not match an accepted timing report for SLI '$sliId'."
+                                        }
+
+                                        if ($timingReportStatus -eq "passed" -and $timingReportElapsedMilliseconds -gt $targetMilliseconds) {
+                                            throw "SRE stable baseline release-validation wall-time timing report '$timingReportPath' cannot be passed while exceeding its target for SLI '$sliId'."
+                                        }
+
+                                        if ($timingReportStatus -eq "investigate" -and $timingReportElapsedMilliseconds -le $targetMilliseconds) {
+                                            throw "SRE stable baseline release-validation wall-time timing report '$timingReportPath' cannot be investigate without exceeding its target for SLI '$sliId'."
                                         }
                                     }
 

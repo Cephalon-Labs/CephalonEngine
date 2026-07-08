@@ -10,6 +10,7 @@ public sealed class DotNetReadinessTests
     {
         var scriptPath = RepositoryPaths.GetFile("scripts", "validate-dotnet-readiness.ps1");
         var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-dotnet-readiness-{Guid.NewGuid():N}");
+        const string testFilter = "FullyQualifiedName!~Cephalon.Tests.Tooling.PackagePublishingTests";
 
         Directory.CreateDirectory(outputPath);
 
@@ -17,7 +18,7 @@ public sealed class DotNetReadinessTests
         {
             var result = RunProcess(
                 "pwsh",
-                $"-File \"{scriptPath}\" -Configuration {GetCurrentBuildConfiguration()} -OutputPath \"{outputPath}\" -SkipBuild -SkipTests -SkipReferenceDocs -SkipPackages",
+                $"-File \"{scriptPath}\" -Configuration {GetCurrentBuildConfiguration()} -OutputPath \"{outputPath}\" -SkipBuild -SkipTests -SkipReferenceDocs -SkipPackages -TestFilter \"{testFilter}\"",
                 workingDirectory: Path.GetDirectoryName(scriptPath)!);
 
             Assert.True(
@@ -37,6 +38,7 @@ public sealed class DotNetReadinessTests
 
             var shippingBaseline = Assert.IsType<JsonObject>(report["ShippingBaseline"]);
             Assert.Equal("net10.0", shippingBaseline["StableTargetFramework"]?.GetValue<string>());
+            Assert.Equal(testFilter, report["TestFilter"]?.GetValue<string>());
 
             var deploymentModeSupport = Assert.IsType<JsonObject>(report["DeploymentModeSupport"]);
             Assert.Equal("scripts/deployment-mode-support.json", deploymentModeSupport["ManifestPath"]?.GetValue<string>());
@@ -106,6 +108,10 @@ public sealed class DotNetReadinessTests
         Assert.Contains("dotnet-version: 11.0.x", workflowContents, StringComparison.Ordinal);
         Assert.Contains("validate-dotnet-readiness.ps1", workflowContents, StringComparison.Ordinal);
         Assert.Contains("dotnet-readiness-sdk11", workflowContents, StringComparison.Ordinal);
+        Assert.Contains("-TestFilter", workflowContents, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Tests.Tooling.TemplatePackTests", workflowContents, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Tests.Tooling.PackagePublishingTests", workflowContents, StringComparison.Ordinal);
+        Assert.Contains("RunAsyncStagesPublishedModulePackageIntoLoadableDirectory", workflowContents, StringComparison.Ordinal);
     }
 
     [Fact]

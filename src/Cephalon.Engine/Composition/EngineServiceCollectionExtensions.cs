@@ -79,6 +79,7 @@ public static class EngineServiceCollectionExtensions
             new RuntimeDiagnosticsCatalogSnapshot(serviceProvider.GetServices<IDiagnosticsConventionContributor>()));
         services.AddSingleton<IRuntimeDiagnosticsCatalog>(serviceProvider =>
             serviceProvider.GetRequiredService<RuntimeDiagnosticsCatalogSnapshot>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IRuntimeIntrospectionSectionContributor, DependencyHealthRuntimeIntrospectionSectionContributor>());
         services.AddSingleton<IRuntimeIntrospectionSnapshotProvider, RuntimeIntrospectionSnapshotProvider>();
 
         return services;

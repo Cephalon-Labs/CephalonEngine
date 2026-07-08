@@ -138,7 +138,7 @@ public sealed class StranglerFigRouteDescriptor
         }
 
         var normalized = value.Trim();
-        if (Uri.TryCreate(normalized, UriKind.Absolute, out var absoluteUri))
+        if (TryCreateNonFileAbsoluteUri(normalized, out var absoluteUri))
         {
             normalized = absoluteUri.AbsolutePath;
         }
@@ -161,6 +161,18 @@ public sealed class StranglerFigRouteDescriptor
         return string.IsNullOrWhiteSpace(normalized)
             ? "/"
             : normalized;
+    }
+
+    private static bool TryCreateNonFileAbsoluteUri(string value, out Uri uri)
+    {
+        if (Uri.TryCreate(value, UriKind.Absolute, out uri!) &&
+            !string.Equals(uri.Scheme, Uri.UriSchemeFile, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        uri = null!;
+        return false;
     }
 
     private static string[] NormalizeMethods(IReadOnlyList<string>? methods)

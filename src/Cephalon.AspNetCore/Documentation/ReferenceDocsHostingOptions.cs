@@ -97,10 +97,21 @@ public sealed class ReferenceDocsHostingOptions
             return null;
         }
 
-        return Path.IsPathRooted(directoryPath)
-            ? Path.GetFullPath(directoryPath)
+        var normalizedDirectoryPath = NormalizeRelativeDirectorySeparators(directoryPath.Trim());
+
+        return Path.IsPathRooted(normalizedDirectoryPath)
+            ? Path.GetFullPath(normalizedDirectoryPath)
             : string.IsNullOrWhiteSpace(contentRootPath)
-                ? Path.GetFullPath(directoryPath)
-                : Path.GetFullPath(Path.Combine(contentRootPath, directoryPath));
+                ? Path.GetFullPath(normalizedDirectoryPath)
+                : Path.GetFullPath(Path.Combine(contentRootPath, normalizedDirectoryPath));
+    }
+
+    private static string NormalizeRelativeDirectorySeparators(string directoryPath)
+    {
+        return Path.IsPathRooted(directoryPath)
+            ? directoryPath
+            : directoryPath
+                .Replace('\\', Path.DirectorySeparatorChar)
+                .Replace('/', Path.DirectorySeparatorChar);
     }
 }

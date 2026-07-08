@@ -97,9 +97,33 @@ Describe "summarise-public-api-deltas.ps1" {
 
         $outputPath = Join-Path $script:tempRoot "artifacts\public-api-delta.md"
         $jsonOutputPath = Join-Path $script:tempRoot "artifacts\public-api-delta.json"
-        $output = & $script:powerShellHostPath -NoLogo -NoProfile -File $script:scriptPath -RepoRoot $script:tempRoot -OutputPath $outputPath -JsonOutputPath $jsonOutputPath -FailOnRemovals 2>&1
+        $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
+        $startInfo.FileName = $script:powerShellHostPath
+        foreach ($argument in @(
+                "-NoLogo",
+                "-NoProfile",
+                "-File",
+                $script:scriptPath,
+                "-RepoRoot",
+                $script:tempRoot,
+                "-OutputPath",
+                $outputPath,
+                "-JsonOutputPath",
+                $jsonOutputPath,
+                "-FailOnRemovals")) {
+            $startInfo.ArgumentList.Add($argument)
+        }
 
-        $LASTEXITCODE | Should -Not -Be 0
+        $startInfo.RedirectStandardOutput = $true
+        $startInfo.RedirectStandardError = $true
+        $startInfo.UseShellExecute = $false
+        $process = [System.Diagnostics.Process]::Start($startInfo)
+        $standardOutput = $process.StandardOutput.ReadToEnd()
+        $standardError = $process.StandardError.ReadToEnd()
+        $process.WaitForExit()
+        $output = $standardOutput + [Environment]::NewLine + $standardError
+
+        $process.ExitCode | Should -Not -Be 0
         Test-Path -LiteralPath $outputPath -PathType Leaf | Should -BeTrue
         Test-Path -LiteralPath $jsonOutputPath -PathType Leaf | Should -BeTrue
 
@@ -107,7 +131,9 @@ Describe "summarise-public-api-deltas.ps1" {
         $report | Should -Match "Total removal entries: \*\*1\*\*"
         $json = Get-Content -LiteralPath $jsonOutputPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
         $json.RemovalGateWouldFail | Should -BeTrue
-        ($output | Out-String) | Should -Match "Public API removal entries detected: 1 removal\(s\) across 1 package\(s\): Cephalon\.Fixture"
+        $json.RemovalEntryCount | Should -Be 1
+        $json.PackageDeltas[0].PackageId | Should -Be "Cephalon.Fixture"
+        ($standardOutput | Out-String) | Should -Match "Total removal entries: 1"
     }
 
     It "passes the removal gate when only additive entries are pending" {

@@ -314,7 +314,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Engine.Runtime`
 
-- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-runtime): 17 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime)
+- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-runtime): 22 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime)
 
 ## `Cephalon.Engine.Technologies`
 

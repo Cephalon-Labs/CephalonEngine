@@ -48,6 +48,7 @@ dotnet run --project samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.c
   - `ShowcaseAuditHistoryDbContext`
 - The read role now has its own committed migration history so it can evolve independently from the write database.
 - Write-side mutations now stage durable projection jobs in `showcase_write`, flush them immediately when possible, and let the hosted read-model sync worker retry any unfinished work against `showcase_read`.
+- The hosted read-model sync worker is enabled by default. Test or diagnostic profiles that need to prove write/read separation before any catch-up loop runs can set `Showcase:ReadModelProjection:HostedServiceEnabled=false`; request-level flushes still remain available to code paths that explicitly enqueue projection jobs.
 
 ## Operator Surfaces
 

@@ -2873,7 +2873,10 @@ public sealed class PackageSurfaceTests
         Assert.DoesNotContain("Type.GetType(", contents);
         Assert.DoesNotContain("evt.GetType().AssemblyQualifiedName", contents);
         Assert.Contains("IEventTypeRegistry", contents);
-        Assert.Contains("_eventTypes.Deserialize", contents);
+        Assert.True(
+            contents.Contains("_eventTypes.Deserialize", StringComparison.Ordinal) ||
+            contents.Contains("eventTypes.Deserialize", StringComparison.Ordinal),
+            "Event-sourcing providers should deserialize through the event type registry, whether the store uses a backing field or a primary-constructor parameter.");
     }
 
     [Fact]

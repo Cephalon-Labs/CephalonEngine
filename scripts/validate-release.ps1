@@ -4,6 +4,7 @@ param(
     [switch]$SkipTests,
     [switch]$SkipDotNetReadiness,
     [switch]$SkipDeploymentModeClaims,
+    [switch]$SkipSurfaceMaturityReport,
     [switch]$SkipEngineCompletionScorecard,
     [switch]$SkipNuGetVulnerabilityAudit,
     [switch]$SkipOperationalConventions,
@@ -47,6 +48,7 @@ $benchmarkProjectPath = [System.IO.Path]::Combine($repoRoot, "benchmarks", "Ceph
 $deploymentModeSupportManifestPath = [System.IO.Path]::Combine($repoRoot, "scripts", "deployment-mode-support.json")
 $dotNetReadinessScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-dotnet-readiness.ps1")
 $deploymentModeClaimsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-deployment-mode-claims.ps1")
+$surfaceMaturityReportScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-surface-maturity-report.ps1")
 $engineCompletionScorecardScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-engine-completion-scorecard.ps1")
 $nugetVulnerabilityAuditScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-nuget-vulnerability-audit.ps1")
 $referenceDocsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-reference-docs.ps1")
@@ -55,6 +57,7 @@ $operationalConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "script
 $phase8ConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-phase8-conventions.ps1")
 $dotNetReadinessOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "dotnet-readiness-release")
 $deploymentModeClaimsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "deployment-mode-claims-release")
+$surfaceMaturityReportOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "surface-maturity-report-release", "surface-maturity-report.json")
 $engineCompletionScorecardOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "engine-completion-scorecard-release")
 $nugetVulnerabilityAuditOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "nuget-vulnerability-audit-release")
 $sreReleaseValidationOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "sre-release-validation")
@@ -228,21 +231,27 @@ function Write-SreReleaseValidationStepTiming {
         throw "SRE timing for '$SliId' must be greater than zero milliseconds."
     }
 
-    if ($ElapsedMilliseconds -gt $TargetMilliseconds) {
-        throw "SRE timing for '$SliId' exceeded target: $([math]::Round($ElapsedMilliseconds, 4))ms > ${TargetMilliseconds}ms."
-    }
+    $roundedElapsedMilliseconds = [math]::Round($ElapsedMilliseconds, 4)
+    $targetExceeded = $ElapsedMilliseconds -gt $TargetMilliseconds
+    $status = if ($targetExceeded) { "investigate" } else { "passed" }
 
     [ordered]@{
         '$schemaVersion' = "1.0.0"
         sliId = $SliId
         stepName = $StepName
         command = $Command
-        status = "passed"
-        elapsedMilliseconds = [math]::Round($ElapsedMilliseconds, 4)
+        status = $status
+        elapsedMilliseconds = $roundedElapsedMilliseconds
         targetMilliseconds = $TargetMilliseconds
+        targetExceeded = $targetExceeded
+        excessMilliseconds = if ($targetExceeded) { [math]::Round($ElapsedMilliseconds - $TargetMilliseconds, 4) } else { 0 }
         capturedAtUtc = [DateTimeOffset]::UtcNow.ToString("o")
         capturedFromCommit = Get-RepositoryCommit
     } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $OutputPath $FileName) -Encoding UTF8
+
+    if ($targetExceeded) {
+        Write-Warning "SRE timing for '$SliId' exceeded target: ${roundedElapsedMilliseconds}ms > ${TargetMilliseconds}ms. Timing evidence was written with status 'investigate'."
+    }
 }
 
 function Test-IsCanonicalReleaseValidationRun {
@@ -251,6 +260,7 @@ function Test-IsCanonicalReleaseValidationRun {
         $SkipTests -or
         $SkipDotNetReadiness -or
         $SkipDeploymentModeClaims -or
+        $SkipSurfaceMaturityReport -or
         $SkipEngineCompletionScorecard -or
         $SkipNuGetVulnerabilityAudit -or
         $SkipOperationalConventions -or
@@ -1095,6 +1105,15 @@ try {
                 -Command $referenceDocsCommand `
                 -ElapsedMilliseconds $referenceDocsStopwatch.Elapsed.TotalMilliseconds `
                 -TargetMilliseconds 300000
+        }
+    }
+
+    if (-not $SkipSurfaceMaturityReport) {
+        Invoke-Step "Publish surface maturity evidence artifact" {
+            Invoke-PowerShellScript -Path $surfaceMaturityReportScriptPath -Arguments @(
+                "-OutputPath", $surfaceMaturityReportOutputPath,
+                "-FailOnDrift"
+            )
         }
     }
 

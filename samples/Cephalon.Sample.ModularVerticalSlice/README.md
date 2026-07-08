@@ -4,6 +4,7 @@ This sample is the vertical-slice blueprint baseline for Cephalon.
 
 It carries the same narrow phase-8 starter contract as the other shipped blueprint samples: canonical `Engine` ids, structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections, plus low-ceremony `Sfid` id generation and `Cephalon.Audit` wiring.
 Its public REST boundary is also behavior-backed: the starter module owns routes through `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` and `MapProfile<TBehavior>()`, with `Cephalon.Behaviors.SourceGen` referenced as the local analyzer that emits the generated REST profile hints expected by that low-ceremony path.
+The checkout preview behavior now also declares a gRPC-ready topology edge with `ViaGrpc()` so `/engine/technology-surfaces` can show that the behavior contract is ready for a future gRPC adapter. The checked-in host still selects only `rest-api`, so route mapping remains REST-only until the sample deliberately adds `Cephalon.AspNetCore.Grpc`, `builder.AddGrpcTransport()`, and `grpc` to `Engine:Transports`.
 
 The sample settings live in `modular-vertical-slice.settings.json`.
 
