@@ -1343,6 +1343,112 @@ artifacts/adoption-smoke/out-of-tree-package-adoption.json
         } | Should -Throw "*stable baseline row references SLI 'engine.fixture.other'*"
     }
 
+    It "accepts investigate timing reports for current release-validation wall-time overruns" {
+        $fixtureRoot = Join-Path $script:tempRoot "sre-wall-time-investigate-fixture"
+        $scriptsRoot = Join-Path $fixtureRoot "scripts"
+        $docsRoot = Join-Path $fixtureRoot "docs"
+        $guardrailRoot = Join-Path $fixtureRoot "benchmarks\Cephalon.Benchmarks\guardrails"
+        $timingReportRoot = Join-Path $fixtureRoot "artifacts\sre-release-validation"
+        New-Item -ItemType Directory -Path $scriptsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $docsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $guardrailRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $timingReportRoot -Force | Out-Null
+
+        $sliId = "engine.fixture.restore.wall-time"
+        $stepName = "Restore solution (locked mode)"
+        $timingReportPath = "artifacts/sre-release-validation/restore-wall-time.json"
+
+        Set-Content -LiteralPath (Join-Path $docsRoot "sre-posture.md") -Value "# SRE posture fixture`n$sliId" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $docsRoot "benchmarking.md") -Value "# Benchmarking fixture" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $scriptsRoot "validate-release.ps1") -Value "# release validation fixture" -Encoding UTF8
+        @{
+            version = "1.0"
+            entries = @(
+                @{
+                    reportFileName = "fixture.csv"
+                    benchmark = "Fixture"
+                    maxMeanNanoseconds = 10
+                    maxAllocatedBytes = 20
+                }
+            )
+        } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $guardrailRoot "performance-guardrails.json") -Encoding UTF8
+
+        @{
+            sliId = $sliId
+            stepName = $stepName
+            status = "investigate"
+            elapsedMilliseconds = 95000
+            targetMilliseconds = 90000
+        } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $timingReportRoot "restore-wall-time.json") -Encoding UTF8
+
+        @{
+            '$schemaVersion' = "1.0.0"
+            status = "benchmark-baseline-published"
+            capturedAtUtc = "2026-05-08T09:08:04.9633564Z"
+            capturedFromCommit = "fixture"
+            publishedBaselineSliIds = @($sliId)
+            pendingBaselineSliIds = @()
+            baselineRows = @(
+                @{
+                    sliId = $sliId
+                    status = "stable-baseline-published"
+                    measurementKind = "release-validation-step-wall-time-baseline"
+                    measurements = @(
+                        @{
+                            timingReportPath = $timingReportPath
+                            stepName = $stepName
+                            command = "dotnet restore --locked-mode"
+                            status = "passed"
+                            elapsedMilliseconds = 60000
+                            targetMilliseconds = 90000
+                            capturedAtUtc = "2026-05-08T09:08:04.9633564Z"
+                            capturedFromCommit = "fixture"
+                        }
+                    )
+                }
+            )
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $scriptsRoot "sre-stable-baselines.json") -Encoding UTF8
+
+        $manifestPath = Join-Path $scriptsRoot "sre-posture-support.json"
+        @{
+            '$schemaVersion' = "1.2.0"
+            status = "partial-stable-baseline-published"
+            summary = "fixture"
+            releaseValidationSummaryMode = "scorecard-artifact"
+            stableBaselinesPublished = $true
+            stableBaselineManifest = "scripts/sre-stable-baselines.json"
+            sourceDocs = @(
+                "docs/sre-posture.md",
+                "docs/benchmarking.md"
+            )
+            validationScripts = @("scripts/validate-release.ps1")
+            guardrailCatalog = "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
+            slis = @(
+                @{
+                    id = $sliId
+                    category = "fixture"
+                    measurementSurface = "release-validation-wall-time"
+                    sourceDocument = "docs/sre-posture.md"
+                    sloTarget = "90 seconds"
+                    window = "per release validation run"
+                    targetStatus = "target-declared"
+                    baselineStatus = "stable-baseline-published"
+                    guardrailCoverageStatus = "not-applicable"
+                }
+            )
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        $evidence = Convert-SrePostureEvidence `
+            -ResolvedManifestPath $manifestPath `
+            -ResolvedRepoRoot $fixtureRoot
+
+        $wallTimeBaseline = $evidence.StableBaselineRows | Where-Object { $_.SliId -eq $sliId }
+        $wallTimeBaseline.MeasurementKind | Should -Be "release-validation-step-wall-time-baseline"
+        $wallTimeBaseline.Measurements.TimingReportPath | Should -Be $timingReportPath
+        $wallTimeBaseline.Measurements.Status | Should -Be "passed"
+        $wallTimeBaseline.Measurements.ElapsedMilliseconds | Should -Be 60000
+    }
+
     It "fails when SRE pending baseline rows reference stable SLI rows" {
         $fixtureRoot = Join-Path $script:tempRoot "sre-pending-baseline-fixture"
         $scriptsRoot = Join-Path $fixtureRoot "scripts"

@@ -4,7 +4,8 @@ param(
     [switch]$SkipBuild,
     [switch]$SkipTests,
     [switch]$SkipReferenceDocs,
-    [switch]$SkipPackages
+    [switch]$SkipPackages,
+    [string]$TestFilter = ""
 )
 
 Set-StrictMode -Version Latest
@@ -16,6 +17,7 @@ $referenceDocsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publ
 $packageArtifactsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-package-artifacts.ps1")
 $globalJsonPath = [System.IO.Path]::Combine($repoRoot, "global.json")
 $deploymentModeSupportManifestPath = [System.IO.Path]::Combine($repoRoot, "scripts", "deployment-mode-support.json")
+$normalizedTestFilter = $TestFilter.Trim()
 $testProjectPaths = @(
     [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests.Composition", "Cephalon.Tests.Composition.csproj"),
     [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests.Hosting", "Cephalon.Tests.Hosting.csproj"),
@@ -583,11 +585,22 @@ try {
                     $arguments += @("--no-build", "--no-restore")
                 }
 
+                if (-not [string]::IsNullOrWhiteSpace($normalizedTestFilter)) {
+                    $arguments += @("--filter", $normalizedTestFilter)
+                }
+
                 Invoke-DotNet -Arguments $arguments -WorkingDirectory $dotNetWorkingDirectory
             }
         }
 
-        Add-StepResult -Results $stepResults -Name "tests" -Status "pass" -Detail ("Executed test projects: " + (@($testProjectPaths | ForEach-Object { Get-RepoRelativePath -Path $_ }) -join ", "))
+        $testFilterDetail = if ([string]::IsNullOrWhiteSpace($normalizedTestFilter)) {
+            "no test filter"
+        }
+        else {
+            "filter '$normalizedTestFilter'"
+        }
+
+        Add-StepResult -Results $stepResults -Name "tests" -Status "pass" -Detail ("Executed test projects with $testFilterDetail`: " + (@($testProjectPaths | ForEach-Object { Get-RepoRelativePath -Path $_ }) -join ", "))
     }
     else {
         Add-StepResult -Results $stepResults -Name "tests" -Status "skipped" -Detail "Skipped by request."
@@ -638,6 +651,7 @@ try {
     $report = [pscustomobject]@{
         GeneratedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
         Configuration = $Configuration
+        TestFilter = $normalizedTestFilter
         GlobalJson = [pscustomobject]@{
             Version = $globalJson.sdk.version
             RollForward = $globalJson.sdk.rollForward

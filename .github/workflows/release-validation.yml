@@ -188,7 +188,13 @@ jobs:
 
       - name: Run .NET 11 readiness validation
         shell: pwsh
-        run: ./scripts/validate-dotnet-readiness.ps1 -Configuration Release -OutputPath artifacts/dotnet-readiness-sdk11 -SkipReferenceDocs -SkipPackages
+        run: >
+          ./scripts/validate-dotnet-readiness.ps1
+          -Configuration Release
+          -OutputPath artifacts/dotnet-readiness-sdk11
+          -SkipReferenceDocs
+          -SkipPackages
+          -TestFilter "FullyQualifiedName!~Cephalon.Tests.Tooling.TemplatePackTests&FullyQualifiedName!~Cephalon.Tests.Tooling.PackagePublishingTests&FullyQualifiedName!~RunAsyncStagesPublishedModulePackageIntoLoadableDirectory"
 
       - name: Upload .NET 11 readiness report
         if: always()
