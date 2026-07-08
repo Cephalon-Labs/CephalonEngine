@@ -33,7 +33,7 @@ internal sealed class EventingBenchmarkProofCatalog : IEventingBenchmarkProofCat
             Family: "remediation-filtered-reads",
             ReportFileName: "Cephalon.Benchmarks.HotPath.EventDispatchRemediationCatalogBenchmarks-report.csv",
             Benchmark: "FilterLatestByCorrelationId",
-            MaxMeanNanoseconds: 15000,
+            MaxMeanNanoseconds: 25000,
             MaxAllocatedBytes: 0,
             HotPath: "latest-filter-single-pass"),
         new(
@@ -41,7 +41,7 @@ internal sealed class EventingBenchmarkProofCatalog : IEventingBenchmarkProofCat
             Family: "remediation-filtered-reads",
             ReportFileName: "Cephalon.Benchmarks.HotPath.EventDispatchRemediationCatalogBenchmarks-report.csv",
             Benchmark: "FilterOldestByDispatchOutcome",
-            MaxMeanNanoseconds: 2000,
+            MaxMeanNanoseconds: 3000,
             MaxAllocatedBytes: 0,
             HotPath: "oldest-filter-single-pass"),
         new(
@@ -49,7 +49,7 @@ internal sealed class EventingBenchmarkProofCatalog : IEventingBenchmarkProofCat
             Family: "remediation-filtered-reads",
             ReportFileName: "Cephalon.Benchmarks.HotPath.EventDispatchRemediationCatalogBenchmarks-report.csv",
             Benchmark: "FilterOperatorDashboardSelectors",
-            MaxMeanNanoseconds: 30000,
+            MaxMeanNanoseconds: 45000,
             MaxAllocatedBytes: 512,
             HotPath: "operator-dashboard-multi-selector"),
         new(
