@@ -243,6 +243,22 @@ Describe "validate-release.ps1 SRE timing output" {
         Test-IsCanonicalReleaseValidationRun | Should -BeTrue
     }
 
+    It "runs every guardrail report family in the default benchmark smoke suite" {
+        $catalogPath = Join-Path $script:repoRoot "benchmarks\Cephalon.Benchmarks\guardrails\performance-guardrails.json"
+        $catalog = Get-Content -LiteralPath $catalogPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 8
+        $expectedFilters = $catalog.entries |
+            ForEach-Object {
+                $reportStem = [System.IO.Path]::GetFileNameWithoutExtension($_.reportFileName) -replace '-report$', ''
+                $className = ($reportStem -split '\.')[-1]
+                "*$className*"
+            } |
+            Sort-Object -Unique
+
+        foreach ($filter in $expectedFilters) {
+            $BenchmarkFilters | Should -Contain $filter
+        }
+    }
+
     It "writes a passed timing report when elapsed time is within target" {
         Write-SreReleaseValidationStepTiming `
             -FileName "validate-release-wall-time.json" `

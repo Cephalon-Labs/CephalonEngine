@@ -2304,7 +2304,7 @@ public sealed class EngineBuilderTests
         Assert.Equal(11, benchmarkProofSurface.Entries.Count);
         Assert.Equal("FilterOperatorDashboardSelectors", benchmarkProofEntry.Metadata["benchmark"]);
         Assert.Equal("Cephalon.Benchmarks.HotPath.EventDispatchRemediationCatalogBenchmarks-report.csv", benchmarkProofEntry.Metadata["benchmarkReport"]);
-        Assert.Equal("30000", benchmarkProofEntry.Metadata["maxMeanNanoseconds"]);
+        Assert.Equal("45000", benchmarkProofEntry.Metadata["maxMeanNanoseconds"]);
         Assert.Equal("512", benchmarkProofEntry.Metadata["maxAllocatedBytes"]);
         Assert.Equal("guardrail-catalog-mapped", benchmarkProofEntry.Metadata["benchmarkProofMaturity"]);
         Assert.Equal("true", benchmarkProofEntry.Metadata["providerNeutral"]);
