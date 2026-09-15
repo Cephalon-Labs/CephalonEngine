@@ -1,7 +1,10 @@
 using Cephalon.Abstractions.Authorization;
+using Cephalon.Abstractions.Capabilities;
+using Cephalon.Abstractions.Modules;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
+using Cephalon.Identity.Policies;
 using Cephalon.Identity.Registration;
 using Cephalon.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
@@ -293,5 +296,238 @@ public sealed class IdentityPackTests
         var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
 
         Assert.Empty(technologyCatalog.GetByTechnology("identity-access"));
+    }
+
+    [Fact]
+    public async Task AddIdentityAccessDeniesUnknownPolicyIdsWithDeterministicMetadata()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                technologies: ["IdentityAccess"],
+                identity: new IdentitySettings(
+                    enabled: true,
+                    authorizationModes: ["Policy", "RBAC"])));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new IdentityAuthorizationTestModule());
+            engine.AddIdentityAccess();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var evaluator = provider.GetRequiredService<IAuthorizationEvaluator>();
+
+        var decision = await evaluator.EvaluateAsync(
+            new AuthorizationSubject(subjectId: "user-unknown-policy", tenantIds: ["tenant-001"]),
+            new AuthorizationResource(resourceType: "document", resourceId: "doc-unknown", tenantId: "tenant-001"),
+            new AuthorizationContext(action: "read", policyId: "not-registered", tenantId: "tenant-001"));
+
+        Assert.False(decision.IsAllowed);
+        Assert.Equal("not-registered", decision.PolicyId);
+        Assert.Equal("denied", decision.Metadata["outcome"]);
+        Assert.Equal("2", decision.Metadata["modeCount"]);
+        Assert.Equal("rbac,policy", decision.Metadata["modes"]);
+        Assert.Contains("not active", decision.Reason!, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task AddIdentityAccessDeniesMisconfiguredRequiredRolesPolicies()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["IdentityAccess"],
+                identity: new IdentitySettings(
+                    enabled: true,
+                    authorizationModes: ["Policy", "RBAC"])));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new IdentityAuthorizationEvaluatorEdgeCaseModule());
+            engine.AddIdentityAccess();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var evaluator = provider.GetRequiredService<IAuthorizationEvaluator>();
+
+        var decision = await evaluator.EvaluateAsync(
+            new AuthorizationSubject(subjectId: "user-misconfigured", roles: ["tenant-admin"], tenantIds: ["tenant-001"]),
+            new AuthorizationResource(resourceType: "document", resourceId: "doc-misconfigured", tenantId: "tenant-001"),
+            new AuthorizationContext(action: "read", policyId: "misconfigured-required-roles", tenantId: "tenant-001"));
+
+        Assert.False(decision.IsAllowed);
+        Assert.Equal("misconfigured-required-roles", decision.PolicyId);
+        Assert.Equal("0", decision.Metadata["ruleCount"]);
+        Assert.Contains("without any roles", decision.Reason!, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task AddIdentityAccessEnforcesRequiredRoleMatchAllPolicies()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                technologies: ["IdentityAccess"],
+                identity: new IdentitySettings(
+                    enabled: true,
+                    authorizationModes: ["Policy", "RBAC"])));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new IdentityAuthorizationEvaluatorEdgeCaseModule());
+            engine.AddIdentityAccess();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var evaluator = provider.GetRequiredService<IAuthorizationEvaluator>();
+
+        var deniedDecision = await evaluator.EvaluateAsync(
+            new AuthorizationSubject(subjectId: "user-missing-role", roles: ["tenant-admin"], tenantIds: ["tenant-001"]),
+            new AuthorizationResource(resourceType: "tenant", resourceId: "tenant-001", tenantId: "tenant-001"),
+            new AuthorizationContext(action: "manage", policyId: "strict-role-all", tenantId: "tenant-001"));
+
+        var allowedDecision = await evaluator.EvaluateAsync(
+            new AuthorizationSubject(subjectId: "user-all-roles", roles: ["tenant-admin", "compliance-auditor"], tenantIds: ["tenant-001"]),
+            new AuthorizationResource(resourceType: "tenant", resourceId: "tenant-001", tenantId: "tenant-001"),
+            new AuthorizationContext(action: "manage", policyId: "strict-role-all", tenantId: "tenant-001"));
+
+        Assert.False(deniedDecision.IsAllowed);
+        Assert.Contains("role match 'all'", deniedDecision.Reason!, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("1", deniedDecision.Metadata["ruleCount"]);
+
+        Assert.True(allowedDecision.IsAllowed);
+        Assert.Equal("strict-role-all", allowedDecision.PolicyId);
+        Assert.Equal("allowed", allowedDecision.Metadata["outcome"]);
+        Assert.Equal("1", allowedDecision.Metadata["ruleCount"]);
+    }
+
+    [Fact]
+    public async Task AddIdentityAccessDeniesPoliciesWithoutMetadataDrivenRules()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                technologies: ["IdentityAccess"],
+                identity: new IdentitySettings(
+                    enabled: true,
+                    authorizationModes: ["Policy", "RBAC", "ABAC"])));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new IdentityAuthorizationEvaluatorEdgeCaseModule());
+            engine.AddIdentityAccess();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var evaluator = provider.GetRequiredService<IAuthorizationEvaluator>();
+
+        var decision = await evaluator.EvaluateAsync(
+            new AuthorizationSubject(subjectId: "user-no-rules", roles: ["tenant-admin"], tenantIds: ["tenant-001"]),
+            new AuthorizationResource(resourceType: "document", resourceId: "doc-no-rules", tenantId: "tenant-001"),
+            new AuthorizationContext(action: "read", policyId: "no-metadata-rules", tenantId: "tenant-001"));
+
+        Assert.False(decision.IsAllowed);
+        Assert.Equal("no-metadata-rules", decision.PolicyId);
+        Assert.Equal("0", decision.Metadata["ruleCount"]);
+        Assert.Contains("does not declare any metadata-driven rules", decision.Reason!, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task AddIdentityAccessDeniesPoliciesWithEmptyRequiredAttributeValues()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                technologies: ["IdentityAccess"],
+                identity: new IdentitySettings(
+                    enabled: true,
+                    authorizationModes: ["Policy", "ABAC"])));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new IdentityAuthorizationEvaluatorEdgeCaseModule());
+            engine.AddIdentityAccess();
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        var evaluator = provider.GetRequiredService<IAuthorizationEvaluator>();
+
+        var decision = await evaluator.EvaluateAsync(
+            new AuthorizationSubject(
+                subjectId: "user-empty-attribute",
+                tenantIds: ["tenant-001"],
+                attributes: new Dictionary<string, string>
+                {
+                    ["region"] = "apac"
+                }),
+            new AuthorizationResource(resourceType: "document", resourceId: "doc-empty-attribute", tenantId: "tenant-001"),
+            new AuthorizationContext(action: "read", policyId: "empty-subject-attribute-value", tenantId: "tenant-001"));
+
+        Assert.False(decision.IsAllowed);
+        Assert.Equal("empty-subject-attribute-value", decision.PolicyId);
+        Assert.Equal("1", decision.Metadata["ruleCount"]);
+        Assert.Contains("empty required value", decision.Reason!, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private sealed class IdentityAuthorizationEvaluatorEdgeCaseModule : ModuleBase, IAuthorizationPolicyContributor
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "identity-authorization-evaluator-edge-cases",
+            displayName: "Identity Authorization Evaluator Edge Cases",
+            description: "Contributes policy metadata used to test metadata-driven evaluator edge-case behavior.",
+            tags: ["identity", "authorization", "tests", "edge-cases"],
+            version: "1.0.0");
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public override void RegisterCapabilities(ICapabilityRegistry capabilities)
+        {
+        }
+
+        public void RegisterPolicies(IAuthorizationPolicyRegistry policies)
+        {
+            policies.Add(new AuthorizationPolicyDescriptor(
+                id: "strict-role-all",
+                displayName: "Strict Role All",
+                description: "Requires all listed roles for access.",
+                modes: [AuthorizationMode.Rbac, AuthorizationMode.Policy],
+                tags: ["role", "strict"],
+                metadata: new Dictionary<string, string>
+                {
+                    [IdentityPolicyMetadataKeys.RequiredRoles] = "tenant-admin,compliance-auditor",
+                    [IdentityPolicyMetadataKeys.RequiredRoleMatch] = IdentityPolicyMetadataKeys.RequiredRoleMatchAll
+                }));
+
+            policies.Add(new AuthorizationPolicyDescriptor(
+                id: "misconfigured-required-roles",
+                displayName: "Misconfigured Required Roles",
+                description: "Declares a required-role rule without usable role values.",
+                modes: [AuthorizationMode.Rbac, AuthorizationMode.Policy],
+                tags: ["role", "misconfigured"],
+                metadata: new Dictionary<string, string>
+                {
+                    [IdentityPolicyMetadataKeys.RequiredRoles] = "  ,   "
+                }));
+
+            policies.Add(new AuthorizationPolicyDescriptor(
+                id: "no-metadata-rules",
+                displayName: "No Metadata Rules",
+                description: "Intentionally omits metadata rules to verify fail-closed behavior.",
+                modes: [AuthorizationMode.Policy],
+                tags: ["misconfigured", "rules"],
+                metadata: new Dictionary<string, string>()));
+
+            policies.Add(new AuthorizationPolicyDescriptor(
+                id: "empty-subject-attribute-value",
+                displayName: "Empty Subject Attribute Value",
+                description: "Declares a subject attribute rule with an empty required value.",
+                modes: [AuthorizationMode.Abac, AuthorizationMode.Policy],
+                tags: ["misconfigured", "attributes"],
+                metadata: new Dictionary<string, string>
+                {
+                    [$"{IdentityPolicyMetadataKeys.SubjectAttributePrefix}region"] = "   "
+                }));
+        }
     }
 }

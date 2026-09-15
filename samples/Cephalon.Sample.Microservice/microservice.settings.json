@@ -33,5 +33,11 @@
   },
   "OpenApi": {
     "Title": "Cephalon Microservice Sample"
+  },
+  "ApiRoutes": {
+    "DefaultBehaviorDocumentName": "v1",
+    "ResultEnvelope": {
+      "Enabled": true
+    }
   }
 }

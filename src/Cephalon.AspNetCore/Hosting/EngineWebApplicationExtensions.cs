@@ -1,5 +1,10 @@
+using Cephalon.AspNetCore.Transports;
+using Cephalon.AspNetCore.Resilience;
+using Cephalon.AspNetCore.Localization;
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Diagnostics;
+using Cephalon.AspNetCore.Audit;
+using Cephalon.AspNetCore.Authorization;
 using Cephalon.AspNetCore.Health;
 using Cephalon.AspNetCore;
 using Cephalon.Abstractions.AppModel;
@@ -344,6 +349,16 @@ public static class EngineWebApplicationExtensions
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
+        MapGetResultRequestDelegate(engineGroup, "/rate-limiting/runtime", "GetCephalonRateLimitingRuntime", static context =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var value = GetRequiredService<IRateLimitingRuntimeCatalog>(context).Policies;
+                stopwatch.Stop();
+                return TypedResults.Ok(new RateLimitingRuntimeSurface(
+                    value,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            });
         MapGetResultRequestDelegate(engineGroup, "/rate-limiting", "GetCephalonRateLimiting", static context =>
             TypedResults.Ok(GetRequiredService<IRateLimitingRuntimeCatalog>(context).Policies));
         MapGetResultRequestDelegate(engineGroup, "/rate-limiting/{policyId}", "GetCephalonRateLimitingPolicy", static context =>
@@ -471,6 +486,16 @@ public static class EngineWebApplicationExtensions
                 var graph = catalog.GetById(graphId);
 
                 return graph is null ? Results.NotFound() : Results.Ok(graph);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/data-products/runtime", "GetCephalonDataProductsRuntime", static context =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var value = GetRequiredService<IDataProductCatalog>(context).DataProducts;
+                stopwatch.Stop();
+                return TypedResults.Ok(new DataProductRuntimeSurface(
+                    value,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
             });
         MapGetResultRequestDelegate(engineGroup, "/data-products", "GetCephalonDataProducts", static context =>
             TypedResults.Ok(GetRequiredService<IDataProductCatalog>(context).DataProducts));
@@ -941,6 +966,16 @@ public static class EngineWebApplicationExtensions
                 var projection = catalog.GetById(projectionId);
 
                 return projection is null ? Results.NotFound() : Results.Ok(projection);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/outboxes/runtime", "GetCephalonOutboxRuntime", static context =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var value = GetRequiredService<IOutboxCatalog>(context).Outboxes;
+                stopwatch.Stop();
+                return TypedResults.Ok(new OutboxRuntimeSurface(
+                    value,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
             });
         MapGetResultRequestDelegate(engineGroup, "/outboxes", "GetCephalonOutboxes", static context =>
             TypedResults.Ok(GetRequiredService<IOutboxCatalog>(context).Outboxes));
@@ -1700,6 +1735,16 @@ public static class EngineWebApplicationExtensions
 
                 return readiness is null ? Results.NotFound() : Results.Ok(readiness);
             });
+        MapGetResultRequestDelegate(engineGroup, "/inboxes/runtime", "GetCephalonInboxRuntime", static context =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var value = GetRequiredService<IInboxCatalog>(context).Inboxes;
+                stopwatch.Stop();
+                return TypedResults.Ok(new InboxRuntimeSurface(
+                    value,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            });
         MapGetResultRequestDelegate(engineGroup, "/inboxes", "GetCephalonInboxes", static context =>
             TypedResults.Ok(GetRequiredService<IInboxCatalog>(context).Inboxes));
         MapGetResultRequestDelegate(engineGroup, "/inboxes/{inboxId}", "GetCephalonInbox", static context =>
@@ -1709,6 +1754,16 @@ public static class EngineWebApplicationExtensions
                 var inbox = catalog.GetById(inboxId);
 
                 return inbox is null ? Results.NotFound() : Results.Ok(inbox);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/audit-stores/runtime", "GetCephalonAuditStoreRuntime", static context =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var value = GetRequiredService<IAuditStoreCatalog>(context).AuditStores;
+                stopwatch.Stop();
+                return TypedResults.Ok(new AuditStoreRuntimeSurface(
+                    value,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
             });
         MapGetResultRequestDelegate(engineGroup, "/audit-stores", "GetCephalonAuditStores", static context =>
             TypedResults.Ok(GetRequiredService<IAuditStoreCatalog>(context).AuditStores));
@@ -1872,6 +1927,16 @@ public static class EngineWebApplicationExtensions
                     return Results.Empty;
                 });
         }
+        MapGetResultRequestDelegate(engineGroup, "/authorization-policies/runtime", "GetCephalonAuthorizationPolicyRuntime", static context =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var value = GetRequiredService<IAuthorizationPolicyCatalog>(context).Policies;
+                stopwatch.Stop();
+                return TypedResults.Ok(new AuthorizationPolicyRuntimeSurface(
+                    value,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            });
         MapGetResultRequestDelegate(engineGroup, "/authorization-policies", "GetCephalonAuthorizationPolicies", static context =>
             TypedResults.Ok(GetRequiredService<IAuthorizationPolicyCatalog>(context).Policies));
         MapGetResultRequestDelegate(engineGroup, "/authorization-policies/{policyId}", "GetCephalonAuthorizationPolicy", static context =>
@@ -2214,12 +2279,43 @@ public static class EngineWebApplicationExtensions
                             statusCode: StatusCodes.Status500InternalServerError);
                     }
                 });
+        MapGetResultRequestDelegate(engineGroup, "/transports/runtime", "GetCephalonTransportRuntime", static context =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var value = GetRequiredService<RuntimeManifest>(context).AppProfile.Transports;
+                stopwatch.Stop();
+                return TypedResults.Ok(new TransportRuntimeSurface(
+                    value,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            });
         MapGetResultRequestDelegate(engineGroup, "/transports", "GetCephalonTransports", static context =>
             TypedResults.Ok(GetRequiredService<RuntimeManifest>(context).AppProfile.Transports));
         MapGetResultRequestDelegate(engineGroup, "/dependencies", "GetCephalonDependencies", static context =>
             TypedResults.Ok(GetRequiredService<RuntimeHealthEvaluator>(context).EvaluateDependencies()));
+        MapGetResultRequestDelegate(engineGroup, "/localization/runtime", "GetCephalonLocalizationRuntime", static context =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var value = GetRequiredService<ILocalizedTextCatalog>(context).CreateSnapshot(GetQueryValue(context, "culture"));
+                stopwatch.Stop();
+                return TypedResults.Ok(new LocalizedResourcesRuntimeSurface(
+                    value,
+                    GetQueryValue(context, "culture"),
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            });
         MapGetResultRequestDelegate(engineGroup, "/localization", "GetCephalonLocalization", static context =>
             TypedResults.Ok(GetRequiredService<ILocalizedTextCatalog>(context).CreateSnapshot(GetQueryValue(context, "culture"))));
+        MapGetResultRequestDelegate(engineGroup, "/reference-docs/runtime", "GetCephalonReferenceDocsRuntime", context =>
+            {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                var value = referenceDocsSurface;
+                stopwatch.Stop();
+                return TypedResults.Ok(new ReferenceDocsRuntimeSurface(
+                    value,
+                    DateTimeOffset.UtcNow,
+                    (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)));
+            });
         MapGetResultRequestDelegate(engineGroup, "/reference-docs", "GetCephalonReferenceDocs", context =>
             TypedResults.Ok(referenceDocsSurface));
         MapGetResultRequestDelegate(engineGroup, "/options", "GetCephalonOptions", static context =>
@@ -2955,16 +3051,29 @@ public static class EngineWebApplicationExtensions
         RuntimeHealthEvaluator health,
         IRuntimeDiagnosticsCatalog diagnosticsCatalog)
     {
+        var generatedAtUtc = DateTimeOffset.UtcNow;
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        var liveness = health.EvaluateLiveness();
+        var livenessDuration = (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue);
+        stopwatch.Restart();
+        var readiness = health.EvaluateReadiness();
+        stopwatch.Stop();
+
         return new DiagnosticsSurface(
             MeterName: EngineDiagnostics.MeterName,
             ActivitySourceName: EngineDiagnostics.ActivitySourceName,
             Counters: GetDiagnosticsCounters(),
             Conventions: diagnosticsCatalog.Conventions,
-            Liveness: health.EvaluateLiveness(),
-            Readiness: health.EvaluateReadiness(),
+            Liveness: liveness,
+            Readiness: readiness,
             SummaryPath: "/health",
             LivenessPath: "/health/live",
-            ReadinessPath: "/health/ready");
+            ReadinessPath: "/health/ready")
+        {
+            GeneratedAtUtc = generatedAtUtc,
+            LivenessEvaluationDurationMilliseconds = livenessDuration,
+            ReadinessEvaluationDurationMilliseconds = (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue)
+        };
     }
 
     private static string[] GetDiagnosticsCounters()

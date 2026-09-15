@@ -24,4 +24,20 @@ public sealed record DiagnosticsSurface(
     RuntimeHealthReport Readiness,
     string SummaryPath,
     string LivenessPath,
-    string ReadinessPath);
+    string ReadinessPath)
+{
+    /// <summary>
+    /// Gets the UTC time at which the diagnostics payload was generated.
+    /// </summary>
+    public DateTimeOffset GeneratedAtUtc { get; init; }
+
+    /// <summary>
+    /// Gets the liveness evaluation duration in milliseconds.
+    /// </summary>
+    public int LivenessEvaluationDurationMilliseconds { get; init; }
+
+    /// <summary>
+    /// Gets the readiness evaluation duration in milliseconds.
+    /// </summary>
+    public int ReadinessEvaluationDurationMilliseconds { get; init; }
+}

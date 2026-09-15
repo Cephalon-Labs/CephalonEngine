@@ -176,6 +176,111 @@ public sealed partial class BehaviorHttpTransportResilienceHostingTests
     }
 
     [Fact]
+    public async Task BehaviorHttpGraphQlWsClosesWithInitTimeoutWhenConnectionInitIsMissing()
+    {
+        await using var app = await BuildRateLimitedBehaviorHttpAppAsync("http.graphql-ws");
+        var webSocketClient = app.GetTestServer().CreateWebSocketClient();
+        webSocketClient.SubProtocols.Add("graphql-transport-ws");
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        using var socket = await webSocketClient.ConnectAsync(
+            new Uri("ws://localhost/graphql-ws/v1/tests/rate-limited"),
+            cts.Token);
+
+        var close = await ReceiveWebSocketCloseFrameAsync(socket, cts.Token);
+
+        Assert.Equal(WebSocketMessageType.Close, close.MessageType);
+        Assert.Equal((WebSocketCloseStatus)4408, close.CloseStatus);
+        Assert.Contains("initialisation timeout", close.CloseStatusDescription, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task BehaviorHttpGraphQlWsClosesSessionWhenConnectionTerminateIsSent()
+    {
+        await using var app = await BuildRateLimitedBehaviorHttpAppAsync("http.graphql-ws");
+        var webSocketClient = app.GetTestServer().CreateWebSocketClient();
+        webSocketClient.SubProtocols.Add("graphql-transport-ws");
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        using var socket = await webSocketClient.ConnectAsync(
+            new Uri("ws://localhost/graphql-ws/v1/tests/rate-limited"),
+            cts.Token);
+
+        await InitializeGraphqlWebSocketAsync(socket, cts.Token);
+        await SendWebSocketJsonAsync(socket, new { type = "connection_terminate" }, cts.Token);
+
+        var close = await ReceiveWebSocketCloseFrameAsync(socket, cts.Token);
+
+        Assert.Equal(WebSocketMessageType.Close, close.MessageType);
+        Assert.Equal(WebSocketCloseStatus.NormalClosure, close.CloseStatus);
+        Assert.Contains("terminated", close.CloseStatusDescription, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task BehaviorHttpGraphQlWsIgnoresMalformedJsonFrameAndContinuesSession()
+    {
+        await using var app = await BuildRateLimitedBehaviorHttpAppAsync("http.graphql-ws");
+        var webSocketClient = app.GetTestServer().CreateWebSocketClient();
+        webSocketClient.SubProtocols.Add("graphql-transport-ws");
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        using var socket = await webSocketClient.ConnectAsync(
+            new Uri("ws://localhost/graphql-ws/v1/tests/rate-limited"),
+            cts.Token);
+
+        await SendWebSocketTextAsync(socket, "{ malformed", cts.Token);
+        await InitializeGraphqlWebSocketAsync(socket, cts.Token);
+        await SendWebSocketJsonAsync(
+            socket,
+            new
+            {
+                id = "req-1",
+                type = "subscribe",
+                payload = CreateGraphqlRequest("alpha")
+            },
+            cts.Token);
+        var nextMessage = await ReceiveWebSocketMessageMatchingAsync(
+            socket,
+            message => message.Contains("\"type\":\"next\"", StringComparison.Ordinal) &&
+                message.Contains("\"id\":\"req-1\"", StringComparison.Ordinal),
+            cts.Token);
+        using var nextPayload = JsonDocument.Parse(nextMessage);
+
+        Assert.Equal("alpha", nextPayload.RootElement
+            .GetProperty("payload")
+            .GetProperty("data")
+            .GetProperty("Value")
+            .GetString());
+    }
+
+    [Fact]
+    public async Task BehaviorHttpGraphQlWsClosesWithInitTimeoutAfterMalformedFrameWhenConnectionInitIsStillMissing()
+    {
+        await using var app = await BuildRateLimitedBehaviorHttpAppAsync("http.graphql-ws");
+        var webSocketClient = app.GetTestServer().CreateWebSocketClient();
+        webSocketClient.SubProtocols.Add("graphql-transport-ws");
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        using var socket = await webSocketClient.ConnectAsync(
+            new Uri("ws://localhost/graphql-ws/v1/tests/rate-limited"),
+            cts.Token);
+
+        await SendWebSocketTextAsync(socket, "{ malformed", cts.Token);
+        var close = await ReceiveWebSocketCloseFrameAsync(socket, cts.Token);
+
+        Assert.Equal(WebSocketMessageType.Close, close.MessageType);
+        Assert.Equal((WebSocketCloseStatus)4408, close.CloseStatus);
+        Assert.Contains("initialisation timeout", close.CloseStatusDescription, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task BehaviorHttpGraphQlWsReturnsBadRequestWhenRequestIsNotWebSocketUpgrade()
+    {
+        await using var app = await BuildRateLimitedBehaviorHttpAppAsync("http.graphql-ws");
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync("/graphql-ws/v1/tests/rate-limited");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
     public async Task BehaviorHttpSseReturnsProtocolRateLimitingEnvelopeWhenHostLimiterOverrideDisablesEndpointPolicy()
     {
         await using var app = await BuildRateLimitedBehaviorHttpAppAsync("http.sse");
@@ -1218,6 +1323,19 @@ public sealed partial class BehaviorHttpTransportResilienceHostingTests
             cancellationToken: cancellationToken);
     }
 
+    private static async Task SendWebSocketTextAsync(
+        WebSocket socket,
+        string payload,
+        CancellationToken cancellationToken)
+    {
+        var buffer = Encoding.UTF8.GetBytes(payload);
+        await socket.SendAsync(
+            new ArraySegment<byte>(buffer),
+            WebSocketMessageType.Text,
+            endOfMessage: true,
+            cancellationToken: cancellationToken);
+    }
+
     private static async Task<string> ReceiveWebSocketMessageMatchingAsync(
         WebSocket socket,
         Func<string, bool> match,
@@ -1258,6 +1376,23 @@ public sealed partial class BehaviorHttpTransportResilienceHostingTests
         }
 
         return Encoding.UTF8.GetString(stream.ToArray());
+    }
+
+    private static async Task<WebSocketReceiveResult> ReceiveWebSocketCloseFrameAsync(
+        WebSocket socket,
+        CancellationToken cancellationToken)
+    {
+        var buffer = new byte[4096];
+        for (var index = 0; index < 10; index++)
+        {
+            var result = await socket.ReceiveAsync(buffer, cancellationToken);
+            if (result.MessageType == WebSocketMessageType.Close)
+            {
+                return result;
+            }
+        }
+
+        throw new Xunit.Sdk.XunitException("Expected GraphQL WebSocket close frame but did not receive one.");
     }
 
     [AppBehavior(RateLimitedBehaviorId)]

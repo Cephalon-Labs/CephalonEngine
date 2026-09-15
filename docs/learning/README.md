@@ -13,6 +13,15 @@ These documents are intentionally lightweight and contributor-oriented:
 - [Week 1 architecture summary starter](week-1-architecture-summary.md)
 - [Cephalon glossary starter](cephalon-glossary-starter.md)
 
+## Dated learning-pass records
+
+These are dated records of autonomous learning passes against the docs graph,
+the current `.NET` preview wave, and external industry signal. They do not
+introduce policy; they record what was checked, what signal was observed, and
+which owner-home doc should record any eventual durable change.
+
+- [May 2026 learning pass](may-2026-learning-pass.md)
+
 ## How to use this folder
 
 1. Start from [Learning roadmap](../learning-roadmap.md).

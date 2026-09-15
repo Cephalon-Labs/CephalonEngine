@@ -1442,4 +1442,3 @@ the evaluation context for `IFeatureToggle`.
 - `Cephalon.Behaviors` — dispatcher, catalog, resolver, compatibility rules (required dependency)
 - `Cephalon.Abstractions` — behavior contracts
 - `Cephalon.AspNetCore` — host-level OpenAPI + Scalar surface for REST endpoints
-

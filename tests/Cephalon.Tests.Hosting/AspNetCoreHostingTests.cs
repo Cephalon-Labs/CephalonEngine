@@ -1,3 +1,5 @@
+using Cephalon.AspNetCore.Authorization;
+using Cephalon.AspNetCore.Audit;
 using System.Net.Http.Json;
 using System.Net.Http.Headers;
 using System.Net.WebSockets;
@@ -29,6 +31,9 @@ using Cephalon.AspNetCore;
 using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Documentation;
+using Cephalon.AspNetCore.Localization;
+using Cephalon.AspNetCore.Resilience;
+using Cephalon.AspNetCore.Transports;
 using Cephalon.AspNetCore.GraphQL.Hosting;
 using Cephalon.AspNetCore.Grpc.Contracts.Discovery;
 using Cephalon.AspNetCore.Grpc.Hosting;
@@ -56,6 +61,8 @@ using Cephalon.MultiTenancy.Governance.Services;
 using Cephalon.MultiTenancy.Registration;
 using Cephalon.Retrieval.Registration;
 using Cephalon.Retrieval.Services;
+using Google.Protobuf;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -123,6 +130,7 @@ public sealed class AspNetCoreHostingTests
             var client = app.GetTestClient();
 
             var surface = await client.GetFromJsonAsync<ReferenceDocsSurface>("/engine/reference-docs");
+            var runtimeSurface = await client.GetFromJsonAsync<ReferenceDocsRuntimeSurface>("/engine/reference-docs/runtime");
             var browseResponse = await client.GetAsync("/reference/browse.html");
             var browsePayload = await browseResponse.Content.ReadAsStringAsync();
             var memberIndexResponse = await client.GetAsync("/reference/members.md");
@@ -136,6 +144,13 @@ public sealed class AspNetCoreHostingTests
             Assert.Equal("browse.html", surface.DefaultDocument);
             Assert.Equal("/reference/browse.html", surface.BrowserPath);
             Assert.Equal("/reference/members.md", surface.MemberIndexPath);
+
+            Assert.NotNull(runtimeSurface);
+            Assert.NotNull(runtimeSurface.Surface);
+            Assert.NotEqual(default, runtimeSurface.EvaluatedAtUtc);
+            Assert.True(runtimeSurface.EvaluationDurationMilliseconds >= 0);
+            Assert.Equal(surface.RoutePrefix, runtimeSurface.Surface.RoutePrefix);
+            Assert.Equal(surface.DefaultDocumentPath, runtimeSurface.Surface.DefaultDocumentPath);
 
             Assert.True(browseResponse.IsSuccessStatusCode);
             Assert.Equal("text/html", browseResponse.Content.Headers.ContentType?.MediaType);
@@ -1093,6 +1108,7 @@ public sealed class AspNetCoreHostingTests
         var appModel = await client.GetFromJsonAsync<AppProfile>("/engine/app-model");
         var resilience = await client.GetFromJsonAsync<ResilienceSelection>("/engine/resilience");
         var rateLimitingPolicies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+        var rateLimitingRuntime = await client.GetFromJsonAsync<RateLimitingRuntimeSurface>("/engine/rate-limiting/runtime");
         var databases = await client.GetFromJsonAsync<DatabaseTopologySelection>("/engine/databases");
         var databaseRoles = await client.GetFromJsonAsync<DatabaseRoleDescriptor[]>("/engine/database-roles");
         var databaseMigrations = await client.GetFromJsonAsync<DatabaseMigrationDescriptor[]>("/engine/database-migrations");
@@ -1103,6 +1119,7 @@ public sealed class AspNetCoreHostingTests
         var technologies = await client.GetFromJsonAsync<TechnologyDescriptor[]>("/engine/technologies");
         var technologyCatalog = await client.GetFromJsonAsync<TechnologyDescriptor[]>("/engine/technology-catalog");
         var transports = await client.GetFromJsonAsync<TransportDescriptor[]>("/engine/transports");
+        var transportRuntime = await client.GetFromJsonAsync<TransportRuntimeSurface>("/engine/transports/runtime");
         var dependencies = await client.GetFromJsonAsync<DependencyHealthReport[]>("/engine/dependencies");
         var trustPolicy = await client.GetFromJsonAsync<TrustSnapshot>("/engine/trust-policy");
         var failurePolicy = await client.GetFromJsonAsync<FailurePolicy>("/engine/failure-policy");
@@ -1255,6 +1272,10 @@ public sealed class AspNetCoreHostingTests
         Assert.True(rateLimitingPolicy.Effective.Enabled);
         Assert.Equal("SlidingWindow", rateLimitingPolicy.Effective.Algorithm);
         Assert.Equal("subject-or-tenant-or-ip", rateLimitingPolicy.Metadata["partitionStrategy"]);
+        Assert.NotNull(rateLimitingRuntime);
+        Assert.NotEqual(default, rateLimitingRuntime.EvaluatedAtUtc);
+        Assert.True(rateLimitingRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(rateLimitingPolicies.Length, rateLimitingRuntime.Policies.Count);
 
         Assert.NotNull(databases);
         Assert.Equal("PostgreSql", databases.Write.Provider);
@@ -1305,7 +1326,9 @@ public sealed class AspNetCoreHostingTests
         Assert.NotNull(packages);
         Assert.Empty(packages);
         Assert.NotNull(trustPolicy);
+        Assert.NotEqual(default, trustPolicy.EvaluatedAtUtc);
         Assert.Empty(trustPolicy.Packages);
+        Assert.All(trustPolicy.Capabilities, decision => Assert.NotEqual(default, decision.EvaluatedAtUtc));
 
         Assert.NotNull(capabilities);
         Assert.DoesNotContain(capabilities, capability => capability.Key == "platform.clock");
@@ -1325,6 +1348,10 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains(transports, transport => transport.Id == "graphql");
         Assert.Contains(transports, transport => transport.Id == "server-sent-events");
         Assert.Contains(transports, transport => transport.Id == "websocket");
+        Assert.NotNull(transportRuntime);
+        Assert.NotEqual(default, transportRuntime.EvaluatedAtUtc);
+        Assert.True(transportRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(transports.Length, transportRuntime.Transports.Count);
 
         Assert.NotNull(dependencies);
         Assert.Empty(dependencies);
@@ -1432,6 +1459,9 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal((int)RuntimeHealthState.Healthy, diagnosticsDocument.RootElement.GetProperty("readiness").GetProperty("state").GetInt32());
         Assert.Equal("/health/live", diagnosticsDocument.RootElement.GetProperty("livenessPath").GetString());
         Assert.Equal("/health/ready", diagnosticsDocument.RootElement.GetProperty("readinessPath").GetString());
+        Assert.NotEqual(default, diagnosticsDocument.RootElement.GetProperty("generatedAtUtc").GetDateTimeOffset());
+        Assert.True(diagnosticsDocument.RootElement.GetProperty("livenessEvaluationDurationMilliseconds").GetInt32() >= 0);
+        Assert.True(diagnosticsDocument.RootElement.GetProperty("readinessEvaluationDurationMilliseconds").GetInt32() >= 0);
 
         Assert.True(healthResponse.IsSuccessStatusCode, healthPayload);
         Assert.Equal("application/json", healthResponse.Content.Headers.ContentType?.MediaType);
@@ -1732,6 +1762,7 @@ public sealed class AspNetCoreHostingTests
         var secondOpenApiResponse = await client.GetAsync("/openapi/v1.json");
         var rejectedPayload = await secondPublicResponse.Content.ReadAsStringAsync();
         var policies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+        var runtime = await client.GetFromJsonAsync<RateLimitingRuntimeSurface>("/engine/rate-limiting/runtime");
 
         Assert.Equal(HttpStatusCode.OK, firstPublicResponse.StatusCode);
         Assert.Equal(HttpStatusCode.TooManyRequests, secondPublicResponse.StatusCode);
@@ -1750,6 +1781,10 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains("/engine", policy.ExcludedPathPrefixes);
         Assert.Contains("/openapi", policy.ExcludedPathPrefixes);
         Assert.Contains("/scalar", policy.ExcludedPathPrefixes);
+        Assert.NotNull(runtime);
+        Assert.NotEqual(default, runtime.EvaluatedAtUtc);
+        Assert.True(runtime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(policies.Length, runtime.Policies.Count);
     }
 
     [Fact]
@@ -1779,6 +1814,7 @@ public sealed class AspNetCoreHostingTests
         var firstPublicResponse = await client.GetAsync("/api/platform/time");
         var secondPublicResponse = await client.GetAsync("/api/platform/time");
         var policies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+        var runtime = await client.GetFromJsonAsync<RateLimitingRuntimeSurface>("/engine/rate-limiting/runtime");
 
         Assert.Equal(HttpStatusCode.OK, firstPublicResponse.StatusCode);
         Assert.Equal(HttpStatusCode.TooManyRequests, secondPublicResponse.StatusCode);
@@ -1786,6 +1822,10 @@ public sealed class AspNetCoreHostingTests
         var policy = Assert.Single(policies);
         Assert.Equal("FixedWindow", policy.Effective.Algorithm);
         Assert.Contains("rest-api", policy.TransportIds);
+        Assert.NotNull(runtime);
+        Assert.NotEqual(default, runtime.EvaluatedAtUtc);
+        Assert.True(runtime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(policies.Length, runtime.Policies.Count);
     }
 
     [Fact]
@@ -1808,12 +1848,17 @@ public sealed class AspNetCoreHostingTests
         var client = app.GetTestClient();
 
         var policies = await client.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+        var runtime = await client.GetFromJsonAsync<RateLimitingRuntimeSurface>("/engine/rate-limiting/runtime");
         var policyResponse = await client.GetAsync("/engine/rate-limiting/cephalon-public-http");
         var firstPublicResponse = await client.GetAsync("/api/platform/time");
         var secondPublicResponse = await client.GetAsync("/api/platform/time");
 
         Assert.NotNull(policies);
         Assert.Empty(policies);
+        Assert.NotNull(runtime);
+        Assert.NotEqual(default, runtime.EvaluatedAtUtc);
+        Assert.True(runtime.EvaluationDurationMilliseconds >= 0);
+        Assert.Empty(runtime.Policies);
         Assert.Equal(HttpStatusCode.NotFound, policyResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, firstPublicResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, secondPublicResponse.StatusCode);
@@ -2204,6 +2249,128 @@ public sealed class AspNetCoreHostingTests
                 Directory.Delete(contentRootPath, recursive: true);
             }
         }
+    }
+
+    [Fact]
+    public async Task MapCephalonGrpcReturnsUnimplementedForUnknownMethod()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "Grpc";
+        builder.AddGrpcTransport();
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var grpcHandler = new GrpcSubdirectoryHandler(app.GetTestServer().CreateHandler(), "/grpc");
+        using var grpcHttpClient = new HttpClient(grpcHandler)
+        {
+            BaseAddress = new Uri("http://localhost")
+        };
+        grpcHttpClient.DefaultRequestVersion = HttpVersion.Version20;
+        grpcHttpClient.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+
+        using var grpcChannel = GrpcChannel.ForAddress("http://localhost", new GrpcChannelOptions
+        {
+            HttpClient = grpcHttpClient
+        });
+
+        var unknownMethod = new Method<HelloRequest, HelloReply>(
+            MethodType.Unary,
+            "cephalon.transports.grpc.discovery.DiscoveryService",
+            "MissingMethod",
+            Marshallers.Create(
+                request => request.ToByteArray(),
+                payload => HelloRequest.Parser.ParseFrom(payload)),
+            Marshallers.Create(
+                response => response.ToByteArray(),
+                payload => HelloReply.Parser.ParseFrom(payload)));
+
+        var callInvoker = grpcChannel.CreateCallInvoker();
+        var exception = await Assert.ThrowsAsync<RpcException>(async () =>
+        {
+            var call = callInvoker.AsyncUnaryCall(
+                unknownMethod,
+                host: null,
+                options: new CallOptions(),
+                request: new HelloRequest
+                {
+                    Name = "Codex"
+                });
+
+            await call.ResponseAsync;
+        });
+
+        Assert.Equal(StatusCode.Unimplemented, exception.StatusCode);
+    }
+
+    [Fact]
+    public async Task MapCephalonGrpcReturnsUnimplementedForUnknownService()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "Grpc";
+        builder.AddGrpcTransport();
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var grpcHandler = new GrpcSubdirectoryHandler(app.GetTestServer().CreateHandler(), "/grpc");
+        using var grpcHttpClient = new HttpClient(grpcHandler)
+        {
+            BaseAddress = new Uri("http://localhost")
+        };
+        grpcHttpClient.DefaultRequestVersion = HttpVersion.Version20;
+        grpcHttpClient.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+
+        using var grpcChannel = GrpcChannel.ForAddress("http://localhost", new GrpcChannelOptions
+        {
+            HttpClient = grpcHttpClient
+        });
+
+        var unknownServiceMethod = new Method<HelloRequest, HelloReply>(
+            MethodType.Unary,
+            "cephalon.transports.grpc.discovery.MissingService",
+            "SayHello",
+            Marshallers.Create(
+                request => request.ToByteArray(),
+                payload => HelloRequest.Parser.ParseFrom(payload)),
+            Marshallers.Create(
+                response => response.ToByteArray(),
+                payload => HelloReply.Parser.ParseFrom(payload)));
+
+        var callInvoker = grpcChannel.CreateCallInvoker();
+        var exception = await Assert.ThrowsAsync<RpcException>(async () =>
+        {
+            var call = callInvoker.AsyncUnaryCall(
+                unknownServiceMethod,
+                host: null,
+                options: new CallOptions(),
+                request: new HelloRequest
+                {
+                    Name = "Codex"
+                });
+
+            await call.ResponseAsync;
+        });
+
+        Assert.Equal(StatusCode.Unimplemented, exception.StatusCode);
     }
 
     [Fact]
@@ -2721,6 +2888,7 @@ public sealed class AspNetCoreHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
         var dataProducts = await client.GetFromJsonAsync<DataProductDescriptor[]>("/engine/data-products");
+        var dataProductRuntime = await client.GetFromJsonAsync<DataProductRuntimeSurface>("/engine/data-products/runtime");
         var dataProduct = await client.GetFromJsonAsync<DataProductDescriptor>("/engine/data-products/tenant-profile");
         var cdcCaptures = await client.GetFromJsonAsync<CdcCaptureDescriptor[]>("/engine/cdc-captures");
         var cdcCapture = await client.GetFromJsonAsync<CdcCaptureDescriptor>("/engine/cdc-captures/tenant-profile-cdc");
@@ -2728,17 +2896,25 @@ public sealed class AspNetCoreHostingTests
         var projections = await client.GetFromJsonAsync<ProjectionDescriptor[]>("/engine/projections");
         var projection = await client.GetFromJsonAsync<ProjectionDescriptor>("/engine/projections/tenant-summary");
         var inboxes = await client.GetFromJsonAsync<InboxDescriptor[]>("/engine/inboxes");
+        var inboxRuntime = await client.GetFromJsonAsync<InboxRuntimeSurface>("/engine/inboxes/runtime");
         var inbox = await client.GetFromJsonAsync<InboxDescriptor>("/engine/inboxes/tenant-event-inbox");
         var outboxes = await client.GetFromJsonAsync<OutboxDescriptor[]>("/engine/outboxes");
+        var outboxRuntime = await client.GetFromJsonAsync<OutboxRuntimeSurface>("/engine/outboxes/runtime");
         var outbox = await client.GetFromJsonAsync<OutboxDescriptor>("/engine/outboxes/tenant-event-outbox");
         var auditStores = await client.GetFromJsonAsync<AuditStoreDescriptor[]>("/engine/audit-stores");
+        var auditRuntime = await client.GetFromJsonAsync<AuditStoreRuntimeSurface>("/engine/audit-stores/runtime");
         var auditStore = await client.GetFromJsonAsync<AuditStoreDescriptor>("/engine/audit-stores/tenant-audit-store");
         var policies = await client.GetFromJsonAsync<AuthorizationPolicyDescriptor[]>("/engine/authorization-policies");
+        var policyRuntime = await client.GetFromJsonAsync<AuthorizationPolicyRuntimeSurface>("/engine/authorization-policies/runtime");
         var policy = await client.GetFromJsonAsync<AuthorizationPolicyDescriptor>("/engine/authorization-policies/tenant-admin");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.NotNull(dataProducts);
         Assert.Single(dataProducts);
+        Assert.NotNull(dataProductRuntime);
+        Assert.NotEqual(default, dataProductRuntime.EvaluatedAtUtc);
+        Assert.True(dataProductRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(dataProducts.Length, dataProductRuntime.DataProducts.Count);
         Assert.NotNull(dataProduct);
         Assert.Equal("phase8-runtime-catalogs", dataProduct.SourceModuleId);
         Assert.Equal("tenant-management", dataProduct.DomainId);
@@ -2762,6 +2938,10 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(outboxes);
         Assert.Single(outboxes);
+        Assert.NotNull(outboxRuntime);
+        Assert.NotEqual(default, outboxRuntime.EvaluatedAtUtc);
+        Assert.True(outboxRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(outboxes.Length, outboxRuntime.Outboxes.Count);
         Assert.NotNull(outbox);
         Assert.Equal("phase8-runtime-catalogs", outbox.SourceModuleId);
         Assert.Equal("relational", outbox.Provider);
@@ -2769,6 +2949,10 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(inboxes);
         Assert.Single(inboxes);
+        Assert.NotNull(inboxRuntime);
+        Assert.NotEqual(default, inboxRuntime.EvaluatedAtUtc);
+        Assert.True(inboxRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(inboxes.Length, inboxRuntime.Inboxes.Count);
         Assert.NotNull(inbox);
         Assert.Equal("phase8-runtime-catalogs", inbox.SourceModuleId);
         Assert.Equal("relational", inbox.Provider);
@@ -2776,6 +2960,10 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(auditStores);
         Assert.Single(auditStores);
+        Assert.NotNull(auditRuntime);
+        Assert.NotEqual(default, auditRuntime.EvaluatedAtUtc);
+        Assert.True(auditRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(auditStores.Length, auditRuntime.AuditStores.Count);
         Assert.NotNull(auditStore);
         Assert.Equal("phase8-runtime-catalogs", auditStore.SourceModuleId);
         Assert.Equal("memory", auditStore.Provider);
@@ -2783,6 +2971,10 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(policies);
         Assert.Equal(2, policies.Length);
+        Assert.NotNull(policyRuntime);
+        Assert.NotEqual(default, policyRuntime.EvaluatedAtUtc);
+        Assert.True(policyRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(policies.Length, policyRuntime.Policies.Count);
         Assert.NotNull(policy);
         Assert.Contains(AuthorizationMode.Rbac, policy.Modes);
         Assert.Equal("phase8-runtime-catalogs", policy.Metadata["sourceModuleId"]);
@@ -2915,6 +3107,9 @@ public sealed class AspNetCoreHostingTests
         Assert.NotNull(diagnostics);
         Assert.Contains(diagnostics.Counters, counter => counter == "cephalon.execution-graphs.transitions");
         Assert.Contains(diagnostics.Counters, counter => counter == "cephalon.hosted-executions.transitions");
+        Assert.NotEqual(default, diagnostics.GeneratedAtUtc);
+        Assert.True(diagnostics.LivenessEvaluationDurationMilliseconds >= 0);
+        Assert.True(diagnostics.ReadinessEvaluationDurationMilliseconds >= 0);
         var engineConvention = Assert.Single(diagnostics.Conventions, convention => convention.Source == "Cephalon.Engine");
         Assert.Equal(2000, engineConvention.MinimumEventId);
         Assert.Equal(2005, engineConvention.MaximumEventId);
@@ -3588,6 +3783,7 @@ note: visible
         var client = app.GetTestClient();
 
         var thaiSnapshot = await client.GetFromJsonAsync<LocalizedResourcesSnapshot>("/engine/localization?culture=th");
+        var thaiRuntime = await client.GetFromJsonAsync<LocalizedResourcesRuntimeSurface>("/engine/localization/runtime?culture=th");
         var japaneseSnapshot = await client.GetFromJsonAsync<LocalizedResourcesSnapshot>("/engine/localization?culture=ja");
         var thaiOpenApiPayload = await client.GetStringAsync("/openapi/v1.json?culture=th&ui-culture=th");
         var japaneseOpenApiPayload = await client.GetStringAsync("/openapi/v1.json?culture=ja&ui-culture=ja");
@@ -3598,6 +3794,12 @@ note: visible
         Assert.Equal("th", thaiSnapshot.ResolvedCulture);
         Assert.Equal("เอกสาร REST ของ Cephalon", thaiSnapshot.Resources["engine.docs.rest.title"]);
         Assert.Contains("ja", thaiSnapshot.SupportedCultures);
+        Assert.NotNull(thaiRuntime);
+        Assert.NotNull(thaiRuntime.Snapshot);
+        Assert.Equal("th", thaiRuntime.RequestedCulture);
+        Assert.NotEqual(default, thaiRuntime.EvaluatedAtUtc);
+        Assert.True(thaiRuntime.EvaluationDurationMilliseconds >= 0);
+        Assert.Equal(thaiSnapshot.ResolvedCulture, thaiRuntime.Snapshot.ResolvedCulture);
 
         Assert.NotNull(japaneseSnapshot);
         Assert.Equal("ja", japaneseSnapshot.ResolvedCulture);
@@ -5865,12 +6067,19 @@ note: visible
 
             Assert.NotNull(trustSnapshot);
             Assert.True(trustSnapshot.Policy.RequireTrustedPackages);
+            Assert.NotEqual(default, trustSnapshot.EvaluatedAtUtc);
             Assert.Contains(trustSnapshot.Policy.TrustedPublishers, publisher => string.Equals(publisher, "cephalon-labs", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(trustSnapshot.Packages, decision =>
                 decision.PackageId == "reference-operations" &&
                 decision.IsTrusted &&
                 decision.PublisherId == "cephalon-labs" &&
                 decision.Reason == "Package publisher is explicitly trusted by the current trust policy.");
+            Assert.All(trustSnapshot.Packages, decision =>
+            {
+                Assert.NotEqual(default, decision.VerifiedAtUtc);
+                Assert.True(decision.VerificationDurationMilliseconds >= 0);
+            });
+            Assert.All(trustSnapshot.Capabilities, decision => Assert.NotEqual(default, decision.EvaluatedAtUtc));
 
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.Manifest.Packages, staged =>
@@ -5924,10 +6133,12 @@ note: visible
         Assert.NotNull(capabilities);
         Assert.DoesNotContain(capabilities, capability => capability.Key == "restricted.secret");
         Assert.NotNull(trust);
+        Assert.NotEqual(default, trust.EvaluatedAtUtc);
         Assert.Contains(trust.Capabilities, decision =>
             decision.CapabilityKey == "restricted.secret" &&
             decision.Access == CapabilityAccess.Denied &&
             !decision.IsAllowed);
+        Assert.All(trust.Capabilities, decision => Assert.NotEqual(default, decision.EvaluatedAtUtc));
     }
 
     [Fact]

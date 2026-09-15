@@ -70,6 +70,7 @@ Generated app roots now also emit `Configurations/AddReferenceDocs.json` with th
 When this is enabled, `MapCephalon()` exposes:
 
 - `/engine/reference-docs` for host-level introspection
+- `/engine/reference-docs/runtime` for host-level introspection with payload freshness and evaluation-duration metadata
 - `/reference/browse.html` for the browser UI
 - `/reference/README.md`, `/reference/namespaces.md`, `/reference/types.md`, and `/reference/members.md`
 - `/reference/reference-manifest.json` for tooling

@@ -29,4 +29,15 @@ public sealed record PackageTrustDecision(
     bool IsSignatureVerified,
     string SignatureVerificationReason,
     bool IsTrusted,
-    string Reason);
+    string Reason)
+{
+    /// <summary>
+    /// Gets the UTC time at which this trust decision was projected.
+    /// </summary>
+    public DateTimeOffset VerifiedAtUtc { get; init; }
+
+    /// <summary>
+    /// Gets elapsed policy-projection time in milliseconds when this decision was produced; this does not measure cryptographic verification.
+    /// </summary>
+    public int VerificationDurationMilliseconds { get; init; }
+}

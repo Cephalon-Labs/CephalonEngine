@@ -232,6 +232,8 @@ Do not patch only the nearest document if multiple docs reference the same surfa
 
 ## Commit reference rule
 
+Every meaningful implementation commit must be recorded back into the related GitHub Project task/card with its commit id.
+
 If a commit materially advances a GitHub Project card:
 
 1. keep the commit intentional and readable

@@ -47,7 +47,7 @@ $projectFile = Join-Path $projectDir "$projectName.csproj"
 $docsDir     = Join-Path $repoRoot "docs" "components"
 $docFile     = Join-Path $docsDir "$docSlug.md"
 $catalogFile = Join-Path $docsDir "README.md"
-$testsCsproj = Join-Path $repoRoot "tests" "Cephalon.Tests" "Cephalon.Tests.csproj"
+$testsCsproj = Join-Path $repoRoot "tests" "Cephalon.Tests.Support" "Cephalon.Tests.Support.csproj"
 
 # ---------------------------------------------------------------------------
 # Guard
@@ -129,7 +129,7 @@ if ($catalogContent -notlike "*${ProviderName}Dependencies*") {
 }
 
 # ---------------------------------------------------------------------------
-# 4. ProjectReference in Cephalon.Tests.csproj
+# 4. ProjectReference in Cephalon.Tests.Support.csproj
 # ---------------------------------------------------------------------------
 $testsContent = Get-Content -Path $testsCsproj -Raw
 
@@ -161,12 +161,12 @@ Write-Host "       <Project Path=""src/$projectName/$projectName.csproj"" />"
 Write-Host ""
 Write-Host " [ ] Add the $NuGetPackage version to Directory.Packages.props if not already present."
 Write-Host ""
-Write-Host " [ ] Implement $projectName:"
+Write-Host (" [ ] Implement {0}" -f $projectName)
 Write-Host "       - Registration/${ProviderName}DependenciesEngineBuilderExtensions.cs"
 Write-Host "       - Health/${ProviderName}HealthCheck.cs (if applicable)"
 Write-Host "       - Telemetry/${ProviderName}InstrumentationContributor.cs (if applicable)"
 Write-Host ""
-Write-Host " [ ] Add composition/integration tests in Cephalon.Tests."
+Write-Host " [ ] Add composition/integration tests in Cephalon.Tests.Composition and/or Cephalon.Tests.Hosting."
 Write-Host ""
 Write-Host " [ ] Fill in the stub doc file: docs/components/$docSlug.md"
 Write-Host ""

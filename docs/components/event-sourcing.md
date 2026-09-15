@@ -4,6 +4,8 @@
 
 `Cephalon.EventSourcing` is the runtime-neutral event-sourcing baseline for Cephalon.
 
+See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), [Conformance matrix](../conformance-matrix.md), and [Runtime contract index](../runtime-contract-index.md) for the per-package adoption-truth, maturity (`M1`, application-managed), ownership, and the `IEventStoreCatalog` / `snapshot.*` runtime-key inventory that the event-sourcing baseline projects against. [Engineering standards](../engineering-standards.md) records the library-design and code-quality baseline the contract layer ships against; [Long-range engine direction](../long-range-direction.md) frames why event-sourcing stays a host-agnostic baseline with a separate snapshot contract that provider packages (`Cephalon.EventSourcing.EntityFramework`, `.MongoDb`, `.Redis`, `.Nats`, and the wider catalog) plug into additively, rather than fusing stream and snapshot persistence into a single provider.
+
 ## What it owns
 
 - host-agnostic contracts for domain events, event stores, aggregate replay, snapshots, and event-stream catalogs
@@ -150,6 +152,12 @@ Those remain later slices until Cephalon can ship them truthfully.
 
 - [Cephalon.Abstractions](abstractions.md)
 - [Cephalon.Engine](engine.md)
+- [Engine surface maturity audit](../engine-surface-maturity-audit.md)
+- [Conformance matrix](../conformance-matrix.md)
+- [Runtime contract index](../runtime-contract-index.md)
+- [Long-range engine direction](../long-range-direction.md)
+- [Engineering standards](../engineering-standards.md)
+- [Architecture review (May 2026)](../architecture-review-2026-05.md)
 - [Cephalon.EventSourcing.EntityFramework](event-sourcing-entityframework.md)
 - [Cephalon.EventSourcing.MongoDB](event-sourcing-mongodb.md)
 - [Cephalon.EventSourcing.Nats](event-sourcing-nats.md)

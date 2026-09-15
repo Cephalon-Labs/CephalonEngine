@@ -1,3 +1,8 @@
+using Cephalon.AspNetCore.Transports;
+using Cephalon.AspNetCore.Resilience;
+using Cephalon.AspNetCore.Localization;
+using Cephalon.AspNetCore.Authorization;
+using Cephalon.AspNetCore.Audit;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Cephalon.Abstractions.AppModel;
@@ -59,6 +64,15 @@ namespace Cephalon.AspNetCore;
 [JsonSerializable(typeof(TrustSnapshot))]
 [JsonSerializable(typeof(RuntimeStatusSnapshot))]
 [JsonSerializable(typeof(RuntimeOperationalStory))]
+[JsonSerializable(typeof(RateLimitingRuntimeSurface))]
+[JsonSerializable(typeof(DataProductRuntimeSurface))]
+[JsonSerializable(typeof(OutboxRuntimeSurface))]
+[JsonSerializable(typeof(InboxRuntimeSurface))]
+[JsonSerializable(typeof(AuditStoreRuntimeSurface))]
+[JsonSerializable(typeof(AuthorizationPolicyRuntimeSurface))]
+[JsonSerializable(typeof(TransportRuntimeSurface))]
+[JsonSerializable(typeof(LocalizedResourcesRuntimeSurface))]
+[JsonSerializable(typeof(ReferenceDocsRuntimeSurface))]
 [JsonSerializable(typeof(DiagnosticsSurface))]
 [JsonSerializable(typeof(DiagnosticsConventionsSurface))]
 [JsonSerializable(typeof(string))]

@@ -12,5 +12,11 @@
   },
   "OpenApi": {
     "Title": "Cephalon Microservice Suite - Catalog Service"
+  },
+  "ApiRoutes": {
+    "DefaultBehaviorDocumentName": "v1",
+    "ResultEnvelope": {
+      "Enabled": true
+    }
   }
 }

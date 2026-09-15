@@ -43,6 +43,9 @@ public sealed class RedisDependencyHealthHostingTests
         Assert.Equal("redis-cache", dependency.Id);
         Assert.Equal("Redis Cache", dependency.DisplayName);
         Assert.Equal(HealthState.Healthy, dependency.State);
+        Assert.True(dependency.CheckedAtUtc.HasValue);
+        Assert.True(dependency.ProbeDurationMilliseconds >= 0);
+        Assert.Equal(0, dependency.ConsecutiveFailureCount);
 
         await host.StopAsync();
     }
@@ -102,6 +105,9 @@ public sealed class RedisDependencyHealthHostingTests
             dependency.Description.Contains("failed", StringComparison.OrdinalIgnoreCase) ||
             dependency.Description.Contains("timed out", StringComparison.OrdinalIgnoreCase),
             $"Expected a Redis failure description but received '{dependency.Description}'.");
+        Assert.True(dependency.CheckedAtUtc.HasValue);
+        Assert.True(dependency.ProbeDurationMilliseconds >= 0);
+        Assert.True(dependency.ConsecutiveFailureCount > 0);
 
         await host.StopAsync();
     }

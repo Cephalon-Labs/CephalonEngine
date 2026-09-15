@@ -19,4 +19,10 @@ public sealed record CapabilityPolicyDecision(
     CapabilityAccess Access,
     bool SourceTrusted,
     bool IsAllowed,
-    string Reason);
+    string Reason)
+{
+    /// <summary>
+    /// Gets the UTC time at which the capability policy was evaluated.
+    /// </summary>
+    public DateTimeOffset EvaluatedAtUtc { get; init; }
+}

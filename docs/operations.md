@@ -2613,6 +2613,7 @@ Current note:
 ## Authorization policy surface
 
 `GET /engine/authorization-policies` exposes the operator-facing authorization-policy catalog contributed by active modules.
+`GET /engine/authorization-policies/runtime` exposes the same catalog with payload freshness and evaluation-duration metadata for operator automation loops.
 
 Current payload highlights:
 

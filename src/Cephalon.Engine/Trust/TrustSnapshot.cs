@@ -11,4 +11,10 @@ namespace Cephalon.Engine.Trust;
 public sealed record TrustSnapshot(
     TrustPolicy Policy,
     IReadOnlyList<PackageTrustDecision> Packages,
-    IReadOnlyList<CapabilityPolicyDecision> Capabilities);
+    IReadOnlyList<CapabilityPolicyDecision> Capabilities)
+{
+    /// <summary>
+    /// Gets the UTC time at which the trust snapshot was evaluated.
+    /// </summary>
+    public DateTimeOffset EvaluatedAtUtc { get; init; }
+}
