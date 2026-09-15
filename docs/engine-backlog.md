@@ -1593,6 +1593,33 @@ Validation:
 - `dotnet build tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-restore -m:1`
 - `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~GraphQLExecutionResilienceHostingTests" --logger "console;verbosity=minimal"`
 
+### ENG-643 Streaming direct-module resilience outcome counters
+
+Status: done
+Estimate: 0.25
+Iteration: Sprint 125
+Area: phase-11 / resilience / ASP.NET Core streaming
+Quality dimensions: Reliability, Availability, Usability, Compatibility, Maintainability, Auditability, Observability
+
+Why:
+
+- `ENG-641` already shipped direct SSE and WebSocket module timeout, circuit-breaker, and bulkhead enforcement, but the streaming bulkhead lane was the only one publishing cumulative `bulkheadAcceptedCount` / `bulkheadRejectedCount` / `bulkheadLastRejectedAtUtc` posture; the timeout and circuit lanes only reported instantaneous state
+- operators could not answer "how many direct SSE/WebSocket calls have actually timed out?" or "how often has the breaker rejected streaming callers while open?" without scraping endpoint exception logs
+- the gRPC adapter (`ENG-637`/`ENG-638` follow-through) and JSON-RPC adapter (`ENG-642`) already publish those cumulative timeout-occurrence, circuit-open transition, and circuit-open rejection counters; the streaming adapter needed the same operator observability shape so all four first-party non-REST direct-module surfaces stayed consistent
+
+Delivered:
+
+- new `DirectStreamingModuleTimeoutState` keyed per transport in `DirectStreamingModuleResilienceStateRegistry`; the shared streaming endpoint filter now records both host-enforced `TimeoutException` and Polly `TimeoutRejectedException` translations through that state
+- `DirectStreamingModuleCircuitBreakerState` now tracks `openedCount` (incremented when the breaker transitions to open) plus `rejectedWhileOpenCount` and `lastRejectedWhileOpenAtUtc` (incremented when `TryEnter` rejects callers while the breaker is open or half-open-probing)
+- `/engine/technology-surfaces/server-sent-events` and `/engine/technology-surfaces/websocket` now report `timeoutOccurredCount`, `timeoutLastOccurredAtUtc`, `circuitOpenedCount`, `circuitRejectedWhileOpenCount`, and `circuitLastRejectedWhileOpenAtUtc` alongside the existing bulkhead counters on `sse-direct-module-resilience` and `websocket-direct-module-resilience`
+- hand-authored docs (`components/aspnetcore.md`, `components/resilience.md`, `app-models.md`, `runtime-contract-index.md`, `engine-roadmap.md`, `engine-backlog.md`, `project-memory.md`) refreshed alongside the shipped surface so docs do not drift
+
+Validation:
+
+- `dotnet build src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj --no-restore -m:1`
+- `dotnet build tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-restore -m:1`
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~DirectStreamingModuleResilienceHostingTests" --logger "console;verbosity=minimal"`
+
 ### ENG-552 SRE flake-rate Actions readiness evidence
 
 Status: done

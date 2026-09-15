@@ -13,7 +13,8 @@ internal sealed class DirectStreamingModuleResilienceFilter(
     DirectStreamingModuleTransportKind transportKind,
     DirectStreamingModuleResilienceOptions options,
     DirectStreamingModuleCircuitBreakerState circuitBreakerState,
-    DirectStreamingModuleBulkheadState bulkheadState) : IEndpointFilter
+    DirectStreamingModuleBulkheadState bulkheadState,
+    DirectStreamingModuleTimeoutState timeoutState) : IEndpointFilter
 {
     private const string BrokenCircuitExceptionTypeName = "Polly.CircuitBreaker.BrokenCircuitException";
     private const string TimeoutRejectedExceptionTypeName = "Polly.Timeout.TimeoutRejectedException";
@@ -69,11 +70,13 @@ internal sealed class DirectStreamingModuleResilienceFilter(
         catch (Exception exception) when (IsPollyTimeoutRejectedException(exception))
         {
             circuitBreakerState.RecordFailure(exception);
+            timeoutState.RecordTimeout();
             return CreateFaultResult(context.HttpContext, CreateTimeoutFault());
         }
         catch (TimeoutException exception)
         {
             circuitBreakerState.RecordFailure(exception);
+            timeoutState.RecordTimeout();
             return CreateFaultResult(context.HttpContext, CreateTimeoutFault());
         }
         catch (Exception exception) when (IsPollyBrokenCircuitException(exception))

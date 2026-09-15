@@ -34,6 +34,10 @@ public sealed class DirectStreamingModuleResilienceHostingTests
         Assert.Equal("text/event-stream", response.Content.Headers.ContentType?.MediaType);
         Assert.Equal("error", message.EventName);
         AssertStreamingError(payload.RootElement, "sse_execution_timeout", 503, "timeout");
+
+        var entry = await ReadResilienceEntryAsync(client, "server-sent-events", "sse-direct-module-resilience");
+        Assert.Equal("1", entry.Metadata["timeoutOccurredCount"]);
+        Assert.True(entry.Metadata.ContainsKey("timeoutLastOccurredAtUtc"));
     }
 
     [Fact]
@@ -60,6 +64,11 @@ public sealed class DirectStreamingModuleResilienceHostingTests
             503,
             "circuit breaker",
             expectRetryAfter: true);
+
+        var entry = await ReadResilienceEntryAsync(client, "server-sent-events", "sse-direct-module-resilience");
+        Assert.Equal("1", entry.Metadata["circuitOpenedCount"]);
+        Assert.Equal("1", entry.Metadata["circuitRejectedWhileOpenCount"]);
+        Assert.True(entry.Metadata.ContainsKey("circuitLastRejectedWhileOpenAtUtc"));
     }
 
     [Fact]
@@ -99,6 +108,10 @@ public sealed class DirectStreamingModuleResilienceHostingTests
         using var payload = await ReceiveWebSocketJsonAsync(socket, cts.Token);
 
         AssertStreamingError(payload.RootElement, "websocket_execution_timeout", 503, "timeout");
+
+        var entry = await ReadResilienceEntryAsync(app.GetTestClient(), "websocket", "websocket-direct-module-resilience");
+        Assert.Equal("1", entry.Metadata["timeoutOccurredCount"]);
+        Assert.True(entry.Metadata.ContainsKey("timeoutLastOccurredAtUtc"));
     }
 
     [Fact]
@@ -123,6 +136,11 @@ public sealed class DirectStreamingModuleResilienceHostingTests
             503,
             "circuit breaker",
             expectRetryAfter: true);
+
+        var entry = await ReadResilienceEntryAsync(app.GetTestClient(), "websocket", "websocket-direct-module-resilience");
+        Assert.Equal("1", entry.Metadata["circuitOpenedCount"]);
+        Assert.Equal("1", entry.Metadata["circuitRejectedWhileOpenCount"]);
+        Assert.True(entry.Metadata.ContainsKey("circuitLastRejectedWhileOpenAtUtc"));
     }
 
     [Fact]
@@ -175,6 +193,9 @@ public sealed class DirectStreamingModuleResilienceHostingTests
         Assert.Equal("True", sseEntry.Metadata["bulkheadEnabled"]);
         Assert.Equal("1", sseEntry.Metadata["bulkheadMaxConcurrentExecutions"]);
         Assert.Equal("sse_bulkhead_rejected", sseEntry.Metadata["bulkheadRejectedCephalonCode"]);
+        Assert.Equal("0", sseEntry.Metadata["circuitOpenedCount"]);
+        Assert.Equal("0", sseEntry.Metadata["circuitRejectedWhileOpenCount"]);
+        Assert.Equal("0", sseEntry.Metadata["timeoutOccurredCount"]);
 
         Assert.Equal("websocket-direct-module-resilience", webSocketEntry.Id);
         Assert.Equal("aspnetcore-streaming-endpoint-filter", webSocketEntry.Metadata["executionMode"]);
@@ -185,6 +206,20 @@ public sealed class DirectStreamingModuleResilienceHostingTests
         Assert.Equal("websocket_execution_timeout", webSocketEntry.Metadata["timeoutCephalonCode"]);
         Assert.Equal("websocket_circuit_breaker_open", webSocketEntry.Metadata["circuitBreakerOpenCephalonCode"]);
         Assert.Equal("websocket_bulkhead_rejected", webSocketEntry.Metadata["bulkheadRejectedCephalonCode"]);
+        Assert.Equal("0", webSocketEntry.Metadata["circuitOpenedCount"]);
+        Assert.Equal("0", webSocketEntry.Metadata["circuitRejectedWhileOpenCount"]);
+        Assert.Equal("0", webSocketEntry.Metadata["timeoutOccurredCount"]);
+    }
+
+    private static async Task<TechnologyRuntimeEntry> ReadResilienceEntryAsync(
+        HttpClient client,
+        string technologyId,
+        string surfaceId)
+    {
+        var surfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>($"/engine/technology-surfaces/{technologyId}");
+        var surface = Assert.Single(surfaces ?? []);
+        Assert.Equal(surfaceId, surface.SurfaceId);
+        return Assert.Single(surface.Entries);
     }
 
     private static async Task<WebApplication> BuildHostAsync(

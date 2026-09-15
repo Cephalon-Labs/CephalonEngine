@@ -63,6 +63,11 @@ internal abstract class DirectStreamingModuleResilienceRuntimeContributor(
             metadata[entry.Key] = entry.Value;
         }
 
+        foreach (var entry in stateRegistry.GetTimeout(transportId).CreateMetadata())
+        {
+            metadata[entry.Key] = entry.Value;
+        }
+
         return new TechnologyRuntimeSurface(
             technologyId,
             surfaceId,

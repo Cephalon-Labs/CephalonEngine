@@ -418,8 +418,9 @@ same adapter-owned timeout, circuit-breaker, and bulkhead posture through JSON-R
 `-32029` envelopes. Direct SSE and WebSocket modules now use the shared streaming endpoint filter:
 SSE rejections are emitted as `event: error` payloads, WebSocket rejections are emitted as text error
 frames, and `/engine/technology-surfaces` publishes `sse-direct-module-resilience` plus
-`websocket-direct-module-resilience` with policy source, live circuit state, bulkhead counters, and
-`wolverineRequired=false` / `consumerCodeRequired=false`. The behavior-pipeline
+`websocket-direct-module-resilience` with policy source, live circuit state, bulkhead counters,
+cumulative `timeoutOccurredCount` / `circuitOpenedCount` / `circuitRejectedWhileOpenCount` outcome
+counters with last-occurrence timestamps, and `wolverineRequired=false` / `consumerCodeRequired=false`. The behavior-pipeline
 follow-through now adds a shared behavior-dispatch middleware in `Cephalon.Behaviors` so retry,
 timeout, circuit-breaker, bulkhead, and rate-limiting enforcement apply consistently across transports, resolves narrower
 `Engine:Resilience:BehaviorExecution:Overrides` entries with
