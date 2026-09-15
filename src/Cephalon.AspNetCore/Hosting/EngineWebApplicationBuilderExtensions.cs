@@ -371,6 +371,12 @@ public static class EngineWebApplicationBuilderExtensions
             return;
         }
 
+        if (IsJsonRpcTransportEndpoint(context.HttpContext))
+        {
+            await WriteJsonRpcRateLimitRejectedResponseAsync(context.HttpContext, retryAfterSeconds).ConfigureAwait(false);
+            return;
+        }
+
         if (useResultModelEnvelope)
         {
             var details = retryAfterSeconds.HasValue
@@ -476,6 +482,52 @@ public static class EngineWebApplicationBuilderExtensions
         return context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter)
             ? (int)Math.Ceiling(retryAfter.TotalSeconds)
             : null;
+    }
+
+    private static bool IsJsonRpcTransportEndpoint(HttpContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        var metadata = context.GetEndpoint()?.Metadata.GetMetadata<CephalonRateLimitingTransportMetadata>();
+        if (metadata is null)
+        {
+            return false;
+        }
+
+        return string.Equals(metadata.TransportId, "json-rpc", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(metadata.TransportId, "http.jsonrpc", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(metadata.TransportId, "http.json-rpc", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private const int JsonRpcTooManyRequestsErrorCode = -32029;
+
+    private static async ValueTask WriteJsonRpcRateLimitRejectedResponseAsync(
+        HttpContext context,
+        int? retryAfterSeconds)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        var data = retryAfterSeconds.HasValue
+            ? $"behavior_execution_rate_limited: The request exceeded the configured Cephalon rate limit. Retry after {retryAfterSeconds.Value} seconds."
+            : "behavior_execution_rate_limited: The request exceeded the configured Cephalon rate limit.";
+
+        var envelope = new JsonRpcRateLimitRejectionEnvelope
+        {
+            Error = new JsonRpcRateLimitRejectionError
+            {
+                Code = JsonRpcTooManyRequestsErrorCode,
+                Message = "Too many requests",
+                Data = data
+            }
+        };
+
+        await Results.Json(
+                envelope,
+                AspNetCoreJsonSerializerContext.Default.JsonRpcRateLimitRejectionEnvelope,
+                statusCode: StatusCodes.Status200OK,
+                contentType: "application/json")
+            .ExecuteAsync(context)
+            .ConfigureAwait(false);
     }
 
     /// <summary>

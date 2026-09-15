@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Resilience;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.JsonRpc.Hosting;
 using Cephalon.AspNetCore.JsonRpc.Modules;
@@ -130,6 +131,49 @@ public sealed class JsonRpcErrorResponseHostingTests
     }
 
     [Fact]
+    public async Task JsonRpcEndpoint_AppliesCephalonRateLimitingAndEmitsJsonRpcEnvelope()
+    {
+        await using var app = await BuildHostAsync(enableTightRateLimiting: true);
+        var httpClient = app.GetTestClient();
+
+        var policies = await httpClient.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+        var policy = Assert.Single(policies ?? []);
+
+        Assert.Contains("json-rpc", policy.TransportIds);
+        Assert.Equal("aspnetcore-endpoint-policy", policy.ExecutionMode);
+
+        var firstResponse = await httpClient.PostAsJsonAsync(EndpointPath, new
+        {
+            jsonrpc = "2.0",
+            method = "echo",
+            @params = new Dictionary<string, string?> { ["text"] = "ping" },
+            id = "rate-1"
+        });
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+
+        var rejected = await httpClient.PostAsJsonAsync(EndpointPath, new
+        {
+            jsonrpc = "2.0",
+            method = "echo",
+            @params = new Dictionary<string, string?> { ["text"] = "pong" },
+            id = "rate-2"
+        });
+
+        Assert.Equal(HttpStatusCode.OK, rejected.StatusCode);
+        Assert.Equal("application/json", rejected.Content.Headers.ContentType?.MediaType);
+
+        var payload = await rejected.Content.ReadAsStringAsync();
+        using var document = JsonDocument.Parse(payload);
+        var root = document.RootElement;
+        Assert.Equal("2.0", root.GetProperty("jsonrpc").GetString());
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("id").ValueKind);
+        var error = root.GetProperty("error");
+        Assert.Equal(-32029, error.GetProperty("code").GetInt32());
+        Assert.Contains("Too many requests", error.GetProperty("message").GetString(), StringComparison.Ordinal);
+        Assert.Contains("rate_limited", error.GetProperty("data").GetString(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task JsonRpcEndpoint_ReturnsResult_WhenRequestIsWellFormed()
     {
         await using var app = await BuildHostAsync();
@@ -153,12 +197,20 @@ public sealed class JsonRpcErrorResponseHostingTests
         Assert.Equal("ping", root.GetProperty("result").GetProperty("echoed").GetString());
     }
 
-    private static async Task<WebApplication> BuildHostAsync()
+    private static async Task<WebApplication> BuildHostAsync(bool enableTightRateLimiting = false)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "JsonRpc";
+        if (enableTightRateLimiting)
+        {
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Enabled"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Algorithm"] = "FixedWindow";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:PermitLimit"] = "1";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:QueueLimit"] = "0";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:WindowSeconds"] = "60";
+        }
         builder.AddJsonRpcTransport();
         builder.AddCephalon(engine =>
         {

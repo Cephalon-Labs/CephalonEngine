@@ -1338,6 +1338,33 @@ Validation:
 - `dotnet test tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj -c Release --no-restore --filter "FullyQualifiedName~OutOfTreePackageAdoptionAssetsTests|FullyQualifiedName~CompletionScorecardDocsStayAlignedWithDoctorSummary"`
 - `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1 -ReportPath artifacts/adoption-smoke-smoke/out-of-tree-package-adoption.json`
 
+### ENG-637 JSON-RPC public transport rate-limiting envelope
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: phase-11 / resilience / ASP.NET Core JSON-RPC
+Quality dimensions: Reliability, Availability, Usability, Auditability, Maintainability
+
+Why:
+
+- ENG-635 closed the gRPC endpoint rate-limit envelope gap and ENG-636 added direct gRPC module resilience-fault envelopes, but the public JSON-RPC route group still surfaced REST-shaped ProblemDetails or result-envelope payloads on endpoint-policy rejections even though the standalone JSON-RPC adapter already participated in the shared limiter
+- JSON-RPC callers expect a JSON-RPC 2.0 error envelope with `jsonrpc: "2.0"`, `error.code`, `error.message`, optional `error.data`, and `id` — not a ProblemDetails payload — when a request is rejected before the handler runs
+- the behavior-dispatch JSON-RPC binding (`http.jsonrpc`) already translates its own Polly rate-limit rejection into the JSON-RPC `-32029` envelope, but rejections from the shared ASP.NET Core endpoint limiter still bypassed that translation because they fire in `OnRejected` before the behavior handler executes
+
+Delivered:
+
+- new `CephalonRateLimitingTransportMetadata` endpoint metadata is attached automatically by `ApplyCephalonRateLimiting(...)`, so every endpoint that already participates in the Cephalon endpoint limiter carries its transport id forward without per-adapter changes
+- the shared ASP.NET Core rate-limiter rejection writer now inspects that metadata and emits a JSON-RPC 2.0 envelope (`code: -32029`, `message: "Too many requests"`, `id: null`, `data` carries the rate-limit reason and optional `Retry after N seconds` hint) over HTTP `200 OK` and `application/json` for `json-rpc`, `http.jsonrpc`, and `http.json-rpc` transports; gRPC, REST, and result-envelope paths are unchanged
+- source-generated JSON metadata covers the new envelope type so the path stays trim/AOT-safe
+- component docs (`aspnetcore`, `aspnetcore-jsonrpc`, `resilience`) and project memory now distinguish JSON-RPC endpoint-policy coverage from broader future non-REST timeout and circuit-breaker envelope work
+
+Validation:
+
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --filter "JsonRpcEndpoint_AppliesCephalonRateLimitingAndEmitsJsonRpcEnvelope"`
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~JsonRpcErrorResponseHostingTests|FullyQualifiedName~GrpcTransport_AppliesCephalonRateLimitingAndReportsRuntimeCatalog|FullyQualifiedName~MapCephalonAppliesConfiguredRateLimitingOnlyToPublicHttpEndpoints|FullyQualifiedName~MapCephalonExposesBehaviorResiliencePoliciesAcrossEndpointAndSnapshot"`
+- `dotnet build src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj -c Release --nologo`
+
 ### ENG-635 gRPC public transport rate-limiting envelope
 
 Status: done
