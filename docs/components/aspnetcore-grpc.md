@@ -12,6 +12,7 @@
 - Cephalon endpoint rate-limiting participation for the public gRPC route group
 - host-enforced direct-module timeout, circuit-breaker, and bulkhead handling from `Engine:Resilience`
 - gRPC-native resilience fault envelopes for direct module timeouts, open-circuit rejections, and bulkhead rejections
+- cumulative direct-module timeout, circuit-open transition, and circuit-open rejection outcome counters
 - `grpc-direct-module-resilience` runtime truth through `/engine/technology-surfaces`
 - shared proto contracts used by the sample/runtime surface
 
@@ -21,6 +22,7 @@
 - `Hosting/CephalonGrpcDirectModuleResilienceOptions.cs`
 - `Hosting/CephalonGrpcDirectModuleCircuitBreakerState.cs`
 - `Hosting/CephalonGrpcDirectModuleBulkheadState.cs`
+- `Hosting/CephalonGrpcDirectModuleTimeoutState.cs`
 - `Hosting/CephalonGrpcDirectModuleResilienceRuntimeContributor.cs`
 - `Modules/IGrpcModule.cs`
 - `Routing/GrpcTransportRouteMapper.cs`
