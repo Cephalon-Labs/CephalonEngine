@@ -331,6 +331,39 @@ Authoritative external sources:
 - [.NET application security best practices](https://learn.microsoft.com/en-us/aspnet/core/security/?view=aspnetcore-10.0)
 - [GitHub Actions trusted publishing for NuGet](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing)
 
+## Observability and telemetry standards
+
+Observability is a contract concern, not an instrumentation chore. Cephalon's runtime catalogs (`/engine/*`, `snapshot.*`) already expose typed truth that humans and AI agents can read; the telemetry surface (traces, metrics, logs) must stay aligned with that same truth so a postmortem, a dashboard, and a runtime catalog never disagree about what the engine did.
+
+- **OpenTelemetry is the unified baseline.** All engine-owned tracing, metrics, and logs flow through `System.Diagnostics.ActivitySource` and `System.Diagnostics.Metrics.Meter` so downstream exporters (OTLP, Azure Monitor, AWS X-Ray, GCP Cloud Trace, New Relic, Grafana Cloud, Serilog) plug in without forks. Vendor-specific clients are routed through the existing `Cephalon.Observability.*` exporter companions, never bypassed.
+- **Diagnostics conventions are catalog-backed.** The canonical activity sources, meters, and `cephalon.*` attribute keys live in `Cephalon.Diagnostics` constants and are published through `GET /engine/diagnostics-conventions`. New telemetry must be added there and referenced from source; ad-hoc string constants in handler code are a quality-gate failure.
+- **The `cephalon.*` namespace is engine-owned.** Engine, host adapters, and `Cephalon.*` companion packs emit telemetry under the `cephalon.*` prefix and document each name in the diagnostics conventions surface. Application modules emit under their own namespace; if a consumer needs to add tags or counters, they pick a namespace they own.
+- **Activity naming and parent-child correlation cross every layer.** A request that touches an HTTP transport, a behavior pipeline, a resilience policy, a tenant-resolution decision, an outbox stage, and an event-dispatch attempt produces one trace with explicit parent-child links across modules, behaviors, and transports. Activity names follow `cephalon.<surface>.<operation>` and tags reuse the conventions catalog rather than inventing per-call strings.
+- **Cardinality discipline is mandatory.** Metric tags must be bounded: tenant id, behavior id, transport id, policy id, and outcome class are allowed; raw user ids, free-form route templates, error messages, and unbounded request parameters are not. High-cardinality dimensions belong in traces / structured logs, not in metric labels.
+- **Sensitive data is redacted at the boundary.** PII, secrets, tokens, request bodies, and free-form prompts never appear in spans, metric tags, or log structured properties unless an explicit redaction policy authorises it. Multi-tenancy, audit, and governance contexts emit redacted projections by default and let opt-in observability companions widen the policy for trusted environments.
+- **Health checks are layered.** `/health/live` reports process viability (the host is up), `/health/ready` reports readiness to serve traffic (dependencies healthy, manifests loaded, behaviors registered), and `/engine/dependencies` projects per-dependency posture for operator drill-down. Kubernetes-style probes wire to these by convention; degraded modes stay observable through the runtime catalog rather than collapsing into a single boolean.
+- **Trace sampling is a policy, not an accident.** Head-based sampling defaults to ratio-based across the request surface; tail-based sampling and per-route overrides are opt-in through `Engine:Observability:Sampling`. Audit, governance-action, and event-dispatch-remediation traces are exempted from sampling and always exported so audit-trail completeness never depends on sampling luck.
+- **Costs are observable too.** AI-touching surfaces emit token counts, model identity, and provider latency as first-class telemetry so the operator dashboard can answer "how many tokens did this tenant consume?" through the same surface as request latency.
+
+Cross-references:
+
+- [`architecture-patterns-research.md`](architecture-patterns-research.md) section 6 — Resilience and Observability (patterns)
+- [`sre-posture.md`](sre-posture.md) — SLI / SLO discipline and oncall posture
+- [`runtime-failure-policy.md`](runtime-failure-policy.md) — how failures are classified, escalated, and observed
+- [`observability-provider-authoring.md`](observability-provider-authoring.md) — downstream provider companion authoring rules
+- [`components/observability.md`](components/observability.md) and the `Cephalon.Observability.*` family — exporter and dependency-binding packages
+- `GET /engine/diagnostics`, `GET /engine/diagnostics-conventions`, `GET /engine/dependencies`, and `GET /health/*` are the operator-facing surfaces this section is the standards layer for
+
+Quality dimension alignment: this section primarily advances **Auditability**, **Reliability**, **Availability**, and **Compliance**; it secondarily advances **Maintainability** because consistent telemetry makes the engine debuggable across the long-range horizon when AI agents become primary operators (see [`long-range-direction.md`](long-range-direction.md) Horizon 3).
+
+Authoritative external sources:
+
+- [OpenTelemetry semantic conventions](https://opentelemetry.io/docs/specs/semconv/)
+- [.NET distributed tracing concepts](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/distributed-tracing-concepts)
+- [.NET metrics with System.Diagnostics.Metrics](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/metrics)
+- [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html)
+- [NIST SP 800-92 Rev. 1 (draft): Cybersecurity Log Management Planning Guide](https://csrc.nist.gov/pubs/sp/800/92/r1/ipd)
+
 ## Planning and governance standards
 
 The standards above apply to every change. They are kept in sync with planning artefacts, GitHub Project tracking, and the durable record through:
