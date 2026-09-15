@@ -11,12 +11,17 @@
 - JSON-RPC route mapping under the host transport surface
 - direct JSON-RPC module resilience enforcement for configured `Engine:Resilience` timeout, circuit-breaker, and bulkhead policies
 - JSON-RPC-native resilience error envelopes for direct module endpoints without Wolverine or consumer endpoint filter code
+- cumulative direct-module timeout, circuit-open transition, and circuit-open rejection outcome counters
 
 ## Main surfaces
 
 - `Hosting/JsonRpcTransportServiceCollectionExtensions.cs`
 - `Hosting/JsonRpcDirectModuleResilienceFilter.cs`
 - `Hosting/JsonRpcDirectModuleResilienceRuntimeContributor.cs`
+- `Hosting/JsonRpcDirectModuleResilienceOptions.cs`
+- `Hosting/JsonRpcDirectModuleCircuitBreakerState.cs`
+- `Hosting/JsonRpcDirectModuleBulkheadState.cs`
+- `Hosting/JsonRpcDirectModuleTimeoutState.cs`
 - `Modules/IJsonRpcModule.cs`
 - `Routing/JsonRpcTransportRouteMapper.cs`
 

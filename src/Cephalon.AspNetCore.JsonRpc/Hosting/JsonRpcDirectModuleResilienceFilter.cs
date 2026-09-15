@@ -10,7 +10,8 @@ namespace Cephalon.AspNetCore.JsonRpc.Hosting;
 internal sealed class JsonRpcDirectModuleResilienceFilter(
     JsonRpcDirectModuleResilienceOptions options,
     JsonRpcDirectModuleCircuitBreakerState circuitBreakerState,
-    JsonRpcDirectModuleBulkheadState bulkheadState) : IEndpointFilter
+    JsonRpcDirectModuleBulkheadState bulkheadState,
+    JsonRpcDirectModuleTimeoutState timeoutState) : IEndpointFilter
 {
     private const string ProtocolVersion = "2.0";
     private const string BrokenCircuitExceptionTypeName = "Polly.CircuitBreaker.BrokenCircuitException";
@@ -71,11 +72,13 @@ internal sealed class JsonRpcDirectModuleResilienceFilter(
         catch (Exception exception) when (IsPollyTimeoutRejectedException(exception))
         {
             circuitBreakerState.RecordFailure(exception);
+            timeoutState.RecordTimeout();
             return CreateTimeoutResult(requestId);
         }
         catch (TimeoutException exception)
         {
             circuitBreakerState.RecordFailure(exception);
+            timeoutState.RecordTimeout();
             return CreateTimeoutResult(requestId);
         }
         catch (Exception exception) when (IsPollyBrokenCircuitException(exception))
