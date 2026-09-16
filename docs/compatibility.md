@@ -20,7 +20,7 @@ See also: [Engineering standards](engineering-standards.md) is the broader quali
 
 ## Alignment rules
 
-September 16, 2026 planning refresh: the repository SDK is 10.0.303 and the shipping floor is net10.0. Upstream .NET 11 RC1 remains an assessment lane; ENG-731 owns servicing, package/API/wire and deployment-matrix proof before any support change. See [.NET readiness](dotnet11-readiness.md).
+September 16, 2026 servicing repair: the repository SDK is 10.0.401 (exact pin, prereleases disabled) and the shipping floor is net10.0. Upstream .NET 11 RC1 remains an assessment lane; ENG-731 owns servicing, package/API/wire and deployment-matrix proof before any support change. See [.NET readiness](dotnet11-readiness.md).
 
 ### Version and framework baselines
 
@@ -133,6 +133,8 @@ September 16, 2026 planning refresh: the repository SDK is 10.0.303 and the ship
 - keep shared NuGet metadata, package readme defaults, CLI tool packaging, and release artifact output aligned across shipped packages, the CLI tool package, and the reference module package
 - keep the release checksum/provenance manifest aligned with the actual repository source revision, packed file set, and published checksum sidecar
 - keep the stable `cephalon` command name aligned across `Cephalon.Cli` packaging, docs, and validation coverage whenever the tool install surface changes
+
+Install SDK 10.0.401 before building this checkout. A newer installed SDK must not silently change the locked dependency graph; future SDKs remain an explicit readiness lane. When servicing the pin, regenerate and review SDK-dependent lock entries with that exact SDK, then run `dotnet restore CephalonEngine.slnx --locked-mode`. Do not disable locked restore to accommodate runner drift. See [global.json matching rules](https://learn.microsoft.com/en-us/dotnet/core/tools/global-json) and [repair evidence](compatibility-repair-2026-09.md).
 
 ## Public-API contract artefacts
 

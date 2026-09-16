@@ -1,5 +1,7 @@
 # Cephalon Docs
 
+September 2026: [SDK and API compatibility repair](compatibility-repair-2026-09.md) records exact SDK selection, analyzer enforcement and remaining release gates.
+
 - [September 2026 branch consolidation and validation](branch-consolidation-2026-09-15.md) — retained history, adapter readback, compatibility, and ENG-717 delivery evidence.
 
 This directory is the documentation hub for the Cephalon engine, its host adapters, companion packages, tooling, and planning artifacts.

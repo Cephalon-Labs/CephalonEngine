@@ -1,5 +1,7 @@
 # Cephalon.Analyzers
 
+Repository API authoring uses a direct `Microsoft.CodeAnalysis.PublicApiAnalyzers` reference on Abstractions. A project reference to the analyzer meta-package does not propagate its NuGet analyzer dependencies to the compiler. Packaged consumer adoption remains a separate test path; see [compatibility repair](../compatibility-repair-2026-09.md).
+
 > **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.Analyzers` is the curated meta-package that gives Cephalon-engine consumers a single `<PackageReference>` for the engine's analyzer baseline plus a curated `BannedSymbols.txt` and `.editorconfig` snippet aligned with Cephalon's quality posture.
@@ -24,7 +26,7 @@
 
 The package keeps the generated-app adoption path warning-clean by default: `buildTransitive/Cephalon.Analyzers.props` wires the curated banned-symbols file automatically, but suppresses PublicApiAnalyzers drift warnings until a package author sets `<CephalonAnalyzersEnablePublicApiTracking>true</CephalonAnalyzersEnablePublicApiTracking>` and commits matching `PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt` files. Consumers can still opt out of the bundled banned-symbols set with `<CephalonAnalyzersUseBannedSymbols>false</CephalonAnalyzersUseBannedSymbols>`.
 
-Inside the repo, projects that consume `Cephalon.Analyzers` as a compiler-only `ProjectReference` remove host publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`. The analyzer project also declares `TreatAsLocalProperty` for `PublishTrimmed`, `PublishAot`, `PublishSingleFile`, `SelfContained`, `RuntimeIdentifier`, and `RuntimeIdentifiers` so representative trim/AOT/single-file publish probes do not accidentally apply app publish settings to this `netstandard2.0` compiler-only project.
+A compiler-only project reference does not propagate meta-package dependency analyzers. Repository compiler references remove host publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`; consumer apps use the packaged analyzer assets. The analyzer project also declares `TreatAsLocalProperty` for `PublishTrimmed`, `PublishAot`, `PublishSingleFile`, `SelfContained`, `RuntimeIdentifier`, and `RuntimeIdentifiers` so representative trim/AOT/single-file publish probes do not accidentally apply app publish settings to this `netstandard2.0` compiler-only project.
 
 The bundled analyzer severities tune a small set of high-leverage rules:
 
@@ -39,7 +41,7 @@ The curated `BannedSymbols.txt` bans wall-clock time without an injectable abstr
 
 ## Maturity and ownership
 
-- maturity today: `M2` — `cephalon-managed`; `Cephalon.Abstractions` consumes the meta-package via a `PrivateAssets=all` `ProjectReference`, `cephalon new` emits `Cephalon.Analyzers` into generated non-test projects through `Directory.Packages.props`, and the template-pack app/module starters reference it by default as a private analyzer package. The host-agnostic contract layer and new consumer apps now inherit the curated analyzer baseline (`PublicApiAnalyzers`, `BannedApiAnalyzers`, `Roslynator`, `Meziantou`, `Microsoft.VisualStudio.Threading.Analyzers`) and the curated `BannedSymbols.txt` is wired in automatically through the package's `buildTransitive/Cephalon.Analyzers.props`; PublicApiAnalyzers public-surface enforcement remains an explicit package-author opt-in so a fresh generated app can restore, build, run, and probe `/engine/*` without starter-owned analyzer noise.
+- maturity today: `M2` — `cephalon-managed`; repository Abstractions enforces public API tracking through a direct private analyzer package reference; `cephalon new` emits `Cephalon.Analyzers` into generated non-test projects through `Directory.Packages.props`, and the template-pack app/module starters reference it by default as a private analyzer package. New consumer apps receive the curated analyzer baseline (`PublicApiAnalyzers`, `BannedApiAnalyzers`, `Roslynator`, `Meziantou`, `Microsoft.VisualStudio.Threading.Analyzers`) and the curated `BannedSymbols.txt` is wired in automatically through the package's `buildTransitive/Cephalon.Analyzers.props`; PublicApiAnalyzers public-surface enforcement remains an explicit package-author opt-in so a fresh generated app can restore, build, run, and probe `/engine/*` without starter-owned analyzer noise.
 - promote beyond `M2` only when analyzer enforcement is wired into release scorecard/operator adoption gates with stable remediation guidance, not just package references
 - ownership: `cephalon-managed` (the engine owns the curated analyzer baseline, generated adoption wiring, and package-level buildTransitive behavior)
 

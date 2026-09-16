@@ -33,8 +33,10 @@ public sealed class DotNetReadinessTests
 
             var report = Assert.IsType<JsonObject>(JsonNode.Parse(File.ReadAllText(jsonPath)));
             var globalJson = Assert.IsType<JsonObject>(report["GlobalJson"]);
-            Assert.Equal("10.0.201", globalJson["Version"]?.GetValue<string>());
-            Assert.Equal("latestFeature", globalJson["RollForward"]?.GetValue<string>());
+            var repositorySdk = JsonNode.Parse(File.ReadAllText(RepositoryPaths.GetFile("global.json")))!["sdk"]!;
+            Assert.Equal(repositorySdk["version"]!.GetValue<string>(), globalJson["Version"]?.GetValue<string>());
+            Assert.Equal("disable", globalJson["RollForward"]?.GetValue<string>());
+            Assert.False(repositorySdk["allowPrerelease"]!.GetValue<bool>());
 
             var shippingBaseline = Assert.IsType<JsonObject>(report["ShippingBaseline"]);
             Assert.Equal("net10.0", shippingBaseline["StableTargetFramework"]?.GetValue<string>());

@@ -5,7 +5,7 @@ This guide records the current Cephalon truth for future-framework assessment wi
 ## Current repo truth
 
 - stable Cephalon packages still ship on `net10.0`
-- `global.json` pins `.NET SDK 10.0.303`
+- `global.json` pins `.NET SDK 10.0.401` with `rollForward: disable` and `allowPrerelease: false`
 - the template-pack package, analyzer meta-package, and source-generator surfaces remain the intentional `netstandard2.0` exceptions
 - `.NET 11` is currently a readiness lane, not a default-target migration
 - trim, Native AOT, and single-file support remain explicit global `not-claimed` support statements tracked through [Deployment-mode support](deployment-mode-support.md) and `scripts/deployment-mode-support.json`; package-scoped claims such as `Cephalon.Diagnostics` single-file support are narrower manifest entries and do not change the global support rows, and `publishProbePolicy` now makes the representative `singleFile` publish probe release-blocking without promoting global single-file support
@@ -14,8 +14,8 @@ As of **September 16, 2026**, the official [.NET support policy](https://dotnet.
 
 - .NET 11 RC1 / SDK 11.0.100-rc.1, released September 8, 2026; Microsoft lists RC1 as go-live with support through October 13, 2026.
 - .NET 10.0.12 is the current listed patch, released September 8; .NET 10 LTS ends November 14, 2028.
-- Cephalon still ships net10.0 with repository SDK 10.0.303. Upstream go-live status does not establish Cephalon .NET 11 support.
-- ENG-731 will assess servicing, RC compatibility and supported package/OS/deployment combinations. This documentation refresh does not install a new SDK, change packages or claim that RC1 tests passed.
+- Cephalon still ships net10.0 with repository SDK 10.0.401. Upstream go-live status does not establish Cephalon .NET 11 support.
+- ENG-739 updates the stable SDK and its three SDK-dependent ILLink lock entries to 10.0.12. ENG-731 remains open for consumer/OS/deployment proof under ENG-742. This servicing change does not claim .NET 11 support. See [compatibility repair evidence](compatibility-repair-2026-09.md).
 
 This supersedes July 7 Preview 5 as current external truth. The older preview links below remain historical research references. Recheck upstream patch/RC/GA state at the next readiness run and before each release.
 

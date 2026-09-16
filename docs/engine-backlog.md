@@ -638,19 +638,19 @@ GitHub issue: #1424
 
 Issue link: [#1424](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424)
 
-Status: backlog
+Status: in-progress
 
 Estimate: 32
 
 Phase: 15
 
-Iteration: Later / not scheduled yet
+Iteration: Sprint 16
 
 Owner: Cephalon-Neza
 
 Priority: P0
 
-Test: Failed
+Test: Needed
 
 Benchmark: Needed
 
@@ -668,7 +668,143 @@ Estimate basis: engineering hours including review, tests and docs; initial rang
 
 Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
 
-September implementation findings: upstream run 35081865397 fails Windows/Linux locked restore (ILLink 10.0.12 vs 10.0.11 locks) and the .NET 11 in-process event scheduling test. Explicit analyzer injection reveals 121 pre-existing non-coordination Abstractions API diagnostics (118 undeclared, 3 stale declarations); normal project-reference wiring did not enforce them. Budget within the existing 32 h: SDK/locks 8 h; analyzer/baseline repair 8 h; scheduling proof 4 h; remaining consumer/deployment matrix 12 h. This task stays open and unscheduled; re-estimate if evidence expands the scope.
+September implementation findings: upstream run 35081865397 fails Windows/Linux locked restore (ILLink 10.0.12 vs 10.0.11 locks) and the .NET 11 in-process event scheduling test. Explicit analyzer injection reveals 121 pre-existing non-coordination Abstractions API diagnostics (118 undeclared, 3 stale declarations); normal project-reference wiring did not enforce them. Budget within the existing 32 h: SDK/locks 8 h; analyzer/baseline repair 8 h; scheduling proof 4 h; remaining consumer/deployment matrix 12 h. This parent is active in Sprint 16 and stays open until all children meet acceptance. ENG-739/740/741 carry the first 20 h; ENG-742 retains the remaining 12 h unscheduled. The 32 h parent is a non-additive rollup, not another 32 h.
+
+Delivery status: ENG-739/740/741 completed 20 h of estimated scope in Sprint 16. ENG-742 retains 12 h and the full compatibility acceptance; parent remains open. [Evidence](compatibility-repair-2026-09.md).
+
+### ENG-739 Pin the shipping SDK and regenerate locked restore
+
+GitHub issue: #1432
+
+Issue link: [#1432](https://github.com/Cephalon-Labs/CephalonEngine/issues/1432)
+
+Status: shipped
+
+Estimate: 8
+
+Phase: 15
+
+Iteration: Sprint 16
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Passed
+
+Benchmark: N/A
+
+Parent: ENG-731 / #1424. Child estimate is included in the 32 h parent rollup.
+
+Scope: Pin stable SDK 10.0.401 with rollForward=disable and allowPrerelease=false. Regenerate SDK-dependent ILLink locks; preserve net10.0 and the separate .NET 11 readiness lane.
+
+Acceptance: An ordinary locked solution restore on the pinned SDK passes; lock changes are scoped and explained; readiness reports and regression expectations read the declared baseline.
+
+Quality dimensions: Compatibility + Reliability + Maintainability + Auditability.
+
+Estimate basis: engineering hours including implementation, review, tests and docs; excludes external waiting. No maturity or GA promotion.
+
+Delivery: [compatibility repair evidence](compatibility-repair-2026-09.md); SDK/locked restore, fresh positive and negative analyzer builds, 24 hosting cases, 4 readiness tests and 227 package-surface cases passed. No maturity promotion.
+
+### ENG-740 Restore Abstractions public API analyzer enforcement
+
+GitHub issue: #1433
+
+Issue link: [#1433](https://github.com/Cephalon-Labs/CephalonEngine/issues/1433)
+
+Status: shipped
+
+Estimate: 8
+
+Phase: 15
+
+Iteration: Sprint 16
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Passed
+
+Benchmark: N/A
+
+Parent: ENG-731 / #1424. Child estimate is included in the 32 h parent rollup.
+
+Scope: Use a direct compiler analyzer reference; reconcile 115 existing undeclared signatures in Unshipped and three static registry transcription errors using source history.
+
+Acceptance: A fresh build has zero API diagnostics; a deliberately untracked API is rejected; no runtime public API is removed. Record the historical static evidence and updated delta counts.
+
+Quality dimensions: Compatibility + Reliability + Maintainability + Auditability.
+
+Estimate basis: engineering hours including implementation, review, tests and docs; excludes external waiting. No maturity or GA promotion.
+
+Delivery: [compatibility repair evidence](compatibility-repair-2026-09.md); SDK/locked restore, fresh positive and negative analyzer builds, 24 hosting cases, 4 readiness tests and 227 package-surface cases passed. No maturity promotion.
+
+### ENG-741 Wait for scheduled publication terminal evidence
+
+GitHub issue: #1434
+
+Issue link: [#1434](https://github.com/Cephalon-Labs/CephalonEngine/issues/1434)
+
+Status: shipped
+
+Estimate: 4
+
+Phase: 15
+
+Iteration: Sprint 16
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Passed
+
+Benchmark: N/A
+
+Parent: ENG-731 / #1424. Child estimate is included in the 32 h parent rollup.
+
+Scope: Correct the event scheduling hosting test to await the terminal publication catalog report instead of only handler completion.
+
+Acceptance: Scheduling integration tests and a delayed-report regression prove the handler-to-catalog observation boundary. Preserve accepted and succeeded state assertions.
+
+Quality dimensions: Compatibility + Reliability + Maintainability + Auditability.
+
+Estimate basis: engineering hours including implementation, review, tests and docs; excludes external waiting. No maturity or GA promotion.
+
+Delivery: [compatibility repair evidence](compatibility-repair-2026-09.md); SDK/locked restore, fresh positive and negative analyzer builds, 24 hosting cases, 4 readiness tests and 227 package-surface cases passed. No maturity promotion.
+
+### ENG-742 Complete SDK consumer and deployment compatibility evidence
+
+GitHub issue: #1435
+
+Issue link: [#1435](https://github.com/Cephalon-Labs/CephalonEngine/issues/1435)
+
+Status: backlog
+
+Estimate: 12
+
+Phase: 15
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Needed
+
+Benchmark: Needed
+
+Parent: ENG-731 / #1424. Child estimate is included in the 32 h parent rollup.
+
+Scope: Complete the remaining ENG-731 Windows/Linux, consumer upgrade/downgrade, binary/wire/config/manifest, generated app, .NET 11 RC and selected deployment-mode matrix. Retain explicit unsupported targets.
+
+Acceptance: Reproducible per-SDK/OS/package/RID evidence with commit and run links; all promoted claims match deployment manifests; failures remain open and assigned.
+
+Quality dimensions: Compatibility + Reliability + Maintainability + Auditability.
+
+Estimate basis: engineering hours including implementation, review, tests and docs; excludes external waiting. No maturity or GA promotion.
 
 ### ENG-732 External developer journey documentation and accessibility
 

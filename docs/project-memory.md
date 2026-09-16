@@ -6,6 +6,9 @@ This page is a repo-oriented orientation snapshot. It is meant to help contribut
 
 Cross-references: `README.md`, `docs/README.md`, `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`, `docs/m3-m4-elevation-plan.md`, `docs/supply-chain-uplift-plan.md`, `docs/compatibility.md`, `docs/long-range-direction.md`, `docs/engineering-standards.md`, `docs/engine-completion-scorecard.md`, `docs/sre-posture.md`, `docs/dotnet11-readiness.md`, `docs/runtime-contract-index.md`, `docs/conformance-matrix.md`, `docs/architecture-review-2026-04.md`, `docs/architecture-review-2026-05.md`, `docs/architecture-review-2026-05-followups.md`, `docs/architecture-review-2026-06.md`, `docs/architecture-review-2026-06-followups.md`, `docs/engine-surface-maturity-audit.md`, `docs/test-coverage-roadmap.md`, `docs/planning-governance.md`, `docs/deployment-mode-support.md`, `docs/trim-aot-hazard-inventory.md`
 
+
+September 16 compatibility repair: ENG-739/740/741 deliver exact SDK/locked restore, real API analyzer enforcement and terminal scheduling evidence. ENG-731 remains open with ENG-742's 12 h matrix; total remaining leaf estimate is 477 h including ENG-532. [Validation and limits](compatibility-repair-2026-09.md). The 397-entry API readback includes 115 pre-existing source declarations recovered in Unshipped; no runtime API or M0–M4 promotion occurred.
+
 ## Identity
 
 Cephalon is not being positioned as a single application shell.
@@ -23,7 +26,7 @@ The repository is aiming at a modular .NET engine/framework foundation that is g
 
 - ENG-719/720 add an opt-in instance-local coordination kernel; [decision and adoption](architecture/coordination-kernel.md), [delivery evidence](coordination-kernel-delivery-2026-09.md). Existing family runtimes remain unchanged; ENG-721/722 are the next durable recovery and authorization gates. No package maturity changes.
 
-- the repo is pinned to `.NET SDK 10.0.303` through `global.json`
+- the repo is pinned to `.NET SDK 10.0.401` through `global.json` with roll-forward disabled
 - the shipped project baseline is `net10.0`
 - notable packaging and compiler-tooling exceptions are the template pack, analyzer meta-package, and source generator surfaces (`Cephalon.Behaviors.SourceGen` and `Cephalon.Engine.SourceGen`) that stay on `netstandard2.0`
 - repo-native framework assessment now lives in `scripts/validate-dotnet-readiness.ps1`, which keeps `global.json`-selected shipping truth separate from higher-SDK readiness checks
@@ -37,7 +40,7 @@ The repository is aiming at a modular .NET engine/framework foundation that is g
 - Keep 107 package maturity declarations unchanged until evidence supports a reviewed change. M0/M1 are legitimate roles; M4 is not GA.
 - ENG-714/715 retain their IDs and become 96 h / 120 h parent rollups; ENG-719–738 contain 536 h of leaf implementation work, plus ENG-532's separate 1 h. ENG-718 is the planning delivery only.
 - No capacity-backed dates exist for Phases 14–16; future work remains Later / not scheduled yet. Do not infer dates from the legacy Project iteration calendar.
-- Official September 16 source refresh shows .NET 11 RC1 and .NET 10.0.12. The local SDK remains 10.0.303 and net10.0 remains the shipping floor; ENG-731 owns tested upgrades.
+- Official September 16 source refresh shows .NET 11 RC1 and .NET 10.0.12. ENG-739 installs SDK 10.0.401 for validation and updates the repository pin and ILLink locks; net10.0 remains the shipping floor. ENG-731/742 retain the broader compatibility matrix.
 
 ## M3/M4 elevation baseline
 

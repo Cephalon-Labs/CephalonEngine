@@ -2228,8 +2228,10 @@ public sealed class EventDispatchHostingTests
         Assert.Empty(publicationRuntimeCatalog.States);
     }
 
-    [Fact]
-    public async Task MapCephalonSchedulesCoreInProcessEventPublicationWithoutWolverine()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task MapCephalonSchedulesCoreInProcessEventPublicationWithoutWolverine(bool delayTerminalReport)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
@@ -2251,11 +2253,18 @@ public sealed class EventDispatchHostingTests
             engine.AddEventingFromConfiguration(builder.Configuration);
         });
 
+        builder.Services.AddSingleton<PublicationTerminalReportGate>();
+        builder.Services.AddSingleton<IEventSubscriptionExecutionMiddleware>(services =>
+            new GatedSubscriptionCompletionMiddleware(
+                services.GetRequiredService<PublicationTerminalReportGate>(),
+                delayTerminalReport));
+
         await using var app = builder.Build();
         app.MapCephalon();
 
         await app.StartAsync();
 
+        var terminalReportGate = app.Services.GetRequiredService<PublicationTerminalReportGate>();
         var scheduledForUtc = DateTimeOffset.UtcNow.AddMilliseconds(1000);
         var client = app.GetTestClient();
         var response = await client.PostAsJsonAsync(
@@ -2320,7 +2329,29 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("providerDelayQueue=not-present", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
-        await WaitForConditionAsync(() => probe.SuccessfulAttempts == 1, timeoutMilliseconds: 5000);
+        // Handler completion precedes the publisher's terminal runtime report. Wait for
+        // the externally observed publication boundary, including its subscription report.
+        var completion = WaitForConditionAsync(
+            () => publicationRuntimeCatalog.States.Any(state =>
+                state.PublicationId == "audit-scheduled-001" &&
+                state.LastOutcome == EventPublicationRuntimeOutcomes.Succeeded),
+            timeoutMilliseconds: 5000);
+        if (delayTerminalReport)
+        {
+            try
+            {
+                await terminalReportGate.Reached.Task.WaitAsync(TimeSpan.FromSeconds(5));
+                Assert.Equal(1, probe.SuccessfulAttempts);
+                Assert.Equal(EventPublicationRuntimeOutcomes.Accepted, publicationRuntimeCatalog.GetByPublicationId("audit-scheduled-001")!.LastOutcome);
+                Assert.False(completion.IsCompleted);
+            }
+            finally
+            {
+                terminalReportGate.Release.TrySetResult();
+            }
+        }
+
+        await completion;
 
         var completedState = Assert.Single(publicationRuntimeCatalog.States);
         var runtimeState = Assert.Single(app.Services.GetRequiredService<IEventSubscriptionRuntimeCatalog>().States);
@@ -3462,6 +3493,30 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("eventingBridge=not-active", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("handoffDurability=not-active", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+    }
+
+    private sealed class PublicationTerminalReportGate
+    {
+        public TaskCompletionSource Reached { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource Release { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    }
+
+    private sealed class GatedSubscriptionCompletionMiddleware(
+        PublicationTerminalReportGate gate,
+        bool delayTerminalReport) : IEventSubscriptionExecutionMiddleware
+    {
+        public async ValueTask InvokeAsync(
+            EventSubscriptionExecutionContext context,
+            EventSubscriptionExecutionStep nextStep,
+            CancellationToken cancellationToken = default)
+        {
+            await nextStep(context, cancellationToken);
+            if (delayTerminalReport)
+            {
+                gate.Reached.TrySetResult();
+                await gate.Release.Task.WaitAsync(cancellationToken);
+            }
+        }
     }
 
     private static async Task WaitForConditionAsync(
