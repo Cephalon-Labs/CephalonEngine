@@ -48,4 +48,6 @@ Tracking: [ENG-743 / #1436](https://github.com/Cephalon-Labs/CephalonEngine/issu
 
 ## September 16, 2026 validation checkpoint
 
-Local source and explicit-artifact runs passed all seven scenarios on Windows x64 with SDK `10.0.401` and runtime `10.0.12`. Both source projects reported MSBuild SDK `10.0.401`. The script suite passed 250 tests, including nine artifact/process guard tests. This checkpoint used the implementation working tree; Windows/Linux CI receipts on the committed implementation are required before ENG-743 closes.
+Local source and explicit-artifact runs passed all seven scenarios on Windows x64 with SDK `10.0.401` and runtime `10.0.12`. Both source projects reported MSBuild SDK `10.0.401`. The script suite passed 250 tests, including nine artifact/process guard tests. The local checkpoint used the implementation working tree. Both CI jobs subsequently passed on [implementation `5f67f61c`](https://github.com/Cephalon-Labs/CephalonEngine/commit/5f67f61c9519a553ad1faf0ce80d40cc763d338b) and [Windows/Linux CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35090093557): Ubuntu 24.04.5 and Windows build 26100, SDK `10.0.401`, runtime `10.0.12`, seven scenarios each, clean candidate checkouts and the expected distinct assembly hashes. ENG-743 is complete; ENG-744 and its parents remain open.
+
+The earlier Release Validation run on `13b0e859` was superseded/cancelled during tooling tests. Its successful SDK 11 readiness job and this dedicated contract workflow do not establish a successful full release matrix.

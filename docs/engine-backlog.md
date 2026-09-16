@@ -670,7 +670,7 @@ Plan: [Framework completion](framework-completion-plan.md); [primary-source rese
 
 September implementation findings: upstream run 35081865397 fails Windows/Linux locked restore (ILLink 10.0.12 vs 10.0.11 locks) and the .NET 11 in-process event scheduling test. Explicit analyzer injection reveals 121 pre-existing non-coordination Abstractions API diagnostics (118 undeclared, 3 stale declarations); normal project-reference wiring did not enforce them. Budget within the existing 32 h: SDK/locks 8 h; analyzer/baseline repair 8 h; scheduling proof 4 h; remaining consumer/deployment matrix 12 h. This parent is active in Sprint 16 and stays open until all children meet acceptance. ENG-739/740/741 carry the first 20 h; ENG-742 is active in Sprint 16 with 12 h split into ENG-743 (8 h) and ENG-744 (4 h). The 32 h parent is a non-additive rollup, not another 32 h.
 
-Delivery status: ENG-739/740/741 completed 20 h of estimated scope in Sprint 16. ENG-742 retains 12 h and the full compatibility acceptance; parent remains open. [Evidence](compatibility-repair-2026-09.md).
+Delivery status: ENG-739/740/741/743 completed 28 h of estimated scope in Sprint 16. ENG-731 retains its 32 h rollup and ENG-742 its 12 h rollup; only ENG-744's 4 h remains within this branch. Both parents remain open for the broader compatibility acceptance. [Evidence](compatibility-repair-2026-09.md).
 
 ### ENG-739 Pin the shipping SDK and regenerate locked restore
 
@@ -808,7 +808,7 @@ Quality dimensions: Compatibility + Reliability + Maintainability + Auditability
 
 Estimate basis: engineering hours including implementation, review, tests and docs; excludes external waiting. No maturity or GA promotion.
 
-Breakdown: ENG-743 (8 h) and ENG-744 (4 h) are native children included in this 12 h rollup. ENG-743 proves selected contract consumers; ENG-744 retains the remaining host/wire/generated/deployment evidence. These are engineering estimates, not elapsed hours.
+Breakdown: ENG-743 (8 h) and ENG-744 (4 h) are native children included in this 12 h rollup. ENG-743 proves selected contract consumers; ENG-744 retains the remaining host/wire/generated/deployment evidence. These are engineering estimates, not elapsed hours. ENG-743 is done after both Windows/Linux CI jobs passed; ENG-744 retains 4 h of remaining scope. [implementation `5f67f61c`](https://github.com/Cephalon-Labs/CephalonEngine/commit/5f67f61c9519a553ad1faf0ce80d40cc763d338b) and [Windows/Linux CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35090093557).
 
 ### ENG-743 Prove cross-version contract consumers and bounded rollback
 
@@ -816,7 +816,7 @@ GitHub issue: #1436
 
 Issue link: [#1436](https://github.com/Cephalon-Labs/CephalonEngine/issues/1436)
 
-Status: validation
+Status: done
 
 Estimate: 8
 
@@ -828,7 +828,7 @@ Owner: Cephalon-Neza
 
 Priority: P0
 
-Test: Running
+Test: Passed
 
 Benchmark: N/A
 
@@ -842,7 +842,7 @@ Quality dimensions: Compatibility + Reliability + Maintainability + Flexibility 
 
 Estimate basis: engineering hours including review, tests, docs and tracking; excludes external waiting. No maturity promotion.
 
-Local evidence: all seven selected consumer scenarios passed on SDK 10.0.401, including the exact new-type rollback boundary. Windows/Linux CI confirmation is required before completion. [Guide and commands](contract-compatibility.md).
+Local evidence: all seven selected consumer scenarios passed on SDK 10.0.401, including the exact new-type rollback boundary. Both committed-source CI jobs passed all seven scenarios; see [implementation `5f67f61c`](https://github.com/Cephalon-Labs/CephalonEngine/commit/5f67f61c9519a553ad1faf0ce80d40cc763d338b) and [Windows/Linux CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35090093557). [Guide and commands](contract-compatibility.md).
 
 ### ENG-744 Finish host snapshot generated-app and deployment matrix
 
@@ -875,6 +875,8 @@ Acceptance: Per-SDK/OS/package/RID receipts match source commits and declared su
 Quality dimensions: Compatibility + Reliability + Maintainability + Flexibility + Auditability.
 
 Estimate basis: engineering hours including review, tests, docs and tracking; excludes external waiting. No maturity promotion.
+Evidence still needed: the preceding full release run on `13b0e859` was superseded/cancelled during tooling tests after Linux composition (885) and hosting (819) passed. The separate SDK 11 RC1 readiness job passed 2,074 selected net10.0 tests. Cancellation is not a successful full release run; collect a completed release/tooling/generated/deployment matrix before closing this task.
+
 
 ### ENG-732 External developer journey documentation and accessibility
 
