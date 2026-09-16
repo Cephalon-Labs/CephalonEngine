@@ -62,6 +62,7 @@ jobs:
         with:
           global-json-file: global.json
           cache: true
+          cache-dependency-path: '**/packages.lock.json'
 
       - name: Docker preflight
         if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.provider == 'All' || github.event.inputs.provider == matrix.provider }}

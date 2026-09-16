@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `July 7, 2026`.
+Backlog status in this document reflects the repository state as of `September 15, 2026`.
 
 ## M3/M4 elevation program (June 2026)
 
@@ -40,6 +40,8 @@ Status: ready
 
 Estimate: 32
 
+Iteration: Later / not scheduled yet.
+
 Purpose: consolidate lease/fencing, idempotency, retry, journal, approval, reconciliation, and audit concepts before more families implement incompatible operator loops.
 
 Acceptance: host-agnostic contracts; deterministic state transitions; durable-provider seams; restart, duplicate-command, lost-lease, terminal-failure, and redaction tests; no transport dependency in engine core.
@@ -51,6 +53,8 @@ Quality dimensions: Reliability + Scalability + Data integrity + Security + Audi
 Status: backlog
 
 Estimate: 64
+
+Iteration: Later / not scheduled yet.
 
 Purpose: prove the shared kernel in dependency health, eventing/CDC, and edge/governance before any family-wide maturity promotion.
 
@@ -71,6 +75,28 @@ Scope: recheck official Microsoft sources on July 7, 2026; refresh `.NET 11 Prev
 Validation: readiness validation; focused docs/scorecard Pester coverage; stale current-truth search.
 
 Quality dimensions: Compatibility + Auditability + Maintainability + Usability.
+
+### ENG-717 Consolidate local branch histories and operator readback
+
+Status: in progress
+
+Estimate: 16
+
+GitHub issue: [#1410](https://github.com/Cephalon-Labs/CephalonEngine/issues/1410)
+
+Iteration: Operational Sprint 0 (September 2–15, 2026). Phase: 14.
+
+Purpose: consolidate 139 local branches into one authoritative master while preserving every original tip, uncommitted worktree state, current upstream contracts, and independent unpublished work.
+
+Scope: join local/GitHub histories; integrate direct-module resilience counters, JSON-RPC rate-limit envelopes, runtime observation metadata, and regression tests; keep published positional APIs and generated JSON stable; update API documentation and planning evidence; verify and detach worktrees before deleting the 138 non-master local branches; commit and push the validated result; align issue/project status and commit references.
+
+Maturity and ownership: additive M1 observation metadata over existing Cephalon-managed execution; no package promotion or expansion of deployment-mode support claims.
+
+Validation: affected composition/hosting suites, script and maturity gates, public API and generated reference-doc checks, preserved worktree state, branch ancestry and local/remote parity. See [consolidation evidence](branch-consolidation-2026-09-15.md).
+
+Discovered release hygiene: align SDK 10.0.303 and ILLink locks; pin the patched SSH.NET test-harness dependency; repair provider-workflow lock-file cache discovery; retain the CatalogService unwrapped response contract.
+
+Quality dimensions: Reliability + Security + Compatibility + Maintainability + Auditability.
 
 ## Current planning reset (April 2026)
 

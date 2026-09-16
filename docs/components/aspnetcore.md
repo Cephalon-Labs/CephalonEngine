@@ -739,3 +739,9 @@ types.
 - [Deployment-mode support](../deployment-mode-support.md)
 - [Operations](../operations.md)
 - [Reference docs publishing](../reference-docs.md)
+
+## Observation metadata and transport outcomes (ENG-717)
+
+The [runtime contract index](../runtime-contract-index.md#catalog-observation-readback-eng-717) lists nine catalog observation endpoints and additive diagnostics/trust timestamps. Response types use the host's source-generated JSON contract. Existing positional record constructors remain stable; new metadata on existing records uses init properties.
+
+Endpoint rate limiting on selected JSON-RPC routes emits a JSON-RPC `-32029` error with HTTP 429 and retry guidance. Direct-module gRPC, JSON-RPC, SSE, and WebSocket resilience surfaces include process-local timeout and circuit outcome counters. These observations are M1 readback over the adapters' existing managed execution; they do not change package maturity or deployment-mode claims.

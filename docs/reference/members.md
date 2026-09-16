@@ -2271,6 +2271,12 @@ Browse the published API surface by public member.
 - [AuditStoreDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-auditstoredescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AuditStoreDescriptor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuditStoreDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Creates a new audit-store descriptor.
   - `AuditStoreDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string mode, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [AuditStoreRuntimeSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-audit-auditstoreruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-audit-auditstoredescriptor-system-datetimeoffset-system-int32): `Constructors` on `AuditStoreRuntimeSurface` in `Cephalon.AspNetCore.Audit` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AuditStoreRuntimeSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Audit&scope=members)
+  - Describes the operator-facing audit-store runtime surface exposed by a Cephalon ASP.NET Core host.
+  - `AuditStoreRuntimeSurface(IReadOnlyList<AuditStoreDescriptor> AuditStores, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)`
+- [AuditStores](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-audit-auditstoreruntimesurface-auditstores): `Properties` on `AuditStoreRuntimeSurface` in `Cephalon.AspNetCore.Audit` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AuditStores&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Audit&scope=members)
+  - The active audit stores visible to the current runtime.
+  - `IReadOnlyList<AuditStoreDescriptor> AuditStores { get; set; }`
 - [AuditStores](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-iauditstorecatalog-auditstores): `Properties` on `IAuditStoreCatalog` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuditStores&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets all audit-store surfaces visible to the current runtime.
   - `IReadOnlyList<AuditStoreDescriptor> AuditStores { get; }`
@@ -2364,6 +2370,9 @@ Browse the published API surface by public member.
 - [AuthorizationPolicyDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-authorizationpolicydescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-authorization-authorizationmode-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AuthorizationPolicyDescriptor` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuthorizationPolicyDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Creates a new authorization policy descriptor.
   - `AuthorizationPolicyDescriptor(string id, string displayName, string description, IReadOnlyList<AuthorizationMode> modes, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [AuthorizationPolicyRuntimeSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-authorization-authorizationpolicydescriptor-system-datetimeoffset-system-int32): `Constructors` on `AuthorizationPolicyRuntimeSurface` in `Cephalon.AspNetCore.Authorization` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AuthorizationPolicyRuntimeSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Authorization&scope=members)
+  - Describes the operator-facing authorization policy runtime surface exposed by a Cephalon ASP.NET Core host.
+  - `AuthorizationPolicyRuntimeSurface(IReadOnlyList<AuthorizationPolicyDescriptor> Policies, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)`
 - [AuthorizationResource](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-authorizationresource-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AuthorizationResource` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuthorizationResource&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Creates a new authorization resource.
   - `AuthorizationResource(string resourceType, string resourceId, string tenantId, string ownerSubjectId, IReadOnlyDictionary<string, string> attributes)`
@@ -4068,6 +4077,9 @@ Browse the published API surface by public member.
 - [CephalonPackageVersion](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-cephalonpackageversion): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=CephalonPackageVersion&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the Cephalon package version written into the scaffold.
   - `string CephalonPackageVersion { get; }`
+- [CephalonRateLimitingTransportMetadata](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-cephalonratelimitingtransportmetadata-ctor-system-string): `Constructors` on `CephalonRateLimitingTransportMetadata` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=CephalonRateLimitingTransportMetadata&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Initializes a new `CephalonRateLimitingTransportMetadata`.
+  - `CephalonRateLimitingTransportMetadata(string transportId)`
 - [CertificateThumbprint](cephalon-engine.md#member-p-cephalon-engine-manifest-packagesignaturemanifest-certificatethumbprint): `Properties` on `PackageSignatureManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=CertificateThumbprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the signing certificate thumbprint used during verification, when certificate-backed trust was used.
   - `string CertificateThumbprint { get; }`
@@ -6166,7 +6178,7 @@ Browse the published API surface by public member.
   - Gets or sets a value indicating whether the pack should create the logical replication slot when it does not exist yet.
   - `bool CreateSlotIfMissing { get; set; }`
 - [CreateSnapshot](cephalon-engine.md#member-m-cephalon-engine-trust-capabilitypolicyevaluator-createsnapshot-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-capabilitymanifest): `Methods` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=CreateSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
-  - Creates a trust snapshot from the supplied policy, packages, modules, and capabilities.
+  - Creates a trust snapshot from the supplied policy, packages, modules, and capabilities. Populates operator-facing metadata for freshness, performance visibility, and drift detection.
   - `TrustSnapshot CreateSnapshot(TrustPolicy policy, IReadOnlyList<PackageManifest> packages, IReadOnlyList<ModuleManifest> modules, IReadOnlyList<CapabilityManifest> capabilities)`
 - [CreateSnapshot](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabasetopologyoperationalsnapshotprovider-createsnapshot): `Methods` on `IDatabaseTopologyOperationalSnapshotProvider` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CreateSnapshot&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates the current database-topology posture snapshot.
@@ -6591,6 +6603,12 @@ Browse the published API surface by public member.
 - [DataProductDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-dataproductdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DataProductDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new data product descriptor.
   - `DataProductDescriptor(string id, string displayName, string description, string sourceModuleId, string domainId, string contractId, string mode, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [DataProductRuntimeSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-dataproductruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-data-dataproductdescriptor-system-datetimeoffset-system-int32): `Constructors` on `DataProductRuntimeSurface` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DataProductRuntimeSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Describes the operator-facing runtime projection for data product descriptors.
+  - `DataProductRuntimeSurface(IReadOnlyList<DataProductDescriptor> DataProducts, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)`
+- [DataProducts](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-dataproductruntimesurface-dataproducts): `Properties` on `DataProductRuntimeSurface` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DataProducts&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - The active data product descriptors visible to the current runtime.
+  - `IReadOnlyList<DataProductDescriptor> DataProducts { get; set; }`
 - [DataProducts](cephalon-abstractions.md#member-p-cephalon-abstractions-data-idataproductcatalog-dataproducts): `Properties` on `IDataProductCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DataProducts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all data products visible to the current runtime.
   - `IReadOnlyList<DataProductDescriptor> DataProducts { get; }`
@@ -9657,12 +9675,45 @@ Browse the published API surface by public member.
 - [Evaluated](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofcollectionresult-evaluated): `Properties` on `TenantDomainOwnershipHttpProofCollectionResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Evaluated&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether proof evaluation reached a terminal workflow outcome.
   - `bool Evaluated { get; }`
+- [EvaluatedAtUtc](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-audit-auditstoreruntimesurface-evaluatedatutc): `Properties` on `AuditStoreRuntimeSurface` in `Cephalon.AspNetCore.Audit` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluatedAtUtc&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Audit&scope=members)
+  - The UTC timestamp when the audit-store payload was evaluated.
+  - `DateTimeOffset EvaluatedAtUtc { get; set; }`
+- [EvaluatedAtUtc](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface-evaluatedatutc): `Properties` on `AuthorizationPolicyRuntimeSurface` in `Cephalon.AspNetCore.Authorization` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluatedAtUtc&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Authorization&scope=members)
+  - The UTC timestamp when the authorization policy payload was evaluated.
+  - `DateTimeOffset EvaluatedAtUtc { get; set; }`
+- [EvaluatedAtUtc](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-evaluatedatutc): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=EvaluatedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Gets the UTC time at which the capability policy was evaluated.
+  - `DateTimeOffset EvaluatedAtUtc { get; set; }`
+- [EvaluatedAtUtc](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-dataproductruntimesurface-evaluatedatutc): `Properties` on `DataProductRuntimeSurface` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluatedAtUtc&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - The UTC timestamp when the runtime payload was evaluated.
+  - `DateTimeOffset EvaluatedAtUtc { get; set; }`
+- [EvaluatedAtUtc](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-inboxruntimesurface-evaluatedatutc): `Properties` on `InboxRuntimeSurface` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluatedAtUtc&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - The UTC timestamp when the runtime payload was evaluated.
+  - `DateTimeOffset EvaluatedAtUtc { get; set; }`
+- [EvaluatedAtUtc](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-evaluatedatutc): `Properties` on `LocalizedResourcesRuntimeSurface` in `Cephalon.AspNetCore.Localization` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluatedAtUtc&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Localization&scope=members)
+  - The UTC timestamp when the runtime payload was evaluated.
+  - `DateTimeOffset EvaluatedAtUtc { get; set; }`
+- [EvaluatedAtUtc](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-outboxruntimesurface-evaluatedatutc): `Properties` on `OutboxRuntimeSurface` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluatedAtUtc&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - The UTC timestamp when the runtime payload was evaluated.
+  - `DateTimeOffset EvaluatedAtUtc { get; set; }`
+- [EvaluatedAtUtc](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-resilience-ratelimitingruntimesurface-evaluatedatutc): `Properties` on `RateLimitingRuntimeSurface` in `Cephalon.AspNetCore.Resilience` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluatedAtUtc&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Resilience&scope=members)
+  - The UTC timestamp when the runtime payload was evaluated.
+  - `DateTimeOffset EvaluatedAtUtc { get; set; }`
+- [EvaluatedAtUtc](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocsruntimesurface-evaluatedatutc): `Properties` on `ReferenceDocsRuntimeSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluatedAtUtc&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - The UTC timestamp when the runtime payload was evaluated.
+  - `DateTimeOffset EvaluatedAtUtc { get; set; }`
 - [EvaluatedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-evaluatedatutc): `Properties` on `TenantDomainOwnershipProofEvaluationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EvaluatedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when proof evaluation executed.
   - `DateTimeOffset EvaluatedAtUtc { get; }`
 - [EvaluatedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationresult-evaluatedatutc): `Properties` on `TenantMembershipEvaluationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EvaluatedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when evaluation executed.
   - `DateTimeOffset EvaluatedAtUtc { get; }`
+- [EvaluatedAtUtc](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-transportruntimesurface-evaluatedatutc): `Properties` on `TransportRuntimeSurface` in `Cephalon.AspNetCore.Transports` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluatedAtUtc&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports&scope=members)
+  - The UTC timestamp when the runtime payload was evaluated.
+  - `DateTimeOffset EvaluatedAtUtc { get; set; }`
+- [EvaluatedAtUtc](cephalon-engine.md#member-p-cephalon-engine-trust-trustsnapshot-evaluatedatutc): `Properties` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=EvaluatedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Gets the UTC time at which the trust snapshot was evaluated.
+  - `DateTimeOffset EvaluatedAtUtc { get; set; }`
 - [EvaluateDependencies](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthevaluator-evaluatedependencies): `Methods` on `RuntimeHealthEvaluator` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EvaluateDependencies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Evaluates dependency-level health reports without applying probe semantics.
   - `DependencyHealthReport[] EvaluateDependencies()`
@@ -9672,6 +9723,33 @@ Browse the published API surface by public member.
 - [EvaluateReadiness](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimehealthevaluator-evaluatereadiness): `Methods` on `RuntimeHealthEvaluator` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EvaluateReadiness&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Evaluates whether the runtime is ready to serve traffic.
   - `RuntimeHealthReport EvaluateReadiness()`
+- [EvaluationDurationMilliseconds](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-audit-auditstoreruntimesurface-evaluationdurationmilliseconds): `Properties` on `AuditStoreRuntimeSurface` in `Cephalon.AspNetCore.Audit` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluationDurationMilliseconds&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Audit&scope=members)
+  - The time in milliseconds spent resolving the audit-store payload.
+  - `int EvaluationDurationMilliseconds { get; set; }`
+- [EvaluationDurationMilliseconds](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface-evaluationdurationmilliseconds): `Properties` on `AuthorizationPolicyRuntimeSurface` in `Cephalon.AspNetCore.Authorization` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluationDurationMilliseconds&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Authorization&scope=members)
+  - The time in milliseconds spent resolving the authorization policy payload.
+  - `int EvaluationDurationMilliseconds { get; set; }`
+- [EvaluationDurationMilliseconds](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-dataproductruntimesurface-evaluationdurationmilliseconds): `Properties` on `DataProductRuntimeSurface` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluationDurationMilliseconds&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - The time in milliseconds spent evaluating the runtime payload.
+  - `int EvaluationDurationMilliseconds { get; set; }`
+- [EvaluationDurationMilliseconds](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-inboxruntimesurface-evaluationdurationmilliseconds): `Properties` on `InboxRuntimeSurface` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluationDurationMilliseconds&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - The time in milliseconds spent evaluating the runtime payload.
+  - `int EvaluationDurationMilliseconds { get; set; }`
+- [EvaluationDurationMilliseconds](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-evaluationdurationmilliseconds): `Properties` on `LocalizedResourcesRuntimeSurface` in `Cephalon.AspNetCore.Localization` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluationDurationMilliseconds&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Localization&scope=members)
+  - The time in milliseconds spent evaluating the runtime payload.
+  - `int EvaluationDurationMilliseconds { get; set; }`
+- [EvaluationDurationMilliseconds](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-outboxruntimesurface-evaluationdurationmilliseconds): `Properties` on `OutboxRuntimeSurface` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluationDurationMilliseconds&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - The time in milliseconds spent evaluating the runtime payload.
+  - `int EvaluationDurationMilliseconds { get; set; }`
+- [EvaluationDurationMilliseconds](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-resilience-ratelimitingruntimesurface-evaluationdurationmilliseconds): `Properties` on `RateLimitingRuntimeSurface` in `Cephalon.AspNetCore.Resilience` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluationDurationMilliseconds&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Resilience&scope=members)
+  - The time in milliseconds spent evaluating the runtime payload.
+  - `int EvaluationDurationMilliseconds { get; set; }`
+- [EvaluationDurationMilliseconds](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocsruntimesurface-evaluationdurationmilliseconds): `Properties` on `ReferenceDocsRuntimeSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluationDurationMilliseconds&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - The time in milliseconds spent evaluating the runtime payload.
+  - `int EvaluationDurationMilliseconds { get; set; }`
+- [EvaluationDurationMilliseconds](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-transportruntimesurface-evaluationdurationmilliseconds): `Properties` on `TransportRuntimeSurface` in `Cephalon.AspNetCore.Transports` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EvaluationDurationMilliseconds&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports&scope=members)
+  - The time in milliseconds spent evaluating the runtime payload.
+  - `int EvaluationDurationMilliseconds { get; set; }`
 - [EvaluationFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-evaluationfailed): `Fields` on `TenantDomainOwnershipDnsTxtProofCollectionOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=EvaluationFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - DNS TXT content was collected, but proof evaluation did not apply a terminal workflow outcome.
   - `const string EvaluationFailed`
@@ -11475,6 +11553,9 @@ Browse the published API surface by public member.
 - [GeneratedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalsnapshot-generatedatutc): `Properties` on `DatabaseTopologyOperationalSnapshot` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GeneratedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp when the snapshot was created.
   - `DateTimeOffset GeneratedAtUtc { get; }`
+- [GeneratedAtUtc](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-generatedatutc): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=GeneratedAtUtc&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
+  - Gets the UTC time at which the diagnostics payload was generated.
+  - `DateTimeOffset GeneratedAtUtc { get; set; }`
 - [GeneratedAtUtc](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-generatedatutc): `Properties` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=GeneratedAtUtc&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - The UTC timestamp when the reply was generated.
   - `string GeneratedAtUtc { get; set; }`
@@ -14463,6 +14544,9 @@ Browse the published API surface by public member.
 - [Inboxes](cephalon-abstractions.md#member-p-cephalon-abstractions-data-iinboxcatalog-inboxes): `Properties` on `IInboxCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Inboxes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all inbox surfaces visible to the current runtime.
   - `IReadOnlyList<InboxDescriptor> Inboxes { get; }`
+- [Inboxes](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-inboxruntimesurface-inboxes): `Properties` on `InboxRuntimeSurface` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Inboxes&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - The active inbox descriptors visible to the current runtime.
+  - `IReadOnlyList<InboxDescriptor> Inboxes { get; set; }`
 - [Inboxes](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-inboxes): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Inboxes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the inbox surfaces contributed by active modules and visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<InboxDescriptor> Inboxes { get; set; }`
@@ -14478,6 +14562,9 @@ Browse the published API surface by public member.
 - [InboxMessages](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-ientityframeworkinboxcontext-inboxmessages): `Properties` on `IEntityFrameworkInboxContext` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=InboxMessages&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets the processed-message rows tracked by the current write-side `DbContext`.
   - `DbSet<EntityFrameworkInboxEntry> InboxMessages { get; }`
+- [InboxRuntimeSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-inboxruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-data-inboxdescriptor-system-datetimeoffset-system-int32): `Constructors` on `InboxRuntimeSurface` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=InboxRuntimeSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Describes the operator-facing runtime projection for inbox descriptors.
+  - `InboxRuntimeSurface(IReadOnlyList<InboxDescriptor> Inboxes, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)`
 - [IncludeAllClaimsAsSubjectAttributes](cephalon-identity-aspnetcore.md#member-p-cephalon-identity-aspnetcore-configuration-identityaspnetcoreoptions-includeallclaimsassubjectattributes): `Properties` on `IdentityAspNetCoreOptions` in `Cephalon.Identity.AspNetCore.Configuration` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=IncludeAllClaimsAsSubjectAttributes&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Configuration&scope=members)
   - Gets or sets a value indicating whether unmatched claims should be projected into `Attributes`.
   - `bool IncludeAllClaimsAsSubjectAttributes { get; set; }`
@@ -17310,6 +17397,9 @@ Browse the published API surface by public member.
 - [Liveness](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-liveness): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Liveness&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The current liveness report.
   - `RuntimeHealthReport Liveness { get; set; }`
+- [LivenessEvaluationDurationMilliseconds](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-livenessevaluationdurationmilliseconds): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=LivenessEvaluationDurationMilliseconds&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
+  - Gets the liveness evaluation duration in milliseconds.
+  - `int LivenessEvaluationDurationMilliseconds { get; set; }`
 - [LivenessPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-livenesspath): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=LivenessPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The liveness endpoint path.
   - `string LivenessPath { get; set; }`
@@ -17346,6 +17436,9 @@ Browse the published API surface by public member.
 - [LocalizationSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-localizationsettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=LocalizationSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `LocalizationSettings` class.
   - `LocalizationSettings(string defaultCulture, IReadOnlyList<string> supportedCultures, IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> resources)`
+- [LocalizedResourcesRuntimeSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-ctor-cephalon-abstractions-localization-localizedresourcessnapshot-system-string-system-datetimeoffset-system-int32): `Constructors` on `LocalizedResourcesRuntimeSurface` in `Cephalon.AspNetCore.Localization` (`Cephalon.AspNetCore`) [Browse](browse.html?q=LocalizedResourcesRuntimeSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Localization&scope=members)
+  - Describes the operator-facing runtime projection for localization snapshot requests.
+  - `LocalizedResourcesRuntimeSurface(LocalizedResourcesSnapshot Snapshot, string RequestedCulture, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)`
 - [LocalizedResourcesSnapshot](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-localizedresourcessnapshot-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `LocalizedResourcesSnapshot` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=LocalizedResourcesSnapshot&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
   - Creates a localization snapshot.
   - `LocalizedResourcesSnapshot(string defaultCulture, string resolvedCulture, IReadOnlyList<string> supportedCultures, IReadOnlyDictionary<string, string> resources)`
@@ -20717,6 +20810,9 @@ Browse the published API surface by public member.
 - [Outboxes](cephalon-abstractions.md#member-p-cephalon-abstractions-data-ioutboxcatalog-outboxes): `Properties` on `IOutboxCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outboxes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all outbox surfaces visible to the current runtime.
   - `IReadOnlyList<OutboxDescriptor> Outboxes { get; }`
+- [Outboxes](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-outboxruntimesurface-outboxes): `Properties` on `OutboxRuntimeSurface` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Outboxes&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - The active outbox descriptors visible to the current runtime.
+  - `IReadOnlyList<OutboxDescriptor> Outboxes { get; set; }`
 - [Outboxes](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-outboxes): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Outboxes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the outbox surfaces contributed by active modules and visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<OutboxDescriptor> Outboxes { get; set; }`
@@ -20786,6 +20882,9 @@ Browse the published API surface by public member.
 - [OutboxPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-outboxpattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=OutboxPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the outbox pattern.
   - `PatternDescriptor OutboxPattern { get; }`
+- [OutboxRuntimeSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-outboxruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-data-outboxdescriptor-system-datetimeoffset-system-int32): `Constructors` on `OutboxRuntimeSurface` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=OutboxRuntimeSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Describes the operator-facing runtime projection for outbox descriptors.
+  - `OutboxRuntimeSurface(IReadOnlyList<OutboxDescriptor> Outboxes, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)`
 - [Outcome](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-outcome): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the stable outcome identifier.
   - `string Outcome { get; }`
@@ -21641,6 +21740,9 @@ Browse the published API surface by public member.
 - [PoisonQueueOwnership](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-poisonqueueownership): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PoisonQueueOwnership&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether poison queue ownership was reported for the dispatch.
   - `const string PoisonQueueOwnership`
+- [Policies](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface-policies): `Properties` on `AuthorizationPolicyRuntimeSurface` in `Cephalon.AspNetCore.Authorization` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Policies&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Authorization&scope=members)
+  - The active authorization policies visible to the current runtime.
+  - `IReadOnlyList<AuthorizationPolicyDescriptor> Policies { get; set; }`
 - [Policies](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-iauthorizationpolicycatalog-policies): `Properties` on `IAuthorizationPolicyCatalog` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Policies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets all authorization policies visible to the current runtime.
   - `IReadOnlyList<AuthorizationPolicyDescriptor> Policies { get; }`
@@ -21659,6 +21761,9 @@ Browse the published API surface by public member.
 - [Policies](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-irestendpointauthoringpolicyruntimecatalog-policies): `Properties` on `IRestEndpointAuthoringPolicyRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Policies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the behavior-level REST authoring-policy answers visible to the current runtime.
   - `IReadOnlyList<RestEndpointAuthoringPolicyDescriptor> Policies { get; }`
+- [Policies](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-resilience-ratelimitingruntimesurface-policies): `Properties` on `RateLimitingRuntimeSurface` in `Cephalon.AspNetCore.Resilience` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Policies&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Resilience&scope=members)
+  - The active rate-limiting policies visible to the current runtime.
+  - `IReadOnlyList<RateLimitingRuntimeDescriptor> Policies { get; set; }`
 - [Policy](cephalon-abstractions.md#member-f-cephalon-abstractions-authorization-authorizationmode-policy): `Fields` on `AuthorizationMode` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Policy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Indicates a policy-driven authorization evaluation.
   - `const AuthorizationMode Policy`
@@ -23502,6 +23607,9 @@ Browse the published API surface by public member.
 - [RateLimitingRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-appmodel-ratelimitingselection-cephalon-abstractions-appmodel-ratelimitingselection-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=RateLimitingRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Describes one effective HTTP rate-limiting policy exposed by the current runtime.
   - `RateLimitingRuntimeDescriptor(string Id, string DisplayName, string Description, string ExecutionMode, string Scope, int RejectionStatusCode, IReadOnlyList<string> TransportIds, IReadOnlyList<string> ExcludedPathPrefixes, RateLimitingSelection Requested, RateLimitingSelection Effective, IReadOnlyDictionary<string, string> Metadata)`
+- [RateLimitingRuntimeSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-resilience-ratelimitingruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-system-datetimeoffset-system-int32): `Constructors` on `RateLimitingRuntimeSurface` in `Cephalon.AspNetCore.Resilience` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RateLimitingRuntimeSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Resilience&scope=members)
+  - Describes the operator-facing runtime projection for rate-limiting policies.
+  - `RateLimitingRuntimeSurface(IReadOnlyList<RateLimitingRuntimeDescriptor> Policies, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)`
 - [RateLimitingSelection](cephalon-abstractions.md#member-m-cephalon-abstractions-appmodel-ratelimitingselection-ctor-system-nullable-system-boolean-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-appmodel-ratelimitingoverrideselection): `Constructors` on `RateLimitingSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RateLimitingSelection&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Initializes a new instance of the `RateLimitingSelection` class.
   - `RateLimitingSelection(bool? enabled, string algorithm, int? permitLimit, int? queueLimit, int? windowSeconds, int? segmentsPerWindow, IReadOnlyList<RateLimitingOverrideSelection> overrides)`
@@ -23529,6 +23637,9 @@ Browse the published API surface by public member.
 - [Readiness](cephalon-abstractions.md#member-p-cephalon-abstractions-data-ieventsubscriptionexecutionreadinesscatalog-readiness): `Properties` on `IEventSubscriptionExecutionReadinessCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Readiness&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current execution-readiness descriptors for declared event subscriptions.
   - `IReadOnlyList<EventSubscriptionExecutionReadinessDescriptor> Readiness { get; }`
+- [ReadinessEvaluationDurationMilliseconds](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-readinessevaluationdurationmilliseconds): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ReadinessEvaluationDurationMilliseconds&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
+  - Gets the readiness evaluation duration in milliseconds.
+  - `int ReadinessEvaluationDurationMilliseconds { get; set; }`
 - [ReadinessPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-readinesspath): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ReadinessPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The readiness endpoint path.
   - `string ReadinessPath { get; set; }`
@@ -24135,6 +24246,9 @@ Browse the published API surface by public member.
 - [ReferenceDocsRequest](cephalon-referencedocs.md#member-m-cephalon-referencedocs-generation-referencedocsrequest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=ReferenceDocsRequest&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Creates a new reference docs request.
   - `ReferenceDocsRequest(string rootPath, string outputPath, string configuration, string targetFramework, IReadOnlyList<string> assemblies)`
+- [ReferenceDocsRuntimeSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-referencedocsruntimesurface-ctor-cephalon-aspnetcore-documentation-referencedocssurface-system-datetimeoffset-system-int32): `Constructors` on `ReferenceDocsRuntimeSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ReferenceDocsRuntimeSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - Describes the operator-facing runtime projection for hosted Cephalon reference documentation.
+  - `ReferenceDocsRuntimeSurface(ReferenceDocsSurface Surface, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)`
 - [ReferenceDocsSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-referencedocssurface-ctor-system-boolean-system-boolean-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Constructors` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ReferenceDocsSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Describes the operator-facing HTTP surface for hosted Cephalon reference documentation.
   - `ReferenceDocsSurface(bool Enabled, bool Available, string RoutePrefix, string DefaultDocument, string DefaultDocumentPath, string ReadmePath, string BrowserPath, string NamespaceIndexPath, string TypeIndexPath, string MemberIndexPath, string ManifestPath)`
@@ -24846,6 +24960,9 @@ Browse the published API surface by public member.
 - [RequestedBy](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-requestedby): `Properties` on `TenantGovernanceActionDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RequestedBy&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the actor that requested the action when known.
   - `string RequestedBy { get; }`
+- [RequestedCulture](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-requestedculture): `Properties` on `LocalizedResourcesRuntimeSurface` in `Cephalon.AspNetCore.Localization` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RequestedCulture&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Localization&scope=members)
+  - The optional culture requested by the operator.
+  - `string RequestedCulture { get; set; }`
 - [RequestedExecutionRuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-requestedexecutionruntimeid): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestedExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the execution-runtime identifier requested for the CDC capture after additive overrides are applied.
   - `string RequestedExecutionRuntimeId { get; }`
@@ -27494,6 +27611,9 @@ Browse the published API surface by public member.
 - [Snapshot](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicyevaluator-snapshot): `Properties` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Snapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Gets the trust snapshot being evaluated.
   - `TrustSnapshot Snapshot { get; }`
+- [Snapshot](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-snapshot): `Properties` on `LocalizedResourcesRuntimeSurface` in `Cephalon.AspNetCore.Localization` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Snapshot&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Localization&scope=members)
+  - The resolved localization snapshot payload.
+  - `LocalizedResourcesSnapshot Snapshot { get; set; }`
 - [SnapshotMode](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-snapshotmode): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=SnapshotMode&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
   - Gets or sets the Debezium snapshot mode when the pack should publish it as operator-facing metadata.
   - `string SnapshotMode { get; set; }`
@@ -29094,6 +29214,9 @@ Browse the published API surface by public member.
 - [SuppressionSummaries](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-suppressionsummaries): `Properties` on `RestEndpointAuthoringPolicyDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SuppressionSummaries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the grouped authoring-policy suppression outcomes summarized by suppression kind.
   - `IReadOnlyList<RestEndpointAuthoringPolicySuppressionSummaryDescriptor> SuppressionSummaries { get; }`
+- [Surface](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocsruntimesurface-surface): `Properties` on `ReferenceDocsRuntimeSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Surface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
+  - The current reference-doc hosting surface configuration and availability.
+  - `ReferenceDocsSurface Surface { get; set; }`
 - [SurfaceId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyruntimesurface-surfaceid): `Properties` on `TechnologyRuntimeSurface` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=SurfaceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the stable identifier of this surface within the owning technology.
   - `string SurfaceId { get; }`
@@ -30387,6 +30510,9 @@ Browse the published API surface by public member.
 - [TransportId](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-transportid): `Properties` on `BehaviorResilienceExceptionContext` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Gets the active transport identifier when one is known.
   - `string TransportId { get; }`
+- [TransportId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-cephalonratelimitingtransportmetadata-transportid): `Properties` on `CephalonRateLimitingTransportMetadata` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=TransportId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets the Cephalon transport identifier the rejected request belongs to.
+  - `string TransportId { get; }`
 - [TransportId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-transportid): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets the active transport identifier when one is known.
   - `string TransportId { get; }`
@@ -30450,6 +30576,9 @@ Browse the published API surface by public member.
 - [TransportKind](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-transportkind): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the provider transport kind currently associated with provider-specific materialization when one is known.
   - `string TransportKind { get; set; }`
+- [TransportRuntimeSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-transports-transportruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-system-datetimeoffset-system-int32): `Constructors` on `TransportRuntimeSurface` in `Cephalon.AspNetCore.Transports` (`Cephalon.AspNetCore`) [Browse](browse.html?q=TransportRuntimeSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports&scope=members)
+  - Describes the operator-facing runtime projection for active transport selections.
+  - `TransportRuntimeSurface(IReadOnlyList<TransportDescriptor> Transports, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)`
 - [Transports](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-transports): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Transports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the selected transports.
   - `IReadOnlyList<TransportDescriptor> Transports { get; }`
@@ -30459,6 +30588,9 @@ Browse the published API surface by public member.
 - [Transports](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-transports): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Transports&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the selected transport identifiers.
   - `IReadOnlyList<string> Transports { get; }`
+- [Transports](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-transportruntimesurface-transports): `Properties` on `TransportRuntimeSurface` in `Cephalon.AspNetCore.Transports` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Transports&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports&scope=members)
+  - The active transport descriptors visible to the current runtime.
+  - `IReadOnlyList<TransportDescriptor> Transports { get; set; }`
 - [TriggerKind](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-triggerkind): `Properties` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TriggerKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the operator-facing trigger kind for the compensation action.
   - `string TriggerKind { get; }`
@@ -31287,6 +31419,9 @@ Browse the published API surface by public member.
 - [VerificationCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingresult-verificationcount): `Properties` on `TenantDomainOwnershipProofPollingResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerificationCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of verification attempts run.
   - `int VerificationCount { get; }`
+- [VerificationDurationMilliseconds](cephalon-engine.md#member-p-cephalon-engine-trust-packagetrustdecision-verificationdurationmilliseconds): `Properties` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=VerificationDurationMilliseconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Gets elapsed policy-projection time in milliseconds when this decision was produced; this does not measure cryptographic verification.
+  - `int VerificationDurationMilliseconds { get; set; }`
 - [VerificationMethod](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-verificationmethod): `Properties` on `TenantDomainOwnershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerificationMethod&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the verification method associated with the descriptor.
   - `string VerificationMethod { get; }`
@@ -31377,6 +31512,9 @@ Browse the published API surface by public member.
 - [Verified](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses-verified): `Fields` on `TenantDomainOwnershipStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Verified&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The tenant domain ownership has been verified and can be validated.
   - `const string Verified`
+- [VerifiedAtUtc](cephalon-engine.md#member-p-cephalon-engine-trust-packagetrustdecision-verifiedatutc): `Properties` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=VerifiedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
+  - Gets the UTC time at which this trust decision was projected.
+  - `DateTimeOffset VerifiedAtUtc { get; set; }`
 - [VerifiedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-verifiedatutc): `Properties` on `TenantDomainOwnershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=VerifiedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when ownership was verified.
   - `DateTimeOffset? VerifiedAtUtc { get; }`

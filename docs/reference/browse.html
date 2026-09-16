@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-07-07T14:36:19.213932+00:00",
+  "GeneratedAtUtc": "2026-09-16T08:32:34.1686409+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -126,8 +126,8 @@
       "Category": "Hosts",
       "Description": "ASP.NET Core host core, REST surface, docs, health, and runtime endpoints.",
       "FileName": "cephalon-aspnetcore.md",
-      "NamespaceCount": 8,
-      "TypeCount": 29
+      "NamespaceCount": 13,
+      "TypeCount": 39
     },
     {
       "AssemblyName": "Cephalon.AspNetCore.GraphQL",
@@ -908,6 +908,20 @@
       "TypeCount": 13
     },
     {
+      "NamespaceName": "Cephalon.AspNetCore.Audit",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "namespace-cephalon-aspnetcore-audit",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.AspNetCore.Authorization",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "namespace-cephalon-aspnetcore-authorization",
+      "TypeCount": 1
+    },
+    {
       "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
@@ -919,7 +933,7 @@
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
       "AnchorId": "namespace-cephalon-aspnetcore-documentation",
-      "TypeCount": 4
+      "TypeCount": 5
     },
     {
       "NamespaceName": "Cephalon.AspNetCore.GraphQL.Hosting",
@@ -961,7 +975,7 @@
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
       "AnchorId": "namespace-cephalon-aspnetcore-hosting",
-      "TypeCount": 13
+      "TypeCount": 17
     },
     {
       "NamespaceName": "Cephalon.AspNetCore.JsonRpc.Hosting",
@@ -978,6 +992,13 @@
       "TypeCount": 1
     },
     {
+      "NamespaceName": "Cephalon.AspNetCore.Localization",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "namespace-cephalon-aspnetcore-localization",
+      "TypeCount": 1
+    },
+    {
       "NamespaceName": "Cephalon.AspNetCore.Modules",
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
@@ -985,10 +1006,24 @@
       "TypeCount": 1
     },
     {
+      "NamespaceName": "Cephalon.AspNetCore.Resilience",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "namespace-cephalon-aspnetcore-resilience",
+      "TypeCount": 1
+    },
+    {
       "NamespaceName": "Cephalon.AspNetCore.Transformers",
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
       "AnchorId": "namespace-cephalon-aspnetcore-transformers",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.AspNetCore.Transports",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "namespace-cephalon-aspnetcore-transports",
       "TypeCount": 1
     },
     {
@@ -3043,6 +3078,21 @@
       }
     },
     {
+      "DisplayName": "AuditStoreRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Audit",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-audit-auditstoreruntimesurface",
+      "Declaration": "public sealed class AuditStoreRuntimeSurface",
+      "Summary": "Describes the operator-facing audit-store runtime surface exposed by a Cephalon ASP.NET Core host.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "AuthorizationContext",
       "NamespaceName": "Cephalon.Abstractions.Authorization",
       "AssemblyName": "Cephalon.Abstractions",
@@ -3099,6 +3149,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AuthorizationPolicyRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Authorization",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface",
+      "Declaration": "public sealed class AuthorizationPolicyRuntimeSurface",
+      "Summary": "Describes the operator-facing authorization policy runtime surface exposed by a Cephalon ASP.NET Core host.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
         "Methods": 0
       }
     },
@@ -3863,7 +3928,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -6868,6 +6933,21 @@
       }
     },
     {
+      "DisplayName": "CephalonRateLimitingTransportMetadata",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-hosting-cephalonratelimitingtransportmetadata",
+      "Declaration": "public sealed class CephalonRateLimitingTransportMetadata",
+      "Summary": "Carries the Cephalon transport identifier onto an endpoint so the shared rate-limiting rejection writer can emit a transport-native envelope when the configured ASP.NET Core endpoint limiter rejects a request.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "CircuitBreakerSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -7483,6 +7563,21 @@
       }
     },
     {
+      "DisplayName": "DataProductRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-hosting-dataproductruntimesurface",
+      "Declaration": "public sealed class DataProductRuntimeSurface",
+      "Summary": "Describes the operator-facing runtime projection for data product descriptors.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "DataRuntimeOptions",
       "NamespaceName": "Cephalon.Data.Configuration",
       "AssemblyName": "Cephalon.Data",
@@ -7703,7 +7798,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 9,
+        "Properties": 12,
         "Methods": 0
       }
     },
@@ -12973,6 +13068,21 @@
       }
     },
     {
+      "DisplayName": "InboxRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-hosting-inboxruntimesurface",
+      "Declaration": "public sealed class InboxRuntimeSurface",
+      "Summary": "Describes the operator-facing runtime projection for inbox descriptors.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "IOutbox",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -14713,6 +14823,21 @@
       }
     },
     {
+      "DisplayName": "LocalizedResourcesRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Localization",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-localization-localizedresourcesruntimesurface",
+      "Declaration": "public sealed class LocalizedResourcesRuntimeSurface",
+      "Summary": "Describes the operator-facing runtime projection for localization snapshot requests.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "LocalizedResourcesSnapshot",
       "NamespaceName": "Cephalon.Abstractions.Localization",
       "AssemblyName": "Cephalon.Abstractions",
@@ -15928,6 +16053,21 @@
       }
     },
     {
+      "DisplayName": "OutboxRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-hosting-outboxruntimesurface",
+      "Declaration": "public sealed class OutboxRuntimeSurface",
+      "Summary": "Describes the operator-facing runtime projection for outbox descriptors.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "OwnedBehaviorRegistration",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -16058,7 +16198,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 12,
+        "Properties": 14,
         "Methods": 0
       }
     },
@@ -16348,6 +16488,21 @@
       }
     },
     {
+      "DisplayName": "RateLimitingRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Resilience",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-resilience-ratelimitingruntimesurface",
+      "Declaration": "public sealed class RateLimitingRuntimeSurface",
+      "Summary": "Describes the operator-facing runtime projection for rate-limiting policies.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "RateLimitingSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -16494,6 +16649,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ReferenceDocsRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-documentation-referencedocsruntimesurface",
+      "Declaration": "public sealed class ReferenceDocsRuntimeSurface",
+      "Summary": "Describes the operator-facing runtime projection for hosted Cephalon reference documentation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
         "Methods": 0
       }
     },
@@ -20278,6 +20448,21 @@
       }
     },
     {
+      "DisplayName": "TransportRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Transports",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-transports-transportruntimesurface",
+      "Declaration": "public sealed class TransportRuntimeSurface",
+      "Summary": "Describes the operator-facing runtime projection for active transport selections.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "TrustPolicy",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -20303,7 +20488,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 3,
+        "Properties": 4,
         "Methods": 0
       }
     },
@@ -28735,6 +28920,28 @@
       "Summary": "Creates a new audit-store descriptor."
     },
     {
+      "DisplayName": "AuditStoreRuntimeSurface",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AuditStoreRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Audit",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-audit-auditstoreruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-audit-auditstoredescriptor-system-datetimeoffset-system-int32",
+      "Signature": "AuditStoreRuntimeSurface(IReadOnlyList\u003CAuditStoreDescriptor\u003E AuditStores, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)",
+      "Summary": "Describes the operator-facing audit-store runtime surface exposed by a Cephalon ASP.NET Core host."
+    },
+    {
+      "DisplayName": "AuditStores",
+      "Category": "Properties",
+      "DeclaringTypeName": "AuditStoreRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Audit",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-audit-auditstoreruntimesurface-auditstores",
+      "Signature": "IReadOnlyList\u003CAuditStoreDescriptor\u003E AuditStores { get; set; }",
+      "Summary": "The active audit stores visible to the current runtime."
+    },
+    {
       "DisplayName": "AuditStores",
       "Category": "Properties",
       "DeclaringTypeName": "IAuditStoreCatalog",
@@ -29074,6 +29281,17 @@
       "AnchorId": "member-m-cephalon-abstractions-authorization-authorizationpolicydescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-authorization-authorizationmode-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "AuthorizationPolicyDescriptor(string id, string displayName, string description, IReadOnlyList\u003CAuthorizationMode\u003E modes, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a new authorization policy descriptor."
+    },
+    {
+      "DisplayName": "AuthorizationPolicyRuntimeSurface",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AuthorizationPolicyRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Authorization",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-authorization-authorizationpolicydescriptor-system-datetimeoffset-system-int32",
+      "Signature": "AuthorizationPolicyRuntimeSurface(IReadOnlyList\u003CAuthorizationPolicyDescriptor\u003E Policies, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)",
+      "Summary": "Describes the operator-facing authorization policy runtime surface exposed by a Cephalon ASP.NET Core host."
     },
     {
       "DisplayName": "AuthorizationResource",
@@ -35300,6 +35518,17 @@
       "AnchorId": "member-p-cephalon-scaffolding-generation-scaffoldrequest-cephalonpackageversion",
       "Signature": "string CephalonPackageVersion { get; }",
       "Summary": "Gets the Cephalon package version written into the scaffold."
+    },
+    {
+      "DisplayName": "CephalonRateLimitingTransportMetadata",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CephalonRateLimitingTransportMetadata",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-cephalonratelimitingtransportmetadata-ctor-system-string",
+      "Signature": "CephalonRateLimitingTransportMetadata(string transportId)",
+      "Summary": "Initializes a new \u0060CephalonRateLimitingTransportMetadata\u0060."
     },
     {
       "DisplayName": "CertificateThumbprint",
@@ -42999,7 +43228,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-m-cephalon-engine-trust-capabilitypolicyevaluator-createsnapshot-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-capabilitymanifest",
       "Signature": "TrustSnapshot CreateSnapshot(TrustPolicy policy, IReadOnlyList\u003CPackageManifest\u003E packages, IReadOnlyList\u003CModuleManifest\u003E modules, IReadOnlyList\u003CCapabilityManifest\u003E capabilities)",
-      "Summary": "Creates a trust snapshot from the supplied policy, packages, modules, and capabilities."
+      "Summary": "Creates a trust snapshot from the supplied policy, packages, modules, and capabilities. Populates operator-facing metadata for freshness, performance visibility, and drift detection."
     },
     {
       "DisplayName": "CreateSnapshot",
@@ -44540,6 +44769,28 @@
       "AnchorId": "member-m-cephalon-abstractions-data-dataproductdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "DataProductDescriptor(string id, string displayName, string description, string sourceModuleId, string domainId, string contractId, string mode, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a new data product descriptor."
+    },
+    {
+      "DisplayName": "DataProductRuntimeSurface",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DataProductRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-dataproductruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-data-dataproductdescriptor-system-datetimeoffset-system-int32",
+      "Signature": "DataProductRuntimeSurface(IReadOnlyList\u003CDataProductDescriptor\u003E DataProducts, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)",
+      "Summary": "Describes the operator-facing runtime projection for data product descriptors."
+    },
+    {
+      "DisplayName": "DataProducts",
+      "Category": "Properties",
+      "DeclaringTypeName": "DataProductRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-dataproductruntimesurface-dataproducts",
+      "Signature": "IReadOnlyList\u003CDataProductDescriptor\u003E DataProducts { get; set; }",
+      "Summary": "The active data product descriptors visible to the current runtime."
     },
     {
       "DisplayName": "DataProducts",
@@ -55783,6 +56034,105 @@
     {
       "DisplayName": "EvaluatedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "AuditStoreRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Audit",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-audit-auditstoreruntimesurface-evaluatedatutc",
+      "Signature": "DateTimeOffset EvaluatedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the audit-store payload was evaluated."
+    },
+    {
+      "DisplayName": "EvaluatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "AuthorizationPolicyRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Authorization",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface-evaluatedatutc",
+      "Signature": "DateTimeOffset EvaluatedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the authorization policy payload was evaluated."
+    },
+    {
+      "DisplayName": "EvaluatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CapabilityPolicyDecision",
+      "NamespaceName": "Cephalon.Engine.Trust",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-trust-capabilitypolicydecision-evaluatedatutc",
+      "Signature": "DateTimeOffset EvaluatedAtUtc { get; set; }",
+      "Summary": "Gets the UTC time at which the capability policy was evaluated."
+    },
+    {
+      "DisplayName": "EvaluatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "DataProductRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-dataproductruntimesurface-evaluatedatutc",
+      "Signature": "DateTimeOffset EvaluatedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the runtime payload was evaluated."
+    },
+    {
+      "DisplayName": "EvaluatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "InboxRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-inboxruntimesurface-evaluatedatutc",
+      "Signature": "DateTimeOffset EvaluatedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the runtime payload was evaluated."
+    },
+    {
+      "DisplayName": "EvaluatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "LocalizedResourcesRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Localization",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-evaluatedatutc",
+      "Signature": "DateTimeOffset EvaluatedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the runtime payload was evaluated."
+    },
+    {
+      "DisplayName": "EvaluatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "OutboxRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-outboxruntimesurface-evaluatedatutc",
+      "Signature": "DateTimeOffset EvaluatedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the runtime payload was evaluated."
+    },
+    {
+      "DisplayName": "EvaluatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Resilience",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-resilience-ratelimitingruntimesurface-evaluatedatutc",
+      "Signature": "DateTimeOffset EvaluatedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the runtime payload was evaluated."
+    },
+    {
+      "DisplayName": "EvaluatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReferenceDocsRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-documentation-referencedocsruntimesurface-evaluatedatutc",
+      "Signature": "DateTimeOffset EvaluatedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the runtime payload was evaluated."
+    },
+    {
+      "DisplayName": "EvaluatedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -55801,6 +56151,28 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationresult-evaluatedatutc",
       "Signature": "DateTimeOffset EvaluatedAtUtc { get; }",
       "Summary": "Gets the UTC timestamp when evaluation executed."
+    },
+    {
+      "DisplayName": "EvaluatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TransportRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Transports",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-transports-transportruntimesurface-evaluatedatutc",
+      "Signature": "DateTimeOffset EvaluatedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the runtime payload was evaluated."
+    },
+    {
+      "DisplayName": "EvaluatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "TrustSnapshot",
+      "NamespaceName": "Cephalon.Engine.Trust",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-trust-trustsnapshot-evaluatedatutc",
+      "Signature": "DateTimeOffset EvaluatedAtUtc { get; set; }",
+      "Summary": "Gets the UTC time at which the trust snapshot was evaluated."
     },
     {
       "DisplayName": "EvaluateDependencies",
@@ -55834,6 +56206,105 @@
       "AnchorId": "member-m-cephalon-engine-runtime-runtimehealthevaluator-evaluatereadiness",
       "Signature": "RuntimeHealthReport EvaluateReadiness()",
       "Summary": "Evaluates whether the runtime is ready to serve traffic."
+    },
+    {
+      "DisplayName": "EvaluationDurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "AuditStoreRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Audit",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-audit-auditstoreruntimesurface-evaluationdurationmilliseconds",
+      "Signature": "int EvaluationDurationMilliseconds { get; set; }",
+      "Summary": "The time in milliseconds spent resolving the audit-store payload."
+    },
+    {
+      "DisplayName": "EvaluationDurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "AuthorizationPolicyRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Authorization",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface-evaluationdurationmilliseconds",
+      "Signature": "int EvaluationDurationMilliseconds { get; set; }",
+      "Summary": "The time in milliseconds spent resolving the authorization policy payload."
+    },
+    {
+      "DisplayName": "EvaluationDurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DataProductRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-dataproductruntimesurface-evaluationdurationmilliseconds",
+      "Signature": "int EvaluationDurationMilliseconds { get; set; }",
+      "Summary": "The time in milliseconds spent evaluating the runtime payload."
+    },
+    {
+      "DisplayName": "EvaluationDurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "InboxRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-inboxruntimesurface-evaluationdurationmilliseconds",
+      "Signature": "int EvaluationDurationMilliseconds { get; set; }",
+      "Summary": "The time in milliseconds spent evaluating the runtime payload."
+    },
+    {
+      "DisplayName": "EvaluationDurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "LocalizedResourcesRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Localization",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-evaluationdurationmilliseconds",
+      "Signature": "int EvaluationDurationMilliseconds { get; set; }",
+      "Summary": "The time in milliseconds spent evaluating the runtime payload."
+    },
+    {
+      "DisplayName": "EvaluationDurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "OutboxRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-outboxruntimesurface-evaluationdurationmilliseconds",
+      "Signature": "int EvaluationDurationMilliseconds { get; set; }",
+      "Summary": "The time in milliseconds spent evaluating the runtime payload."
+    },
+    {
+      "DisplayName": "EvaluationDurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Resilience",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-resilience-ratelimitingruntimesurface-evaluationdurationmilliseconds",
+      "Signature": "int EvaluationDurationMilliseconds { get; set; }",
+      "Summary": "The time in milliseconds spent evaluating the runtime payload."
+    },
+    {
+      "DisplayName": "EvaluationDurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReferenceDocsRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-documentation-referencedocsruntimesurface-evaluationdurationmilliseconds",
+      "Signature": "int EvaluationDurationMilliseconds { get; set; }",
+      "Summary": "The time in milliseconds spent evaluating the runtime payload."
+    },
+    {
+      "DisplayName": "EvaluationDurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "TransportRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Transports",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-transports-transportruntimesurface-evaluationdurationmilliseconds",
+      "Signature": "int EvaluationDurationMilliseconds { get; set; }",
+      "Summary": "The time in milliseconds spent evaluating the runtime payload."
     },
     {
       "DisplayName": "EvaluationFailed",
@@ -62423,6 +62894,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasetopologyoperationalsnapshot-generatedatutc",
       "Signature": "DateTimeOffset GeneratedAtUtc { get; }",
       "Summary": "Gets the UTC timestamp when the snapshot was created."
+    },
+    {
+      "DisplayName": "GeneratedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticsSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-generatedatutc",
+      "Signature": "DateTimeOffset GeneratedAtUtc { get; set; }",
+      "Summary": "Gets the UTC time at which the diagnostics payload was generated."
     },
     {
       "DisplayName": "GeneratedAtUtc",
@@ -73361,6 +73843,17 @@
     {
       "DisplayName": "Inboxes",
       "Category": "Properties",
+      "DeclaringTypeName": "InboxRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-inboxruntimesurface-inboxes",
+      "Signature": "IReadOnlyList\u003CInboxDescriptor\u003E Inboxes { get; set; }",
+      "Summary": "The active inbox descriptors visible to the current runtime."
+    },
+    {
+      "DisplayName": "Inboxes",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -73412,6 +73905,17 @@
       "AnchorId": "member-p-cephalon-data-entityframework-modeling-ientityframeworkinboxcontext-inboxmessages",
       "Signature": "DbSet\u003CEntityFrameworkInboxEntry\u003E InboxMessages { get; }",
       "Summary": "Gets the processed-message rows tracked by the current write-side \u0060DbContext\u0060."
+    },
+    {
+      "DisplayName": "InboxRuntimeSurface",
+      "Category": "Constructors",
+      "DeclaringTypeName": "InboxRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-inboxruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-data-inboxdescriptor-system-datetimeoffset-system-int32",
+      "Signature": "InboxRuntimeSurface(IReadOnlyList\u003CInboxDescriptor\u003E Inboxes, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)",
+      "Summary": "Describes the operator-facing runtime projection for inbox descriptors."
     },
     {
       "DisplayName": "IncludeAllClaimsAsSubjectAttributes",
@@ -83765,6 +84269,17 @@
       "Summary": "The current liveness report."
     },
     {
+      "DisplayName": "LivenessEvaluationDurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticsSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-livenessevaluationdurationmilliseconds",
+      "Signature": "int LivenessEvaluationDurationMilliseconds { get; set; }",
+      "Summary": "Gets the liveness evaluation duration in milliseconds."
+    },
+    {
       "DisplayName": "LivenessPath",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsSurface",
@@ -83895,6 +84410,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-localizationsettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "LocalizationSettings(string defaultCulture, IReadOnlyList\u003Cstring\u003E supportedCultures, IReadOnlyDictionary\u003Cstring, IReadOnlyDictionary\u003Cstring, string\u003E\u003E resources)",
       "Summary": "Initializes a new instance of the \u0060LocalizationSettings\u0060 class."
+    },
+    {
+      "DisplayName": "LocalizedResourcesRuntimeSurface",
+      "Category": "Constructors",
+      "DeclaringTypeName": "LocalizedResourcesRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Localization",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-ctor-cephalon-abstractions-localization-localizedresourcessnapshot-system-string-system-datetimeoffset-system-int32",
+      "Signature": "LocalizedResourcesRuntimeSurface(LocalizedResourcesSnapshot Snapshot, string RequestedCulture, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)",
+      "Summary": "Describes the operator-facing runtime projection for localization snapshot requests."
     },
     {
       "DisplayName": "LocalizedResourcesSnapshot",
@@ -96237,6 +96763,17 @@
     {
       "DisplayName": "Outboxes",
       "Category": "Properties",
+      "DeclaringTypeName": "OutboxRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-outboxruntimesurface-outboxes",
+      "Signature": "IReadOnlyList\u003COutboxDescriptor\u003E Outboxes { get; set; }",
+      "Summary": "The active outbox descriptors visible to the current runtime."
+    },
+    {
+      "DisplayName": "Outboxes",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -96486,6 +97023,17 @@
       "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-outboxpattern",
       "Signature": "PatternDescriptor OutboxPattern { get; }",
       "Summary": "Gets the outbox pattern."
+    },
+    {
+      "DisplayName": "OutboxRuntimeSurface",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OutboxRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-outboxruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-data-outboxdescriptor-system-datetimeoffset-system-int32",
+      "Signature": "OutboxRuntimeSurface(IReadOnlyList\u003COutboxDescriptor\u003E Outboxes, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)",
+      "Summary": "Describes the operator-facing runtime projection for outbox descriptors."
     },
     {
       "DisplayName": "Outcome",
@@ -99614,6 +100162,17 @@
     {
       "DisplayName": "Policies",
       "Category": "Properties",
+      "DeclaringTypeName": "AuthorizationPolicyRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Authorization",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface-policies",
+      "Signature": "IReadOnlyList\u003CAuthorizationPolicyDescriptor\u003E Policies { get; set; }",
+      "Summary": "The active authorization policies visible to the current runtime."
+    },
+    {
+      "DisplayName": "Policies",
+      "Category": "Properties",
       "DeclaringTypeName": "IAuthorizationPolicyCatalog",
       "NamespaceName": "Cephalon.Abstractions.Authorization",
       "AssemblyName": "Cephalon.Abstractions",
@@ -99676,6 +100235,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-irestendpointauthoringpolicyruntimecatalog-policies",
       "Signature": "IReadOnlyList\u003CRestEndpointAuthoringPolicyDescriptor\u003E Policies { get; }",
       "Summary": "Gets the behavior-level REST authoring-policy answers visible to the current runtime."
+    },
+    {
+      "DisplayName": "Policies",
+      "Category": "Properties",
+      "DeclaringTypeName": "RateLimitingRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Resilience",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-resilience-ratelimitingruntimesurface-policies",
+      "Signature": "IReadOnlyList\u003CRateLimitingRuntimeDescriptor\u003E Policies { get; set; }",
+      "Summary": "The active rate-limiting policies visible to the current runtime."
     },
     {
       "DisplayName": "Policy",
@@ -106419,6 +106989,17 @@
       "Summary": "Describes one effective HTTP rate-limiting policy exposed by the current runtime."
     },
     {
+      "DisplayName": "RateLimitingRuntimeSurface",
+      "Category": "Constructors",
+      "DeclaringTypeName": "RateLimitingRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Resilience",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-resilience-ratelimitingruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-system-datetimeoffset-system-int32",
+      "Signature": "RateLimitingRuntimeSurface(IReadOnlyList\u003CRateLimitingRuntimeDescriptor\u003E Policies, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)",
+      "Summary": "Describes the operator-facing runtime projection for rate-limiting policies."
+    },
+    {
       "DisplayName": "RateLimitingSelection",
       "Category": "Constructors",
       "DeclaringTypeName": "RateLimitingSelection",
@@ -106516,6 +107097,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-ieventsubscriptionexecutionreadinesscatalog-readiness",
       "Signature": "IReadOnlyList\u003CEventSubscriptionExecutionReadinessDescriptor\u003E Readiness { get; }",
       "Summary": "Gets the current execution-readiness descriptors for declared event subscriptions."
+    },
+    {
+      "DisplayName": "ReadinessEvaluationDurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticsSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-readinessevaluationdurationmilliseconds",
+      "Signature": "int ReadinessEvaluationDurationMilliseconds { get; set; }",
+      "Summary": "Gets the readiness evaluation duration in milliseconds."
     },
     {
       "DisplayName": "ReadinessPath",
@@ -108738,6 +109330,17 @@
       "AnchorId": "member-m-cephalon-referencedocs-generation-referencedocsrequest-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string",
       "Signature": "ReferenceDocsRequest(string rootPath, string outputPath, string configuration, string targetFramework, IReadOnlyList\u003Cstring\u003E assemblies)",
       "Summary": "Creates a new reference docs request."
+    },
+    {
+      "DisplayName": "ReferenceDocsRuntimeSurface",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ReferenceDocsRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-documentation-referencedocsruntimesurface-ctor-cephalon-aspnetcore-documentation-referencedocssurface-system-datetimeoffset-system-int32",
+      "Signature": "ReferenceDocsRuntimeSurface(ReferenceDocsSurface Surface, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)",
+      "Summary": "Describes the operator-facing runtime projection for hosted Cephalon reference documentation."
     },
     {
       "DisplayName": "ReferenceDocsSurface",
@@ -111345,6 +111948,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-requestedby",
       "Signature": "string RequestedBy { get; }",
       "Summary": "Gets the actor that requested the action when known."
+    },
+    {
+      "DisplayName": "RequestedCulture",
+      "Category": "Properties",
+      "DeclaringTypeName": "LocalizedResourcesRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Localization",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-requestedculture",
+      "Signature": "string RequestedCulture { get; set; }",
+      "Summary": "The optional culture requested by the operator."
     },
     {
       "DisplayName": "RequestedExecutionRuntimeId",
@@ -121048,6 +121662,17 @@
       "Summary": "Gets the trust snapshot being evaluated."
     },
     {
+      "DisplayName": "Snapshot",
+      "Category": "Properties",
+      "DeclaringTypeName": "LocalizedResourcesRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Localization",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-snapshot",
+      "Signature": "LocalizedResourcesSnapshot Snapshot { get; set; }",
+      "Summary": "The resolved localization snapshot payload."
+    },
+    {
       "DisplayName": "SnapshotMode",
       "Category": "Properties",
       "DeclaringTypeName": "DebeziumCaptureOptions",
@@ -126920,6 +127545,17 @@
       "Summary": "Gets the grouped authoring-policy suppression outcomes summarized by suppression kind."
     },
     {
+      "DisplayName": "Surface",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReferenceDocsRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Documentation",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-documentation-referencedocsruntimesurface-surface",
+      "Signature": "ReferenceDocsSurface Surface { get; set; }",
+      "Summary": "The current reference-doc hosting surface configuration and availability."
+    },
+    {
       "DisplayName": "SurfaceId",
       "Category": "Properties",
       "DeclaringTypeName": "TechnologyRuntimeSurface",
@@ -131652,6 +132288,17 @@
     {
       "DisplayName": "TransportId",
       "Category": "Properties",
+      "DeclaringTypeName": "CephalonRateLimitingTransportMetadata",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-cephalonratelimitingtransportmetadata-transportid",
+      "Signature": "string TransportId { get; }",
+      "Summary": "Gets the Cephalon transport identifier the rejected request belongs to."
+    },
+    {
+      "DisplayName": "TransportId",
+      "Category": "Properties",
       "DeclaringTypeName": "FeatureFlagEvaluationContext",
       "NamespaceName": "Cephalon.Abstractions.Features",
       "AssemblyName": "Cephalon.Abstractions",
@@ -131881,6 +132528,17 @@
       "Summary": "Gets the provider transport kind currently associated with provider-specific materialization when one is known."
     },
     {
+      "DisplayName": "TransportRuntimeSurface",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TransportRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Transports",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-transports-transportruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-system-datetimeoffset-system-int32",
+      "Signature": "TransportRuntimeSurface(IReadOnlyList\u003CTransportDescriptor\u003E Transports, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)",
+      "Summary": "Describes the operator-facing runtime projection for active transport selections."
+    },
+    {
       "DisplayName": "Transports",
       "Category": "Properties",
       "DeclaringTypeName": "AppProfile",
@@ -131912,6 +132570,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-enginesettings-transports",
       "Signature": "IReadOnlyList\u003Cstring\u003E Transports { get; }",
       "Summary": "Gets the selected transport identifiers."
+    },
+    {
+      "DisplayName": "Transports",
+      "Category": "Properties",
+      "DeclaringTypeName": "TransportRuntimeSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Transports",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-transports-transportruntimesurface-transports",
+      "Signature": "IReadOnlyList\u003CTransportDescriptor\u003E Transports { get; set; }",
+      "Summary": "The active transport descriptors visible to the current runtime."
     },
     {
       "DisplayName": "TriggerKind",
@@ -134928,6 +135597,17 @@
       "Summary": "Gets the number of verification attempts run."
     },
     {
+      "DisplayName": "VerificationDurationMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageTrustDecision",
+      "NamespaceName": "Cephalon.Engine.Trust",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-trust-packagetrustdecision-verificationdurationmilliseconds",
+      "Signature": "int VerificationDurationMilliseconds { get; set; }",
+      "Summary": "Gets elapsed policy-projection time in milliseconds when this decision was produced; this does not measure cryptographic verification."
+    },
+    {
       "DisplayName": "VerificationMethod",
       "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipDescriptor",
@@ -135256,6 +135936,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses-verified",
       "Signature": "const string Verified",
       "Summary": "The tenant domain ownership has been verified and can be validated."
+    },
+    {
+      "DisplayName": "VerifiedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "PackageTrustDecision",
+      "NamespaceName": "Cephalon.Engine.Trust",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-trust-packagetrustdecision-verifiedatutc",
+      "Signature": "DateTimeOffset VerifiedAtUtc { get; set; }",
+      "Summary": "Gets the UTC time at which this trust decision was projected."
     },
     {
       "DisplayName": "VerifiedAtUtc",

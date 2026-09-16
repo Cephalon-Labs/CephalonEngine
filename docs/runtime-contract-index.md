@@ -360,3 +360,23 @@ This document is meant to evolve with the runtime contract.
 - keep the conditional/optional notes truthful so agents and operators do not assume a surface exists when it is gated behind a configuration switch
 - whenever this index drifts more than a month from the underlying source (verified against the `engine-surface-maturity-audit.md` truth), refresh the affected sections together
 - the canonical naming pattern for new entries is `/engine/{kebab-case-surface}` for routes, `snapshot.{PascalCaseSurface}` for snapshot keys, and `I{Surface}Catalog` or `I{Surface}RuntimeCatalog` for interfaces
+
+## Catalog observation readback (ENG-717)
+
+The normal ASP.NET Core operator route set includes the following additive observation endpoints. Each keeps the catalog payload together with `evaluatedAtUtc` and `evaluationDurationMilliseconds`; these values describe payload projection, not provider execution or freshness of the underlying data. Localization echoes the requested culture. These routes do not widen deployment-mode support claims.
+
+| Route | Payload |
+| --- | --- |
+| `/engine/rate-limiting/runtime` | Rate-limiting policies |
+| `/engine/data-products/runtime` | Data-product descriptors |
+| `/engine/outboxes/runtime` | Outbox descriptors |
+| `/engine/inboxes/runtime` | Inbox descriptors |
+| `/engine/audit-stores/runtime` | Audit-store descriptors |
+| `/engine/authorization-policies/runtime` | Authorization-policy descriptors |
+| `/engine/transports/runtime` | Selected transport descriptors |
+| `/engine/localization/runtime` | Localized resource snapshot and requested culture |
+| `/engine/reference-docs/runtime` | Hosted reference-document configuration surface |
+
+`/engine/diagnostics` also exposes `generatedAtUtc`, `livenessEvaluationDurationMilliseconds`, and `readinessEvaluationDurationMilliseconds`. `/engine/trust-policy` exposes snapshot/capability `evaluatedAtUtc` and package policy-projection `verifiedAtUtc`. The legacy-named `verificationDurationMilliseconds` measures elapsed policy projection, not cryptographic signature verification.
+
+Direct-module gRPC, JSON-RPC, SSE, and WebSocket resilience technology surfaces expose `timeoutOccurredCount`, `circuitOpenedCount`, and `circuitRejectedWhileOpenCount`; last-occurrence timestamps are present after an outcome is observed. Counters are process-local and reset with their runtime state. See [consolidation evidence](branch-consolidation-2026-09-15.md).

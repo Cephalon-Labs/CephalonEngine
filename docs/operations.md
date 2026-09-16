@@ -3747,3 +3747,9 @@ That keeps readiness/liveness logic shared across:
 - `docs/runtime-failure-policy.md`
 - `docs/engine-roadmap.md`
 - `docs/engine-backlog.md`
+
+## Reading observation and outcome metadata
+
+The [ENG-717 catalog readback endpoints](runtime-contract-index.md#catalog-observation-readback-eng-717) timestamp payload projection. Use dependency-health `checkedAtUtc` and the versioned operator sections for actual dependency observations; a newly projected catalog payload does not prove that an upstream dependency is fresh.
+
+Direct-module transport timeout/circuit counters describe process-local outcomes and reset when their runtime state is recreated. They are useful for diagnosing rejection patterns alongside logs and traces, but are not durable accounting. JSON-RPC endpoint rate-limit rejections retain JSON-RPC error semantics with HTTP 429 and retry guidance.

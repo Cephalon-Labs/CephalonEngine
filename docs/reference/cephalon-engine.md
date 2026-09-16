@@ -11644,6 +11644,16 @@ string CapabilityKey { get; set; }
 
 The capability key that was evaluated.
 
+<a id="member-p-cephalon-engine-trust-capabilitypolicydecision-evaluatedatutc"></a>
+
+##### `EvaluatedAtUtc`
+
+```csharp
+DateTimeOffset EvaluatedAtUtc { get; set; }
+```
+
+Gets the UTC time at which the capability policy was evaluated.
+
 <a id="member-p-cephalon-engine-trust-capabilitypolicydecision-isallowed"></a>
 
 ##### `IsAllowed`
@@ -11742,9 +11752,9 @@ Gets the trust snapshot being evaluated.
 TrustSnapshot CreateSnapshot(TrustPolicy policy, IReadOnlyList<PackageManifest> packages, IReadOnlyList<ModuleManifest> modules, IReadOnlyList<CapabilityManifest> capabilities)
 ```
 
-Creates a trust snapshot from the supplied policy, packages, modules, and capabilities.
+Creates a trust snapshot from the supplied policy, packages, modules, and capabilities. Populates operator-facing metadata for freshness, performance visibility, and drift detection.
 
-Returns: A computed trust snapshot.
+Returns: A computed trust snapshot with evaluation timestamps and performance metrics.
 
 Parameters:
 - `policy`: The trust policy to apply.
@@ -12046,6 +12056,26 @@ string SignatureVerificationReason { get; set; }
 
 The aggregate signature verification outcome summary.
 
+<a id="member-p-cephalon-engine-trust-packagetrustdecision-verificationdurationmilliseconds"></a>
+
+##### `VerificationDurationMilliseconds`
+
+```csharp
+int VerificationDurationMilliseconds { get; set; }
+```
+
+Gets elapsed policy-projection time in milliseconds when this decision was produced; this does not measure cryptographic verification.
+
+<a id="member-p-cephalon-engine-trust-packagetrustdecision-verifiedatutc"></a>
+
+##### `VerifiedAtUtc`
+
+```csharp
+DateTimeOffset VerifiedAtUtc { get; set; }
+```
+
+Gets the UTC time at which this trust decision was projected.
+
 <a id="type-cephalon-engine-trust-trustsnapshot"></a>
 
 ### `TrustSnapshot`
@@ -12085,6 +12115,16 @@ IReadOnlyList<CapabilityPolicyDecision> Capabilities { get; set; }
 ```
 
 The evaluated capability trust decisions.
+
+<a id="member-p-cephalon-engine-trust-trustsnapshot-evaluatedatutc"></a>
+
+##### `EvaluatedAtUtc`
+
+```csharp
+DateTimeOffset EvaluatedAtUtc { get; set; }
+```
+
+Gets the UTC time at which the trust snapshot was evaluated.
 
 <a id="member-p-cephalon-engine-trust-trustsnapshot-packages"></a>
 

@@ -345,3 +345,7 @@ This package also carries the public contracts that should be explained well thr
 - [App models](../app-models.md)
 - [Operations](../operations.md)
 - [Runtime failure policy](../runtime-failure-policy.md)
+
+## Trust observation compatibility (ENG-717)
+
+Trust snapshots and decisions carry additive policy-projection timestamps through init properties, preserving their published constructor and deconstruction signatures. Shared capability trust still evaluates every declared source module; an absent source denies the capability. Package timing describes policy projection, not cryptographic verification time. See the [runtime contract index](../runtime-contract-index.md#catalog-observation-readback-eng-717).

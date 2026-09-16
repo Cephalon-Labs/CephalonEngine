@@ -1,6 +1,6 @@
 # Engine Surface Maturity Audit
 
-Surface maturity in this document reflects the repository state as of `July 7, 2026` (after the Sprint 125 Eventing operational-superiority evidence stream, scorecard schema `1.25.0`, the generated-app adoption report readback, the adoption golden-use-case readback, the component maturity-badge completion guard, the Entity Framework, MongoDB, Redis, and NATS EventSourcing durable-snapshot proofs, the Gate 0 machine-readable maturity reconciliation, and the July framework-readiness truth refresh).
+Surface maturity in this document reflects the repository state as of `September 15, 2026` (after the Sprint 125 Eventing operational-superiority evidence stream, scorecard schema `1.25.0`, the generated-app adoption report readback, the adoption golden-use-case readback, the component maturity-badge completion guard, the Entity Framework, MongoDB, Redis, and NATS EventSourcing durable-snapshot proofs, the Gate 0 machine-readable maturity reconciliation, and the July framework-readiness truth refresh).
 
 ## Why this document exists
 

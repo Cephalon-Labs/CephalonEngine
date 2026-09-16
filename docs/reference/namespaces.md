@@ -100,13 +100,21 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Agentics](cephalon-agentics.md#namespace-cephalon-agentics-services): 13 public types [Browse](browse.html?assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services)
 
+## `Cephalon.AspNetCore.Audit`
+
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-audit): 1 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Audit)
+
+## `Cephalon.AspNetCore.Authorization`
+
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-authorization): 1 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Authorization)
+
 ## `Cephalon.AspNetCore.Diagnostics`
 
 - [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-diagnostics): 2 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics)
 
 ## `Cephalon.AspNetCore.Documentation`
 
-- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-documentation): 4 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation)
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-documentation): 5 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation)
 
 ## `Cephalon.AspNetCore.GraphQL.Hosting`
 
@@ -130,7 +138,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.AspNetCore.Hosting`
 
-- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-hosting): 13 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting)
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-hosting): 17 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting)
 
 ## `Cephalon.AspNetCore.JsonRpc.Hosting`
 
@@ -140,13 +148,25 @@ Browse the published API surface by namespace.
 
 - [Cephalon.AspNetCore.JsonRpc](cephalon-aspnetcore-jsonrpc.md#namespace-cephalon-aspnetcore-jsonrpc-modules): 1 public types [Browse](browse.html?assembly=Cephalon.AspNetCore.JsonRpc&namespace=Cephalon.AspNetCore.JsonRpc.Modules)
 
+## `Cephalon.AspNetCore.Localization`
+
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-localization): 1 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Localization)
+
 ## `Cephalon.AspNetCore.Modules`
 
 - [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-modules): 1 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Modules)
 
+## `Cephalon.AspNetCore.Resilience`
+
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-resilience): 1 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Resilience)
+
 ## `Cephalon.AspNetCore.Transformers`
 
 - [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-transformers): 1 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transformers)
+
+## `Cephalon.AspNetCore.Transports`
+
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-transports): 1 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports)
 
 ## `Cephalon.AspNetCore.Transports.Rest`
 

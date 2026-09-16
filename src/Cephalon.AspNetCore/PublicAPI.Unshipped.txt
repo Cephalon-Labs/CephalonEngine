@@ -2,3 +2,155 @@
 Cephalon.AspNetCore.Hosting.CephalonRateLimitingTransportMetadata
 Cephalon.AspNetCore.Hosting.CephalonRateLimitingTransportMetadata.CephalonRateLimitingTransportMetadata(string! transportId) -> void
 Cephalon.AspNetCore.Hosting.CephalonRateLimitingTransportMetadata.TransportId.get -> string!
+Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface
+Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.<Clone>$() -> Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface!
+Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.AuditStoreRuntimeSurface(System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Audit.AuditStoreDescriptor!>! AuditStores, System.DateTimeOffset EvaluatedAtUtc = default(System.DateTimeOffset), int EvaluationDurationMilliseconds = 0) -> void
+Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.AuditStores.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Audit.AuditStoreDescriptor!>!
+Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.AuditStores.init -> void
+Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.Deconstruct(out System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Audit.AuditStoreDescriptor!>! AuditStores, out System.DateTimeOffset EvaluatedAtUtc, out int EvaluationDurationMilliseconds) -> void
+Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.Equals(Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface? other) -> bool
+Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.EvaluatedAtUtc.get -> System.DateTimeOffset
+Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.EvaluatedAtUtc.init -> void
+Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.EvaluationDurationMilliseconds.get -> int
+Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.EvaluationDurationMilliseconds.init -> void
+Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface
+Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.<Clone>$() -> Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface!
+Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.AuthorizationPolicyRuntimeSurface(System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Authorization.AuthorizationPolicyDescriptor!>! Policies, System.DateTimeOffset EvaluatedAtUtc = default(System.DateTimeOffset), int EvaluationDurationMilliseconds = 0) -> void
+Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.Deconstruct(out System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Authorization.AuthorizationPolicyDescriptor!>! Policies, out System.DateTimeOffset EvaluatedAtUtc, out int EvaluationDurationMilliseconds) -> void
+Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.Equals(Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface? other) -> bool
+Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.EvaluatedAtUtc.get -> System.DateTimeOffset
+Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.EvaluatedAtUtc.init -> void
+Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.EvaluationDurationMilliseconds.get -> int
+Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.EvaluationDurationMilliseconds.init -> void
+Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.Policies.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Authorization.AuthorizationPolicyDescriptor!>!
+Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.Policies.init -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.GeneratedAtUtc.get -> System.DateTimeOffset
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.GeneratedAtUtc.init -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.LivenessEvaluationDurationMilliseconds.get -> int
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.LivenessEvaluationDurationMilliseconds.init -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.ReadinessEvaluationDurationMilliseconds.get -> int
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.ReadinessEvaluationDurationMilliseconds.init -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface
+Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.<Clone>$() -> Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface!
+Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.Deconstruct(out Cephalon.AspNetCore.Documentation.ReferenceDocsSurface! Surface, out System.DateTimeOffset EvaluatedAtUtc, out int EvaluationDurationMilliseconds) -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.Equals(Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface? other) -> bool
+Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.EvaluatedAtUtc.get -> System.DateTimeOffset
+Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.EvaluatedAtUtc.init -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.EvaluationDurationMilliseconds.get -> int
+Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.EvaluationDurationMilliseconds.init -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.ReferenceDocsRuntimeSurface(Cephalon.AspNetCore.Documentation.ReferenceDocsSurface! Surface, System.DateTimeOffset EvaluatedAtUtc = default(System.DateTimeOffset), int EvaluationDurationMilliseconds = 0) -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.Surface.get -> Cephalon.AspNetCore.Documentation.ReferenceDocsSurface!
+Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.Surface.init -> void
+Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface
+Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.<Clone>$() -> Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface!
+Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.DataProductRuntimeSurface(System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.DataProductDescriptor!>! DataProducts, System.DateTimeOffset EvaluatedAtUtc = default(System.DateTimeOffset), int EvaluationDurationMilliseconds = 0) -> void
+Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.DataProducts.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.DataProductDescriptor!>!
+Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.DataProducts.init -> void
+Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.Deconstruct(out System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.DataProductDescriptor!>! DataProducts, out System.DateTimeOffset EvaluatedAtUtc, out int EvaluationDurationMilliseconds) -> void
+Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.Equals(Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface? other) -> bool
+Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.EvaluatedAtUtc.get -> System.DateTimeOffset
+Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.EvaluatedAtUtc.init -> void
+Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.EvaluationDurationMilliseconds.get -> int
+Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.EvaluationDurationMilliseconds.init -> void
+Cephalon.AspNetCore.Hosting.InboxRuntimeSurface
+Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.<Clone>$() -> Cephalon.AspNetCore.Hosting.InboxRuntimeSurface!
+Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.Deconstruct(out System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.InboxDescriptor!>! Inboxes, out System.DateTimeOffset EvaluatedAtUtc, out int EvaluationDurationMilliseconds) -> void
+Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.Equals(Cephalon.AspNetCore.Hosting.InboxRuntimeSurface? other) -> bool
+Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.EvaluatedAtUtc.get -> System.DateTimeOffset
+Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.EvaluatedAtUtc.init -> void
+Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.EvaluationDurationMilliseconds.get -> int
+Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.EvaluationDurationMilliseconds.init -> void
+Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.InboxRuntimeSurface(System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.InboxDescriptor!>! Inboxes, System.DateTimeOffset EvaluatedAtUtc = default(System.DateTimeOffset), int EvaluationDurationMilliseconds = 0) -> void
+Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.Inboxes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.InboxDescriptor!>!
+Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.Inboxes.init -> void
+Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface
+Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.<Clone>$() -> Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface!
+Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.Deconstruct(out System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.OutboxDescriptor!>! Outboxes, out System.DateTimeOffset EvaluatedAtUtc, out int EvaluationDurationMilliseconds) -> void
+Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.Equals(Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface? other) -> bool
+Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.EvaluatedAtUtc.get -> System.DateTimeOffset
+Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.EvaluatedAtUtc.init -> void
+Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.EvaluationDurationMilliseconds.get -> int
+Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.EvaluationDurationMilliseconds.init -> void
+Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.OutboxRuntimeSurface(System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.OutboxDescriptor!>! Outboxes, System.DateTimeOffset EvaluatedAtUtc = default(System.DateTimeOffset), int EvaluationDurationMilliseconds = 0) -> void
+Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.Outboxes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.OutboxDescriptor!>!
+Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.Outboxes.init -> void
+Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface
+Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.<Clone>$() -> Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface!
+Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.Deconstruct(out Cephalon.Abstractions.Localization.LocalizedResourcesSnapshot! Snapshot, out string? RequestedCulture, out System.DateTimeOffset EvaluatedAtUtc, out int EvaluationDurationMilliseconds) -> void
+Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.Equals(Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface? other) -> bool
+Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.EvaluatedAtUtc.get -> System.DateTimeOffset
+Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.EvaluatedAtUtc.init -> void
+Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.EvaluationDurationMilliseconds.get -> int
+Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.EvaluationDurationMilliseconds.init -> void
+Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.LocalizedResourcesRuntimeSurface(Cephalon.Abstractions.Localization.LocalizedResourcesSnapshot! Snapshot, string? RequestedCulture, System.DateTimeOffset EvaluatedAtUtc = default(System.DateTimeOffset), int EvaluationDurationMilliseconds = 0) -> void
+Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.RequestedCulture.get -> string?
+Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.RequestedCulture.init -> void
+Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.Snapshot.get -> Cephalon.Abstractions.Localization.LocalizedResourcesSnapshot!
+Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.Snapshot.init -> void
+Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface
+Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.<Clone>$() -> Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface!
+Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.Deconstruct(out System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Resilience.RateLimitingRuntimeDescriptor!>! Policies, out System.DateTimeOffset EvaluatedAtUtc, out int EvaluationDurationMilliseconds) -> void
+Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.Equals(Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface? other) -> bool
+Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.EvaluatedAtUtc.get -> System.DateTimeOffset
+Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.EvaluatedAtUtc.init -> void
+Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.EvaluationDurationMilliseconds.get -> int
+Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.EvaluationDurationMilliseconds.init -> void
+Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.Policies.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Resilience.RateLimitingRuntimeDescriptor!>!
+Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.Policies.init -> void
+Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.RateLimitingRuntimeSurface(System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Resilience.RateLimitingRuntimeDescriptor!>! Policies, System.DateTimeOffset EvaluatedAtUtc = default(System.DateTimeOffset), int EvaluationDurationMilliseconds = 0) -> void
+Cephalon.AspNetCore.Transports.TransportRuntimeSurface
+Cephalon.AspNetCore.Transports.TransportRuntimeSurface.<Clone>$() -> Cephalon.AspNetCore.Transports.TransportRuntimeSurface!
+Cephalon.AspNetCore.Transports.TransportRuntimeSurface.Deconstruct(out System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.TransportDescriptor!>! Transports, out System.DateTimeOffset EvaluatedAtUtc, out int EvaluationDurationMilliseconds) -> void
+Cephalon.AspNetCore.Transports.TransportRuntimeSurface.Equals(Cephalon.AspNetCore.Transports.TransportRuntimeSurface? other) -> bool
+Cephalon.AspNetCore.Transports.TransportRuntimeSurface.EvaluatedAtUtc.get -> System.DateTimeOffset
+Cephalon.AspNetCore.Transports.TransportRuntimeSurface.EvaluatedAtUtc.init -> void
+Cephalon.AspNetCore.Transports.TransportRuntimeSurface.EvaluationDurationMilliseconds.get -> int
+Cephalon.AspNetCore.Transports.TransportRuntimeSurface.EvaluationDurationMilliseconds.init -> void
+Cephalon.AspNetCore.Transports.TransportRuntimeSurface.TransportRuntimeSurface(System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.TransportDescriptor!>! Transports, System.DateTimeOffset EvaluatedAtUtc = default(System.DateTimeOffset), int EvaluationDurationMilliseconds = 0) -> void
+Cephalon.AspNetCore.Transports.TransportRuntimeSurface.Transports.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.TransportDescriptor!>!
+Cephalon.AspNetCore.Transports.TransportRuntimeSurface.Transports.init -> void
+override Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.Equals(object? obj) -> bool
+override Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.GetHashCode() -> int
+override Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.ToString() -> string!
+override Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.Equals(object? obj) -> bool
+override Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.GetHashCode() -> int
+override Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.ToString() -> string!
+override Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.Equals(object? obj) -> bool
+override Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.GetHashCode() -> int
+override Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.ToString() -> string!
+override Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.Equals(object? obj) -> bool
+override Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.GetHashCode() -> int
+override Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.ToString() -> string!
+override Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.Equals(object? obj) -> bool
+override Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.GetHashCode() -> int
+override Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.ToString() -> string!
+override Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.Equals(object? obj) -> bool
+override Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.GetHashCode() -> int
+override Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.ToString() -> string!
+override Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.Equals(object? obj) -> bool
+override Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.GetHashCode() -> int
+override Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.ToString() -> string!
+override Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.Equals(object? obj) -> bool
+override Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.GetHashCode() -> int
+override Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.ToString() -> string!
+override Cephalon.AspNetCore.Transports.TransportRuntimeSurface.Equals(object? obj) -> bool
+override Cephalon.AspNetCore.Transports.TransportRuntimeSurface.GetHashCode() -> int
+override Cephalon.AspNetCore.Transports.TransportRuntimeSurface.ToString() -> string!
+static Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.operator !=(Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface? left, Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface.operator ==(Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface? left, Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.operator !=(Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface? left, Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface.operator ==(Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface? left, Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.operator !=(Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface? left, Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface.operator ==(Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface? left, Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.operator !=(Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface? left, Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface.operator ==(Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface? left, Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.operator !=(Cephalon.AspNetCore.Hosting.InboxRuntimeSurface? left, Cephalon.AspNetCore.Hosting.InboxRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Hosting.InboxRuntimeSurface.operator ==(Cephalon.AspNetCore.Hosting.InboxRuntimeSurface? left, Cephalon.AspNetCore.Hosting.InboxRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.operator !=(Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface? left, Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface.operator ==(Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface? left, Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.operator !=(Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface? left, Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface.operator ==(Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface? left, Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.operator !=(Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface? left, Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface.operator ==(Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface? left, Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Transports.TransportRuntimeSurface.operator !=(Cephalon.AspNetCore.Transports.TransportRuntimeSurface? left, Cephalon.AspNetCore.Transports.TransportRuntimeSurface? right) -> bool
+static Cephalon.AspNetCore.Transports.TransportRuntimeSurface.operator ==(Cephalon.AspNetCore.Transports.TransportRuntimeSurface? left, Cephalon.AspNetCore.Transports.TransportRuntimeSurface? right) -> bool

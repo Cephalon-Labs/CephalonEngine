@@ -655,6 +655,16 @@ public sealed class PackageSurfaceTests
     {
         AssertExportedTypes(
             typeof(global::Cephalon.AspNetCore.Hosting.EngineWebApplicationBuilderExtensions).Assembly,
+            typeof(global::Cephalon.AspNetCore.Audit.AuditStoreRuntimeSurface),
+            typeof(global::Cephalon.AspNetCore.Authorization.AuthorizationPolicyRuntimeSurface),
+            typeof(global::Cephalon.AspNetCore.Documentation.ReferenceDocsRuntimeSurface),
+            typeof(global::Cephalon.AspNetCore.Hosting.CephalonRateLimitingTransportMetadata),
+            typeof(global::Cephalon.AspNetCore.Hosting.DataProductRuntimeSurface),
+            typeof(global::Cephalon.AspNetCore.Hosting.InboxRuntimeSurface),
+            typeof(global::Cephalon.AspNetCore.Hosting.OutboxRuntimeSurface),
+            typeof(global::Cephalon.AspNetCore.Localization.LocalizedResourcesRuntimeSurface),
+            typeof(global::Cephalon.AspNetCore.Resilience.RateLimitingRuntimeSurface),
+            typeof(global::Cephalon.AspNetCore.Transports.TransportRuntimeSurface),
             typeof(global::Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface),
             typeof(global::Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface),
             typeof(global::Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions),

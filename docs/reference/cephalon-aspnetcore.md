@@ -5,14 +5,147 @@ Generated from XML comments and the public API surface of the compiled assembly.
 [Back to reference index](README.md) | [Namespace index](namespaces.md) | [Type index](types.md) | [Member index](members.md) | [Browser view](browse.html?assembly=Cephalon.AspNetCore)
 ## Namespaces
 
+- `Cephalon.AspNetCore.Audit`
+- `Cephalon.AspNetCore.Authorization`
 - `Cephalon.AspNetCore.Diagnostics`
 - `Cephalon.AspNetCore.Documentation`
 - `Cephalon.AspNetCore.Hosting`
+- `Cephalon.AspNetCore.Localization`
 - `Cephalon.AspNetCore.Modules`
+- `Cephalon.AspNetCore.Resilience`
 - `Cephalon.AspNetCore.Transformers`
+- `Cephalon.AspNetCore.Transports`
 - `Cephalon.AspNetCore.Transports.Rest`
 - `Cephalon.AspNetCore.Transports.ServerSentEvents`
 - `Cephalon.AspNetCore.Transports.WebSockets`
+
+<a id="namespace-cephalon-aspnetcore-audit"></a>
+
+## Namespace Cephalon.AspNetCore.Audit
+
+<a id="type-cephalon-aspnetcore-audit-auditstoreruntimesurface"></a>
+
+### `AuditStoreRuntimeSurface`
+
+Describes the operator-facing audit-store runtime surface exposed by a Cephalon ASP.NET Core host.
+
+#### Declaration
+```csharp
+public sealed class AuditStoreRuntimeSurface
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-audit-auditstoreruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-audit-auditstoredescriptor-system-datetimeoffset-system-int32"></a>
+
+##### `AuditStoreRuntimeSurface`
+
+```csharp
+AuditStoreRuntimeSurface(IReadOnlyList<AuditStoreDescriptor> AuditStores, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)
+```
+
+Describes the operator-facing audit-store runtime surface exposed by a Cephalon ASP.NET Core host.
+
+Parameters:
+- `AuditStores`: The active audit stores visible to the current runtime.
+- `EvaluatedAtUtc`: The UTC timestamp when the audit-store payload was evaluated.
+- `EvaluationDurationMilliseconds`: The time in milliseconds spent resolving the audit-store payload.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-audit-auditstoreruntimesurface-auditstores"></a>
+
+##### `AuditStores`
+
+```csharp
+IReadOnlyList<AuditStoreDescriptor> AuditStores { get; set; }
+```
+
+The active audit stores visible to the current runtime.
+
+<a id="member-p-cephalon-aspnetcore-audit-auditstoreruntimesurface-evaluatedatutc"></a>
+
+##### `EvaluatedAtUtc`
+
+```csharp
+DateTimeOffset EvaluatedAtUtc { get; set; }
+```
+
+The UTC timestamp when the audit-store payload was evaluated.
+
+<a id="member-p-cephalon-aspnetcore-audit-auditstoreruntimesurface-evaluationdurationmilliseconds"></a>
+
+##### `EvaluationDurationMilliseconds`
+
+```csharp
+int EvaluationDurationMilliseconds { get; set; }
+```
+
+The time in milliseconds spent resolving the audit-store payload.
+
+<a id="namespace-cephalon-aspnetcore-authorization"></a>
+
+## Namespace Cephalon.AspNetCore.Authorization
+
+<a id="type-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface"></a>
+
+### `AuthorizationPolicyRuntimeSurface`
+
+Describes the operator-facing authorization policy runtime surface exposed by a Cephalon ASP.NET Core host.
+
+#### Declaration
+```csharp
+public sealed class AuthorizationPolicyRuntimeSurface
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-authorization-authorizationpolicydescriptor-system-datetimeoffset-system-int32"></a>
+
+##### `AuthorizationPolicyRuntimeSurface`
+
+```csharp
+AuthorizationPolicyRuntimeSurface(IReadOnlyList<AuthorizationPolicyDescriptor> Policies, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)
+```
+
+Describes the operator-facing authorization policy runtime surface exposed by a Cephalon ASP.NET Core host.
+
+Parameters:
+- `Policies`: The active authorization policies visible to the current runtime.
+- `EvaluatedAtUtc`: The UTC timestamp when the authorization policy payload was evaluated.
+- `EvaluationDurationMilliseconds`: The time in milliseconds spent resolving the authorization policy payload.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface-evaluatedatutc"></a>
+
+##### `EvaluatedAtUtc`
+
+```csharp
+DateTimeOffset EvaluatedAtUtc { get; set; }
+```
+
+The UTC timestamp when the authorization policy payload was evaluated.
+
+<a id="member-p-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface-evaluationdurationmilliseconds"></a>
+
+##### `EvaluationDurationMilliseconds`
+
+```csharp
+int EvaluationDurationMilliseconds { get; set; }
+```
+
+The time in milliseconds spent resolving the authorization policy payload.
+
+<a id="member-p-cephalon-aspnetcore-authorization-authorizationpolicyruntimesurface-policies"></a>
+
+##### `Policies`
+
+```csharp
+IReadOnlyList<AuthorizationPolicyDescriptor> Policies { get; set; }
+```
+
+The active authorization policies visible to the current runtime.
 
 <a id="namespace-cephalon-aspnetcore-diagnostics"></a>
 
@@ -144,6 +277,16 @@ IReadOnlyList<string> Counters { get; set; }
 
 The built-in counter names exposed by the engine.
 
+<a id="member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-generatedatutc"></a>
+
+##### `GeneratedAtUtc`
+
+```csharp
+DateTimeOffset GeneratedAtUtc { get; set; }
+```
+
+Gets the UTC time at which the diagnostics payload was generated.
+
 <a id="member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-liveness"></a>
 
 ##### `Liveness`
@@ -153,6 +296,16 @@ RuntimeHealthReport Liveness { get; set; }
 ```
 
 The current liveness report.
+
+<a id="member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-livenessevaluationdurationmilliseconds"></a>
+
+##### `LivenessEvaluationDurationMilliseconds`
+
+```csharp
+int LivenessEvaluationDurationMilliseconds { get; set; }
+```
+
+Gets the liveness evaluation duration in milliseconds.
 
 <a id="member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-livenesspath"></a>
 
@@ -183,6 +336,16 @@ RuntimeHealthReport Readiness { get; set; }
 ```
 
 The current readiness report.
+
+<a id="member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-readinessevaluationdurationmilliseconds"></a>
+
+##### `ReadinessEvaluationDurationMilliseconds`
+
+```csharp
+int ReadinessEvaluationDurationMilliseconds { get; set; }
+```
+
+Gets the readiness evaluation duration in milliseconds.
 
 <a id="member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-readinesspath"></a>
 
@@ -451,6 +614,66 @@ Parameters:
 - `configuration`: The application configuration root.
 - `sectionPath`: The section path that contains the hosting settings.
 - `contentRootPath`: The application content root used to normalize relative documentation paths.
+
+<a id="type-cephalon-aspnetcore-documentation-referencedocsruntimesurface"></a>
+
+### `ReferenceDocsRuntimeSurface`
+
+Describes the operator-facing runtime projection for hosted Cephalon reference documentation.
+
+#### Declaration
+```csharp
+public sealed class ReferenceDocsRuntimeSurface
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-documentation-referencedocsruntimesurface-ctor-cephalon-aspnetcore-documentation-referencedocssurface-system-datetimeoffset-system-int32"></a>
+
+##### `ReferenceDocsRuntimeSurface`
+
+```csharp
+ReferenceDocsRuntimeSurface(ReferenceDocsSurface Surface, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)
+```
+
+Describes the operator-facing runtime projection for hosted Cephalon reference documentation.
+
+Parameters:
+- `Surface`: The current reference-doc hosting surface configuration and availability.
+- `EvaluatedAtUtc`: The UTC timestamp when the runtime payload was evaluated.
+- `EvaluationDurationMilliseconds`: The time in milliseconds spent evaluating the runtime payload.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-documentation-referencedocsruntimesurface-evaluatedatutc"></a>
+
+##### `EvaluatedAtUtc`
+
+```csharp
+DateTimeOffset EvaluatedAtUtc { get; set; }
+```
+
+The UTC timestamp when the runtime payload was evaluated.
+
+<a id="member-p-cephalon-aspnetcore-documentation-referencedocsruntimesurface-evaluationdurationmilliseconds"></a>
+
+##### `EvaluationDurationMilliseconds`
+
+```csharp
+int EvaluationDurationMilliseconds { get; set; }
+```
+
+The time in milliseconds spent evaluating the runtime payload.
+
+<a id="member-p-cephalon-aspnetcore-documentation-referencedocsruntimesurface-surface"></a>
+
+##### `Surface`
+
+```csharp
+ReferenceDocsSurface Surface { get; set; }
+```
+
+The current reference-doc hosting surface configuration and availability.
 
 <a id="type-cephalon-aspnetcore-documentation-referencedocssurface"></a>
 
@@ -929,6 +1152,106 @@ Parameters:
 - `transportId`: The transport identifier used by the endpoint.
 - `behaviorId`: The optional behavior identifier when the endpoint maps a single behavior.
 
+<a id="type-cephalon-aspnetcore-hosting-cephalonratelimitingtransportmetadata"></a>
+
+### `CephalonRateLimitingTransportMetadata`
+
+Carries the Cephalon transport identifier onto an endpoint so the shared rate-limiting rejection writer can emit a transport-native envelope when the configured ASP.NET Core endpoint limiter rejects a request.
+
+Remarks: This metadata is attached automatically by `ApplyCephalonRateLimiting<T>` so transport mappers do not need to wire it manually.
+
+#### Declaration
+```csharp
+public sealed class CephalonRateLimitingTransportMetadata
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-hosting-cephalonratelimitingtransportmetadata-ctor-system-string"></a>
+
+##### `CephalonRateLimitingTransportMetadata`
+
+```csharp
+CephalonRateLimitingTransportMetadata(string transportId)
+```
+
+Initializes a new `CephalonRateLimitingTransportMetadata`.
+
+Parameters:
+- `transportId`: The Cephalon transport identifier (for example `rest-api`, `json-rpc`, `grpc`, `http.jsonrpc`).
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-hosting-cephalonratelimitingtransportmetadata-transportid"></a>
+
+##### `TransportId`
+
+```csharp
+string TransportId { get; }
+```
+
+Gets the Cephalon transport identifier the rejected request belongs to.
+
+<a id="type-cephalon-aspnetcore-hosting-dataproductruntimesurface"></a>
+
+### `DataProductRuntimeSurface`
+
+Describes the operator-facing runtime projection for data product descriptors.
+
+#### Declaration
+```csharp
+public sealed class DataProductRuntimeSurface
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-hosting-dataproductruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-data-dataproductdescriptor-system-datetimeoffset-system-int32"></a>
+
+##### `DataProductRuntimeSurface`
+
+```csharp
+DataProductRuntimeSurface(IReadOnlyList<DataProductDescriptor> DataProducts, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)
+```
+
+Describes the operator-facing runtime projection for data product descriptors.
+
+Parameters:
+- `DataProducts`: The active data product descriptors visible to the current runtime.
+- `EvaluatedAtUtc`: The UTC timestamp when the runtime payload was evaluated.
+- `EvaluationDurationMilliseconds`: The time in milliseconds spent evaluating the runtime payload.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-hosting-dataproductruntimesurface-dataproducts"></a>
+
+##### `DataProducts`
+
+```csharp
+IReadOnlyList<DataProductDescriptor> DataProducts { get; set; }
+```
+
+The active data product descriptors visible to the current runtime.
+
+<a id="member-p-cephalon-aspnetcore-hosting-dataproductruntimesurface-evaluatedatutc"></a>
+
+##### `EvaluatedAtUtc`
+
+```csharp
+DateTimeOffset EvaluatedAtUtc { get; set; }
+```
+
+The UTC timestamp when the runtime payload was evaluated.
+
+<a id="member-p-cephalon-aspnetcore-hosting-dataproductruntimesurface-evaluationdurationmilliseconds"></a>
+
+##### `EvaluationDurationMilliseconds`
+
+```csharp
+int EvaluationDurationMilliseconds { get; set; }
+```
+
+The time in milliseconds spent evaluating the runtime payload.
+
 <a id="type-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions"></a>
 
 ### `EngineWebApplicationBuilderExtensions`
@@ -1324,6 +1647,66 @@ Parameters:
 - `configuration`: The application configuration root.
 - `sectionPath`: The configuration section path that contains the engine settings. The default is `Engine`.
 
+<a id="type-cephalon-aspnetcore-hosting-inboxruntimesurface"></a>
+
+### `InboxRuntimeSurface`
+
+Describes the operator-facing runtime projection for inbox descriptors.
+
+#### Declaration
+```csharp
+public sealed class InboxRuntimeSurface
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-hosting-inboxruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-data-inboxdescriptor-system-datetimeoffset-system-int32"></a>
+
+##### `InboxRuntimeSurface`
+
+```csharp
+InboxRuntimeSurface(IReadOnlyList<InboxDescriptor> Inboxes, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)
+```
+
+Describes the operator-facing runtime projection for inbox descriptors.
+
+Parameters:
+- `Inboxes`: The active inbox descriptors visible to the current runtime.
+- `EvaluatedAtUtc`: The UTC timestamp when the runtime payload was evaluated.
+- `EvaluationDurationMilliseconds`: The time in milliseconds spent evaluating the runtime payload.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-hosting-inboxruntimesurface-evaluatedatutc"></a>
+
+##### `EvaluatedAtUtc`
+
+```csharp
+DateTimeOffset EvaluatedAtUtc { get; set; }
+```
+
+The UTC timestamp when the runtime payload was evaluated.
+
+<a id="member-p-cephalon-aspnetcore-hosting-inboxruntimesurface-evaluationdurationmilliseconds"></a>
+
+##### `EvaluationDurationMilliseconds`
+
+```csharp
+int EvaluationDurationMilliseconds { get; set; }
+```
+
+The time in milliseconds spent evaluating the runtime payload.
+
+<a id="member-p-cephalon-aspnetcore-hosting-inboxruntimesurface-inboxes"></a>
+
+##### `Inboxes`
+
+```csharp
+IReadOnlyList<InboxDescriptor> Inboxes { get; set; }
+```
+
+The active inbox descriptors visible to the current runtime.
+
 <a id="type-cephalon-aspnetcore-hosting-itransportroutemapper"></a>
 
 ### `ITransportRouteMapper`
@@ -1437,6 +1820,66 @@ string QueryText { get; set; }
 ```
 
 Gets or initializes the query text.
+
+<a id="type-cephalon-aspnetcore-hosting-outboxruntimesurface"></a>
+
+### `OutboxRuntimeSurface`
+
+Describes the operator-facing runtime projection for outbox descriptors.
+
+#### Declaration
+```csharp
+public sealed class OutboxRuntimeSurface
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-hosting-outboxruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-data-outboxdescriptor-system-datetimeoffset-system-int32"></a>
+
+##### `OutboxRuntimeSurface`
+
+```csharp
+OutboxRuntimeSurface(IReadOnlyList<OutboxDescriptor> Outboxes, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)
+```
+
+Describes the operator-facing runtime projection for outbox descriptors.
+
+Parameters:
+- `Outboxes`: The active outbox descriptors visible to the current runtime.
+- `EvaluatedAtUtc`: The UTC timestamp when the runtime payload was evaluated.
+- `EvaluationDurationMilliseconds`: The time in milliseconds spent evaluating the runtime payload.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-hosting-outboxruntimesurface-evaluatedatutc"></a>
+
+##### `EvaluatedAtUtc`
+
+```csharp
+DateTimeOffset EvaluatedAtUtc { get; set; }
+```
+
+The UTC timestamp when the runtime payload was evaluated.
+
+<a id="member-p-cephalon-aspnetcore-hosting-outboxruntimesurface-evaluationdurationmilliseconds"></a>
+
+##### `EvaluationDurationMilliseconds`
+
+```csharp
+int EvaluationDurationMilliseconds { get; set; }
+```
+
+The time in milliseconds spent evaluating the runtime payload.
+
+<a id="member-p-cephalon-aspnetcore-hosting-outboxruntimesurface-outboxes"></a>
+
+##### `Outboxes`
+
+```csharp
+IReadOnlyList<OutboxDescriptor> Outboxes { get; set; }
+```
+
+The active outbox descriptors visible to the current runtime.
 
 <a id="type-cephalon-aspnetcore-hosting-restapigovernanceoptions"></a>
 
@@ -2207,6 +2650,81 @@ IReadOnlyList<RestEndpointBindingDescriptor> TargetBindings { get; }
 
 Gets the original shorthand explicit binding descriptors targeted by this suppression rule before override actions are applied.
 
+<a id="namespace-cephalon-aspnetcore-localization"></a>
+
+## Namespace Cephalon.AspNetCore.Localization
+
+<a id="type-cephalon-aspnetcore-localization-localizedresourcesruntimesurface"></a>
+
+### `LocalizedResourcesRuntimeSurface`
+
+Describes the operator-facing runtime projection for localization snapshot requests.
+
+#### Declaration
+```csharp
+public sealed class LocalizedResourcesRuntimeSurface
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-ctor-cephalon-abstractions-localization-localizedresourcessnapshot-system-string-system-datetimeoffset-system-int32"></a>
+
+##### `LocalizedResourcesRuntimeSurface`
+
+```csharp
+LocalizedResourcesRuntimeSurface(LocalizedResourcesSnapshot Snapshot, string RequestedCulture, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)
+```
+
+Describes the operator-facing runtime projection for localization snapshot requests.
+
+Parameters:
+- `Snapshot`: The resolved localization snapshot payload.
+- `RequestedCulture`: The optional culture requested by the operator.
+- `EvaluatedAtUtc`: The UTC timestamp when the runtime payload was evaluated.
+- `EvaluationDurationMilliseconds`: The time in milliseconds spent evaluating the runtime payload.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-evaluatedatutc"></a>
+
+##### `EvaluatedAtUtc`
+
+```csharp
+DateTimeOffset EvaluatedAtUtc { get; set; }
+```
+
+The UTC timestamp when the runtime payload was evaluated.
+
+<a id="member-p-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-evaluationdurationmilliseconds"></a>
+
+##### `EvaluationDurationMilliseconds`
+
+```csharp
+int EvaluationDurationMilliseconds { get; set; }
+```
+
+The time in milliseconds spent evaluating the runtime payload.
+
+<a id="member-p-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-requestedculture"></a>
+
+##### `RequestedCulture`
+
+```csharp
+string RequestedCulture { get; set; }
+```
+
+The optional culture requested by the operator.
+
+<a id="member-p-cephalon-aspnetcore-localization-localizedresourcesruntimesurface-snapshot"></a>
+
+##### `Snapshot`
+
+```csharp
+LocalizedResourcesSnapshot Snapshot { get; set; }
+```
+
+The resolved localization snapshot payload.
+
 <a id="namespace-cephalon-aspnetcore-modules"></a>
 
 ## Namespace Cephalon.AspNetCore.Modules
@@ -2238,6 +2756,70 @@ Maps the module's REST endpoints onto the supplied endpoint route builder.
 
 Parameters:
 - `endpoints`: The endpoint route builder that receives the module routes.
+
+<a id="namespace-cephalon-aspnetcore-resilience"></a>
+
+## Namespace Cephalon.AspNetCore.Resilience
+
+<a id="type-cephalon-aspnetcore-resilience-ratelimitingruntimesurface"></a>
+
+### `RateLimitingRuntimeSurface`
+
+Describes the operator-facing runtime projection for rate-limiting policies.
+
+#### Declaration
+```csharp
+public sealed class RateLimitingRuntimeSurface
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-resilience-ratelimitingruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-system-datetimeoffset-system-int32"></a>
+
+##### `RateLimitingRuntimeSurface`
+
+```csharp
+RateLimitingRuntimeSurface(IReadOnlyList<RateLimitingRuntimeDescriptor> Policies, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)
+```
+
+Describes the operator-facing runtime projection for rate-limiting policies.
+
+Parameters:
+- `Policies`: The active rate-limiting policies visible to the current runtime.
+- `EvaluatedAtUtc`: The UTC timestamp when the runtime payload was evaluated.
+- `EvaluationDurationMilliseconds`: The time in milliseconds spent evaluating the runtime payload.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-resilience-ratelimitingruntimesurface-evaluatedatutc"></a>
+
+##### `EvaluatedAtUtc`
+
+```csharp
+DateTimeOffset EvaluatedAtUtc { get; set; }
+```
+
+The UTC timestamp when the runtime payload was evaluated.
+
+<a id="member-p-cephalon-aspnetcore-resilience-ratelimitingruntimesurface-evaluationdurationmilliseconds"></a>
+
+##### `EvaluationDurationMilliseconds`
+
+```csharp
+int EvaluationDurationMilliseconds { get; set; }
+```
+
+The time in milliseconds spent evaluating the runtime payload.
+
+<a id="member-p-cephalon-aspnetcore-resilience-ratelimitingruntimesurface-policies"></a>
+
+##### `Policies`
+
+```csharp
+IReadOnlyList<RateLimitingRuntimeDescriptor> Policies { get; set; }
+```
+
+The active rate-limiting policies visible to the current runtime.
 
 <a id="namespace-cephalon-aspnetcore-transformers"></a>
 
@@ -2291,6 +2873,70 @@ Parameters:
 - `document`: The OpenAPI document being transformed.
 - `context`: The transformation context for the current document generation.
 - `cancellationToken`: A token that can cancel document transformation.
+
+<a id="namespace-cephalon-aspnetcore-transports"></a>
+
+## Namespace Cephalon.AspNetCore.Transports
+
+<a id="type-cephalon-aspnetcore-transports-transportruntimesurface"></a>
+
+### `TransportRuntimeSurface`
+
+Describes the operator-facing runtime projection for active transport selections.
+
+#### Declaration
+```csharp
+public sealed class TransportRuntimeSurface
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-transports-transportruntimesurface-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-transportdescriptor-system-datetimeoffset-system-int32"></a>
+
+##### `TransportRuntimeSurface`
+
+```csharp
+TransportRuntimeSurface(IReadOnlyList<TransportDescriptor> Transports, DateTimeOffset EvaluatedAtUtc, int EvaluationDurationMilliseconds)
+```
+
+Describes the operator-facing runtime projection for active transport selections.
+
+Parameters:
+- `Transports`: The active transport descriptors visible to the current runtime.
+- `EvaluatedAtUtc`: The UTC timestamp when the runtime payload was evaluated.
+- `EvaluationDurationMilliseconds`: The time in milliseconds spent evaluating the runtime payload.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-transports-transportruntimesurface-evaluatedatutc"></a>
+
+##### `EvaluatedAtUtc`
+
+```csharp
+DateTimeOffset EvaluatedAtUtc { get; set; }
+```
+
+The UTC timestamp when the runtime payload was evaluated.
+
+<a id="member-p-cephalon-aspnetcore-transports-transportruntimesurface-evaluationdurationmilliseconds"></a>
+
+##### `EvaluationDurationMilliseconds`
+
+```csharp
+int EvaluationDurationMilliseconds { get; set; }
+```
+
+The time in milliseconds spent evaluating the runtime payload.
+
+<a id="member-p-cephalon-aspnetcore-transports-transportruntimesurface-transports"></a>
+
+##### `Transports`
+
+```csharp
+IReadOnlyList<TransportDescriptor> Transports { get; set; }
+```
+
+The active transport descriptors visible to the current runtime.
 
 <a id="namespace-cephalon-aspnetcore-transports-rest"></a>
 

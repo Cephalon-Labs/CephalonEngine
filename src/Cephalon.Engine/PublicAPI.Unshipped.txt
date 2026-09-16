@@ -35,3 +35,11 @@ Cephalon.Engine.Runtime.RuntimeOperatorCondition.RuntimeOperatorCondition(string
 Cephalon.Engine.Runtime.RuntimeOperatorCondition.Severity.get -> string!
 Cephalon.Engine.Runtime.RuntimeOperatorCondition.Status.get -> string!
 Cephalon.Engine.Runtime.RuntimeOperatorCondition.Type.get -> string!
+Cephalon.Engine.Trust.CapabilityPolicyDecision.EvaluatedAtUtc.get -> System.DateTimeOffset
+Cephalon.Engine.Trust.CapabilityPolicyDecision.EvaluatedAtUtc.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision.VerificationDurationMilliseconds.get -> int
+Cephalon.Engine.Trust.PackageTrustDecision.VerificationDurationMilliseconds.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision.VerifiedAtUtc.get -> System.DateTimeOffset
+Cephalon.Engine.Trust.PackageTrustDecision.VerifiedAtUtc.init -> void
+Cephalon.Engine.Trust.TrustSnapshot.EvaluatedAtUtc.get -> System.DateTimeOffset
+Cephalon.Engine.Trust.TrustSnapshot.EvaluatedAtUtc.init -> void

@@ -167,3 +167,7 @@ Use this checklist whenever compatibility-sensitive behavior changes:
 6. If framework-readiness or future-SDK behavior changed, did you update `scripts/deployment-mode-support.json`, `scripts/validate-dotnet-readiness.ps1`, the release-validation workflow, `docs/deployment-mode-support.md`, `docs/dotnet11-readiness.md`, `docs/project-memory.md`, and planning docs together?
 7. If trim, Native AOT, single-file, package-scoped deployment-mode support, or publish-probe gate posture changed, did you add explicit validation and update the deployment-mode support manifest plus package-publishing/support docs instead of relying on analyzer output, local publish experiments, or hidden release-script behavior?
 8. If a technology pack moved into a managed proof, did you update component docs, operations docs, package-surface allow lists, generated reference docs, and planning truth in the same slice?
+
+## September 2026 history consolidation
+
+ENG-717 preserves published positional constructor and `Deconstruct` signatures on trust and diagnostics records by adding observation metadata as init properties. New catalog response records are additive public APIs and have source-generated JSON registrations. Existing provider maturity, the `net10.0` target, and deployment-mode claims remain unchanged. [Consolidation evidence](branch-consolidation-2026-09-15.md) records the build SDK and validation.
