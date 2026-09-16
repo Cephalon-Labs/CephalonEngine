@@ -19,6 +19,8 @@ September 16 compatibility acceptance: ENG-744/742/731 are done at 16/24/44 h, w
 
 September 17 SRE continuation: release CI on `12f436ae` failed one Windows resilience timeout assertion while Linux shipping, SDK 11, host and contract lanes passed. ENG-729 is active in Sprint 16 with native children ENG-745 (8 h, deterministic tests and Showcase OTLP isolation) and ENG-746 (24 h, remaining workload/SLO/telemetry proofs). Parent 32 h is non-additive; total implementation stays 548 h and unfinished leaf scope is 18 tasks / 464 h plus ENG-532 1 h. Earlier compatibility receipts remain checkpoint-specific. [Evidence](sre-validation-2026-09.md), [monthly follow-ups](architecture-review-2026-09-followups.md).
 
+September 17 MongoDB follow-up: ENG-747 adds 4 h for bootstrap diagnostic loss exposed by Windows CI on `c28edb3c`; timeout/OTLP repair passed composition but full CI acceptance remains open. ENG-729 is 36 h (8/24/4), September scope 552 h, unfinished 468 h plus ENG-532 1 h = 469 h. Earlier same-day checkpoints preserve history. [SRE evidence](sre-validation-2026-09.md).
+
 ## Identity
 
 Cephalon is not being positioned as a single application shell.
@@ -48,7 +50,7 @@ The repository is aiming at a modular .NET engine/framework foundation that is g
 
 - [Completion plan](framework-completion-plan.md), [research register](framework-research-2026-09.md) and [September review](architecture-review-2026-09.md) are the current all-level planning frame; earlier dated research below is historical where superseded.
 - Keep 107 package maturity declarations unchanged until evidence supports a reviewed change. M0/M1 are legitimate roles; M4 is not GA.
-- ENG-714/715 retain their IDs and become 96 h / 120 h parent rollups; the original ENG-719–738 scope was 536 h and the revised implementation rollup is 548 h, plus ENG-532's separate 1 h. ENG-718 is the planning delivery only.
+- ENG-714/715 retain their IDs and become 96 h / 120 h parent rollups; the original ENG-719–738 scope was 536 h and the revised implementation rollup is 552 h, plus ENG-532's separate 1 h. ENG-718 is the planning delivery only.
 - No capacity-backed dates exist for Phases 14–16; future work remains Later / not scheduled yet. Do not infer dates from the legacy Project iteration calendar.
 - Official September 16 source refresh shows .NET 11 RC1 and .NET 10.0.12. ENG-739 installs SDK 10.0.401 for validation and updates the repository pin and ILLink locks; net10.0 remains the shipping floor. ENG-731/742/744 completed the declared compatibility matrix; untested release/provider/RID claims remain excluded.
 

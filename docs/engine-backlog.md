@@ -568,7 +568,7 @@ Issue link: [#1422](https://github.com/Cephalon-Labs/CephalonEngine/issues/1422)
 
 Status: in-progress
 
-Estimate: 32
+Estimate: 36
 
 Phase: 15
 
@@ -592,13 +592,15 @@ Maturity and ownership: Cross-cutting evidence for M2/M3 and selective M4; Cepha
 
 Quality dimensions: Performance + Availability + Scalability + Reliability + Auditability.
 
-Estimate basis: engineering hours including review, tests and docs; initial range 24–48 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+Estimate basis: engineering hours including review, tests and docs; revised range 27–54 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
 
 Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
 
-Measured follow-up: [Windows release CI on `c4f8d288`](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35095044308) passed 41 benchmark guardrails but recorded full validation wall time 1,881,965.5918 ms against the existing 1,800,000 ms target (`investigate`). Reproduce and explain the runner/workload timing before renewing that SLO; do not infer SLO compliance from a passing compatibility gate. This baseline investigation belongs to the existing 32 h scope; no estimate or maturity promotion. [Evidence](host-compatibility-2026-09.md).
+Measured follow-up: [Windows release CI on `c4f8d288`](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35095044308) passed 41 benchmark guardrails but recorded full validation wall time 1,881,965.5918 ms against the existing 1,800,000 ms target (`investigate`). Reproduce and explain the runner/workload timing before renewing that SLO; do not infer SLO compliance from a passing compatibility gate. This baseline investigation belongs to the original 32 h scope; no estimate or maturity promotion. [Evidence](host-compatibility-2026-09.md).
 
-Breakdown: ENG-745 (8 h, active in Sprint 16) repairs deterministic validation and collector isolation; ENG-746 (24 h, unscheduled) retains broader load/SLO/telemetry acceptance. Parent 32 h is unchanged and non-additive. The post-closeout release run on `12f436ae` failed one Windows timeout assertion; prior passed compatibility checkpoints remain historical evidence, not current green-release claims.
+Breakdown: ENG-745 (8 h, active in Sprint 16) repairs deterministic validation and collector isolation; ENG-746 (24 h, unscheduled) retains broader load/SLO/telemetry acceptance. The initial 32 h decomposition is historical; ENG-747 adds 4 h of observed MongoDB bootstrap diagnostic work, raising the parent to 36 h (8 + 24 + 4), non-additive. The post-closeout release run on `12f436ae` failed one Windows timeout assertion; prior passed compatibility checkpoints remain historical evidence, not current green-release claims.
+Latest CI: `c28edb3c` passes all 885 Windows composition tests but fails MongoDB CDC fixture startup before the test body (819/820 hosting passed). ENG-747 repairs lost deadline diagnostics; the slow-start cause is not yet established. ENG-745 remains open pending complete CI acceptance.
+
 
 ### ENG-745 Stabilize resilience timeout and isolate integration telemetry
 
@@ -622,7 +624,7 @@ Test: Running
 
 Benchmark: Needed
 
-Parent: ENG-729 / #1422. Included in its unchanged 32 h non-additive rollup.
+Parent: ENG-729 / #1422. Included in its revised 36 h non-additive rollup.
 
 Scope: Replace timeout-versus-delay races with explicitly controlled timeout evidence; isolate showcase HTTP integration tests from an absent OTLP collector while retaining separate exporter integration proof. Measure focused and full suites and preserve all release gates.
 
@@ -658,7 +660,7 @@ Test: Needed
 
 Benchmark: Needed
 
-Parent: ENG-729 / #1422. Included in its unchanged 32 h non-additive rollup.
+Parent: ENG-729 / #1422. Included in its revised 36 h non-additive rollup.
 
 Scope: Complete the remaining ENG-729 declared workload/hardware p95/p99, throughput/allocation/startup/recovery objectives, load/fault/backpressure/exhaustion/cancellation evidence, dashboards, telemetry cardinality/redaction/cost and CI flake-rate assessment. Renew full-release wall-time evidence after ENG-745 without widening historical baselines from one run.
 
@@ -672,6 +674,40 @@ Estimate basis: engineering hours including review, validation, docs and trackin
 
 Evidence: [September SRE follow-up](sre-validation-2026-09.md).
 
+
+### ENG-747 Preserve MongoDB bootstrap deadline diagnostics and cancellation semantics
+
+GitHub issue: #1440
+
+Issue link: [#1440](https://github.com/Cephalon-Labs/CephalonEngine/issues/1440)
+
+Status: in-progress
+
+Estimate: 4
+
+Phase: 15
+
+Iteration: Sprint 16
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Running
+
+Benchmark: N/A
+
+Parent: ENG-729 / #1422. New observed fixture work increases its non-additive rollup from 32 h to 36 h; ENG-745/746 remain 8/24 h.
+
+Scope: Preserve process output and the last driver failure when a MongoDB fixture readiness deadline expires during a command or retry delay. Keep caller cancellation distinct, reject pre-canceled startup before launching a process, and retain the existing 20-second deadlines and real MongoDB CDC assertions.
+
+Acceptance: Deterministic deadline/caller-cancellation/early-cancellation/success/failure regressions pass, along with real MongoDB CDC tests. Full Windows/Linux CI must retain any remaining bootstrap failure; diagnostic repair alone is not proof of the original slow-start cause or a stable SLO.
+
+Quality dimensions: Reliability + Testability + Auditability.
+
+Estimate basis: 4 engineering hours for the newly observed diagnostic loss, implementation, regressions and evidence; excludes external waiting. No production runtime or maturity change.
+
+Evidence: [September SRE follow-up](sre-validation-2026-09.md).
 
 ### ENG-730 Data evolution disaster recovery and privacy proofs
 

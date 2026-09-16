@@ -40,6 +40,7 @@ public sealed class MongoDbReplicaSetRunner : IAsyncDisposable, IDisposable
     /// <returns>The started runner.</returns>
     public static async Task<MongoDbReplicaSetRunner> StartAsync(CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var binaryPath = ResolveMongoBinaryPath();
         var port = ReserveTcpPort();
         var dataDirectory = Path.Combine(Path.GetTempPath(), "cephalon-tests-mongodb", Guid.NewGuid().ToString("N"));
@@ -207,33 +208,30 @@ public sealed class MongoDbReplicaSetRunner : IAsyncDisposable, IDisposable
     private async Task WaitForServerAsync(CancellationToken cancellationToken)
     {
         var database = CreateDirectDatabase();
-        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeout.CancelAfter(TimeSpan.FromSeconds(20));
-
-        while (!timeout.IsCancellationRequested)
+        Exception? lastFailure = null;
+        await RunBootstrapPhaseAsync(async token =>
         {
-            ThrowIfProcessExited();
-
-            try
+            while (true)
             {
-                await database.RunCommandAsync<BsonDocument>(
-                    new BsonDocument("ping", 1),
-                    cancellationToken: timeout.Token).ConfigureAwait(false);
-                return;
-            }
-            catch (MongoConnectionException)
-            {
-                // The server is still starting.
-            }
-            catch (TimeoutException)
-            {
-                // Retry until the outer timeout expires.
-            }
+                token.ThrowIfCancellationRequested();
+                ThrowIfProcessExited();
+                try
+                {
+                    await database.RunCommandAsync<BsonDocument>(
+                        new BsonDocument("ping", 1), cancellationToken: token).ConfigureAwait(false);
+                    return;
+                }
+                catch (Exception exception) when (exception is MongoConnectionException or TimeoutException)
+                {
+                    lastFailure = exception;
+                }
 
-            await Task.Delay(200, timeout.Token).ConfigureAwait(false);
-        }
-
-        throw CreateBootstrapException("Timed out while waiting for the MongoDB test server to accept connections.");
+                await Task.Delay(200, token).ConfigureAwait(false);
+            }
+        }, TimeSpan.FromSeconds(20),
+            exception => CreateBootstrapException(
+                "Timed out while waiting for the MongoDB test server to accept connections.",
+                lastFailure ?? exception), cancellationToken).ConfigureAwait(false);
     }
 
     private async Task InitializeReplicaSetAsync(int port, CancellationToken cancellationToken)
@@ -263,38 +261,57 @@ public sealed class MongoDbReplicaSetRunner : IAsyncDisposable, IDisposable
             // The server is already configured for replica-set mode.
         }
 
-        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeout.CancelAfter(TimeSpan.FromSeconds(20));
-
-        while (!timeout.IsCancellationRequested)
+        Exception? lastFailure = null;
+        await RunBootstrapPhaseAsync(async token =>
         {
-            ThrowIfProcessExited();
-
-            try
+            while (true)
             {
-                var hello = await database.RunCommandAsync<BsonDocument>(
-                    new BsonDocument("hello", 1),
-                    cancellationToken: timeout.Token).ConfigureAwait(false);
-
-                if ((hello.TryGetValue("isWritablePrimary", out var writablePrimary) && writablePrimary.ToBoolean())
-                    || (hello.TryGetValue("ismaster", out var isMaster) && isMaster.ToBoolean()))
+                token.ThrowIfCancellationRequested();
+                ThrowIfProcessExited();
+                try
                 {
-                    return;
+                    var hello = await database.RunCommandAsync<BsonDocument>(
+                        new BsonDocument("hello", 1), cancellationToken: token).ConfigureAwait(false);
+
+                    if ((hello.TryGetValue("isWritablePrimary", out var writablePrimary) && writablePrimary.ToBoolean())
+                        || (hello.TryGetValue("ismaster", out var isMaster) && isMaster.ToBoolean()))
+                    {
+                        return;
+                    }
                 }
-            }
-            catch (MongoCommandException)
-            {
-                // The replica set may still be electing a primary.
-            }
-            catch (TimeoutException)
-            {
-                // Retry until the outer timeout expires.
-            }
+                catch (Exception exception) when (exception is MongoCommandException or TimeoutException)
+                {
+                    lastFailure = exception;
+                }
 
-            await Task.Delay(200, timeout.Token).ConfigureAwait(false);
+                await Task.Delay(200, token).ConfigureAwait(false);
+            }
+        }, TimeSpan.FromSeconds(20),
+            exception => CreateBootstrapException(
+                "Timed out while waiting for the MongoDB replica set primary election.",
+                lastFailure ?? exception), cancellationToken).ConfigureAwait(false);
+    }
+
+    internal static async Task RunBootstrapPhaseAsync(
+        Func<CancellationToken, Task> operation,
+        TimeSpan timeout,
+        Func<OperationCanceledException, Exception> createTimeoutException,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        deadline.CancelAfter(timeout);
+        try
+        {
+            await operation(deadline.Token).ConfigureAwait(false);
         }
-
-        throw CreateBootstrapException("Timed out while waiting for the MongoDB replica set primary election.");
+        catch (OperationCanceledException exception)
+            when (deadline.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
+        {
+            // Both driver commands and the retry delay can expire the deadline. Preserve
+            // process/driver diagnostics in either case, while caller cancellation stays cancellation.
+            throw createTimeoutException(exception);
+        }
     }
 
     private IMongoDatabase CreateDirectDatabase()
@@ -316,7 +333,7 @@ public sealed class MongoDbReplicaSetRunner : IAsyncDisposable, IDisposable
         throw CreateBootstrapException($"The MongoDB test process exited unexpectedly with code {process.ExitCode}.");
     }
 
-    private InvalidOperationException CreateBootstrapException(string message)
+    private InvalidOperationException CreateBootstrapException(string message, Exception? innerException = null)
     {
         var builder = new StringBuilder(message);
         var logs = GetProcessLogs();
@@ -330,7 +347,7 @@ public sealed class MongoDbReplicaSetRunner : IAsyncDisposable, IDisposable
             }
         }
 
-        return new InvalidOperationException(builder.ToString());
+        return new InvalidOperationException(builder.ToString(), innerException);
     }
 
     private void AppendLog(string? line)

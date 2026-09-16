@@ -124,4 +124,4 @@ Do not append a dated change log inside this document. Long-range standards rare
 
 ## September validation follow-up
 
-[ENG-745 / ENG-746](sre-validation-2026-09.md) split ENG-729's existing 32 h into 8 h validation reliability and 24 h remaining SLO/load/telemetry work. [September follow-ups](architecture-review-2026-09-followups.md) record the 31 m 22 s Windows full-release overrun against 30 minutes and the later timeout-test failure. Stable baselines and target thresholds remain unchanged pending repeatable proof.
+[ENG-745 / ENG-746 / ENG-747](sre-validation-2026-09.md) split ENG-729's revised 36 h into 8 h validation reliability, 24 h remaining SLO/load/telemetry work and 4 h newly observed MongoDB bootstrap diagnostic repair. [September follow-ups](architecture-review-2026-09-followups.md) record the 31 m 22 s Windows full-release overrun against 30 minutes, the later timeout-test failure and the subsequent MongoDB startup deadline. Stable baselines and target thresholds remain unchanged pending repeatable proof.

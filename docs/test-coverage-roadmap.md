@@ -145,6 +145,8 @@ Quality dimension: **Reliability + Availability + Maintainability + Compatibilit
 
 [ENG-745](sre-validation-2026-09.md) repairs the observed Windows behavior-timeout race with an explicit test clock and release/cancellation gates, and isolates Showcase HTTP/domain tests from an absent OTLP collector. The dedicated OpenTelemetry capture-server integration tests retain real exporter coverage. No test is skipped; the failing assertion is repaired within the active slice. Broader flake-rate/SLO acceptance remains ENG-746.
 
+ENG-747 covers MongoDB bootstrap diagnostic loss observed after the timeout repair: expiry during a command or retry delay must preserve process/driver evidence, while caller cancellation and pre-canceled startup retain their meaning. The 20-second fixture deadlines and real provider assertions remain. A passing diagnostic regression does not identify the cause of a historical slow start.
+
 ## Test-flake quarantine queue
 
 When `engine.tests.flake-rate.7d` exceeds the target, the affected test enters a quarantine queue per the *Test flake budget* rule in [`sre-posture.md`](sre-posture.md): `[Skip]`-attribute the failing test with a tracking comment within 24 hours, then either fix or delete within 7 days.
