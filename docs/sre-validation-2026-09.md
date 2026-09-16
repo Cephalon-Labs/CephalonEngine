@@ -20,7 +20,9 @@ These choices follow Polly's [timeout cancellation contract](https://www.pollydo
 
 ## Acceptance and retained work
 
-Local Windows / SDK 10.0.401 validation passed 16 resilience tests in 320 ms and all 67 Showcase/OTLP tests in 23 s. In the saved TRX receipts, the same `ShowcaseSampleResolvesCanonicalShowcaseRoute` case took 15.7694063 s before and 0.2891534 s after fixture isolation. Three documentation-link/hub checks passed. These are local diagnostic measurements; full-suite and committed-source CI evidence is still required.
+Local Windows / SDK 10.0.401 validation passed 16 resilience tests in 320 ms and all 67 Showcase/OTLP tests in 23 s. In the saved TRX receipts, the same `ShowcaseSampleResolvesCanonicalShowcaseRoute` case took 15.7694063 s before and 0.2891534 s after fixture isolation. Full composition passed 885/885 in 1 m 2 s; full hosting passed 820/820 in 40 s, compared with the preceding local hosting run's 9 minutes. These are local diagnostic timings, not production-host performance claims.
+
+Three documentation-link/hub checks passed. All 263 Pester tests passed in 29.46 s in a clean checkout of implementation `2dc63595`; the initial run in the reused workspace was stopped after a stack showed recursive artifact scanning, and is not counted as passing evidence. Prefer a clean checkout for the full script suite when a workspace contains accumulated build/toolchain artifacts. GitHub issue/Project guards matched all 22 open issues and their five required fields. Committed-source Windows/Linux release evidence is still required.
 
 ENG-745 remains In Progress until focused regressions, full composition/hosting tests, documentation/planning checks and Windows/Linux release CI pass on committed source. Record before/after timings with runner and checkpoint; retain warnings and failed runs. Neither a local duration reduction nor a single passing CI run promotes a stable SLO or a seven-day flake-rate baseline.
 
