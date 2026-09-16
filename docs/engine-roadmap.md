@@ -30,15 +30,17 @@ The September [framework completion plan](framework-completion-plan.md) adds all
 
 Status: in-progress
 
-ENG-742 now tracks native children ENG-743 (8 h) and ENG-744 (12 h), included in the revised 20 h. The consumer probe passed on Windows/Linux and ENG-743 is done; ENG-744 retains 12 h for the complete release/host/deployment matrix. [Contract consumer guide](contract-compatibility.md).
+ENG-742 now tracks native children ENG-743 (8 h) and ENG-744 (16 h), included in the revised 24 h. The consumer probe passed on Windows/Linux and ENG-743 is done; ENG-744 retains 16 h for the complete release/host/deployment matrix. [Contract consumer guide](contract-compatibility.md).
 
-ENG-731 now has native children ENG-739/740/741/742 with 8/8/4/20 h estimates included in its revised 40 h rollup. SDK reproducibility, analyzer enforcement and scheduling evidence are delivered in Sprint 16 (20 h estimated scope); ENG-742 has a revised 20 h rollup, with 8 h delivered by ENG-743 and 12 h remaining in ENG-744. Phase 15 remaining scope is 188 h plus the independent 1 h ENG-532 action; the wider matrix remains a separate gate. [Repair evidence](compatibility-repair-2026-09.md).
+ENG-731 now has native children ENG-739/740/741/742 with 8/8/4/24 h estimates included in its revised 44 h rollup. SDK reproducibility, analyzer enforcement and scheduling evidence are delivered in Sprint 16 (20 h estimated scope); ENG-742 has a revised 24 h rollup, with 8 h delivered by ENG-743 and 16 h remaining in ENG-744. Phase 15 remaining scope is 192 h plus the independent 1 h ENG-532 action; the wider matrix remains a separate gate. [Repair evidence](compatibility-repair-2026-09.md).
 
-ENG-727–733 cover security/tenant isolation, supply-chain verification, SLO/load/resilience evidence, data/privacy/recovery, framework/API/deployment compatibility, external developer journeys and provider/host support tiers. Original base estimate: 208 engineering hours. Revised scope: 216 h, indicative range 162–324 after the ENG-744 validation-infrastructure findings. ENG-532 remains an independent external signed-release blocker, estimated at 1 h for the next action. No milestone due date until capacity and external access are established.
+ENG-727–733 cover security/tenant isolation, supply-chain verification, SLO/load/resilience evidence, data/privacy/recovery, framework/API/deployment compatibility, external developer journeys and provider/host support tiers. Original base estimate: 208 engineering hours. Revised scope: 220 h, indicative range 165–330 after the ENG-744 validation-infrastructure findings. ENG-532 remains an independent external signed-release blocker, estimated at 1 h for the next action. No milestone due date until capacity and external access are established.
 
 Exit: applicable security, compatibility, supply-chain, SRE, provider and adoption evidence is reproducible for the declared release set; unsupported deployment modes remain explicit. This primarily serves the near-term horizon and supplies stable migration seams for the mid-term horizon. See [completion plan](framework-completion-plan.md) for dependencies and all twelve quality dimensions.
 
-[Host compatibility evidence](host-compatibility-2026-09.md) records the +8 h revision, bounded subprocess repair, reference-link cache and generated runtime contract checks. ENG-744 is active in Sprint 16.
+[Host compatibility evidence](host-compatibility-2026-09.md) records the +12 h total revision, bounded subprocess repair, reference-link cache and generated runtime contract checks. ENG-744 is active in Sprint 16.
+
+The full release matrix exposed two lifecycle-test observation races on `5f99ee15`. ENG-744 adds 4 h for those corrections and their evidence; its revised 16 h remains in Sprint 16. These are test-observation repairs and do not change runtime or provider-support claims.
 
 ## Phase 16: Selective M4 adoption and sustainable evolution
 

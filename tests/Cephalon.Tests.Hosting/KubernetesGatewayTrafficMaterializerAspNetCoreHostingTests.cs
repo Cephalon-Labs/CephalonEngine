@@ -333,6 +333,8 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
     [Fact]
     public async Task MapCephalonExposesKubernetesGatewayCleanupSweepMetadataOnExistingSurfaces()
     {
+        var cleanupStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseCleanup = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
         builder.Services.AddProblemDetails();
@@ -343,7 +345,12 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
         builder.Services.AddSingleton<IKubernetesGatewayTrafficApplyService>(
             new StaticApplyService(static () => CreateApplyPendingResult("created")));
         builder.Services.AddSingleton<IKubernetesGatewayTrafficObservationSource>(
-            new StaticObservationSource(static () => CreateObservedAppliedResult(), static () => CreateCleanupSweepResult()));
+            new StaticObservationSource(static () => CreateObservedAppliedResult(), async cancellationToken =>
+            {
+                cleanupStarted.TrySetResult();
+                await releaseCleanup.Task.WaitAsync(cancellationToken);
+                return CreateCleanupSweepResult();
+            }));
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
         builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:RouteId"] = "orders-to-public-ingress";
         builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:AutomationMode"] = "automatic";
@@ -384,13 +391,15 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
         app.MapCephalon();
 
         await app.StartAsync();
-        await Task.Delay(TimeSpan.FromMilliseconds(1400));
-
         var client = app.GetTestClient();
-        var providerAutomations =
+        await cleanupStarted.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        var pendingAutomations =
             await client.GetFromJsonAsync<CellTrafficAutomationRuntimeDescriptor[]>("/engine/cell-traffic-automations/providers/kubernetes-gateway");
-        var surfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/cell-based-architecture");
-        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+        Assert.NotNull(pendingAutomations);
+        Assert.Equal("pending", Assert.Single(pendingAutomations).RuntimeMetadata["providerMaterialization.cleanupState"]);
+        releaseCleanup.SetResult();
+
+        var (providerAutomations, surfaces, snapshot) = await WaitForCleanupSurfacesAsync(client);
 
         Assert.NotNull(providerAutomations);
         var automation = Assert.Single(providerAutomations);
@@ -419,6 +428,40 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
             item.RouteId == "orders-to-public-ingress" &&
             item.RuntimeMetadata["providerMaterialization.cleanupState"] == "applied");
     }
+
+    private static async Task<(CellTrafficAutomationRuntimeDescriptor[] Automations,
+        TechnologyRuntimeSurface[] Surfaces, RuntimeIntrospectionSnapshot Snapshot)> WaitForCleanupSurfacesAsync(HttpClient client)
+    {
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        try
+        {
+            while (true)
+            {
+                var automations = await client.GetFromJsonAsync<CellTrafficAutomationRuntimeDescriptor[]>(
+                    "/engine/cell-traffic-automations/providers/kubernetes-gateway", timeout.Token);
+                var surfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>(
+                    "/engine/technology-surfaces/cell-based-architecture", timeout.Token);
+                var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot", timeout.Token);
+                if (automations is not null && surfaces is not null && snapshot is not null &&
+                    automations.Any(item => HasAppliedCleanup(item.RuntimeMetadata, "providerMaterialization.cleanupState")) &&
+                    surfaces.Any(surface => surface.SurfaceId == "kubernetes-gateway-traffic-materializations" &&
+                        surface.Entries.Any(entry => HasAppliedCleanup(entry.Metadata, "cleanupState"))) &&
+                    snapshot.CellTrafficAutomations.Any(item => HasAppliedCleanup(item.RuntimeMetadata, "providerMaterialization.cleanupState")))
+                {
+                    return (automations, surfaces, snapshot);
+                }
+
+                await Task.Delay(50, timeout.Token);
+            }
+        }
+        catch (OperationCanceledException) when (timeout.IsCancellationRequested)
+        {
+            throw new TimeoutException("Cleanup did not reach applied on the provider, technology and snapshot surfaces.");
+        }
+    }
+
+    private static bool HasAppliedCleanup(IReadOnlyDictionary<string, string> metadata, string key)
+        => metadata.TryGetValue(key, out var value) && value == "applied";
 
     private static CellTrafficAutomationProviderMaterializationResult CreateApplyPendingResult(string writeAction)
     {
@@ -534,7 +577,7 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
 
     private sealed class StaticObservationSource(
         Func<CellTrafficAutomationProviderMaterializationResult> factory,
-        Func<KubernetesGatewayTrafficCleanupSweepResult>? cleanupFactory = null)
+        Func<CancellationToken, ValueTask<KubernetesGatewayTrafficCleanupSweepResult>>? cleanupFactory = null)
         : IKubernetesGatewayTrafficObservationSource
     {
         public ValueTask<CellTrafficAutomationProviderMaterializationResult> ObserveAsync(
@@ -552,9 +595,9 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
             CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return ValueTask.FromResult(
-                cleanupFactory?.Invoke() ??
-                new KubernetesGatewayTrafficCleanupSweepResult(DateTimeOffset.UtcNow, "idle"));
+            return cleanupFactory is null
+                ? ValueTask.FromResult(new KubernetesGatewayTrafficCleanupSweepResult(DateTimeOffset.UtcNow, "idle"))
+                : cleanupFactory(cancellationToken);
         }
     }
 

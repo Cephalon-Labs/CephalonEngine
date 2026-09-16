@@ -312,7 +312,8 @@ public sealed class OracleDataCdcPackTests
                         InitialPosition = "latest-available",
                         ExpectedDatabaseId = ExpectedDatabaseId,
                         ExpectedDatabaseUniqueName = ExpectedDatabaseUniqueName,
-                        PollingIntervalSeconds = 1,
+                        // Keep this one-shot failure observable; the next empty harness batch reports Idle.
+                        PollingIntervalSeconds = 600,
                         MaxChangesPerRead = 64,
                         MaxAwaitTimeSeconds = 5
                     });

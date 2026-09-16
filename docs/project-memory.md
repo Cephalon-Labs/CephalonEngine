@@ -13,6 +13,8 @@ September 16 contract compatibility: ENG-743 adds a pinned source-checkpoint con
 
 September 16 host compatibility follow-up: ENG-744 is active in Sprint 16 and revised from 4 to 12 h after reproduced process-output and reference-audit delays. Non-additive parent rollups are ENG-742 20 h and ENG-731 40 h; current remaining leaf scope is 477 h including ENG-532. Generated-app reports now validate manifest/configuration/snapshot content and carry schema 1.1.0, SDK/OS/source identity and hashes. [Evidence](host-compatibility-2026-09.md). No support or maturity promotion.
 
+September 16 release observation follow-up: full release CI exposed two pre-existing lifecycle-test races after host validation. ENG-744 is revised to 16 h; ENG-742/731 roll up 24/44 h; current unfinished scope is 481 h including ENG-532. Controlled Kubernetes cleanup completion and a stable Oracle failure fixture preserve the original assertions. No runtime, API or maturity promotion. [Evidence](host-compatibility-2026-09.md).
+
 ## Identity
 
 Cephalon is not being positioned as a single application shell.

@@ -136,3 +136,7 @@ ENG-742 is active in Sprint 16 and decomposes its existing 12 h into ENG-743 (8 
 ## Host compatibility scope revision — September 16, 2026
 
 [ENG-744 evidence](host-compatibility-2026-09.md) reproduced an unbounded process-output wait and repeated reference-anchor parsing. Its estimate increases **4 -> 12 h** (+8 h). Parent rollups become ENG-742 **20 h** and ENG-731 **40 h**, without double counting. The original September baseline was 536 h; revised implementation scope is **544 h**. Current unfinished leaves: **18 tasks / 476 h**, plus ENG-532 **1 h** = **477 h (59.625 person-days)**. Phase 15 increases from 208 to **216 h** (indicative range 162–324), with **188 h** remaining plus ENG-532. ENG-744 is active in Sprint 16 until host/deployment and release evidence passes; no capacity-backed due date or maturity promotion is implied.
+
+## Release observation follow-up — September 16, 2026
+
+The full release run on `5f99ee15` exposed a fixed-delay Kubernetes cleanup assertion and a one-shot Oracle failure overwritten by the fixture retry. ENG-744 increases **12 -> 16 h** (+4 h), with ENG-742 **24 h** and ENG-731 **44 h** non-additive rollups. Revised September implementation scope is **548 h**. Current unfinished leaves: **18 tasks / 480 h**, plus ENG-532 **1 h** = **481 h (60.125 person-days)**. Phase 15 becomes **220 h** (indicative 165–330), with **192 h** remaining plus ENG-532. The generated host and deployment receipts do not substitute for the still-open full-release gate. [Evidence](host-compatibility-2026-09.md).
