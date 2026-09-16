@@ -22,21 +22,40 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: candidate
     env:
       MSBUILDDISABLENODEREUSE: '1'
       DOTNET_CLI_USE_MSBUILD_SERVER: 'false'
       UseSharedCompilation: 'false'
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: candidate
+      - name: Read historical reader baseline
+        id: baseline
+        shell: pwsh
+        run: |
+          $support = Get-Content scripts/contract-compatibility-support.json -Raw | ConvertFrom-Json
+          if ($support.baselineRevision -notmatch '^[0-9a-f]{40}$') { throw 'Expected an immutable baseline commit.' }
+          "revision=$($support.baselineRevision)" >> $env:GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.baseline.outputs.revision }}
+          path: baseline
       - uses: actions/setup-dotnet@v4
         with:
-          global-json-file: global.json
+          global-json-file: candidate/global.json
       - name: Restore declared dependencies
         shell: pwsh
         run: dotnet restore CephalonEngine.slnx --locked-mode
       - name: Prove generated app configuration and runtime contracts
         shell: pwsh
         run: ./scripts/validate-generated-app-adoption.ps1 -ReportPath artifacts/host-compatibility/generated-app.json
+      - name: Prove historical typed snapshot reader
+        shell: pwsh
+        run: ./scripts/validate-snapshot-reader-compatibility.ps1 -BaselineSourceRoot ../baseline -GeneratedAppReportPath artifacts/host-compatibility/generated-app.json
       - name: Validate the declared single-file publish gate
         shell: pwsh
         run: ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode singleFile -OutputPath artifacts/host-compatibility/deployment
@@ -46,7 +65,7 @@ jobs:
         with:
           name: host-compatibility-${{ matrix.os }}
           path: |
-            artifacts/host-compatibility/**/*.json
-            artifacts/host-compatibility/**/*.md
-            artifacts/host-compatibility/**/*.log
+            candidate/artifacts/host-compatibility/**/*.json
+            candidate/artifacts/host-compatibility/**/*.md
+            candidate/artifacts/host-compatibility/**/*.log
           if-no-files-found: error

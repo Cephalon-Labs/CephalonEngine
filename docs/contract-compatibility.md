@@ -44,7 +44,9 @@ This is a bounded consumer proof, not a complete API-diff service. All-package A
 
 Microsoft distinguishes [source, binary and behavioral compatibility](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/breaking-changes). [Package validation](https://learn.microsoft.com/en-us/dotnet/fundamentals/apicompat/package-validation/overview) and [API compatibility tools](https://learn.microsoft.com/en-us/dotnet/fundamentals/apicompat/overview) remain appropriate for full-surface release baselines; these executable consumers add behavioral evidence for the declared subset.
 
-Tracking: [ENG-743 / #1436](https://github.com/Cephalon-Labs/CephalonEngine/issues/1436), [ENG-744 / #1437](https://github.com/Cephalon-Labs/CephalonEngine/issues/1437), [ENG-742 / #1435](https://github.com/Cephalon-Labs/CephalonEngine/issues/1435), [Phase 15](https://github.com/Cephalon-Labs/CephalonEngine/milestone/16), and [Project 2](https://github.com/orgs/Cephalon-Labs/projects/2). Engineering estimates are 8 h and 4 h inside the existing 12 h parent, not additional effort to sum again.
+The separate [host compatibility probe](host-compatibility-2026-09.md) adds generated configuration/manifest checks, a historical typed runtime snapshot reader, and selected deployment evidence. Both harnesses share the bounded process runner in `scripts/compatibility-process.ps1`.
+
+Tracking: [ENG-743 / #1436](https://github.com/Cephalon-Labs/CephalonEngine/issues/1436), [ENG-744 / #1437](https://github.com/Cephalon-Labs/CephalonEngine/issues/1437), [ENG-742 / #1435](https://github.com/Cephalon-Labs/CephalonEngine/issues/1435), [Phase 15](https://github.com/Cephalon-Labs/CephalonEngine/milestone/16), and [Project 2](https://github.com/orgs/Cephalon-Labs/projects/2). Revised engineering estimates are 8 h and 16 h inside the 24 h parent, not additional effort to sum again.
 
 ## September 16, 2026 validation checkpoint
 

@@ -23,7 +23,17 @@ pwsh ./scripts/validate-generated-app-adoption.ps1 -ReportPath artifacts/host-co
 pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode singleFile -OutputPath artifacts/host-compatibility/deployment
 ```
 
-The [Host Compatibility workflow](../.github/workflows/host-compatibility.yml) runs both scripts on Windows/Linux and uploads JSON, Markdown and logs. Deployment validation retains all five representative publish targets. Global trim, Native AOT and single-file support remains `not-claimed`; the existing package-scoped single-file claims remain limited to Abstractions, Diagnostics and Scaffolding. See [deployment-mode support](deployment-mode-support.md).
+The remaining historical-reader check builds a standalone consumer against `Cephalon.Engine` at the same immutable source checkpoint used by the contract-consumer probe. Use a clean disposable baseline checkout; SDK-dependent baseline locks may be regenerated during the build.
+
+```powershell
+pwsh ./scripts/validate-snapshot-reader-compatibility.ps1 -BaselineSourceRoot ../cephalon-compat-baseline -GeneratedAppReportPath artifacts/host-compatibility/generated-app.json
+```
+
+It verifies the input receipt's revision, SDK and payload hashes, then reads manifest/snapshot v2 through the historical typed DTOs. The reader and loaded Engine assembly hashes must remain unchanged while reading the real payload and a payload with additive fields. An unsupported manifest version must produce the exact expected rejection. This supplies source-checkpoint wire evidence for the selected generated REST host, not all historical versions or released Engine packages. It does not test binary replacement of the full Engine assembly; that differs from reading JSON through historical contracts.
+
+Local historical-reader validation passed all three scenarios against the clean Windows host receipt from `c4f8d288`, using a diagnostic working tree. The loaded historical Engine identifies `0.1.0-preview+11488f13f28f68f4bb1bc062dbf931f0d4e91d0e`; the producer identifies `0.1.0-preview+c4f8d2883d219e4224e04b02351a96840cfb79a4`. CI supplies the clean-source cross-platform acceptance.
+
+The [Host Compatibility workflow](../.github/workflows/host-compatibility.yml) runs these scripts on Windows/Linux with separate baseline/candidate checkouts and uploads JSON, Markdown and logs. Deployment validation retains all five representative publish targets. Global trim, Native AOT and single-file support remains `not-claimed`; the existing package-scoped single-file claims remain limited to Abstractions, Diagnostics and Scaffolding. See [deployment-mode support](deployment-mode-support.md).
 
 ## Validation infrastructure repair
 
@@ -35,11 +45,11 @@ Microsoft documents [redirected-stream deadlock risks](https://learn.microsoft.c
 
 ## Planning and evidence
 
-The initial 4 h estimate omitted the reproduced process hang and reference-audit work. ENG-744 is revised to **12 h**, adding **8 h** of engineering scope. ENG-742 rolls up **20 h**, ENG-731 **40 h**; parents are not additive. Remaining September leaf scope becomes **476 h**, plus ENG-532 **1 h** = **477 h** until acceptance closes. Revised Phase 15 scope is **216 h**, with **188 h** remaining plus ENG-532. Estimates are not elapsed time or delivery dates.
+ENG-744 is **16 h**: the original 4 h matrix, 8 h for process supervision/reference-audit repair, and 4 h for the lifecycle observation repairs below. ENG-742 rolls up **24 h**, ENG-731 **44 h**; parents are not additive. Revised September implementation scope is **548 h**. Remaining leaf scope is **480 h**, plus ENG-532 **1 h** = **481 h** until acceptance closes. Phase 15 scope is **220 h**, with **192 h** remaining plus ENG-532. Estimates are not elapsed time or delivery dates.
 
-Local Tooling passed **383/383** tests in 3.51 minutes, including all package tests and the four process regressions. The generated-reference link audit passed in 0.50 seconds. Pester passed **263/263**, including thirteen runtime payload guards. The external generated host passed on Windows with SDK 10.0.401, manifest 2.0, two modules, eight capabilities and successful runtime startup. This local run used a dirty tree based on `56187325`; it is diagnostic evidence. Deployment receipts and corrected committed-source CI are being collected. ENG-744 remains open until its declared matrix is demonstrated; cancelled or running Release Validation jobs are not passing full-release evidence. Release CI now has explicit 60-minute shipping and 20-minute SDK-readiness limits; the dedicated host/deployment job has a 35-minute limit.
+Local Tooling passed **383/383** tests in 3.51 minutes, including all package tests and the four process regressions. The generated-reference link audit passed in 0.50 seconds. Pester passed **263/263**, including thirteen runtime payload guards. The external generated host passed on Windows with SDK 10.0.401, manifest 2.0, two modules, eight capabilities and successful runtime startup. That local run used a dirty tree based on `56187325`; committed-source receipts are recorded below. ENG-744 remains open pending full [Release Validation on `c4f8d288`](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35095044308). Cancelled or running jobs are not passing evidence. Release CI has 60-minute shipping and 20-minute SDK-readiness limits; the dedicated host/deployment job has a 35-minute limit.
 
-## Full release observation failures
+## Committed-source evidence and release blockers
 
 Committed-source [Host Compatibility 35093289578](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35093289578) passed both jobs on `5f99ee15bd64e7fb79a6bb197b5260c0999ea4d1`. Both receipts report a clean tree, SDK 10.0.401, manifest 2.0, two modules, eight capabilities, successful startup, fifteen assertions and three payload digests. Contract Compatibility also [passed both systems](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35093289583).
 
@@ -54,6 +64,4 @@ Local Windows single-file validation also passed all five targets and every boun
 
 The Oracle harness dequeues its single failure batch and reports Idle on the next empty read; the provider retry interval was one second despite a 600 s shared-loop interval. The failure-metadata fixture now uses a 600 s provider interval, preserving the first failure for the existing bounded assertion. Production retry behavior remains unchanged. These are test-fixture repairs, not live Kubernetes or Oracle integration evidence.
 
-This adds **4 h** to ENG-744 (**16 h** total). Current parent rollups are ENG-742 **24 h** and ENG-731 **44 h**; revised September scope **548 h**; remaining **480 h + ENG-532 1 h = 481 h**. Phase 15 is **220 h**, with **192 h** remaining plus ENG-532. Earlier checkpoints above are historical. Full release acceptance remains open.
-
-Repair validation: all four Kubernetes materializer hosting tests and all 885 composition tests passed locally. The eight planning tests passed with the revised estimate graph; GitHub guards matched 23 issues and Project items. The full hosting suite and renewed Release Validation supply the remaining acceptance evidence.
+Repair validation: all 885 composition tests and all 819 hosting tests passed locally, including the four Kubernetes materializer tests. The full hosting run took 9 minutes locally; stack samples showed sample-host OpenTelemetry flush during disposal, and the run completed without failures. The eight planning tests passed with the revised estimate graph; GitHub guards matched 23 issues and Project items. SDK 11 RC1 CI on `c4f8d288` passed 885 composition, 819 hosting and 374 selected tooling tests (2,078 total), all still targeting `net10.0`. Shipping Release Validation remains the outstanding acceptance gate.

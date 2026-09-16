@@ -1,0 +1,59 @@
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text.Json;
+using Cephalon.Engine.Manifest;
+using Cephalon.Engine.Runtime;
+
+try
+{
+    var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+    var manifest = JsonSerializer.Deserialize<RuntimeManifest>(File.ReadAllText(args[0]), options)
+        ?? throw new InvalidOperationException("Manifest was null.");
+    var snapshot = JsonSerializer.Deserialize<RuntimeIntrospectionSnapshot>(File.ReadAllText(args[1]), options)
+        ?? throw new InvalidOperationException("Snapshot was null.");
+    foreach (var candidate in new[] { manifest, snapshot.Manifest })
+    {
+        if (candidate.ManifestVersion != "2.0")
+        {
+            Console.Error.WriteLine("SNAPSHOT_BOUNDARY:invalid-manifest-version");
+            return 42;
+        }
+        Check(!string.IsNullOrWhiteSpace(candidate.EngineVersion), "Engine identity missing.");
+        Check(candidate.AppProfile.BlueprintId == "modular-monolith", "Blueprint changed.");
+        Check(candidate.AppProfile.Patterns.Any(p => p.Id == "shared-foundation-pattern"), "Foundation missing.");
+        Check(candidate.AppProfile.Transports.Any(t => t.Id == "rest-api"), "REST transport missing.");
+        var ids = candidate.Modules.Select(m => m.Id).ToHashSet(StringComparer.Ordinal);
+        Check(ids.Count > 0 && ids.Count == candidate.Modules.Count, "Module identities changed.");
+        Check(candidate.Modules.All(m => !string.IsNullOrWhiteSpace(m.Version)), "Module versions missing.");
+        Check(candidate.Capabilities.Count > 0 && candidate.Capabilities.All(c => ids.Contains(c.SourceModuleId)), "Capability sources changed.");
+    }
+    Check(snapshot.Status.Status == RuntimeStatus.Started && snapshot.Status.StartedAtUtc is not null &&
+        snapshot.Status.LastFailure is null, "Runtime startup evidence missing.");
+    Check(snapshot.Manifest.EngineVersion == manifest.EngineVersion &&
+        snapshot.Manifest.Modules.Select(m => m.Id).SequenceEqual(manifest.Modules.Select(m => m.Id)) &&
+        snapshot.Manifest.Capabilities.Select(c => c.Key).SequenceEqual(manifest.Capabilities.Select(c => c.Key)),
+        "Manifest and snapshot disagree.");
+    var engine = typeof(RuntimeIntrospectionSnapshot).Assembly;
+    File.WriteAllText(args[2], JsonSerializer.Serialize(new
+    {
+        status = "passed", runtime = Environment.Version.ToString(),
+        engineAssemblySha256 = Hash(engine.Location),
+        engineAssemblyVersion = engine.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion,
+        consumerSha256 = Hash(Assembly.GetExecutingAssembly().Location),
+        moduleCount = manifest.Modules.Count, capabilityCount = manifest.Capabilities.Count,
+        manifestVersion = manifest.ManifestVersion, producerEngineVersion = manifest.EngineVersion,
+        blueprintId = manifest.AppProfile.BlueprintId, runtimeStatus = snapshot.Status.Status.ToString()
+    }, options));
+    return 0;
+}
+catch (Exception exception)
+{
+    Console.Error.WriteLine(exception);
+    return 1;
+}
+
+static string Hash(string path) => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));
+static void Check(bool valid, string message)
+{
+    if (!valid) throw new InvalidOperationException(message);
+}

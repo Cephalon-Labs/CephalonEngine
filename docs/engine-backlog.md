@@ -884,6 +884,8 @@ Scope revision: reproduced packaging hang after all 109 packages were written an
 
 Scope follow-up: full Release Validation on `5f99ee15` exposed two pre-existing observation races: the Kubernetes cleanup test sampled after a fixed 1.4 s delay, and the Oracle CDC failure fixture retried into Idle before assertion. Estimate 12 -> 16 h adds 4 h for controlled cleanup completion/readback, stable one-shot failure observation, regression validation and tracking. Host Compatibility already proves the corrected generated-app/deployment contract; full release acceptance stays open until these failures are resolved.
 
+Historical reader acceptance: the original 4 h matrix allocation includes generated-host/deployment evidence and a typed reader built from baseline `11488f13`. The unchanged old consumer now reads the current runtime manifest/snapshot, tolerates additive JSON fields and rejects an invalid schema version with an exact boundary control. Local evidence passed all three cases against the clean `c4f8d288` Windows host receipt; Windows/Linux CI is required before closing. This fills the already-planned old-snapshot-reader row without expanding the 16 h estimate.
+
 
 ### ENG-732 External developer journey documentation and accessibility
 
