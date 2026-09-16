@@ -20,9 +20,9 @@ The following checks were run against this change; full release status remains s
 | Public API | 77 additive signatures: Abstractions 65, Engine 12. Repository readback: 104 baselines, 3 pending packages, 282 additions, zero removals. This change leaves shipped baseline files unchanged; historical analyzer drift is described below. |
 | Benchmark | BenchmarkDotNet in-process ShortRun: 686.6 ns mean, 2.67 ns standard deviation, 896 B allocated; passes initial 10,000 ns / 4,096 B smoke guardrail. Windows 11 x64, i5-13500, SDK 10.0.303 / runtime 10.0.11, 3 warmups + 3 measurements. Local smoke only, no comparative performance or provider-throughput claim. |
 | Script contracts | 44 Pester tests passed: scorecard, canonical release filters and planning parser. |
-| Documentation | 20 focused guide/contract tests and 3 generated-reference link/manifest/browser tests passed; hand-authored repository link/anchor scan pending. Regenerated the reference bundle; 9 files changed. Edited-guide local-link target check: 456 targets, none missing. |
+| Documentation | 24 documentation tests passed across focused guide/contract checks, generated-reference link/manifest/browser checks and the complete hand-authored repository link/anchor scan (10 m 25 s). Regenerated the reference bundle; 9 files changed. Edited-guide local-link target check: 456 targets, none missing. |
 | Maturity | Passed: 107 packages, M0=1 / M1=39 / M2=51 / M3=7 / M4=9, drift=0. |
-| GitHub planning | Final live uniqueness and required-field guards run after issue publication. |
+| GitHub planning | Passed after publication: 21 open issues / 21 tracked ENG rows, zero uniqueness warnings; 21 Project items with all 5 required fields. ENG-719/720 verified closed/Done in Sprint 16 with estimates 16/24 h and native child links; ENG-714 remains open; Phase 14/15 descriptions updated without due dates. |
 
 ## Release limitations and follow-up ownership
 
@@ -36,4 +36,4 @@ The historical API diagnostics are concentrated in Eventing remediation contract
 
 ## Tracking
 
-[ENG-719 / #1412](https://github.com/Cephalon-Labs/CephalonEngine/issues/1412), [ENG-720 / #1413](https://github.com/Cephalon-Labs/CephalonEngine/issues/1413), [ENG-714 parent / #1405](https://github.com/Cephalon-Labs/CephalonEngine/issues/1405), [Phase 14 milestone](https://github.com/Cephalon-Labs/CephalonEngine/milestone/15), and [Project 2](https://github.com/orgs/Cephalon-Labs/projects/2) carry matching scope, estimates, iteration and validation state. The delivery commit is recorded in issue history after push. The parent stays open until all four children meet acceptance.
+[ENG-719 / #1412](https://github.com/Cephalon-Labs/CephalonEngine/issues/1412), [ENG-720 / #1413](https://github.com/Cephalon-Labs/CephalonEngine/issues/1413), [ENG-714 parent / #1405](https://github.com/Cephalon-Labs/CephalonEngine/issues/1405), [Phase 14 milestone](https://github.com/Cephalon-Labs/CephalonEngine/milestone/15), and [Project 2](https://github.com/orgs/Cephalon-Labs/projects/2) carry matching scope, estimates, iteration and validation state. Implementation commit: [00915d88](https://github.com/Cephalon-Labs/CephalonEngine/commit/00915d8806d1d9bbcad07e1cbf6849aae76c8656). The validation closeout commit is recorded in issue history after push. The parent stays open until all four children meet acceptance.
