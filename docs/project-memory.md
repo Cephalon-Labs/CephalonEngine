@@ -21,6 +21,8 @@ The repository is aiming at a modular .NET engine/framework foundation that is g
 
 ## Current technical baseline
 
+- ENG-719/720 add an opt-in instance-local coordination kernel; [decision and adoption](architecture/coordination-kernel.md), [delivery evidence](coordination-kernel-delivery-2026-09.md). Existing family runtimes remain unchanged; ENG-721/722 are the next durable recovery and authorization gates. No package maturity changes.
+
 - the repo is pinned to `.NET SDK 10.0.303` through `global.json`
 - the shipped project baseline is `net10.0`
 - notable packaging and compiler-tooling exceptions are the template pack, analyzer meta-package, and source generator surfaces (`Cephalon.Behaviors.SourceGen` and `Cephalon.Engine.SourceGen`) that stay on `netstandard2.0`

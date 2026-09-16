@@ -40,11 +40,11 @@ GitHub issue: #1405
 
 Issue link: [#1405](https://github.com/Cephalon-Labs/CephalonEngine/issues/1405)
 
-Status: ready
+Status: in progress
 
 Estimate: 96
 
-Iteration: Later / not scheduled yet
+Iteration: Sprint 16
 
 Phase: 14
 
@@ -182,19 +182,19 @@ GitHub issue: #1412
 
 Issue link: [#1412](https://github.com/Cephalon-Labs/CephalonEngine/issues/1412)
 
-Status: backlog
+Status: done
 
 Estimate: 16
 
 Phase: 14
 
-Iteration: Later / not scheduled yet
+Iteration: Sprint 16
 
 Owner: Cephalon-Neza
 
 Priority: P0
 
-Test: Needed
+Test: Passed
 
 Benchmark: N/A
 
@@ -214,27 +214,31 @@ Estimate basis: engineering hours including review, tests and docs; initial rang
 
 Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
 
+Delivery: [Coordination decision](architecture/coordination-kernel.md) and [validation evidence](coordination-kernel-delivery-2026-09.md). Scope is an additive, opt-in instance-local kernel; durable recovery and shared authorization remain ENG-721/722.
+
+Validation: composition 885/885 (26 new reconciliation cases), benchmark 686.6 ns / 896 B against 10,000 ns / 4,096 B smoke budgets; additive API declarations and regenerated reference bundle. Final documentation, script and planning results are recorded in the delivery evidence. No maturity promotion.
+
 ### ENG-720 Deterministic reconciliation planning and bounded execution
 
 GitHub issue: #1413
 
 Issue link: [#1413](https://github.com/Cephalon-Labs/CephalonEngine/issues/1413)
 
-Status: backlog
+Status: done
 
 Estimate: 24
 
 Phase: 14
 
-Iteration: Later / not scheduled yet
+Iteration: Sprint 16
 
 Owner: Cephalon-Neza
 
 Priority: P0
 
-Test: Needed
+Test: Passed
 
-Benchmark: Needed
+Benchmark: Passed
 
 Dependencies: ENG-719.
 
@@ -251,6 +255,10 @@ Quality dimensions: Reliability + Performance + Compatibility + Auditability.
 Estimate basis: engineering hours including review, tests and docs; initial range 18–36 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
 
 Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+Delivery: [Coordination decision](architecture/coordination-kernel.md) and [validation evidence](coordination-kernel-delivery-2026-09.md). Scope is an additive, opt-in instance-local kernel; durable recovery and shared authorization remain ENG-721/722.
+
+Validation: composition 885/885 (26 new reconciliation cases), benchmark 686.6 ns / 896 B against 10,000 ns / 4,096 B smoke budgets; additive API declarations and regenerated reference bundle. Final documentation, script and planning results are recorded in the delivery evidence. No maturity promotion.
 
 ### ENG-721 Durable journal idempotency and lease-fencing provider proof
 
@@ -640,9 +648,9 @@ Iteration: Later / not scheduled yet
 
 Owner: Cephalon-Neza
 
-Priority: P1
+Priority: P0
 
-Test: Needed
+Test: Failed
 
 Benchmark: Needed
 
@@ -659,6 +667,8 @@ Quality dimensions: Compatibility + Maintainability + Flexibility + Performance.
 Estimate basis: engineering hours including review, tests and docs; initial range 24–48 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
 
 Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+September implementation findings: upstream run 35081865397 fails Windows/Linux locked restore (ILLink 10.0.12 vs 10.0.11 locks) and the .NET 11 in-process event scheduling test. Explicit analyzer injection reveals 121 pre-existing non-coordination Abstractions API diagnostics (118 undeclared, 3 stale declarations); normal project-reference wiring did not enforce them. Budget within the existing 32 h: SDK/locks 8 h; analyzer/baseline repair 8 h; scheduling proof 4 h; remaining consumer/deployment matrix 12 h. This task stays open and unscheduled; re-estimate if evidence expands the scope.
 
 ### ENG-732 External developer journey documentation and accessibility
 

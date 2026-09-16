@@ -173,3 +173,7 @@ Use this checklist whenever compatibility-sensitive behavior changes:
 ## September 2026 history consolidation
 
 ENG-717 preserves published positional constructor and `Deconstruct` signatures on trust and diagnostics records by adding observation metadata as init properties. New catalog response records are additive public APIs and have source-generated JSON registrations. Existing provider maturity, the `net10.0` target, and deployment-mode claims remain unchanged. [Consolidation evidence](branch-consolidation-2026-09-15.md) records the build SDK and validation.
+
+## Coordination implementation follow-up (September 16, 2026)
+
+ENG-719/720 add immutable host-agnostic coordination contracts and opt-in instance-local execution. Existing snapshots and family services are preserved; `coordination` is a versioned non-health extension section. See the [decision](architecture/coordination-kernel.md) and [delivery evidence](coordination-kernel-delivery-2026-09.md). Durable recovery and shared authorization remain open. No package maturity or deployment support claim changes.

@@ -15,7 +15,9 @@ public sealed class GuardrailValidatorTests
             "performance-guardrails.json"));
 
         Assert.Equal("1.0", catalog.Version);
-        Assert.Equal(40, catalog.Entries.Count);
+        Assert.Equal(41, catalog.Entries.Count);
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "PlanReady" &&
+            entry.ReportFileName == "Cephalon.Benchmarks.Runtime.ReconciliationBenchmarks-report.csv");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifestWithStrictTrustPolicy");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildPhase8RuntimeManifest");

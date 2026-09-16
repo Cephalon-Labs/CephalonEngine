@@ -5,3 +5,68 @@ Cephalon.Abstractions.Health.DependencyHealthReport.ConsecutiveFailureCount.get 
 Cephalon.Abstractions.Health.DependencyHealthReport.ConsecutiveFailureCount.init -> void
 Cephalon.Abstractions.Health.DependencyHealthReport.ProbeDurationMilliseconds.get -> int
 Cephalon.Abstractions.Health.DependencyHealthReport.ProbeDurationMilliseconds.init -> void
+Cephalon.Abstractions.Coordination.IReconciliationEffect
+Cephalon.Abstractions.Coordination.IReconciliationEffect.ApplyAsync(Cephalon.Abstractions.Coordination.ReconciliationPlan! plan, int attemptNumber, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome>
+Cephalon.Abstractions.Coordination.ReconciliationAttempt
+Cephalon.Abstractions.Coordination.ReconciliationAttempt.<Clone>$() -> Cephalon.Abstractions.Coordination.ReconciliationAttempt!
+Cephalon.Abstractions.Coordination.ReconciliationAttempt.CompletedAtUtc.get -> System.DateTimeOffset
+Cephalon.Abstractions.Coordination.ReconciliationAttempt.CompletedAtUtc.init -> void
+Cephalon.Abstractions.Coordination.ReconciliationAttempt.Deconstruct(out int Number, out System.DateTimeOffset StartedAtUtc, out System.DateTimeOffset CompletedAtUtc, out Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome Outcome) -> void
+Cephalon.Abstractions.Coordination.ReconciliationAttempt.Equals(Cephalon.Abstractions.Coordination.ReconciliationAttempt? other) -> bool
+Cephalon.Abstractions.Coordination.ReconciliationAttempt.Number.get -> int
+Cephalon.Abstractions.Coordination.ReconciliationAttempt.Number.init -> void
+Cephalon.Abstractions.Coordination.ReconciliationAttempt.Outcome.get -> Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome
+Cephalon.Abstractions.Coordination.ReconciliationAttempt.Outcome.init -> void
+Cephalon.Abstractions.Coordination.ReconciliationAttempt.ReconciliationAttempt(int Number, System.DateTimeOffset StartedAtUtc, System.DateTimeOffset CompletedAtUtc, Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome Outcome) -> void
+Cephalon.Abstractions.Coordination.ReconciliationAttempt.StartedAtUtc.get -> System.DateTimeOffset
+Cephalon.Abstractions.Coordination.ReconciliationAttempt.StartedAtUtc.init -> void
+Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome
+Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome.Applied = 1 -> Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome
+Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome.InDoubt = 0 -> Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome
+Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome.Rejected = 3 -> Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome
+Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome.RetryableNoEffect = 2 -> Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome
+Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome.Stale = 4 -> Cephalon.Abstractions.Coordination.ReconciliationEffectOutcome
+Cephalon.Abstractions.Coordination.ReconciliationOutcome
+Cephalon.Abstractions.Coordination.ReconciliationOutcome.Applied = 1 -> Cephalon.Abstractions.Coordination.ReconciliationOutcome
+Cephalon.Abstractions.Coordination.ReconciliationOutcome.Canceled = 5 -> Cephalon.Abstractions.Coordination.ReconciliationOutcome
+Cephalon.Abstractions.Coordination.ReconciliationOutcome.CapacityExceeded = 10 -> Cephalon.Abstractions.Coordination.ReconciliationOutcome
+Cephalon.Abstractions.Coordination.ReconciliationOutcome.Conflict = 9 -> Cephalon.Abstractions.Coordination.ReconciliationOutcome
+Cephalon.Abstractions.Coordination.ReconciliationOutcome.Converged = 2 -> Cephalon.Abstractions.Coordination.ReconciliationOutcome
+Cephalon.Abstractions.Coordination.ReconciliationOutcome.Exhausted = 6 -> Cephalon.Abstractions.Coordination.ReconciliationOutcome
+Cephalon.Abstractions.Coordination.ReconciliationOutcome.Expired = 4 -> Cephalon.Abstractions.Coordination.ReconciliationOutcome
+Cephalon.Abstractions.Coordination.ReconciliationOutcome.InDoubt = 8 -> Cephalon.Abstractions.Coordination.ReconciliationOutcome
+Cephalon.Abstractions.Coordination.ReconciliationOutcome.Rejected = 7 -> Cephalon.Abstractions.Coordination.ReconciliationOutcome
+Cephalon.Abstractions.Coordination.ReconciliationOutcome.Running = 0 -> Cephalon.Abstractions.Coordination.ReconciliationOutcome
+Cephalon.Abstractions.Coordination.ReconciliationOutcome.Stale = 3 -> Cephalon.Abstractions.Coordination.ReconciliationOutcome
+Cephalon.Abstractions.Coordination.ReconciliationPlan
+Cephalon.Abstractions.Coordination.ReconciliationPlan.CreatedAtUtc.get -> System.DateTimeOffset
+Cephalon.Abstractions.Coordination.ReconciliationPlan.ExpiresAtUtc.get -> System.DateTimeOffset
+Cephalon.Abstractions.Coordination.ReconciliationPlan.Fingerprint.get -> string!
+Cephalon.Abstractions.Coordination.ReconciliationPlan.ObservedRevision.get -> string!
+Cephalon.Abstractions.Coordination.ReconciliationPlan.ReconciliationPlan(Cephalon.Abstractions.Coordination.ReconciliationRequest! request, string! observedRevision, System.DateTimeOffset createdAtUtc, System.DateTimeOffset expiresAtUtc) -> void
+Cephalon.Abstractions.Coordination.ReconciliationPlan.Request.get -> Cephalon.Abstractions.Coordination.ReconciliationRequest!
+Cephalon.Abstractions.Coordination.ReconciliationPlan.State.get -> Cephalon.Abstractions.Coordination.ReconciliationPlanState
+Cephalon.Abstractions.Coordination.ReconciliationPlanState
+Cephalon.Abstractions.Coordination.ReconciliationPlanState.Converged = 1 -> Cephalon.Abstractions.Coordination.ReconciliationPlanState
+Cephalon.Abstractions.Coordination.ReconciliationPlanState.Ready = 0 -> Cephalon.Abstractions.Coordination.ReconciliationPlanState
+Cephalon.Abstractions.Coordination.ReconciliationPlanState.Stale = 2 -> Cephalon.Abstractions.Coordination.ReconciliationPlanState
+Cephalon.Abstractions.Coordination.ReconciliationRequest
+Cephalon.Abstractions.Coordination.ReconciliationRequest.ActionId.get -> string!
+Cephalon.Abstractions.Coordination.ReconciliationRequest.ActorId.get -> string!
+Cephalon.Abstractions.Coordination.ReconciliationRequest.DesiredRevision.get -> string!
+Cephalon.Abstractions.Coordination.ReconciliationRequest.ExpectedRevision.get -> string!
+Cephalon.Abstractions.Coordination.ReconciliationRequest.OperationId.get -> string!
+Cephalon.Abstractions.Coordination.ReconciliationRequest.ReconciliationRequest(string! operationId, string! tenantId, string! actorId, string! actionId, string! targetId, string! desiredRevision, string! expectedRevision) -> void
+Cephalon.Abstractions.Coordination.ReconciliationRequest.TargetId.get -> string!
+Cephalon.Abstractions.Coordination.ReconciliationRequest.TenantId.get -> string!
+Cephalon.Abstractions.Coordination.ReconciliationResult
+Cephalon.Abstractions.Coordination.ReconciliationResult.Attempts.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Coordination.ReconciliationAttempt!>!
+Cephalon.Abstractions.Coordination.ReconciliationResult.ObservedAtUtc.get -> System.DateTimeOffset
+Cephalon.Abstractions.Coordination.ReconciliationResult.Outcome.get -> Cephalon.Abstractions.Coordination.ReconciliationOutcome
+Cephalon.Abstractions.Coordination.ReconciliationResult.PlanFingerprint.get -> string!
+Cephalon.Abstractions.Coordination.ReconciliationResult.ReconciliationResult(string! planFingerprint, Cephalon.Abstractions.Coordination.ReconciliationOutcome outcome, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Coordination.ReconciliationAttempt!>! attempts, System.DateTimeOffset observedAtUtc) -> void
+override Cephalon.Abstractions.Coordination.ReconciliationAttempt.Equals(object? obj) -> bool
+override Cephalon.Abstractions.Coordination.ReconciliationAttempt.GetHashCode() -> int
+override Cephalon.Abstractions.Coordination.ReconciliationAttempt.ToString() -> string!
+static Cephalon.Abstractions.Coordination.ReconciliationAttempt.operator !=(Cephalon.Abstractions.Coordination.ReconciliationAttempt? left, Cephalon.Abstractions.Coordination.ReconciliationAttempt? right) -> bool
+static Cephalon.Abstractions.Coordination.ReconciliationAttempt.operator ==(Cephalon.Abstractions.Coordination.ReconciliationAttempt? left, Cephalon.Abstractions.Coordination.ReconciliationAttempt? right) -> bool

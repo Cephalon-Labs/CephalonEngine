@@ -51,6 +51,9 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 
 ## Runtime and operations
 
+- [Coordination kernel decision and adoption](architecture/coordination-kernel.md)
+- [Coordination kernel delivery evidence](coordination-kernel-delivery-2026-09.md)
+
 - [Operations](operations.md)
 - [Container runtime](container-runtime.md)
 - [Generated app publishing](generated-app-publishing.md)

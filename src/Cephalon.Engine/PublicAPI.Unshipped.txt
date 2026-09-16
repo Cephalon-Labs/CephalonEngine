@@ -43,3 +43,15 @@ Cephalon.Engine.Trust.PackageTrustDecision.VerifiedAtUtc.get -> System.DateTimeO
 Cephalon.Engine.Trust.PackageTrustDecision.VerifiedAtUtc.init -> void
 Cephalon.Engine.Trust.TrustSnapshot.EvaluatedAtUtc.get -> System.DateTimeOffset
 Cephalon.Engine.Trust.TrustSnapshot.EvaluatedAtUtc.init -> void
+Cephalon.Engine.Coordination.ReconciliationExecutor
+Cephalon.Engine.Coordination.ReconciliationExecutor.DescribeSection() -> Cephalon.Engine.Runtime.RuntimeIntrospectionSection!
+Cephalon.Engine.Coordination.ReconciliationExecutor.ExecuteAsync(Cephalon.Abstractions.Coordination.ReconciliationPlan! plan, Cephalon.Abstractions.Coordination.IReconciliationEffect! effect, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Cephalon.Abstractions.Coordination.ReconciliationResult!>
+Cephalon.Engine.Coordination.ReconciliationExecutor.ReconciliationExecutor(Cephalon.Engine.Coordination.ReconciliationOptions? options = null, System.TimeProvider? timeProvider = null) -> void
+Cephalon.Engine.Coordination.ReconciliationOptions
+Cephalon.Engine.Coordination.ReconciliationOptions.Capacity.get -> int
+Cephalon.Engine.Coordination.ReconciliationOptions.MaxAttempts.get -> int
+Cephalon.Engine.Coordination.ReconciliationOptions.MaxRetryDelay.get -> System.TimeSpan
+Cephalon.Engine.Coordination.ReconciliationOptions.ReconciliationOptions(int maxAttempts = 3, int capacity = 1024, System.TimeSpan? retryDelay = null, System.TimeSpan? maxRetryDelay = null) -> void
+Cephalon.Engine.Coordination.ReconciliationOptions.RetryDelay.get -> System.TimeSpan
+Cephalon.Engine.Coordination.ReconciliationServiceCollectionExtensions
+static Cephalon.Engine.Coordination.ReconciliationServiceCollectionExtensions.AddCephalonReconciliation(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Cephalon.Engine.Coordination.ReconciliationOptions? options = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

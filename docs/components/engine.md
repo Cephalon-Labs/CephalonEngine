@@ -8,6 +8,8 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 
 ## What it owns
 
+- opt-in bounded reconciliation via `AddCephalonReconciliation`, with instance-local idempotency, expiry, safe retries, explicit uncertainty and the versioned `coordination` observation section; see [coordination adoption](../architecture/coordination-kernel.md). This slice does not supply durable coordination or shared operator authorization.
+
 - module registration and dependency ordering
 - generated-descriptor-backed assembly and package-based module discovery
 - package compatibility, integrity, and detached-signature validation for manifest-driven module loading, including multi-signer package manifests

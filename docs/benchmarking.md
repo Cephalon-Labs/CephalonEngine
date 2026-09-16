@@ -1,5 +1,13 @@
 # Cephalon Benchmarking
 
+## Bounded reconciliation planning
+
+`ReconciliationBenchmarks.PlanReady` measures immutable plan creation, including the canonical SHA-256 binding. ENG-720 adds an initial smoke ceiling of 10,000 ns and 4,096 allocated bytes to the guardrail catalog and canonical `validate-release.ps1` filters. The first measured baseline and machine details are in [coordination delivery evidence](coordination-kernel-delivery-2026-09.md). This is local planner evidence; provider latency, journal throughput and multi-process coordination belong to later pilots.
+
+Run the scoped benchmark with `dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter '*ReconciliationBenchmarks*'`.
+
+## Suite
+
 `Cephalon.Benchmarks` is the repository performance suite built on BenchmarkDotNet.
 
 It currently tracks the following benchmark lanes across composition, runtime, ASP.NET Core hosting, REST publication, scaffolding, and hot-path engine services:

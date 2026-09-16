@@ -782,6 +782,8 @@ These are intentionally different from `playground/`. The playground stays a fre
 
 The current [framework completion plan](docs/framework-completion-plan.md) maps M0–M4, all twelve quality dimensions, estimated work and Phases 14–16. The [September research baseline](docs/framework-research-2026-09.md) records primary sources and the [September architecture review](docs/architecture-review-2026-09.md) explains the decisions and evidence limits.
 
+The [coordination kernel](docs/architecture/coordination-kernel.md) now provides opt-in bounded instance-local reconciliation with immutable plans, safe retries, explicit uncertainty and versioned runtime readback. [Delivery evidence](docs/coordination-kernel-delivery-2026-09.md) records tests and allocation measurements; durable coordination, shared authorization and family pilots remain tracked gates.
+
 - `docs/engine-roadmap.md`
 - `docs/engine-backlog.md`
 - `docs/app-models.md`

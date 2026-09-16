@@ -1,14 +1,14 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-09-16T08:32:34.1686409+00:00",
+  "GeneratedAtUtc": "2026-09-16T10:17:10.8727871+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
       "Category": "Core",
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
-      "NamespaceCount": 21,
-      "TypeCount": 565
+      "NamespaceCount": 22,
+      "TypeCount": 573
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -159,8 +159,8 @@
       "Category": "Core",
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
-      "NamespaceCount": 12,
-      "TypeCount": 103
+      "NamespaceCount": 13,
+      "TypeCount": 106
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -686,6 +686,13 @@
       "TypeCount": 3
     },
     {
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "namespace-cephalon-abstractions-coordination",
+      "TypeCount": 8
+    },
+    {
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
@@ -1181,6 +1188,13 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-configuration",
       "TypeCount": 47
+    },
+    {
+      "NamespaceName": "Cephalon.Engine.Coordination",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "namespace-cephalon-engine-coordination",
+      "TypeCount": 3
     },
     {
       "NamespaceName": "Cephalon.Engine.Diagnostics",
@@ -13190,6 +13204,21 @@
       }
     },
     {
+      "DisplayName": "IReconciliationEffect",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-coordination-ireconciliationeffect",
+      "Declaration": "public interface IReconciliationEffect",
+      "Summary": "Applies one authorized provider action under an atomic revision precondition.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "IRestEndpointAuthoringPolicyRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Transports",
       "AssemblyName": "Cephalon.Abstractions",
@@ -16427,6 +16456,156 @@
         "Fields": 0,
         "Properties": 9,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ReconciliationAttempt",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-coordination-reconciliationattempt",
+      "Declaration": "public sealed class ReconciliationAttempt",
+      "Summary": "Describes a completed local attempt without exposing provider error text.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ReconciliationEffectOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-coordination-reconciliationeffectoutcome",
+      "Declaration": "public enum ReconciliationEffectOutcome",
+      "Summary": "Describes whether an effect is confirmed, safely retryable, or uncertain.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 5,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ReconciliationExecutor",
+      "NamespaceName": "Cephalon.Engine.Coordination",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-coordination-reconciliationexecutor",
+      "Declaration": "public sealed class ReconciliationExecutor",
+      "Summary": "Executes bounded reconciliation with instance-local idempotency and redacted runtime readback.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "ReconciliationOptions",
+      "NamespaceName": "Cephalon.Engine.Coordination",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-coordination-reconciliationoptions",
+      "Declaration": "public sealed class ReconciliationOptions",
+      "Summary": "Bounds process-local execution and retention. Capacity never evicts an idempotency reservation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ReconciliationOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-coordination-reconciliationoutcome",
+      "Declaration": "public enum ReconciliationOutcome",
+      "Summary": "Describes the local execution outcome without implying durable recovery.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 11,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ReconciliationPlan",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-coordination-reconciliationplan",
+      "Declaration": "public sealed class ReconciliationPlan",
+      "Summary": "An immutable, expiring plan derived solely from supplied intent and observation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ReconciliationPlanState",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-coordination-reconciliationplanstate",
+      "Declaration": "public enum ReconciliationPlanState",
+      "Summary": "Describes a pure planning decision.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 3,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ReconciliationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-coordination-reconciliationrequest",
+      "Declaration": "public sealed class ReconciliationRequest",
+      "Summary": "Identifies immutable reconciliation intent within a tenant and operation scope.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ReconciliationResult",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-coordination-reconciliationresult",
+      "Declaration": "public sealed class ReconciliationResult",
+      "Summary": "An immutable local execution snapshot; it is not a durable command journal.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ReconciliationServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Engine.Coordination",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-coordination-reconciliationservicecollectionextensions",
+      "Declaration": "public static class ReconciliationServiceCollectionExtensions",
+      "Summary": "Registers the opt-in coordination service and its observation section.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
       }
     },
     {
@@ -21042,6 +21221,17 @@
     {
       "DisplayName": "ActionId",
       "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationrequest-actionid",
+      "Signature": "string ActionId { get; }",
+      "Summary": "Gets the action identifier."
+    },
+    {
+      "DisplayName": "ActionId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantGovernanceActionDecisionRequest",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -22699,6 +22889,17 @@
       "AnchorId": "member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-actorid",
       "Signature": "string ActorId { get; }",
       "Summary": "Gets the optional actor that requested the query."
+    },
+    {
+      "DisplayName": "ActorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationrequest-actorid",
+      "Signature": "string ActorId { get; }",
+      "Summary": "Gets the actor assertion."
     },
     {
       "DisplayName": "ActorIdTag",
@@ -24536,6 +24737,17 @@
       "AnchorId": "member-m-cephalon-observability-rabbitmqdependencies-hosting-rabbitmqdependencyhealthservicecollectionextensions-addcephalonrabbitmqdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions",
       "Signature": "IServiceCollection AddCephalonRabbitMqDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CRabbitMqDependencyHealthOptions\u003E configure)",
       "Summary": "Adds RabbitMQ dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
+      "DisplayName": "AddCephalonReconciliation",
+      "Category": "Methods",
+      "DeclaringTypeName": "ReconciliationServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Engine.Coordination",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-coordination-reconciliationservicecollectionextensions-addcephalonreconciliation-microsoft-extensions-dependencyinjection-iservicecollection-cephalon-engine-coordination-reconciliationoptions",
+      "Signature": "IServiceCollection AddCephalonReconciliation(this IServiceCollection services, ReconciliationOptions options)",
+      "Summary": "Registers one executor per service provider and contributes its redacted runtime section."
     },
     {
       "DisplayName": "AddCephalonRedisDependencyHealth",
@@ -26421,6 +26633,28 @@
     {
       "DisplayName": "Applied",
       "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationEffectOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-applied",
+      "Signature": "const ReconciliationEffectOutcome Applied",
+      "Summary": "The desired revision was durably applied or verified at the protected write."
+    },
+    {
+      "DisplayName": "Applied",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationoutcome-applied",
+      "Signature": "const ReconciliationOutcome Applied",
+      "Summary": "The effect confirmed the desired revision."
+    },
+    {
+      "DisplayName": "Applied",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantAdministrationWorkflowOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -27297,6 +27531,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-applyandreconcilerisk",
       "Signature": "const string ApplyAndReconcileRisk",
       "Summary": "The broader provider-owned apply-and-reconcile lane currently remains risky."
+    },
+    {
+      "DisplayName": "ApplyAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IReconciliationEffect",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-coordination-ireconciliationeffect-applyasync-cephalon-abstractions-coordination-reconciliationplan-system-int32-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CReconciliationEffectOutcome\u003E ApplyAsync(ReconciliationPlan plan, int attemptNumber, CancellationToken cancellationToken)",
+      "Summary": "Attempts one effect; only a confirmed no-effect retry result permits another invocation."
     },
     {
       "DisplayName": "ApplyAsync",
@@ -28254,6 +28499,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-attemptid",
       "Signature": "string AttemptId { get; set; }",
       "Summary": "Gets the stable recorded command-execution attempt identifier when Cephalon has persisted one outcome."
+    },
+    {
+      "DisplayName": "Attempts",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationResult",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationresult-attempts",
+      "Signature": "IReadOnlyList\u003CReconciliationAttempt\u003E Attempts { get; }",
+      "Summary": "Gets the ordered, immutable completed attempt history."
     },
     {
       "DisplayName": "AttemptTag",
@@ -31996,6 +32252,17 @@
       "Summary": "Gets a value indicating whether the managed connector currently satisfies the shared auto-execution gate."
     },
     {
+      "DisplayName": "Canceled",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationoutcome-canceled",
+      "Signature": "const ReconciliationOutcome Canceled",
+      "Summary": "Cancellation occurred when no effect was outstanding."
+    },
+    {
       "DisplayName": "CandidateCount",
       "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipProofPollingMetadataKeys",
@@ -32973,6 +33240,28 @@
       "AnchorId": "member-m-cephalon-engine-trust-capabilitypolicyevaluator-ctor-cephalon-engine-trust-trustsnapshot",
       "Signature": "CapabilityPolicyEvaluator(TrustSnapshot snapshot)",
       "Summary": "Initializes a new instance of the \u0060CapabilityPolicyEvaluator\u0060 class."
+    },
+    {
+      "DisplayName": "Capacity",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationOptions",
+      "NamespaceName": "Cephalon.Engine.Coordination",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-coordination-reconciliationoptions-capacity",
+      "Signature": "int Capacity { get; }",
+      "Summary": "Gets the retained reservation limit."
+    },
+    {
+      "DisplayName": "CapacityExceeded",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationoutcome-capacityexceeded",
+      "Signature": "const ReconciliationOutcome CapacityExceeded",
+      "Summary": "The local reservation capacity was reached; no invocation occurred."
     },
     {
       "DisplayName": "CaptureAsync",
@@ -39080,6 +39369,17 @@
       "Summary": "Gets the UTC timestamp when replay completed or failed."
     },
     {
+      "DisplayName": "CompletedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationAttempt",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationattempt-completedatutc",
+      "Signature": "DateTimeOffset CompletedAtUtc { get; set; }",
+      "Summary": "The observed completion or uncertainty timestamp."
+    },
+    {
       "DisplayName": "CompletedCount",
       "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeState",
@@ -39540,6 +39840,17 @@
       "AnchorId": "member-f-cephalon-abstractions-behaviors-behaviorresultstatus-conflict",
       "Signature": "const BehaviorResultStatus Conflict",
       "Summary": "The request conflicts with the current state of the target resource."
+    },
+    {
+      "DisplayName": "Conflict",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationoutcome-conflict",
+      "Signature": "const ReconciliationOutcome Conflict",
+      "Summary": "The same tenant/operation identity was bound to another plan."
     },
     {
       "DisplayName": "Conflict",
@@ -41225,6 +41536,28 @@
       "Summary": "Gets the conventions implied by the suite scaffold."
     },
     {
+      "DisplayName": "Converged",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationoutcome-converged",
+      "Signature": "const ReconciliationOutcome Converged",
+      "Summary": "The supplied observation already matched the desired revision."
+    },
+    {
+      "DisplayName": "Converged",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationPlanState",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationplanstate-converged",
+      "Signature": "const ReconciliationPlanState Converged",
+      "Summary": "The desired revision was already observed; no effect is needed."
+    },
+    {
       "DisplayName": "Cooldown",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates",
@@ -42653,6 +42986,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventdispatchitem-createdatutc",
       "Signature": "DateTimeOffset CreatedAtUtc { get; }",
       "Summary": "Gets the time at which the durable outbox row was created."
+    },
+    {
+      "DisplayName": "CreatedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationPlan",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationplan-createdatutc",
+      "Signature": "DateTimeOffset CreatedAtUtc { get; }",
+      "Summary": "Gets the inclusive earliest apply time."
     },
     {
       "DisplayName": "CreatedAtUtc",
@@ -47008,6 +47352,17 @@
       "Summary": "Creates the current operator-facing section projection."
     },
     {
+      "DisplayName": "DescribeSection",
+      "Category": "Methods",
+      "DeclaringTypeName": "ReconciliationExecutor",
+      "NamespaceName": "Cephalon.Engine.Coordination",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-coordination-reconciliationexecutor-describesection",
+      "Signature": "RuntimeIntrospectionSection DescribeSection()",
+      "Summary": "Creates a versioned observation section with no tenant, actor, target, payload, or provider exception text."
+    },
+    {
       "DisplayName": "Description",
       "Category": "Properties",
       "DeclaringTypeName": "AgentToolDescriptor",
@@ -48513,6 +48868,17 @@
       "AnchorId": "member-f-cephalon-abstractions-patterns-patternkind-design",
       "Signature": "const PatternKind Design",
       "Summary": "Identifies a design pattern."
+    },
+    {
+      "DisplayName": "DesiredRevision",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationrequest-desiredrevision",
+      "Signature": "string DesiredRevision { get; }",
+      "Summary": "Gets the desired immutable intent revision."
     },
     {
       "DisplayName": "DesiredState",
@@ -57722,6 +58088,17 @@
       "Summary": "Executes the supplied command on the write side and returns the resulting value."
     },
     {
+      "DisplayName": "ExecuteAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "ReconciliationExecutor",
+      "NamespaceName": "Cephalon.Engine.Coordination",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-coordination-reconciliationexecutor-executeasync-cephalon-abstractions-coordination-reconciliationplan-cephalon-abstractions-coordination-ireconciliationeffect-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CReconciliationResult\u003E ExecuteAsync(ReconciliationPlan plan, IReconciliationEffect effect, CancellationToken cancellationToken)",
+      "Summary": "Reserves intent and executes it once within this instance; duplicates return the latest stored result."
+    },
+    {
       "DisplayName": "ExecutionAdapter",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetrySources",
@@ -59605,6 +59982,17 @@
     {
       "DisplayName": "Exhausted",
       "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationoutcome-exhausted",
+      "Signature": "const ReconciliationOutcome Exhausted",
+      "Summary": "Only confirmed no-effect retries occurred and the attempt budget was consumed."
+    },
+    {
+      "DisplayName": "Exhausted",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantInvitationDeliveryRetryStatuses",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -59790,6 +60178,17 @@
       "Summary": "Gets the SHA-256 fingerprint of the expected proof value when present."
     },
     {
+      "DisplayName": "ExpectedRevision",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationrequest-expectedrevision",
+      "Signature": "string ExpectedRevision { get; }",
+      "Summary": "Gets the required pre-mutation revision."
+    },
+    {
       "DisplayName": "ExpectedSourceServerUuid",
       "Category": "Properties",
       "DeclaringTypeName": "MySqlBinlogCaptureOptions",
@@ -59924,6 +60323,17 @@
     {
       "DisplayName": "Expired",
       "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationoutcome-expired",
+      "Signature": "const ReconciliationOutcome Expired",
+      "Summary": "The plan was outside its validity window before an effect."
+    },
+    {
+      "DisplayName": "Expired",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipStatuses",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -60030,6 +60440,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-expiremembership",
       "Signature": "const string ExpireMembership",
       "Summary": "Expires an existing tenant membership."
+    },
+    {
+      "DisplayName": "ExpiresAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationPlan",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationplan-expiresatutc",
+      "Signature": "DateTimeOffset ExpiresAtUtc { get; }",
+      "Summary": "Gets the exclusive total execution deadline."
     },
     {
       "DisplayName": "ExpiresAtUtc",
@@ -61207,6 +61628,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagesignaturetrustdecision-fingerprint",
       "Signature": "string Fingerprint { get; set; }",
       "Summary": "The declared signer fingerprint, when available."
+    },
+    {
+      "DisplayName": "Fingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationPlan",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationplan-fingerprint",
+      "Signature": "string Fingerprint { get; }",
+      "Summary": "Gets the SHA-256 intent/observation/time binding. This is not a signature or authorization grant."
     },
     {
       "DisplayName": "Flags",
@@ -74464,6 +74896,28 @@
       "Summary": "Stable Cephalon-prefix tag carrying the terminal indexing outcome emitted on the activity (started, succeeded, failed, or skipped)."
     },
     {
+      "DisplayName": "InDoubt",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationEffectOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-indoubt",
+      "Signature": "const ReconciliationEffectOutcome InDoubt",
+      "Summary": "The outcome is unknown; do not retry until externally reconciled."
+    },
+    {
+      "DisplayName": "InDoubt",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationoutcome-indoubt",
+      "Signature": "const ReconciliationOutcome InDoubt",
+      "Summary": "An effect may have occurred; automatic retry is prohibited."
+    },
+    {
       "DisplayName": "Info",
       "Category": "Fields",
       "DeclaringTypeName": "BehaviorAdvisorySeverity",
@@ -86687,6 +87141,17 @@
     {
       "DisplayName": "MaxAttempts",
       "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationOptions",
+      "NamespaceName": "Cephalon.Engine.Coordination",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-coordination-reconciliationoptions-maxattempts",
+      "Signature": "int MaxAttempts { get; }",
+      "Summary": "Gets the total attempt limit."
+    },
+    {
+      "DisplayName": "MaxAttempts",
+      "Category": "Properties",
       "DeclaringTypeName": "RetrySelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -87145,6 +87610,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-databaseruntimesettings-maxretrycount",
       "Signature": "int? MaxRetryCount { get; }",
       "Summary": "Gets the maximum retry count when transient-failure retries were configured."
+    },
+    {
+      "DisplayName": "MaxRetryDelay",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationOptions",
+      "NamespaceName": "Cephalon.Engine.Coordination",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-coordination-reconciliationoptions-maxretrydelay",
+      "Signature": "TimeSpan MaxRetryDelay { get; }",
+      "Summary": "Gets the retry delay ceiling."
     },
     {
       "DisplayName": "MaxRetryDelaySeconds",
@@ -94042,6 +94518,17 @@
       "Summary": "No DNS TXT answer was returned for the planned proof record."
     },
     {
+      "DisplayName": "Number",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationAttempt",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationattempt-number",
+      "Signature": "int Number { get; set; }",
+      "Summary": "The one-based attempt number."
+    },
+    {
       "DisplayName": "ObservabilityOptions",
       "Category": "Constructors",
       "DeclaringTypeName": "ObservabilityOptions",
@@ -94363,6 +94850,17 @@
     {
       "DisplayName": "ObservedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationResult",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationresult-observedatutc",
+      "Signature": "DateTimeOffset ObservedAtUtc { get; }",
+      "Summary": "Gets the snapshot timestamp."
+    },
+    {
+      "DisplayName": "ObservedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeOperatorCondition",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -94502,6 +95000,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-observedprooffingerprint",
       "Signature": "string ObservedProofFingerprint { get; }",
       "Summary": "Gets the SHA-256 fingerprint of the observed proof value when present."
+    },
+    {
+      "DisplayName": "ObservedRevision",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationPlan",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationplan-observedrevision",
+      "Signature": "string ObservedRevision { get; }",
+      "Summary": "Gets the observed revision; the effect must check it atomically again at mutation."
     },
     {
       "DisplayName": "ObservedState",
@@ -95635,6 +96144,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimestate-operationid",
       "Signature": "string OperationId { get; set; }",
       "Summary": "The remediation operation identifier requested by the operator."
+    },
+    {
+      "DisplayName": "OperationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationrequest-operationid",
+      "Signature": "string OperationId { get; }",
+      "Summary": "Gets the idempotency key."
     },
     {
       "DisplayName": "OperationPath",
@@ -97140,6 +97660,28 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackeventresult-outcome",
       "Signature": "string Outcome { get; }",
       "Summary": "Gets the translation or reconciliation outcome."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationAttempt",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationattempt-outcome",
+      "Signature": "ReconciliationEffectOutcome Outcome { get; set; }",
+      "Summary": "The confirmed outcome, or uncertainty."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationResult",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationresult-outcome",
+      "Signature": "ReconciliationOutcome Outcome { get; }",
+      "Summary": "Gets the local outcome."
     },
     {
       "DisplayName": "Outcome",
@@ -99945,6 +100487,17 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantdomainownershipproofpublicationplanner-planasync-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-system-threading-cancellationtoken",
       "Signature": "ValueTask\u003CTenantDomainOwnershipProofPublicationPlanResult\u003E PlanAsync(TenantDomainOwnershipProofPublicationPlanRequest request, CancellationToken cancellationToken)",
       "Summary": "Builds publication instructions for a tenant-domain ownership proof challenge."
+    },
+    {
+      "DisplayName": "PlanFingerprint",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationResult",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationresult-planfingerprint",
+      "Signature": "string PlanFingerprint { get; }",
+      "Summary": "Gets the immutable plan binding."
     },
     {
       "DisplayName": "Planned",
@@ -107139,6 +107692,17 @@
       "Summary": "The execution runtime does not currently require operator remediation."
     },
     {
+      "DisplayName": "Ready",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationPlanState",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationplanstate-ready",
+      "Signature": "const ReconciliationPlanState Ready",
+      "Summary": "The supplied observation matches the precondition."
+    },
+    {
       "DisplayName": "ReadyActionCount",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologyOperationalActionPlan",
@@ -108272,6 +108836,17 @@
       "Summary": "Broader provider-owned control-plane reconcile is currently ready."
     },
     {
+      "DisplayName": "ReconciliationAttempt",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ReconciliationAttempt",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-coordination-reconciliationattempt-ctor-system-int32-system-datetimeoffset-system-datetimeoffset-cephalon-abstractions-coordination-reconciliationeffectoutcome",
+      "Signature": "ReconciliationAttempt(int Number, DateTimeOffset StartedAtUtc, DateTimeOffset CompletedAtUtc, ReconciliationEffectOutcome Outcome)",
+      "Summary": "Describes a completed local attempt without exposing provider error text."
+    },
+    {
       "DisplayName": "ReconciliationDegraded",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories",
@@ -108294,6 +108869,17 @@
       "Summary": "The runtime currently reports a degraded reconciliation posture."
     },
     {
+      "DisplayName": "ReconciliationExecutor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ReconciliationExecutor",
+      "NamespaceName": "Cephalon.Engine.Coordination",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-coordination-reconciliationexecutor-ctor-cephalon-engine-coordination-reconciliationoptions-system-timeprovider",
+      "Signature": "ReconciliationExecutor(ReconciliationOptions options, TimeProvider timeProvider)",
+      "Summary": "Creates an isolated executor with explicit limits and a replaceable clock/timer source."
+    },
+    {
       "DisplayName": "ReconciliationGap",
       "Category": "Fields",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationAttentionCategories",
@@ -108303,6 +108889,28 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-reconciliationgap",
       "Signature": "const string ReconciliationGap",
       "Summary": "The observation did not reconcile into invitation state."
+    },
+    {
+      "DisplayName": "ReconciliationOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ReconciliationOptions",
+      "NamespaceName": "Cephalon.Engine.Coordination",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-coordination-reconciliationoptions-ctor-system-int32-system-int32-system-nullable-system-timespan-system-nullable-system-timespan",
+      "Signature": "ReconciliationOptions(int maxAttempts, int capacity, TimeSpan? retryDelay, TimeSpan? maxRetryDelay)",
+      "Summary": "Creates immutable local execution limits."
+    },
+    {
+      "DisplayName": "ReconciliationPlan",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ReconciliationPlan",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-coordination-reconciliationplan-ctor-cephalon-abstractions-coordination-reconciliationrequest-system-string-system-datetimeoffset-system-datetimeoffset",
+      "Signature": "ReconciliationPlan(ReconciliationRequest request, string observedRevision, DateTimeOffset createdAtUtc, DateTimeOffset expiresAtUtc)",
+      "Summary": "Creates a deterministic plan without reading a clock or invoking a provider."
     },
     {
       "DisplayName": "ReconciliationReason",
@@ -108369,6 +108977,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-reconciliationreason",
       "Signature": "string ReconciliationReason { get; set; }",
       "Summary": "Gets the latest operator-facing reconciliation summary currently visible for the managed connector."
+    },
+    {
+      "DisplayName": "ReconciliationRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ReconciliationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-coordination-reconciliationrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "ReconciliationRequest(string operationId, string tenantId, string actorId, string actionId, string targetId, string desiredRevision, string expectedRevision)",
+      "Summary": "Creates intent. Identifiers are ordinal, case-sensitive, and never normalized."
+    },
+    {
+      "DisplayName": "ReconciliationResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ReconciliationResult",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-coordination-reconciliationresult-ctor-system-string-cephalon-abstractions-coordination-reconciliationoutcome-system-collections-generic-ireadonlylist-cephalon-abstractions-coordination-reconciliationattempt-system-datetimeoffset",
+      "Signature": "ReconciliationResult(string planFingerprint, ReconciliationOutcome outcome, IReadOnlyList\u003CReconciliationAttempt\u003E attempts, DateTimeOffset observedAtUtc)",
+      "Summary": "Creates a result with a defensive copy of attempt history."
     },
     {
       "DisplayName": "ReconciliationStable",
@@ -109986,6 +110616,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-eventdispatchremediationoutcomes-rejected",
       "Signature": "const string Rejected",
       "Summary": "The command was rejected before it could be applied to the active dispatch store."
+    },
+    {
+      "DisplayName": "Rejected",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationEffectOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-rejected",
+      "Signature": "const ReconciliationEffectOutcome Rejected",
+      "Summary": "No mutation occurred and this intent cannot succeed."
+    },
+    {
+      "DisplayName": "Rejected",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationoutcome-rejected",
+      "Signature": "const ReconciliationOutcome Rejected",
+      "Summary": "The action was rejected without mutation."
     },
     {
       "DisplayName": "Rejected",
@@ -111713,6 +112365,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icelltrafficautomationmaterializationreportsink-reportproviderasync-system-string-system-string-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-system-threading-cancellationtoken",
       "Signature": "ValueTask ReportProviderAsync(string automationId, string materializerId, CellTrafficAutomationProviderMaterializationResult result, CancellationToken cancellationToken)",
       "Summary": "Reports a provider-managed materialization observation for one traffic automation answer."
+    },
+    {
+      "DisplayName": "Request",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationPlan",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationplan-request",
+      "Signature": "ReconciliationRequest Request { get; }",
+      "Summary": "Gets the immutable intent."
     },
     {
       "DisplayName": "Request",
@@ -115191,6 +115854,17 @@
       "Summary": "Gets the retry settings resolved for the app."
     },
     {
+      "DisplayName": "RetryableNoEffect",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationEffectOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-retryablenoeffect",
+      "Signature": "const ReconciliationEffectOutcome RetryableNoEffect",
+      "Summary": "No mutation occurred and retrying this same intent is safe."
+    },
+    {
       "DisplayName": "RetryAndTrip",
       "Category": "Fields",
       "DeclaringTypeName": "BehaviorResilienceExceptionHandling",
@@ -115266,6 +115940,17 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrycoordinationid",
       "Signature": "const string RetryCoordinationId",
       "Summary": "Identifies the cross-node retry coordination id reported for the dispatch."
+    },
+    {
+      "DisplayName": "RetryDelay",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationOptions",
+      "NamespaceName": "Cephalon.Engine.Coordination",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-coordination-reconciliationoptions-retrydelay",
+      "Signature": "TimeSpan RetryDelay { get; }",
+      "Summary": "Gets the initial retry delay."
     },
     {
       "DisplayName": "RetryDelayMilliseconds",
@@ -117334,6 +118019,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-databasemigrationstatus-running",
       "Signature": "const DatabaseMigrationStatus Running",
       "Summary": "The migration target is currently executing."
+    },
+    {
+      "DisplayName": "Running",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationoutcome-running",
+      "Signature": "const ReconciliationOutcome Running",
+      "Summary": "The operation is reserved and may be executing."
     },
     {
       "DisplayName": "RunOnStartup",
@@ -123680,6 +124376,39 @@
       "Summary": "The latest successful index is older than the configured freshness window."
     },
     {
+      "DisplayName": "Stale",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationEffectOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-stale",
+      "Signature": "const ReconciliationEffectOutcome Stale",
+      "Summary": "The revision precondition failed atomically without mutation."
+    },
+    {
+      "DisplayName": "Stale",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationOutcome",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationoutcome-stale",
+      "Signature": "const ReconciliationOutcome Stale",
+      "Summary": "A precondition failed without an effect."
+    },
+    {
+      "DisplayName": "Stale",
+      "Category": "Fields",
+      "DeclaringTypeName": "ReconciliationPlanState",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-coordination-reconciliationplanstate-stale",
+      "Signature": "const ReconciliationPlanState Stale",
+      "Summary": "The observation contradicts the precondition; a new plan is needed."
+    },
+    {
       "DisplayName": "StaleAfterSeconds",
       "Category": "Properties",
       "DeclaringTypeName": "KubernetesGatewayTrafficObservationOptions",
@@ -124019,6 +124748,17 @@
       "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayreport-startedatutc",
       "Signature": "DateTimeOffset StartedAtUtc { get; }",
       "Summary": "Gets the UTC timestamp when replay started."
+    },
+    {
+      "DisplayName": "StartedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationAttempt",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationattempt-startedatutc",
+      "Signature": "DateTimeOffset StartedAtUtc { get; set; }",
+      "Summary": "The invocation timestamp."
     },
     {
       "DisplayName": "StartedAtUtc",
@@ -124690,6 +125430,17 @@
       "AnchorId": "member-p-cephalon-eventsourcing-services-eventstreamreplayresult-1-state",
       "Signature": "TState State { get; }",
       "Summary": "Gets the aggregate state produced by replay."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationPlan",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationplan-state",
+      "Signature": "ReconciliationPlanState State { get; }",
+      "Summary": "Gets the deterministic planning decision."
     },
     {
       "DisplayName": "State",
@@ -128390,6 +129141,17 @@
     {
       "DisplayName": "TargetId",
       "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationrequest-targetid",
+      "Signature": "string TargetId { get; }",
+      "Summary": "Gets the target resource identity."
+    },
+    {
+      "DisplayName": "TargetId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantAdministrationWorkflowResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -129574,6 +130336,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-outboxmessage-tenantid",
       "Signature": "string TenantId { get; }",
       "Summary": "Gets the tenant identifier associated with the message."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "ReconciliationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Coordination",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-coordination-reconciliationrequest-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the tenant scope."
     },
     {
       "DisplayName": "TenantId",

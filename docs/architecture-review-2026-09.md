@@ -33,7 +33,7 @@ Near term: trusted releases and adoption. Mid term: shared coordination and prov
 
 ## Follow-ups and delivery validation
 
-The [backlog](engine-backlog.md#framework-completion-program-september-2026) is the live follow-up tracker; it avoids a second manually maintained status list. Parent ENG-714/715 remain open. ENG-719–738 are planned, totaling 536 h of leaf work; ENG-532 adds 1 h. No runtime implementation or maturity promotion is completed by this review.
+The [backlog](engine-backlog.md#framework-completion-program-september-2026) is the live follow-up tracker; it avoids a second manually maintained status list. Parent ENG-714/715 remain open. At the ENG-718 planning cut, ENG-719–738 totaled 536 h of planned leaf work; ENG-532 added 1 h. The later coordination delivery below updates execution status and remaining estimates. No runtime implementation or maturity promotion is completed by this review.
 
 The initial local scorecard publication rejected a pre-existing deployment-mode report whose publish-policy booleans disagreed with the manifest. A planning-only scorecard was then generated with an explicitly absent, dedicated report path; its deployment readback is `not-found`. This proves document/read-model consistency only, not deployment or release readiness. ENG-731 owns fresh deployment proof before any new claim. No artifact was edited to manufacture a pass.
 
@@ -58,3 +58,7 @@ GitHub publication:
 - [Project 2](https://github.com/orgs/Cephalon-Labs/projects/2) now includes the plan, unit/rollup rules and scheduling limits in its README. [ENG-532 / #1180](https://github.com/Cephalon-Labs/CephalonEngine/issues/1180) retains its historical failed proof and 1 h next-action estimate under Phase 15.
 
 The delivery commit is linked in the issue histories after push; local JSON/TRX/Pester receipts are under `artifacts/planning-2026-09/`. Future implementation, provider tests, RC assessment and external adoption remain open and are not included in these passed planning checks.
+
+## Coordination implementation follow-up (September 16, 2026)
+
+ENG-719/720 add immutable host-agnostic coordination contracts and opt-in instance-local execution. Existing snapshots and family services are preserved; `coordination` is a versioned non-health extension section. See the [decision](architecture/coordination-kernel.md) and [delivery evidence](coordination-kernel-delivery-2026-09.md). Durable recovery and shared authorization remain open. No package maturity or deployment support claim changes.

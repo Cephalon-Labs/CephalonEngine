@@ -53,9 +53,9 @@ Estimates are **engineering hours**, matching the existing GitHub Estimate field
 | Phase 14 / Gate 3 | ENG-715 parent: ENG-723–726 | 120 | 90–180 | Shared kernel |
 | Phase 15 | ENG-727–733, release completeness | 208 | 156–312 | Security/kernel and support-matrix dependencies per task |
 | Phase 16 | ENG-734–738, adoption and sustainable evolution | 112 | 84–168 | Relevant release proofs and an external adopter |
-| **Remaining new/re-estimated leaf work** | **20 tasks, excluding parent rollups** | **536** | **402–804** | External blockers can delay without consuming engineering hours |
+| **Original new/re-estimated leaf baseline** | **20 tasks, excluding parent rollups** | **536** | **402–804** | External blockers can delay without consuming engineering hours |
 
-ENG-532 retains its separate **1 h** next-action estimate, so total tracked remaining work is **537 h** (**67.125 person-days**), with a **403–805 h** indicative range. ENG-718 is a separate **8 h planning estimate**, not part of remaining implementation work. ENG-714 changes **32 → 96 h** and ENG-715 **64 → 120 h** because cross-process durability/security proof and three real provider loops were not sufficiently decomposed. Parent estimates are rollups only; never sum parents and children together.
+ENG-532 retains its separate **1 h** next-action estimate, so the original tracked baseline is **537 h** (**67.125 person-days**), with a **403–805 h** indicative range. ENG-718 is a separate **8 h planning estimate**, not part of remaining implementation work. ENG-714 changes **32 → 96 h** and ENG-715 **64 → 120 h** because cross-process durability/security proof and three real provider loops were not sufficiently decomposed. Parent estimates are rollups only; never sum parents and children together.
 
 Ranges are 0.75–1.5 times base, rounded only in display, and are not statistical confidence intervals. Kernel estimates have medium confidence; provider/security/adoption work has low confidence until ADRs and environment access exist. Re-estimate at ENG-719 and after the first pilot. Example capacity scenarios: at 24 focused hours per engineer-week, 537 h is about 22.4 engineer-weeks before external waiting; adding people does not eliminate the kernel/pilot/adoption critical path.
 
@@ -113,4 +113,12 @@ Monthly: refresh security/SDK sources, blockers, estimates and stale evidence. Q
 
 ## Planning delivery validation
 
-ENG-718 completes when research is linked, documents agree, the parser honors phase/iteration/shipped status, docs/maturity/planning checks pass, Project fields and issue relationships match the plan, milestone dates are truthful, and the commit is pushed and referenced from the issues. Runtime implementation ENG-719–738 remains open.
+ENG-718 completes when research is linked, documents agree, the parser honors phase/iteration/shipped status, docs/maturity/planning checks pass, Project fields and issue relationships match the plan, milestone dates are truthful, and the commit is pushed and referenced from the issues. ENG-719/720 now deliver the [bounded coordination slice](coordination-kernel-delivery-2026-09.md). ENG-721–738 remain open, as do the parent epics and release/adoption gates.
+
+## Execution update — September 16, 2026
+
+ENG-719 (16 h) and ENG-720 (24 h) deliver the inventory/decision and bounded instance-local kernel in Sprint 16; [delivery evidence](coordination-kernel-delivery-2026-09.md) separates actual validation from release gaps. Their estimates remain on completed cards for historical truth. ENG-714 retains its 96 h original rollup, with 40 h of estimated scope delivered and 56 h remaining in ENG-721/722. No double-counting of parent cards.
+
+Remaining baseline after this slice: 18 new tasks / **496 h**, plus ENG-532's 1 h next action = **497 h** (**62.125 person-days**), indicative range **373–745 h**. This is estimated unfinished scope, not a delivery date or actual effort spent. Phases 15/16 remain unchanged.
+
+ENG-731's existing 32 h scope now explicitly includes the observed SDK/ILLink locked-restore mismatch, .NET 11 scheduling test failure and pre-existing Abstractions analyzer/baseline drift. Initial breakdown: servicing/lock reproducibility 8 h; analyzer/baseline repair 8 h; readiness scheduling proof 4 h; remaining consumer/deployment matrix 12 h. Keep it unscheduled until implementation starts; discovery alone does not pass its Test or Benchmark fields. Re-estimate if the matrix or baseline repair exceeds these bounds.

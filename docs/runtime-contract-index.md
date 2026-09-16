@@ -1,5 +1,7 @@
 # Runtime contract index
 
+Opt-in coordination adds `snapshot.ExtensionSections[id=coordination]` schema `1.0`, with opaque plan ids, local outcome, attempt count and explicit non-durable scope. It publishes no operator actions and changes no existing top-level snapshot field. See [coordination contract](architecture/coordination-kernel.md).
+
 This document is the consolidated map of Cephalon's runtime contract surface: every `/engine/*` HTTP route, every `snapshot.*` data key, and every runtime catalog interface that an operator, an AI agent, or external tooling can read to know what the engine is actually doing.
 
 It exists because the engine's runtime truth is already machine-readable through `/engine/*` and `snapshot.*`, but a human or an autonomous agent should be able to discover the full surface from one page rather than scraping each route or grep-ing the source tree.

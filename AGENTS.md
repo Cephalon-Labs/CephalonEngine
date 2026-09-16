@@ -180,6 +180,7 @@ Keep folders and namespaces aligned. Do not add new root-level files to a projec
 Current source layout:
 
 - `src/Cephalon.Abstractions/AppModel` -> `Cephalon.Abstractions.AppModel`
+- `src/Cephalon.Abstractions/Coordination` -> `Cephalon.Abstractions.Coordination`
 - `src/Cephalon.Abstractions/AppModel/Scaffolding` -> `Cephalon.Abstractions.AppModel.Scaffolding`
 - `src/Cephalon.Abstractions/Agentics` -> `Cephalon.Abstractions.Agentics`
 - `src/Cephalon.Abstractions/Capabilities` -> `Cephalon.Abstractions.Capabilities`
@@ -193,6 +194,7 @@ Current source layout:
 - `src/Cephalon.Engine/AppModel` -> `Cephalon.Engine.AppModel`
 - `src/Cephalon.Engine/AppModel/Scaffolding` -> `Cephalon.Engine.AppModel.Scaffolding`
 - `src/Cephalon.Engine/Composition` -> `Cephalon.Engine.Composition`
+- `src/Cephalon.Engine/Coordination` -> `Cephalon.Engine.Coordination`
 - `src/Cephalon.Engine/Composition/Packages` -> `Cephalon.Engine.Composition.Packages`
 - `src/Cephalon.Engine/Configuration` -> `Cephalon.Engine.Configuration`
 - `src/Cephalon.Engine/Diagnostics` -> `Cephalon.Engine.Diagnostics`

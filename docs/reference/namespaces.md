@@ -32,6 +32,10 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-capabilities): 3 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities)
 
+## `Cephalon.Abstractions.Coordination`
+
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-coordination): 8 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination)
+
 ## `Cephalon.Abstractions.Data`
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 265 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
@@ -315,6 +319,10 @@ Browse the published API surface by namespace.
 ## `Cephalon.Engine.Configuration`
 
 - [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-configuration): 47 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+
+## `Cephalon.Engine.Coordination`
+
+- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-coordination): 3 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Coordination)
 
 ## `Cephalon.Engine.Diagnostics`
 

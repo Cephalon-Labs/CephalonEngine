@@ -2,6 +2,13 @@
   "version": "1.0",
   "entries": [
     {
+      "reportFileName": "Cephalon.Benchmarks.Runtime.ReconciliationBenchmarks-report.csv",
+      "benchmark": "PlanReady",
+      "maxMeanNanoseconds": 10000,
+      "maxAllocatedBytes": 4096,
+      "notes": "ENG-720: immutable plan including canonical SHA-256 binding; initial smoke budget 10 us and 4 KiB. This is an allocation regression boundary, not a throughput or distributed-coordination claim."
+    },
+    {
       "reportFileName": "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv",
       "benchmark": "BuildRuntimeManifest",
       "maxMeanNanoseconds": 130000,

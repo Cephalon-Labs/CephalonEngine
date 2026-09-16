@@ -351,7 +351,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.TestCoverageOpenQuarantineEntryCount | Should -Be 0
         $json.Summary.PublicApiPackageCount | Should -Be 104
         $json.Summary.PublicApiPendingPackageCount | Should -Be 3
-        $json.Summary.PublicApiAdditiveEntryCount | Should -Be 205
+        $json.Summary.PublicApiAdditiveEntryCount | Should -Be 282
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
         $json.Summary.EvidenceSourceCount | Should -Be 15
         $json.Summary.EvidenceSourceReferenceCount | Should -Be 41
@@ -618,7 +618,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SrePostureEvidence.StableBaselineManifestSchemaVersion | Should -Be "1.8.0"
         $json.SrePostureEvidence.StableBaselineManifestStatus | Should -Be "partial-stable-baseline-published"
         $json.SrePostureEvidence.GuardrailCatalog | Should -Be "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
-        $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 40
+        $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 41
         $json.SrePostureEvidence.SliCount | Should -Be 11
         $json.SrePostureEvidence.TargetDeclaredCount | Should -Be 11
         $json.SrePostureEvidence.PendingStableBaselineCount | Should -Be 1
@@ -793,7 +793,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.PublicApiCompatibilityEvidence.PackageCount | Should -Be 104
         $json.PublicApiCompatibilityEvidence.PendingPackageCount | Should -Be 3
         $json.PublicApiCompatibilityEvidence.HeaderOnlyPackageCount | Should -Be 101
-        $json.PublicApiCompatibilityEvidence.AdditiveEntryCount | Should -Be 205
+        $json.PublicApiCompatibilityEvidence.AdditiveEntryCount | Should -Be 282
         $json.PublicApiCompatibilityEvidence.RemovalEntryCount | Should -Be 0
         $json.PublicApiCompatibilityEvidence.HasRemovalEntries | Should -BeFalse
         $json.PublicApiCompatibilityEvidence.PackageDeltas.Count | Should -Be 104
@@ -801,7 +801,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $abstractionsDelta.Project | Should -Be "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj"
         $abstractionsDelta.Unshipped | Should -Be "src/Cephalon.Abstractions/PublicAPI.Unshipped.txt"
         $abstractionsDelta.Shipped | Should -Be "src/Cephalon.Abstractions/PublicAPI.Shipped.txt"
-        $abstractionsDelta.AdditiveEntryCount | Should -Be 6
+        $abstractionsDelta.AdditiveEntryCount | Should -Be 71
         $abstractionsDelta.RemovalEntryCount | Should -Be 0
         $abstractionsDelta.HasPendingChanges | Should -BeTrue
 
@@ -854,7 +854,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "external-policy-pending"
         $markdown | Should -Match "Public API Compatibility Evidence"
         $markdown | Should -Match "Public API packages with pending changes: 3"
-        $markdown | Should -Match "Public API additive entries: 205"
+        $markdown | Should -Match "Public API additive entries: 282"
         $markdown | Should -Match "Header-only packages: 101"
         $markdown | Should -Match "Cephalon.Abstractions"
         $markdown | Should -Match "Adoption Smoke Evidence"

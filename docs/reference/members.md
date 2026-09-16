@@ -150,6 +150,9 @@ Browse the published API surface by public member.
 - [ActionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-actioncount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of active action identifiers currently visible for the execution runtime.
   - `int ActionCount { get; }`
+- [ActionId](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationrequest-actionid): `Properties` on `ReconciliationRequest` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the action identifier.
+  - `string ActionId { get; }`
 - [ActionId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondecisionrequest-actionid): `Properties` on `TenantGovernanceActionDecisionRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ActionId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the governance action identifier to validate.
   - `string ActionId { get; }`
@@ -602,6 +605,9 @@ Browse the published API surface by public member.
   - `string ActorId { get; set; }`
 - [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-actorid): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the optional actor that requested the query.
+  - `string ActorId { get; }`
+- [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationrequest-actorid): `Properties` on `ReconciliationRequest` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the actor assertion.
   - `string ActorId { get; }`
 - [ActorIdTag](cephalon-agentics.md#member-f-cephalon-agentics-services-agenticsdiagnostics-actoridtag): `Fields` on `AgenticsDiagnostics` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ActorIdTag&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Stable Cephalon-prefix tag carrying the optional actor identifier emitted on the activity.
@@ -1104,6 +1110,9 @@ Browse the published API surface by public member.
 - [AddCephalonRabbitMqDependencyHealth](cephalon-observability-rabbitmqdependencies.md#member-m-cephalon-observability-rabbitmqdependencies-hosting-rabbitmqdependencyhealthservicecollectionextensions-addcephalonrabbitmqdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencyhealthoptions): `Methods` on `RabbitMqDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.RabbitMqDependencies.Hosting` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=AddCephalonRabbitMqDependencyHealth&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Hosting&scope=members)
   - Adds RabbitMQ dependency-health services using configuration as the primary source of probe settings.
   - `IServiceCollection AddCephalonRabbitMqDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action<RabbitMqDependencyHealthOptions> configure)`
+- [AddCephalonReconciliation](cephalon-engine.md#member-m-cephalon-engine-coordination-reconciliationservicecollectionextensions-addcephalonreconciliation-microsoft-extensions-dependencyinjection-iservicecollection-cephalon-engine-coordination-reconciliationoptions): `Methods` on `ReconciliationServiceCollectionExtensions` in `Cephalon.Engine.Coordination` (`Cephalon.Engine`) [Browse](browse.html?q=AddCephalonReconciliation&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Coordination&scope=members)
+  - Registers one executor per service provider and contributes its redacted runtime section.
+  - `IServiceCollection AddCephalonReconciliation(this IServiceCollection services, ReconciliationOptions options)`
 - [AddCephalonRedisDependencyHealth](cephalon-observability-redisdependencies.md#member-m-cephalon-observability-redisdependencies-hosting-redisdependencyhealthservicecollectionextensions-addcephalonredisdependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-observability-redisdependencies-configuration-redisdependencyhealthoptions): `Methods` on `RedisDependencyHealthServiceCollectionExtensions` in `Cephalon.Observability.RedisDependencies.Hosting` (`Cephalon.Observability.RedisDependencies`) [Browse](browse.html?q=AddCephalonRedisDependencyHealth&assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Hosting&scope=members)
   - Adds Redis dependency-health services using code-first configuration.
   - `IServiceCollection AddCephalonRedisDependencyHealth(this IServiceCollection services, Action<RedisDependencyHealthOptions> configure)`
@@ -1617,6 +1626,12 @@ Browse the published API surface by public member.
 - [Applied](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationstates-applied): `Fields` on `CellTrafficAutomationProviderMaterializationStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Applied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The automation was reconciled successfully by the selected provider materializer.
   - `const string Applied`
+- [Applied](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-applied): `Fields` on `ReconciliationEffectOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Applied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The desired revision was durably applied or verified at the protected write.
+  - `const ReconciliationEffectOutcome Applied`
+- [Applied](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationoutcome-applied): `Fields` on `ReconciliationOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Applied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The effect confirmed the desired revision.
+  - `const ReconciliationOutcome Applied`
 - [Applied](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowoutcomes-applied): `Fields` on `TenantAdministrationWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Applied&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The requested tenant-administration command was applied.
   - `const string Applied`
@@ -1857,6 +1872,9 @@ Browse the published API surface by public member.
 - [ApplyAndReconcileRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-applyandreconcilerisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApplyAndReconcileRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The broader provider-owned apply-and-reconcile lane currently remains risky.
   - `const string ApplyAndReconcileRisk`
+- [ApplyAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-coordination-ireconciliationeffect-applyasync-cephalon-abstractions-coordination-reconciliationplan-system-int32-system-threading-cancellationtoken): `Methods` on `IReconciliationEffect` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApplyAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Attempts one effect; only a confirmed no-effect retry result permits another invocation.
+  - `ValueTask<ReconciliationEffectOutcome> ApplyAsync(ReconciliationPlan plan, int attemptNumber, CancellationToken cancellationToken)`
 - [ApplyAsync](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantadministrationworkflow-applyasync-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-system-threading-cancellationtoken): `Methods` on `ITenantAdministrationWorkflow` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ApplyAsync&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Applies one tenant administration command.
   - `ValueTask<TenantAdministrationWorkflowResult> ApplyAsync(TenantAdministrationWorkflowRequest request, CancellationToken cancellationToken)`
@@ -2118,6 +2136,9 @@ Browse the published API surface by public member.
 - [AttemptId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-attemptid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AttemptId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable recorded command-execution attempt identifier when Cephalon has persisted one outcome.
   - `string AttemptId { get; set; }`
+- [Attempts](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationresult-attempts): `Properties` on `ReconciliationResult` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Attempts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the ordered, immutable completed attempt history.
+  - `IReadOnlyList<ReconciliationAttempt> Attempts { get; }`
 - [AttemptTag](cephalon-agentics.md#member-f-cephalon-agentics-services-agenticsdiagnostics-attempttag): `Fields` on `AgenticsDiagnostics` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AttemptTag&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Stable Cephalon-prefix tag carrying the requested execution attempt number emitted on the activity.
   - `const string AttemptTag`
@@ -3144,6 +3165,9 @@ Browse the published API surface by public member.
 - [CanAutoExecuteThroughEngine](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-canautoexecutethroughengine): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanAutoExecuteThroughEngine&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the managed connector currently satisfies the shared auto-execution gate.
   - `bool CanAutoExecuteThroughEngine { get; }`
+- [Canceled](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationoutcome-canceled): `Fields` on `ReconciliationOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Canceled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Cancellation occurred when no effect was outstanding.
+  - `const ReconciliationOutcome Canceled`
 - [CandidateCount](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingmetadatakeys-candidatecount): `Fields` on `TenantDomainOwnershipProofPollingMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CandidateCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key containing the number of declarations that matched the request filters before batch limiting.
   - `const string CandidateCount`
@@ -3411,6 +3435,12 @@ Browse the published API surface by public member.
 - [CapabilityPolicyEvaluator](cephalon-engine.md#member-m-cephalon-engine-trust-capabilitypolicyevaluator-ctor-cephalon-engine-trust-trustsnapshot): `Constructors` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=CapabilityPolicyEvaluator&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Initializes a new instance of the `CapabilityPolicyEvaluator` class.
   - `CapabilityPolicyEvaluator(TrustSnapshot snapshot)`
+- [Capacity](cephalon-engine.md#member-p-cephalon-engine-coordination-reconciliationoptions-capacity): `Properties` on `ReconciliationOptions` in `Cephalon.Engine.Coordination` (`Cephalon.Engine`) [Browse](browse.html?q=Capacity&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Coordination&scope=members)
+  - Gets the retained reservation limit.
+  - `int Capacity { get; }`
+- [CapacityExceeded](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationoutcome-capacityexceeded): `Fields` on `ReconciliationOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=CapacityExceeded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The local reservation capacity was reached; no invocation occurred.
+  - `const ReconciliationOutcome CapacityExceeded`
 - [CaptureAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccapture-captureasync-system-threading-cancellationtoken): `Methods` on `ICdcCapture` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CaptureAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Reads one bounded capture batch and returns the resulting outbox publications plus any provider-facing execution metadata.
   - `ValueTask<CdcCaptureExecutionResult> CaptureAsync(CancellationToken cancellationToken)`
@@ -5076,6 +5106,9 @@ Browse the published API surface by public member.
 - [CompletedAtUtc](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-completedatutc): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=CompletedAtUtc&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Gets the UTC timestamp when replay completed or failed.
   - `DateTimeOffset CompletedAtUtc { get; }`
+- [CompletedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationattempt-completedatutc): `Properties` on `ReconciliationAttempt` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompletedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The observed completion or uncertainty timestamp.
+  - `DateTimeOffset CompletedAtUtc { get; set; }`
 - [CompletedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-completedcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompletedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of `completed` observations reported so far.
   - `int CompletedCount { get; set; }`
@@ -5202,6 +5235,9 @@ Browse the published API surface by public member.
 - [Conflict](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorresultstatus-conflict): `Fields` on `BehaviorResultStatus` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Conflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - The request conflicts with the current state of the target resource.
   - `const BehaviorResultStatus Conflict`
+- [Conflict](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationoutcome-conflict): `Fields` on `ReconciliationOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Conflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The same tenant/operation identity was bound to another plan.
+  - `const ReconciliationOutcome Conflict`
 - [Conflict](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-conflict-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Conflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates a conflict result.
   - `BehaviorResultDescriptor Conflict(string code, string message, BehaviorFault fault)`
@@ -5661,6 +5697,12 @@ Browse the published API surface by public member.
 - [Conventions](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-suitescaffoldplan-conventions): `Properties` on `SuiteScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Conventions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the conventions implied by the suite scaffold.
   - `IReadOnlyList<string> Conventions { get; }`
+- [Converged](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationoutcome-converged): `Fields` on `ReconciliationOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Converged&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The supplied observation already matched the desired revision.
+  - `const ReconciliationOutcome Converged`
+- [Converged](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationplanstate-converged): `Fields` on `ReconciliationPlanState` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Converged&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The desired revision was already observed; no effect is needed.
+  - `const ReconciliationPlanState Converged`
 - [Cooldown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrystates-cooldown): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetryStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Cooldown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current shared runtime truth matches a recently-recorded command and should wait for a short cooldown window before retrying.
   - `const string Cooldown`
@@ -6050,6 +6092,9 @@ Browse the published API surface by public member.
   - `DateTimeOffset CreatedAtUtc { get; set; }`
 - [CreatedAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-createdatutc): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreatedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the time at which the durable outbox row was created.
+  - `DateTimeOffset CreatedAtUtc { get; }`
+- [CreatedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationplan-createdatutc): `Properties` on `ReconciliationPlan` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=CreatedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the inclusive earliest apply time.
   - `DateTimeOffset CreatedAtUtc { get; }`
 - [CreatedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantgovernanceactiondescriptor-createdatutc): `Properties` on `TenantGovernanceActionDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CreatedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when the action was created.
@@ -7239,6 +7284,9 @@ Browse the published API surface by public member.
 - [DescribeSection](cephalon-engine.md#member-m-cephalon-engine-runtime-iruntimeintrospectionsectioncontributor-describesection): `Methods` on `IRuntimeIntrospectionSectionContributor` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DescribeSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Creates the current operator-facing section projection.
   - `RuntimeIntrospectionSection DescribeSection()`
+- [DescribeSection](cephalon-engine.md#member-m-cephalon-engine-coordination-reconciliationexecutor-describesection): `Methods` on `ReconciliationExecutor` in `Cephalon.Engine.Coordination` (`Cephalon.Engine`) [Browse](browse.html?q=DescribeSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Coordination&scope=members)
+  - Creates a versioned observation section with no tenant, actor, target, payload, or provider exception text.
+  - `RuntimeIntrospectionSection DescribeSection()`
 - [Description](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttooldescriptor-description): `Properties` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Description&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the human-readable description of the tool.
   - `string Description { get; }`
@@ -7650,6 +7698,9 @@ Browse the published API surface by public member.
 - [Design](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-design): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Design&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Identifies a design pattern.
   - `const PatternKind Design`
+- [DesiredRevision](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationrequest-desiredrevision): `Properties` on `ReconciliationRequest` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=DesiredRevision&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the desired immutable intent revision.
+  - `string DesiredRevision { get; }`
 - [DesiredState](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-desiredstate): `Properties` on `RuntimeIntrospectionSectionEntry` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DesiredState&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the state the runtime is expected to maintain.
   - `string DesiredState { get; }`
@@ -10164,6 +10215,9 @@ Browse the published API surface by public member.
 - [ExecuteAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iwritestore-executeasync-1-cephalon-abstractions-data-icommand-0-system-threading-cancellationtoken): `Methods` on `IWriteStore` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Executes the supplied command on the write side and returns the resulting value.
   - `ValueTask<TResult> ExecuteAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken)`
+- [ExecuteAsync](cephalon-engine.md#member-m-cephalon-engine-coordination-reconciliationexecutor-executeasync-cephalon-abstractions-coordination-reconciliationplan-cephalon-abstractions-coordination-ireconciliationeffect-system-threading-cancellationtoken): `Methods` on `ReconciliationExecutor` in `Cephalon.Engine.Coordination` (`Cephalon.Engine`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Coordination&scope=members)
+  - Reserves intent and executes it once within this instance; duplicates return the latest stored result.
+  - `ValueTask<ReconciliationResult> ExecuteAsync(ReconciliationPlan plan, IReconciliationEffect effect, CancellationToken cancellationToken)`
 - [ExecutionAdapter](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandretrysources-executionadapter): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandRetrySources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionAdapter&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The retry posture was derived from the shared execution-adapter lane.
   - `const string ExecutionAdapter`
@@ -10677,6 +10731,9 @@ Browse the published API surface by public member.
 - [ExecutionTopology](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-executiontopology): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
   - Gets or sets the execution-topology classification published for the connector runtime.
   - `string ExecutionTopology { get; set; }`
+- [Exhausted](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationoutcome-exhausted): `Fields` on `ReconciliationOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Exhausted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Only confirmed no-effect retries occurred and the attempt budget was consumed.
+  - `const ReconciliationOutcome Exhausted`
 - [Exhausted](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrystatuses-exhausted): `Fields` on `TenantInvitationDeliveryRetryStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Exhausted&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The retry entry exhausted its configured retry budget.
   - `const string Exhausted`
@@ -10728,6 +10785,9 @@ Browse the published API surface by public member.
 - [ExpectedProofFingerprint](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-expectedprooffingerprint): `Properties` on `TenantDomainOwnershipProofEvaluationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExpectedProofFingerprint&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the SHA-256 fingerprint of the expected proof value when present.
   - `string ExpectedProofFingerprint { get; }`
+- [ExpectedRevision](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationrequest-expectedrevision): `Properties` on `ReconciliationRequest` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExpectedRevision&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the required pre-mutation revision.
+  - `string ExpectedRevision { get; }`
 - [ExpectedSourceServerUuid](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-expectedsourceserveruuid): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=ExpectedSourceServerUuid&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the expected MySQL source-server UUID when the capture should fail fast if the runtime connects to a different upstream.
   - `string ExpectedSourceServerUuid { get; set; }`
@@ -10764,6 +10824,9 @@ Browse the published API surface by public member.
 - [Expire](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowcommands-expire): `Fields` on `TenantGovernanceActionWorkflowCommands` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Expire&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Expires a non-terminal tenant-governance action.
   - `const string Expire`
+- [Expired](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationoutcome-expired): `Fields` on `ReconciliationOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Expired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The plan was outside its validity window before an effect.
+  - `const ReconciliationOutcome Expired`
 - [Expired](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipstatuses-expired): `Fields` on `TenantDomainOwnershipStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Expired&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The tenant domain ownership is no longer within its valid time window.
   - `const string Expired`
@@ -10794,6 +10857,9 @@ Browse the published API surface by public member.
 - [ExpireMembership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantadministrationworkflowcommands-expiremembership): `Fields` on `TenantAdministrationWorkflowCommands` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExpireMembership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Expires an existing tenant membership.
   - `const string ExpireMembership`
+- [ExpiresAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationplan-expiresatutc): `Properties` on `ReconciliationPlan` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExpiresAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the exclusive total execution deadline.
+  - `DateTimeOffset ExpiresAtUtc { get; }`
 - [ExpiresAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowrequest-expiresatutc): `Properties` on `TenantAdministrationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExpiresAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional UTC timestamp when the membership or invitation expires.
   - `DateTimeOffset? ExpiresAtUtc { get; }`
@@ -11118,6 +11184,9 @@ Browse the published API surface by public member.
 - [Fingerprint](cephalon-engine.md#member-p-cephalon-engine-trust-packagesignaturetrustdecision-fingerprint): `Properties` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Fingerprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The declared signer fingerprint, when available.
   - `string Fingerprint { get; set; }`
+- [Fingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationplan-fingerprint): `Properties` on `ReconciliationPlan` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Fingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the SHA-256 intent/observation/time binding. This is not a signature or authorization grant.
+  - `string Fingerprint { get; }`
 - [Flags](cephalon-engine.md#member-p-cephalon-engine-configuration-featuresettings-flags): `Properties` on `FeatureSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Flags&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the feature flags configured for the app.
   - `IReadOnlyList<FeatureFlagSettings> Flags { get; }`
@@ -14742,6 +14811,12 @@ Browse the published API surface by public member.
 - [IndexingOutcomeTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-indexingoutcometag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=IndexingOutcomeTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Stable Cephalon-prefix tag carrying the terminal indexing outcome emitted on the activity (started, succeeded, failed, or skipped).
   - `const string IndexingOutcomeTag`
+- [InDoubt](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-indoubt): `Fields` on `ReconciliationEffectOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=InDoubt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The outcome is unknown; do not retry until externally reconciled.
+  - `const ReconciliationEffectOutcome InDoubt`
+- [InDoubt](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationoutcome-indoubt): `Fields` on `ReconciliationOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=InDoubt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - An effect may have occurred; automatic retry is prohibited.
+  - `const ReconciliationOutcome InDoubt`
 - [Info](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-info): `Fields` on `BehaviorAdvisorySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Info&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Informational — no action required.
   - `const BehaviorAdvisorySeverity Info`
@@ -18087,6 +18162,9 @@ Browse the published API surface by public member.
 - [MaxAttempts](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-maxattempts): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=MaxAttempts&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
   - Gets or sets the total number of HTTP dispatch attempts for transient delivery failures.
   - `int MaxAttempts { get; set; }`
+- [MaxAttempts](cephalon-engine.md#member-p-cephalon-engine-coordination-reconciliationoptions-maxattempts): `Properties` on `ReconciliationOptions` in `Cephalon.Engine.Coordination` (`Cephalon.Engine`) [Browse](browse.html?q=MaxAttempts&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Coordination&scope=members)
+  - Gets the total attempt limit.
+  - `int MaxAttempts { get; }`
 - [MaxAttempts](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-maxattempts): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxAttempts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum retry attempts requested for the policy.
   - `int? MaxAttempts { get; }`
@@ -18213,6 +18291,9 @@ Browse the published API surface by public member.
 - [MaxRetryCount](cephalon-engine.md#member-p-cephalon-engine-configuration-databaseruntimesettings-maxretrycount): `Properties` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxRetryCount&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the maximum retry count when transient-failure retries were configured.
   - `int? MaxRetryCount { get; }`
+- [MaxRetryDelay](cephalon-engine.md#member-p-cephalon-engine-coordination-reconciliationoptions-maxretrydelay): `Properties` on `ReconciliationOptions` in `Cephalon.Engine.Coordination` (`Cephalon.Engine`) [Browse](browse.html?q=MaxRetryDelay&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Coordination&scope=members)
+  - Gets the retry delay ceiling.
+  - `TimeSpan MaxRetryDelay { get; }`
 - [MaxRetryDelaySeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-maxretrydelayseconds): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxRetryDelaySeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum retry delay in seconds when transient-failure retries were configured.
   - `int? MaxRetryDelaySeconds { get; }`
@@ -20095,6 +20176,9 @@ Browse the published API surface by public member.
 - [NoTxtRecords](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionoutcomes-notxtrecords): `Fields` on `TenantDomainOwnershipDnsTxtProofCollectionOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=NoTxtRecords&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - No DNS TXT answer was returned for the planned proof record.
   - `const string NoTxtRecords`
+- [Number](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationattempt-number): `Properties` on `ReconciliationAttempt` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Number&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The one-based attempt number.
+  - `int Number { get; set; }`
 
 ## O
 
@@ -20185,6 +20269,9 @@ Browse the published API surface by public member.
 - [ObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-observedatutc): `Properties` on `KnowledgeIndexingResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The UTC timestamp when the outcome was observed.
   - `DateTimeOffset ObservedAtUtc { get; set; }`
+- [ObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationresult-observedatutc): `Properties` on `ReconciliationResult` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the snapshot timestamp.
+  - `DateTimeOffset ObservedAtUtc { get; }`
 - [ObservedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeoperatorcondition-observedatutc): `Properties` on `RuntimeOperatorCondition` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the UTC timestamp at which the condition was observed, when known.
   - `DateTimeOffset? ObservedAtUtc { get; }`
@@ -20224,6 +20311,9 @@ Browse the published API surface by public member.
 - [ObservedProofFingerprint](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationresult-observedprooffingerprint): `Properties` on `TenantDomainOwnershipProofEvaluationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ObservedProofFingerprint&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the SHA-256 fingerprint of the observed proof value when present.
   - `string ObservedProofFingerprint { get; }`
+- [ObservedRevision](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationplan-observedrevision): `Properties` on `ReconciliationPlan` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedRevision&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the observed revision; the effect must check it atomically again at mutation.
+  - `string ObservedRevision { get; }`
 - [ObservedState](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsectionentry-observedstate): `Properties` on `RuntimeIntrospectionSectionEntry` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ObservedState&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the state most recently observed by the contributor.
   - `string ObservedState { get; }`
@@ -20533,6 +20623,9 @@ Browse the published API surface by public member.
 - [OperationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimestate-operationid): `Properties` on `EventDispatchRemediationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The remediation operation identifier requested by the operator.
   - `string OperationId { get; set; }`
+- [OperationId](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationrequest-operationid): `Properties` on `ReconciliationRequest` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the idempotency key.
+  - `string OperationId { get; }`
 - [OperationPath](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-operationpath): `Properties` on `BehaviorApiSurfaceDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationPath&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the logical operation path shared by transport-specific projections.
   - `string OperationPath { get; }`
@@ -20942,6 +21035,12 @@ Browse the published API surface by public member.
 - [Outcome](cephalon-multitenancy-governance-mailgundelivery-aspnetcore.md#member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackeventresult-outcome): `Properties` on `MailgunInvitationDeliveryStatusCallbackEventResult` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`) [Browse](browse.html?q=Outcome&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting&scope=members)
   - Gets the translation or reconciliation outcome.
   - `string Outcome { get; }`
+- [Outcome](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationattempt-outcome): `Properties` on `ReconciliationAttempt` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The confirmed outcome, or uncertainty.
+  - `ReconciliationEffectOutcome Outcome { get; set; }`
+- [Outcome](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationresult-outcome): `Properties` on `ReconciliationResult` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the local outcome.
+  - `ReconciliationOutcome Outcome { get; }`
 - [Outcome](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimelifecycleevent-outcome): `Properties` on `RuntimeLifecycleEvent` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The completion outcome for the event.
   - `RuntimeLifecycleEventOutcome Outcome { get; set; }`
@@ -21710,6 +21809,9 @@ Browse the published API surface by public member.
 - [PlanAsync](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantdomainownershipproofpublicationplanner-planasync-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-system-threading-cancellationtoken): `Methods` on `ITenantDomainOwnershipProofPublicationPlanner` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=PlanAsync&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Builds publication instructions for a tenant-domain ownership proof challenge.
   - `ValueTask<TenantDomainOwnershipProofPublicationPlanResult> PlanAsync(TenantDomainOwnershipProofPublicationPlanRequest request, CancellationToken cancellationToken)`
+- [PlanFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationresult-planfingerprint): `Properties` on `ReconciliationResult` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=PlanFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the immutable plan binding.
+  - `string PlanFingerprint { get; }`
 - [Planned](cephalon-abstractions.md#member-f-cephalon-abstractions-data-databasemigrationstatus-planned): `Fields` on `DatabaseMigrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Planned&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The migration target is known to the runtime but has not started executing yet.
   - `const DatabaseMigrationStatus Planned`
@@ -23676,6 +23778,9 @@ Browse the published API surface by public member.
 - [Ready](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstates-ready): `Fields` on `CdcCaptureExecutionRuntimeRemediationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Ready&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime does not currently require operator remediation.
   - `const string Ready`
+- [Ready](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationplanstate-ready): `Fields` on `ReconciliationPlanState` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Ready&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The supplied observation matches the precondition.
+  - `const ReconciliationPlanState Ready`
 - [ReadyActionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-readyactioncount): `Properties` on `DatabaseTopologyOperationalActionPlan` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReadyActionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of ready-state actions in the plan.
   - `int ReadyActionCount { get; }`
@@ -23985,15 +24090,27 @@ Browse the published API surface by public member.
 - [ReconcileReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-reconcileready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconcileReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider-owned control-plane reconcile is currently ready.
   - `const string ReconcileReady`
+- [ReconciliationAttempt](cephalon-abstractions.md#member-m-cephalon-abstractions-coordination-reconciliationattempt-ctor-system-int32-system-datetimeoffset-system-datetimeoffset-cephalon-abstractions-coordination-reconciliationeffectoutcome): `Constructors` on `ReconciliationAttempt` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconciliationAttempt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Describes a completed local attempt without exposing provider error text.
+  - `ReconciliationAttempt(int Number, DateTimeOffset StartedAtUtc, DateTimeOffset CompletedAtUtc, ReconciliationEffectOutcome Outcome)`
 - [ReconciliationDegraded](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-reconciliationdegraded): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconciliationDegraded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime currently reports a degraded reconciliation posture.
   - `const string ReconciliationDegraded`
 - [ReconciliationDegraded](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareprovisioningandmutationhardeningcategories-reconciliationdegraded): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconciliationDegraded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime currently reports a degraded reconciliation posture.
   - `const string ReconciliationDegraded`
+- [ReconciliationExecutor](cephalon-engine.md#member-m-cephalon-engine-coordination-reconciliationexecutor-ctor-cephalon-engine-coordination-reconciliationoptions-system-timeprovider): `Constructors` on `ReconciliationExecutor` in `Cephalon.Engine.Coordination` (`Cephalon.Engine`) [Browse](browse.html?q=ReconciliationExecutor&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Coordination&scope=members)
+  - Creates an isolated executor with explicit limits and a replaceable clock/timer source.
+  - `ReconciliationExecutor(ReconciliationOptions options, TimeProvider timeProvider)`
 - [ReconciliationGap](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-reconciliationgap): `Fields` on `TenantInvitationDeliveryStatusObservationAttentionCategories` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=ReconciliationGap&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - The observation did not reconcile into invitation state.
   - `const string ReconciliationGap`
+- [ReconciliationOptions](cephalon-engine.md#member-m-cephalon-engine-coordination-reconciliationoptions-ctor-system-int32-system-int32-system-nullable-system-timespan-system-nullable-system-timespan): `Constructors` on `ReconciliationOptions` in `Cephalon.Engine.Coordination` (`Cephalon.Engine`) [Browse](browse.html?q=ReconciliationOptions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Coordination&scope=members)
+  - Creates immutable local execution limits.
+  - `ReconciliationOptions(int maxAttempts, int capacity, TimeSpan? retryDelay, TimeSpan? maxRetryDelay)`
+- [ReconciliationPlan](cephalon-abstractions.md#member-m-cephalon-abstractions-coordination-reconciliationplan-ctor-cephalon-abstractions-coordination-reconciliationrequest-system-string-system-datetimeoffset-system-datetimeoffset): `Constructors` on `ReconciliationPlan` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconciliationPlan&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Creates a deterministic plan without reading a clock or invoking a provider.
+  - `ReconciliationPlan(ReconciliationRequest request, string observedRevision, DateTimeOffset createdAtUtc, DateTimeOffset expiresAtUtc)`
 - [ReconciliationReason](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-reconciliationreason): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconciliationReason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest reported reconciliation summary when one is known.
   - `string ReconciliationReason { get; set; }`
@@ -24012,6 +24129,12 @@ Browse the published API surface by public member.
 - [ReconciliationReason](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-reconciliationreason): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconciliationReason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest operator-facing reconciliation summary currently visible for the managed connector.
   - `string ReconciliationReason { get; set; }`
+- [ReconciliationRequest](cephalon-abstractions.md#member-m-cephalon-abstractions-coordination-reconciliationrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Constructors` on `ReconciliationRequest` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconciliationRequest&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Creates intent. Identifiers are ordinal, case-sensitive, and never normalized.
+  - `ReconciliationRequest(string operationId, string tenantId, string actorId, string actionId, string targetId, string desiredRevision, string expectedRevision)`
+- [ReconciliationResult](cephalon-abstractions.md#member-m-cephalon-abstractions-coordination-reconciliationresult-ctor-system-string-cephalon-abstractions-coordination-reconciliationoutcome-system-collections-generic-ireadonlylist-cephalon-abstractions-coordination-reconciliationattempt-system-datetimeoffset): `Constructors` on `ReconciliationResult` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconciliationResult&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Creates a result with a defensive copy of attempt history.
+  - `ReconciliationResult(string planFingerprint, ReconciliationOutcome outcome, IReadOnlyList<ReconciliationAttempt> attempts, DateTimeOffset observedAtUtc)`
 - [ReconciliationStable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareapplyandreconcilehardeningcategories-reconciliationstable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconciliationStable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime currently reports a stable reconciliation posture.
   - `const string ReconciliationStable`
@@ -24453,6 +24576,12 @@ Browse the published API surface by public member.
 - [Rejected](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventdispatchremediationoutcomes-rejected): `Fields` on `EventDispatchRemediationOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Rejected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command was rejected before it could be applied to the active dispatch store.
   - `const string Rejected`
+- [Rejected](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-rejected): `Fields` on `ReconciliationEffectOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Rejected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - No mutation occurred and this intent cannot succeed.
+  - `const ReconciliationEffectOutcome Rejected`
+- [Rejected](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationoutcome-rejected): `Fields` on `ReconciliationOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Rejected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The action was rejected without mutation.
+  - `const ReconciliationOutcome Rejected`
 - [Rejected](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-rejected): `Fields` on `TenantDomainOwnershipProofEvaluationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Rejected&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The observed proof did not match the expected proof and the domain ownership was rejected.
   - `const string Rejected`
@@ -24924,6 +25053,9 @@ Browse the published API surface by public member.
 - [ReportProviderAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationmaterializationreportsink-reportproviderasync-system-string-system-string-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-system-threading-cancellationtoken): `Methods` on `ICellTrafficAutomationMaterializationReportSink` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportProviderAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Reports a provider-managed materialization observation for one traffic automation answer.
   - `ValueTask ReportProviderAsync(string automationId, string materializerId, CellTrafficAutomationProviderMaterializationResult result, CancellationToken cancellationToken)`
+- [Request](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationplan-request): `Properties` on `ReconciliationPlan` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Request&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the immutable intent.
+  - `ReconciliationRequest Request { get; }`
 - [Request](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-renderedreferencedocs-request): `Properties` on `RenderedReferenceDocs` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Request&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the original generation request.
   - `ReferenceDocsRequest Request { get; }`
@@ -25872,6 +26004,9 @@ Browse the published API surface by public member.
 - [Retry](cephalon-engine.md#member-p-cephalon-engine-configuration-resiliencesettings-retry): `Properties` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Retry&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the retry settings resolved for the app.
   - `RetrySettings Retry { get; }`
+- [RetryableNoEffect](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-retryablenoeffect): `Fields` on `ReconciliationEffectOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryableNoEffect&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - No mutation occurred and retrying this same intent is safe.
+  - `const ReconciliationEffectOutcome RetryableNoEffect`
 - [RetryAndTrip](cephalon-abstractions.md#member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-retryandtrip): `Fields` on `BehaviorResilienceExceptionHandling` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryAndTrip&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Count the exception for circuit-breaker accounting and treat it as eligible for future retry handling.
   - `const BehaviorResilienceExceptionHandling RetryAndTrip`
@@ -25893,6 +26028,9 @@ Browse the published API surface by public member.
 - [RetryCoordinationId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrycoordinationid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryCoordinationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the cross-node retry coordination id reported for the dispatch.
   - `const string RetryCoordinationId`
+- [RetryDelay](cephalon-engine.md#member-p-cephalon-engine-coordination-reconciliationoptions-retrydelay): `Properties` on `ReconciliationOptions` in `Cephalon.Engine.Coordination` (`Cephalon.Engine`) [Browse](browse.html?q=RetryDelay&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Coordination&scope=members)
+  - Gets the initial retry delay.
+  - `TimeSpan RetryDelay { get; }`
 - [RetryDelayMilliseconds](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-retrydelaymilliseconds): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=RetryDelayMilliseconds&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
   - Gets or sets the fixed delay, in milliseconds, between retry attempts.
   - `int RetryDelayMilliseconds { get; set; }`
@@ -26457,6 +26595,9 @@ Browse the published API surface by public member.
 - [Running](cephalon-abstractions.md#member-f-cephalon-abstractions-data-databasemigrationstatus-running): `Fields` on `DatabaseMigrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Running&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The migration target is currently executing.
   - `const DatabaseMigrationStatus Running`
+- [Running](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationoutcome-running): `Fields` on `ReconciliationOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Running&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The operation is reserved and may be executing.
+  - `const ReconciliationOutcome Running`
 - [RunOnStartup](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpollingruntimesnapshot-runonstartup): `Properties` on `TenantDomainOwnershipProofPollingRuntimeSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RunOnStartup&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether background proof polling runs once during hosted-service startup.
   - `bool RunOnStartup { get; }`
@@ -28188,6 +28329,15 @@ Browse the published API surface by public member.
 - [Stale](cephalon-abstractions.md#member-f-cephalon-abstractions-retrieval-knowledgeindexfreshnessstates-stale): `Fields` on `KnowledgeIndexFreshnessStates` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Stale&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The latest successful index is older than the configured freshness window.
   - `const string Stale`
+- [Stale](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-stale): `Fields` on `ReconciliationEffectOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Stale&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The revision precondition failed atomically without mutation.
+  - `const ReconciliationEffectOutcome Stale`
+- [Stale](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationoutcome-stale): `Fields` on `ReconciliationOutcome` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Stale&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - A precondition failed without an effect.
+  - `const ReconciliationOutcome Stale`
+- [Stale](cephalon-abstractions.md#member-f-cephalon-abstractions-coordination-reconciliationplanstate-stale): `Fields` on `ReconciliationPlanState` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=Stale&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The observation contradicts the precondition; a new plan is needed.
+  - `const ReconciliationPlanState Stale`
 - [StaleAfterSeconds](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-staleafterseconds): `Properties` on `KubernetesGatewayTrafficObservationOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=StaleAfterSeconds&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets or sets the freshness window, in seconds, that observed status should advertise to operators.
   - `int StaleAfterSeconds { get; set; }`
@@ -28281,6 +28431,9 @@ Browse the published API surface by public member.
 - [StartedAtUtc](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayreport-startedatutc): `Properties` on `EventStreamReplayReport` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=StartedAtUtc&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Gets the UTC timestamp when replay started.
   - `DateTimeOffset StartedAtUtc { get; }`
+- [StartedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationattempt-startedatutc): `Properties` on `ReconciliationAttempt` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - The invocation timestamp.
+  - `DateTimeOffset StartedAtUtc { get; set; }`
 - [StartedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-startedatutc): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when module startup last completed successfully.
   - `DateTimeOffset? StartedAtUtc { get; set; }`
@@ -28464,6 +28617,9 @@ Browse the published API surface by public member.
 - [State](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamreplayresult-1-state): `Properties` on `EventStreamReplayResult<TState>` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=State&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Gets the aggregate state produced by replay.
   - `TState State { get; }`
+- [State](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationplan-state): `Properties` on `ReconciliationPlan` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the deterministic planning decision.
+  - `ReconciliationPlanState State { get; }`
 - [State](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-state): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=State&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The evaluated runtime health state.
   - `RuntimeHealthState State { get; set; }`
@@ -29475,6 +29631,9 @@ Browse the published API surface by public member.
 - [TargetHealthIsolationIds](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-targethealthisolationids): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetHealthIsolationIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the normalized target-cell health-isolation identifiers.
   - `IReadOnlyList<string> TargetHealthIsolationIds { get; }`
+- [TargetId](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationrequest-targetid): `Properties` on `ReconciliationRequest` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the target resource identity.
+  - `string TargetId { get; }`
 - [TargetId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantadministrationworkflowresult-targetid): `Properties` on `TenantAdministrationWorkflowResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TargetId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the stable target identifier affected by the command.
   - `string TargetId { get; }`
@@ -29798,6 +29957,9 @@ Browse the published API surface by public member.
   - `string TenantId { get; set; }`
 - [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-tenantid): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the tenant identifier associated with the message.
+  - `string TenantId { get; }`
+- [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-coordination-reconciliationrequest-tenantid): `Properties` on `ReconciliationRequest` in `Cephalon.Abstractions.Coordination` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Coordination&scope=members)
+  - Gets the tenant scope.
   - `string TenantId { get; }`
 - [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-tenantid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The tenant identifier associated with the publication when one exists.

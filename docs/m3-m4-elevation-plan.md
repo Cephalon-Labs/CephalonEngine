@@ -64,7 +64,7 @@ Exit proof: custom package contribution, duplicate rejection, source-generated J
 
 ### Gate 2 — shared coordination kernel
 
-Status: `planned` as `ENG-714`.
+Status: `in progress` as `ENG-714`. ENG-719/720 implement the [coordination decision](architecture/coordination-kernel.md), bounded instance-local execution and a non-health observation section. ENG-721/722 retain durable fencing/recovery and shared authorization/approval; this gate remains open. See [delivery evidence](coordination-kernel-delivery-2026-09.md).
 
 Add host-agnostic primitives for:
 

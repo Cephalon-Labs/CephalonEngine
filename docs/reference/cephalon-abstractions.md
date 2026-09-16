@@ -12,6 +12,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 - `Cephalon.Abstractions.Authorization`
 - `Cephalon.Abstractions.Behaviors`
 - `Cephalon.Abstractions.Capabilities`
+- `Cephalon.Abstractions.Coordination`
 - `Cephalon.Abstractions.Data`
 - `Cephalon.Abstractions.EventSourcing`
 - `Cephalon.Abstractions.Execution`
@@ -8530,6 +8531,610 @@ Adds a capability to the registry.
 
 Parameters:
 - `capability`: The capability to register.
+
+<a id="namespace-cephalon-abstractions-coordination"></a>
+
+## Namespace Cephalon.Abstractions.Coordination
+
+<a id="type-cephalon-abstractions-coordination-ireconciliationeffect"></a>
+
+### `IReconciliationEffect`
+
+Applies one authorized provider action under an atomic revision precondition.
+
+Remarks: The implementation must bind ActionId and DesiredRevision to immutable payload, verify actor/tenant authority at apply time, check the expected revision at the protected write, and honor cancellation. A read followed by an unconditional write is insufficient. Throwing after invocation is treated as uncertain, never retried automatically.
+
+#### Declaration
+```csharp
+public interface IReconciliationEffect
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-coordination-ireconciliationeffect-applyasync-cephalon-abstractions-coordination-reconciliationplan-system-int32-system-threading-cancellationtoken"></a>
+
+##### `ApplyAsync`
+
+```csharp
+ValueTask<ReconciliationEffectOutcome> ApplyAsync(ReconciliationPlan plan, int attemptNumber, CancellationToken cancellationToken)
+```
+
+Attempts one effect; only a confirmed no-effect retry result permits another invocation.
+
+Returns: The provider's confirmed outcome.
+
+Parameters:
+- `plan`: The complete immutable plan.
+- `attemptNumber`: The one-based attempt number within this execution.
+- `cancellationToken`: Cancellation including the total plan deadline.
+
+<a id="type-cephalon-abstractions-coordination-reconciliationattempt"></a>
+
+### `ReconciliationAttempt`
+
+Describes a completed local attempt without exposing provider error text.
+
+#### Declaration
+```csharp
+public sealed class ReconciliationAttempt
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-coordination-reconciliationattempt-ctor-system-int32-system-datetimeoffset-system-datetimeoffset-cephalon-abstractions-coordination-reconciliationeffectoutcome"></a>
+
+##### `ReconciliationAttempt`
+
+```csharp
+ReconciliationAttempt(int Number, DateTimeOffset StartedAtUtc, DateTimeOffset CompletedAtUtc, ReconciliationEffectOutcome Outcome)
+```
+
+Describes a completed local attempt without exposing provider error text.
+
+Parameters:
+- `Number`: The one-based attempt number.
+- `StartedAtUtc`: The invocation timestamp.
+- `CompletedAtUtc`: The observed completion or uncertainty timestamp.
+- `Outcome`: The confirmed outcome, or uncertainty.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationattempt-completedatutc"></a>
+
+##### `CompletedAtUtc`
+
+```csharp
+DateTimeOffset CompletedAtUtc { get; set; }
+```
+
+The observed completion or uncertainty timestamp.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationattempt-number"></a>
+
+##### `Number`
+
+```csharp
+int Number { get; set; }
+```
+
+The one-based attempt number.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationattempt-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+ReconciliationEffectOutcome Outcome { get; set; }
+```
+
+The confirmed outcome, or uncertainty.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationattempt-startedatutc"></a>
+
+##### `StartedAtUtc`
+
+```csharp
+DateTimeOffset StartedAtUtc { get; set; }
+```
+
+The invocation timestamp.
+
+<a id="type-cephalon-abstractions-coordination-reconciliationeffectoutcome"></a>
+
+### `ReconciliationEffectOutcome`
+
+Describes whether an effect is confirmed, safely retryable, or uncertain.
+
+#### Declaration
+```csharp
+public enum ReconciliationEffectOutcome
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-applied"></a>
+
+##### `Applied`
+
+```csharp
+const ReconciliationEffectOutcome Applied
+```
+
+The desired revision was durably applied or verified at the protected write.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-indoubt"></a>
+
+##### `InDoubt`
+
+```csharp
+const ReconciliationEffectOutcome InDoubt
+```
+
+The outcome is unknown; do not retry until externally reconciled.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-rejected"></a>
+
+##### `Rejected`
+
+```csharp
+const ReconciliationEffectOutcome Rejected
+```
+
+No mutation occurred and this intent cannot succeed.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-retryablenoeffect"></a>
+
+##### `RetryableNoEffect`
+
+```csharp
+const ReconciliationEffectOutcome RetryableNoEffect
+```
+
+No mutation occurred and retrying this same intent is safe.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationeffectoutcome-stale"></a>
+
+##### `Stale`
+
+```csharp
+const ReconciliationEffectOutcome Stale
+```
+
+The revision precondition failed atomically without mutation.
+
+<a id="type-cephalon-abstractions-coordination-reconciliationoutcome"></a>
+
+### `ReconciliationOutcome`
+
+Describes the local execution outcome without implying durable recovery.
+
+#### Declaration
+```csharp
+public enum ReconciliationOutcome
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationoutcome-applied"></a>
+
+##### `Applied`
+
+```csharp
+const ReconciliationOutcome Applied
+```
+
+The effect confirmed the desired revision.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationoutcome-canceled"></a>
+
+##### `Canceled`
+
+```csharp
+const ReconciliationOutcome Canceled
+```
+
+Cancellation occurred when no effect was outstanding.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationoutcome-capacityexceeded"></a>
+
+##### `CapacityExceeded`
+
+```csharp
+const ReconciliationOutcome CapacityExceeded
+```
+
+The local reservation capacity was reached; no invocation occurred.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationoutcome-conflict"></a>
+
+##### `Conflict`
+
+```csharp
+const ReconciliationOutcome Conflict
+```
+
+The same tenant/operation identity was bound to another plan.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationoutcome-converged"></a>
+
+##### `Converged`
+
+```csharp
+const ReconciliationOutcome Converged
+```
+
+The supplied observation already matched the desired revision.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationoutcome-exhausted"></a>
+
+##### `Exhausted`
+
+```csharp
+const ReconciliationOutcome Exhausted
+```
+
+Only confirmed no-effect retries occurred and the attempt budget was consumed.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationoutcome-expired"></a>
+
+##### `Expired`
+
+```csharp
+const ReconciliationOutcome Expired
+```
+
+The plan was outside its validity window before an effect.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationoutcome-indoubt"></a>
+
+##### `InDoubt`
+
+```csharp
+const ReconciliationOutcome InDoubt
+```
+
+An effect may have occurred; automatic retry is prohibited.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationoutcome-rejected"></a>
+
+##### `Rejected`
+
+```csharp
+const ReconciliationOutcome Rejected
+```
+
+The action was rejected without mutation.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationoutcome-running"></a>
+
+##### `Running`
+
+```csharp
+const ReconciliationOutcome Running
+```
+
+The operation is reserved and may be executing.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationoutcome-stale"></a>
+
+##### `Stale`
+
+```csharp
+const ReconciliationOutcome Stale
+```
+
+A precondition failed without an effect.
+
+<a id="type-cephalon-abstractions-coordination-reconciliationplan"></a>
+
+### `ReconciliationPlan`
+
+An immutable, expiring plan derived solely from supplied intent and observation.
+
+#### Declaration
+```csharp
+public sealed class ReconciliationPlan
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-coordination-reconciliationplan-ctor-cephalon-abstractions-coordination-reconciliationrequest-system-string-system-datetimeoffset-system-datetimeoffset"></a>
+
+##### `ReconciliationPlan`
+
+```csharp
+ReconciliationPlan(ReconciliationRequest request, string observedRevision, DateTimeOffset createdAtUtc, DateTimeOffset expiresAtUtc)
+```
+
+Creates a deterministic plan without reading a clock or invoking a provider.
+
+Parameters:
+- `request`: The immutable intent.
+- `observedRevision`: The observed provider revision.
+- `createdAtUtc`: The observation time and earliest apply time.
+- `expiresAtUtc`: The exclusive deadline, at most one day after creation.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationplan-createdatutc"></a>
+
+##### `CreatedAtUtc`
+
+```csharp
+DateTimeOffset CreatedAtUtc { get; }
+```
+
+Gets the inclusive earliest apply time.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationplan-expiresatutc"></a>
+
+##### `ExpiresAtUtc`
+
+```csharp
+DateTimeOffset ExpiresAtUtc { get; }
+```
+
+Gets the exclusive total execution deadline.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationplan-fingerprint"></a>
+
+##### `Fingerprint`
+
+```csharp
+string Fingerprint { get; }
+```
+
+Gets the SHA-256 intent/observation/time binding. This is not a signature or authorization grant.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationplan-observedrevision"></a>
+
+##### `ObservedRevision`
+
+```csharp
+string ObservedRevision { get; }
+```
+
+Gets the observed revision; the effect must check it atomically again at mutation.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationplan-request"></a>
+
+##### `Request`
+
+```csharp
+ReconciliationRequest Request { get; }
+```
+
+Gets the immutable intent.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationplan-state"></a>
+
+##### `State`
+
+```csharp
+ReconciliationPlanState State { get; }
+```
+
+Gets the deterministic planning decision.
+
+<a id="type-cephalon-abstractions-coordination-reconciliationplanstate"></a>
+
+### `ReconciliationPlanState`
+
+Describes a pure planning decision.
+
+#### Declaration
+```csharp
+public enum ReconciliationPlanState
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationplanstate-converged"></a>
+
+##### `Converged`
+
+```csharp
+const ReconciliationPlanState Converged
+```
+
+The desired revision was already observed; no effect is needed.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationplanstate-ready"></a>
+
+##### `Ready`
+
+```csharp
+const ReconciliationPlanState Ready
+```
+
+The supplied observation matches the precondition.
+
+<a id="member-f-cephalon-abstractions-coordination-reconciliationplanstate-stale"></a>
+
+##### `Stale`
+
+```csharp
+const ReconciliationPlanState Stale
+```
+
+The observation contradicts the precondition; a new plan is needed.
+
+<a id="type-cephalon-abstractions-coordination-reconciliationrequest"></a>
+
+### `ReconciliationRequest`
+
+Identifies immutable reconciliation intent within a tenant and operation scope.
+
+Remarks: Actor and tenant identifiers are assertions, not authorization grants. A revision must identify the complete immutable intent, including provider payload, in the owning companion.
+
+#### Declaration
+```csharp
+public sealed class ReconciliationRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-coordination-reconciliationrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `ReconciliationRequest`
+
+```csharp
+ReconciliationRequest(string operationId, string tenantId, string actorId, string actionId, string targetId, string desiredRevision, string expectedRevision)
+```
+
+Creates intent. Identifiers are ordinal, case-sensitive, and never normalized.
+
+Parameters:
+- `operationId`: An idempotency key unique within the tenant.
+- `tenantId`: The explicit tenant scope; use an application-defined scope for non-tenant workloads.
+- `actorId`: The requesting actor assertion, to be verified before applying.
+- `actionId`: The stable action whose implementation is bound by the application.
+- `targetId`: The target resource identity.
+- `desiredRevision`: The immutable desired intent revision.
+- `expectedRevision`: The revision required immediately before mutation.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationrequest-actionid"></a>
+
+##### `ActionId`
+
+```csharp
+string ActionId { get; }
+```
+
+Gets the action identifier.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationrequest-actorid"></a>
+
+##### `ActorId`
+
+```csharp
+string ActorId { get; }
+```
+
+Gets the actor assertion.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationrequest-desiredrevision"></a>
+
+##### `DesiredRevision`
+
+```csharp
+string DesiredRevision { get; }
+```
+
+Gets the desired immutable intent revision.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationrequest-expectedrevision"></a>
+
+##### `ExpectedRevision`
+
+```csharp
+string ExpectedRevision { get; }
+```
+
+Gets the required pre-mutation revision.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationrequest-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; }
+```
+
+Gets the idempotency key.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationrequest-targetid"></a>
+
+##### `TargetId`
+
+```csharp
+string TargetId { get; }
+```
+
+Gets the target resource identity.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationrequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the tenant scope.
+
+<a id="type-cephalon-abstractions-coordination-reconciliationresult"></a>
+
+### `ReconciliationResult`
+
+An immutable local execution snapshot; it is not a durable command journal.
+
+#### Declaration
+```csharp
+public sealed class ReconciliationResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-coordination-reconciliationresult-ctor-system-string-cephalon-abstractions-coordination-reconciliationoutcome-system-collections-generic-ireadonlylist-cephalon-abstractions-coordination-reconciliationattempt-system-datetimeoffset"></a>
+
+##### `ReconciliationResult`
+
+```csharp
+ReconciliationResult(string planFingerprint, ReconciliationOutcome outcome, IReadOnlyList<ReconciliationAttempt> attempts, DateTimeOffset observedAtUtc)
+```
+
+Creates a result with a defensive copy of attempt history.
+
+Parameters:
+- `planFingerprint`: The immutable plan binding.
+- `outcome`: The local outcome.
+- `attempts`: The ordered completed attempts.
+- `observedAtUtc`: The snapshot timestamp.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationresult-attempts"></a>
+
+##### `Attempts`
+
+```csharp
+IReadOnlyList<ReconciliationAttempt> Attempts { get; }
+```
+
+Gets the ordered, immutable completed attempt history.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationresult-observedatutc"></a>
+
+##### `ObservedAtUtc`
+
+```csharp
+DateTimeOffset ObservedAtUtc { get; }
+```
+
+Gets the snapshot timestamp.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+ReconciliationOutcome Outcome { get; }
+```
+
+Gets the local outcome.
+
+<a id="member-p-cephalon-abstractions-coordination-reconciliationresult-planfingerprint"></a>
+
+##### `PlanFingerprint`
+
+```csharp
+string PlanFingerprint { get; }
+```
+
+Gets the immutable plan binding.
 
 <a id="namespace-cephalon-abstractions-data"></a>
 

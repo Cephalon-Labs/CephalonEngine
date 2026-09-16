@@ -9,6 +9,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 - `Cephalon.Engine.AppModel.Scaffolding`
 - `Cephalon.Engine.Composition`
 - `Cephalon.Engine.Configuration`
+- `Cephalon.Engine.Coordination`
 - `Cephalon.Engine.Diagnostics`
 - `Cephalon.Engine.Localization`
 - `Cephalon.Engine.Manifest`
@@ -6539,6 +6540,170 @@ Parameters:
 - `defaultUri`: The provider default to use when neither an inline value nor a named value is configured.
 - `sectionPath`: The logical provider options section used for diagnostics.
 - `providerDisplayName`: The provider name used in human-readable error messages.
+
+<a id="namespace-cephalon-engine-coordination"></a>
+
+## Namespace Cephalon.Engine.Coordination
+
+<a id="type-cephalon-engine-coordination-reconciliationexecutor"></a>
+
+### `ReconciliationExecutor`
+
+Executes bounded reconciliation with instance-local idempotency and redacted runtime readback.
+
+Remarks: Register one instance per process scope. Reservations never expire or evict; a full executor rejects new operations. Restart loses all reservations. There is no distributed lease, durable recovery, or authorization implementation here. Effects must validate authority and use atomic provider preconditions. Asynchronous effects are time-bounded even if they ignore cancellation; synchronous blocking code cannot be preempted.
+
+#### Declaration
+```csharp
+public sealed class ReconciliationExecutor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-coordination-reconciliationexecutor-ctor-cephalon-engine-coordination-reconciliationoptions-system-timeprovider"></a>
+
+##### `ReconciliationExecutor`
+
+```csharp
+ReconciliationExecutor(ReconciliationOptions options, TimeProvider timeProvider)
+```
+
+Creates an isolated executor with explicit limits and a replaceable clock/timer source.
+
+Parameters:
+- `options`: Execution limits, or defaults.
+- `timeProvider`: The clock and timer source, or the system provider.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-coordination-reconciliationexecutor-describesection"></a>
+
+##### `DescribeSection`
+
+```csharp
+RuntimeIntrospectionSection DescribeSection()
+```
+
+Creates a versioned observation section with no tenant, actor, target, payload, or provider exception text.
+
+Returns: The deterministic coordination section; no executable operator actions are advertised.
+
+<a id="member-m-cephalon-engine-coordination-reconciliationexecutor-executeasync-cephalon-abstractions-coordination-reconciliationplan-cephalon-abstractions-coordination-ireconciliationeffect-system-threading-cancellationtoken"></a>
+
+##### `ExecuteAsync`
+
+```csharp
+ValueTask<ReconciliationResult> ExecuteAsync(ReconciliationPlan plan, IReconciliationEffect effect, CancellationToken cancellationToken)
+```
+
+Reserves intent and executes it once within this instance; duplicates return the latest stored result.
+
+Returns: A terminal or running snapshot. Uncertain effects require external reconciliation, never blind replay.
+
+Parameters:
+- `plan`: The immutable plan. Replanning requires a new operation id.
+- `effect`: The application-bound authorized provider action.
+- `cancellationToken`: Cancellation of the original execution; a duplicate does not cancel it.
+
+<a id="type-cephalon-engine-coordination-reconciliationoptions"></a>
+
+### `ReconciliationOptions`
+
+Bounds process-local execution and retention. Capacity never evicts an idempotency reservation.
+
+#### Declaration
+```csharp
+public sealed class ReconciliationOptions
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-coordination-reconciliationoptions-ctor-system-int32-system-int32-system-nullable-system-timespan-system-nullable-system-timespan"></a>
+
+##### `ReconciliationOptions`
+
+```csharp
+ReconciliationOptions(int maxAttempts, int capacity, TimeSpan? retryDelay, TimeSpan? maxRetryDelay)
+```
+
+Creates immutable local execution limits.
+
+Parameters:
+- `maxAttempts`: The total attempt limit, from one through 32.
+- `capacity`: The maximum retained tenant/operation reservations, from one through 100,000.
+- `retryDelay`: The initial retry delay; default 100 milliseconds.
+- `maxRetryDelay`: The retry delay ceiling; default five seconds.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-coordination-reconciliationoptions-capacity"></a>
+
+##### `Capacity`
+
+```csharp
+int Capacity { get; }
+```
+
+Gets the retained reservation limit.
+
+<a id="member-p-cephalon-engine-coordination-reconciliationoptions-maxattempts"></a>
+
+##### `MaxAttempts`
+
+```csharp
+int MaxAttempts { get; }
+```
+
+Gets the total attempt limit.
+
+<a id="member-p-cephalon-engine-coordination-reconciliationoptions-maxretrydelay"></a>
+
+##### `MaxRetryDelay`
+
+```csharp
+TimeSpan MaxRetryDelay { get; }
+```
+
+Gets the retry delay ceiling.
+
+<a id="member-p-cephalon-engine-coordination-reconciliationoptions-retrydelay"></a>
+
+##### `RetryDelay`
+
+```csharp
+TimeSpan RetryDelay { get; }
+```
+
+Gets the initial retry delay.
+
+<a id="type-cephalon-engine-coordination-reconciliationservicecollectionextensions"></a>
+
+### `ReconciliationServiceCollectionExtensions`
+
+Registers the opt-in coordination service and its observation section.
+
+#### Declaration
+```csharp
+public static class ReconciliationServiceCollectionExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-engine-coordination-reconciliationservicecollectionextensions-addcephalonreconciliation-microsoft-extensions-dependencyinjection-iservicecollection-cephalon-engine-coordination-reconciliationoptions"></a>
+
+##### `AddCephalonReconciliation`
+
+```csharp
+IServiceCollection AddCephalonReconciliation(this IServiceCollection services, ReconciliationOptions options)
+```
+
+Registers one executor per service provider and contributes its redacted runtime section.
+
+Returns: The same service collection.
+
+Parameters:
+- `services`: The application service collection.
+- `options`: Immutable limits; first registration wins.
 
 <a id="namespace-cephalon-engine-diagnostics"></a>
 
