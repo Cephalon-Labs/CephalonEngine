@@ -58,8 +58,8 @@
     be invoked from anywhere.
 
 .PARAMETER PublishTargets
-    Optional explicit set of csproj paths to publish during the publish probe. When omitted the probe
-    is skipped (treated the same as -SkipPublish).
+    Optional explicit set of csproj paths to publish during the publish probe. When omitted, uses the
+    manifest's representativePublishTargets.projects unless -SkipPublish is set.
 
 .PARAMETER ProjectPaths
     Optional explicit set of csproj paths to audit. When omitted the harness scans
@@ -82,8 +82,8 @@
 .EXAMPLE
     pwsh ./scripts/validate-deployment-mode-claims.ps1
 
-    Runs the full audit-only harness (publish probe is skipped because no -PublishTargets was given)
-    against the current repo and writes the report to artifacts/deployment-mode-claims-release/.
+    Runs the full harness, including the manifest's representative publish targets, against the
+    current repo and writes the report to artifacts/deployment-mode-claims-release/.
 
 .EXAMPLE
     pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode trim -SkipPublish

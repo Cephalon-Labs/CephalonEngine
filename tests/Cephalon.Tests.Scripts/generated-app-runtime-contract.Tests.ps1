@@ -2,7 +2,7 @@ BeforeAll {
     . (Join-Path (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)) 'scripts/generated-app-runtime-contract.ps1')
     function New-RuntimeFixture {
         $manifest = @'
-{"manifestVersion":"2.0","engineVersion":"0.1.0","appProfile":{"blueprintId":"modular-monolith","patterns":[{"id":"shared-foundation"}],"transports":[{"id":"rest-api"}],"technologies":[]},"modules":[{"id":"foundation","version":"1.0.0","assemblyName":"Probe.Foundation"}],"capabilities":[{"key":"foundation.status","sourceModuleId":"foundation"}],"packages":[]}
+{"manifestVersion":"2.0","engineVersion":"0.1.0","appProfile":{"blueprintId":"modular-monolith","patterns":[{"id":"shared-foundation-pattern"}],"transports":[{"id":"rest-api"}],"technologies":[]},"modules":[{"id":"foundation","version":"1.0.0","assemblyName":"Probe.Foundation"}],"capabilities":[{"key":"foundation.status","sourceModuleId":"foundation"}],"packages":[]}
 '@ | ConvertFrom-Json
         @{
             Manifest = $manifest
@@ -12,7 +12,7 @@ BeforeAll {
                 futureSurface = @{}
             }
             Configuration = [pscustomobject]@{ Engine = [pscustomobject]@{
-                Blueprint = 'modular-monolith'; Patterns = @('shared-foundation'); Transports = @('rest-api')
+                Blueprint = 'modular-monolith'; Patterns = @('shared-foundation-pattern'); Transports = @('rest-api')
                 Technologies = @(); Discovery = [pscustomobject]@{ Assemblies = @('Probe.Foundation') }
             } }
         }
@@ -44,6 +44,10 @@ Describe 'Generated app runtime contract' {
     It 'rejects runtime transport drift from the generated file' {
         $fixture.Manifest.appProfile.transports[0].id = 'grpc'
         { Assert-GeneratedAppRuntimeContract @fixture } | Should -Throw '*transports*configuration*'
+    }
+    It 'requires the canonical foundation pattern in generated configuration' {
+        $fixture.Configuration.Engine.Patterns = @('shared-foundation')
+        { Assert-GeneratedAppRuntimeContract @fixture } | Should -Throw '*required foundation*'
     }
     It 'rejects a configured assembly absent from runtime discovery' {
         $fixture.Manifest.modules[0].assemblyName = 'Other.Assembly'

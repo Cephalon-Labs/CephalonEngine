@@ -12,6 +12,8 @@ HTTP 200 alone is insufficient. The smoke verifies manifest schema `2.0`, engine
 
 Generated-app report schema `1.1.0` adds required `RuntimeContract` and `Toolchain` fields in `scripts/adoption-smoke-support.json`. Other adoption scenarios retain their own report versions.
 
+The configuration comparison uses canonical engine identifiers, including `shared-foundation-pattern`; template input aliases are not serialized manifest IDs. A real external-app run exposed this distinction in the initial assertion fixture. Payload files are saved before assertions so failed receipts retain the data needed to diagnose drift.
+
 ## Reproduce
 
 Use PowerShell 7.4 or later and the SDK in `global.json`. Run these serially with repository builds: the generated-app smoke temporarily restores against an isolated NuGet cache and restores repository assets during cleanup.
@@ -35,4 +37,4 @@ Microsoft documents [redirected-stream deadlock risks](https://learn.microsoft.c
 
 The initial 4 h estimate omitted the reproduced process hang and reference-audit work. ENG-744 is revised to **12 h**, adding **8 h** of engineering scope. ENG-742 rolls up **20 h**, ENG-731 **40 h**; parents are not additive. Remaining September leaf scope becomes **476 h**, plus ENG-532 **1 h** = **477 h** until acceptance closes. Revised Phase 15 scope is **216 h**, with **188 h** remaining plus ENG-532. Estimates are not elapsed time or delivery dates.
 
-Local Tooling passed **383/383** tests in 3.51 minutes, including all package tests and the four process regressions. The generated-reference link audit passed in 0.50 seconds. Pester passed **262/262**, including twelve runtime payload guards. External generated-host execution, deployment receipts and committed-source CI are being collected. ENG-744 remains open until its declared matrix is demonstrated; cancelled or running Release Validation jobs are not passing full-release evidence. Release CI now has explicit 60-minute shipping and 20-minute SDK-readiness limits; the dedicated host/deployment job has a 35-minute limit.
+Local Tooling passed **383/383** tests in 3.51 minutes, including all package tests and the four process regressions. The generated-reference link audit passed in 0.50 seconds. Pester passed **263/263**, including thirteen runtime payload guards. The external generated host passed on Windows with SDK 10.0.401, manifest 2.0, two modules, eight capabilities and successful runtime startup. This local run used a dirty tree based on `56187325`; it is diagnostic evidence. Deployment receipts and corrected committed-source CI are being collected. ENG-744 remains open until its declared matrix is demonstrated; cancelled or running Release Validation jobs are not passing full-release evidence. Release CI now has explicit 60-minute shipping and 20-minute SDK-readiness limits; the dedicated host/deployment job has a 35-minute limit.

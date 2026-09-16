@@ -9,7 +9,7 @@ function Assert-GeneratedAppRuntimeContract {
     )
     Set-StrictMode -Version Latest
     if ($Configuration.Engine.Blueprint -cne $ExpectedBlueprint) { throw 'Generated configuration has an unexpected blueprint.' }
-    if (@($Configuration.Engine.Patterns) -cnotcontains 'shared-foundation' -or
+    if (@($Configuration.Engine.Patterns) -cnotcontains 'shared-foundation-pattern' -or
         @($Configuration.Engine.Transports) -cnotcontains 'rest-api') { throw 'Generated configuration lost the required foundation or REST transport.' }
 
     foreach ($candidate in @($Manifest, $Snapshot.manifest)) {

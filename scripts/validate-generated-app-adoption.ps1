@@ -409,15 +409,15 @@ try {
     $manifestResponse = Invoke-WebRequest -Uri "$HostUrl/engine" -TimeoutSec 20
     $snapshotResponse = Invoke-WebRequest -Uri "$HostUrl/engine/snapshot" -TimeoutSec 20
     $appModelPath = Join-Path (Split-Path -Parent $hostProjectPath) 'Configurations/AddEngine.AppModel.json'
-    $runtimeContractEvidence = Assert-GeneratedAppRuntimeContract `
-        -Manifest ($manifestResponse.Content | ConvertFrom-Json -Depth 100) `
-        -Snapshot ($snapshotResponse.Content | ConvertFrom-Json -Depth 100) `
-        -Configuration (Get-Content -LiteralPath $appModelPath -Raw | ConvertFrom-Json)
     $evidenceDirectory = Join-Path (Split-Path -Parent (Resolve-ReportPath -Path $ReportPath)) 'generated-app-runtime-contract'
     New-Item -ItemType Directory -Path $evidenceDirectory -Force | Out-Null
     $manifestResponse.Content | Set-Content -LiteralPath (Join-Path $evidenceDirectory 'manifest.json') -Encoding utf8
     $snapshotResponse.Content | Set-Content -LiteralPath (Join-Path $evidenceDirectory 'snapshot.json') -Encoding utf8
     Copy-Item -LiteralPath $appModelPath -Destination (Join-Path $evidenceDirectory 'app-model.json') -Force
+    $runtimeContractEvidence = Assert-GeneratedAppRuntimeContract `
+        -Manifest ($manifestResponse.Content | ConvertFrom-Json -Depth 100) `
+        -Snapshot ($snapshotResponse.Content | ConvertFrom-Json -Depth 100) `
+        -Configuration (Get-Content -LiteralPath $appModelPath -Raw | ConvertFrom-Json)
     $runtimeContractEvidence | Add-Member -NotePropertyName Artifacts -NotePropertyValue @(
         Get-ChildItem -LiteralPath $evidenceDirectory -File | Sort-Object Name | ForEach-Object {
             [pscustomobject]@{ Name = $_.Name; Sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
