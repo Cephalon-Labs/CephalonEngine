@@ -106,15 +106,22 @@ Estimate: 8
         $context.IterationTitle | Should -Be 'Sprint 2'
     }
 
-    It 'retains every September task once with phase, estimates and open implementation state' {
+    It 'retains September task states and estimates without adding parent rollups twice' {
         $specs = @(Get-BacklogIssueSpecs -Path (Join-Path $repoRoot 'docs/engine-backlog.md'))
-        $wave = @($specs | Where-Object { $_.EngCode -match '^ENG-7(1[89]|[23][0-9])$' -and [int]$_.EngCode.Substring(4) -le 738 })
-        $wave.Count | Should -Be 21
+        $wave = @($specs | Where-Object { $_.EngCode -match '^ENG-7(1[89]|[23][0-9]|4[0-2])$' })
+        $wave.Count | Should -Be 25
         @($wave | Group-Object EngCode | Where-Object Count -ne 1).Count | Should -Be 0
-        ($wave | Where-Object EngCode -eq 'ENG-718').State | Should -Be 'closed'
-        $remaining = @($wave | Where-Object EngCode -ne 'ENG-718')
+        $delivered = @('ENG-718', 'ENG-719', 'ENG-720', 'ENG-739', 'ENG-740', 'ENG-741')
+        @($wave | Where-Object { $_.EngCode -in $delivered -and $_.State -ne 'closed' }).Count | Should -Be 0
+        $remaining = @($wave | Where-Object { $_.EngCode -notin $delivered })
         @($remaining | Where-Object State -ne 'open').Count | Should -Be 0
-        ($remaining | Measure-Object Estimate -Sum).Sum | Should -Be 536
-        @($remaining | Where-Object { $_.PhaseNumber -notin @(14, 15, 16) }).Count | Should -Be 0
+        $originalImplementation = @($wave | Where-Object { [int]$_.EngCode.Substring(4) -ge 719 -and [int]$_.EngCode.Substring(4) -le 738 })
+        ($originalImplementation | Measure-Object Estimate -Sum).Sum | Should -Be 536
+        $compatibilityChildren = @($wave | Where-Object { [int]$_.EngCode.Substring(4) -ge 739 })
+        ($compatibilityChildren | Measure-Object Estimate -Sum).Sum | Should -Be ($wave | Where-Object EngCode -eq 'ENG-731').Estimate
+        $remainingLeaves = @($remaining | Where-Object EngCode -ne 'ENG-731')
+        $remainingLeaves.Count | Should -Be 18
+        ($remainingLeaves | Measure-Object Estimate -Sum).Sum | Should -Be 476
+        @($wave | Where-Object { $_.PhaseNumber -notin @(14, 15, 16) }).Count | Should -Be 0
     }
 }

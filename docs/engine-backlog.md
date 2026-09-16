@@ -740,6 +740,8 @@ Estimate basis: engineering hours including implementation, review, tests and do
 
 Delivery: [compatibility repair evidence](compatibility-repair-2026-09.md); SDK/locked restore, fresh positive and negative analyzer builds, 24 hosting cases, 4 readiness tests and 227 package-surface cases passed. No maturity promotion.
 
+Post-push closeout: corrected the obsolete September planning-state assertion; all 241 Pester tests passed in an isolated checkout. Existing 8 h estimate retained. See the delivery evidence for the failed CI run and follow-up validation.
+
 ### ENG-741 Wait for scheduled publication terminal evidence
 
 GitHub issue: #1434
