@@ -30,6 +30,8 @@ The September [framework completion plan](framework-completion-plan.md) adds all
 
 Status: in-progress
 
+September 17: ENG-729 is active in Sprint 16 with ENG-745 (8 h) for timeout-test determinism and Showcase exporter isolation; ENG-746 retains the remaining 24 h load/SLO/telemetry evidence unscheduled. The parent remains 32 h, non-additive. The latest Windows release test failure is tracked independently of earlier passed compatibility checkpoints. [SRE follow-up](sre-validation-2026-09.md).
+
 ENG-731 is complete in Sprint 16 with a **44 h** non-additive rollup: ENG-739/740/741/742 are 8/8/4/24 h, and ENG-742 contains ENG-743/744 at 8/16 h. The scope includes SDK/locks, API enforcement, lifecycle-test repairs, binary/blueprint consumers, historical snapshot readers, generated hosts and declared deployment targets. [Compatibility evidence](host-compatibility-2026-09.md) records the exact source/OS/RID boundaries and successful CI.
 
 ENG-727–733 cover security/tenant isolation, supply-chain verification, SLO/load/resilience evidence, data/privacy/recovery, compatibility, external developer journeys and provider/host support tiers. Original base estimate: 208 h; revised scope: **220 h**, indicative 165–330. With ENG-731 complete, **176 h** remains, plus the independent **1 h** ENG-532 signed-release action. No milestone due date until capacity and external access are established.
@@ -110,7 +112,7 @@ The next planning wave is therefore not "add more descriptors everywhere." It is
 
 ## Sprint alignment
 
-September 2026 active ordering is in the [completion plan](framework-completion-plan.md#delivery-sequence-and-effort). ENG-718/719/720 and compatibility ENG-731/739–744 are complete in the existing September 16–29 Project iteration named Sprint 16. ENG-714/715, the remaining September leaves and ENG-532 remain explicitly unscheduled. Historical sprint narratives below retain their original meaning.
+September 2026 active ordering is in the [completion plan](framework-completion-plan.md#delivery-sequence-and-effort). ENG-718/719/720 and compatibility ENG-731/739–744 are complete in the existing September 16–29 Project iteration named Sprint 16. ENG-729/745 are active in Sprint 16 for the SRE validation repair. ENG-714/715, the other unfinished September leaves (including ENG-746) and ENG-532 remain explicitly unscheduled. Historical sprint narratives below retain their original meaning.
 
 The project board now tracks both delivered work and upcoming work through explicit sprint buckets:
 

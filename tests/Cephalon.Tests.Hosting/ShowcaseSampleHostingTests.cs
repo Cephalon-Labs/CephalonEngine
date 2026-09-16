@@ -24,6 +24,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 
 namespace Cephalon.Tests.Hosting;
 
@@ -33,6 +37,17 @@ namespace Cephalon.Tests.Hosting;
 /// </summary>
 public sealed class ShowcaseSampleHostingTests
 {
+    [Fact]
+    public async Task ShowcaseTestProfileDoesNotRegisterExternalTelemetryExporters()
+    {
+        await using var app = BuildShowcaseForTests();
+
+        Assert.Null(app.Services.GetService<TracerProvider>());
+        Assert.Null(app.Services.GetService<MeterProvider>());
+        Assert.DoesNotContain(app.Services.GetServices<ILoggerProvider>(),
+            provider => provider is OpenTelemetryLoggerProvider);
+    }
+
     private static readonly JsonSerializerOptions WebJsonOptions = new(JsonSerializerDefaults.Web);
     private static readonly string[] DatabaseTopologyProjectionTags =
     [
@@ -2793,6 +2808,12 @@ public sealed class ShowcaseSampleHostingTests
         builder.Configuration["Engine:Data:MongoDB:ConnectionString"] = string.Empty;
         builder.Configuration["Engine:Data:Redis:ConnectionStringName"] = string.Empty;
         builder.Configuration["Engine:Data:Redis:ConnectionString"] = string.Empty;
+
+        // These HTTP/domain fixtures do not own a collector. Keep diagnostic emission
+        // enabled, but isolate network export; OpenTelemetryHostingTests owns OTLP proof.
+        builder.Configuration["Engine:Observability:Telemetry:ExportLogs"] = "false";
+        builder.Configuration["Engine:Observability:Telemetry:ExportMetrics"] = "false";
+        builder.Configuration["Engine:Observability:Telemetry:ExportTraces"] = "false";
     }
 
     private static void ConfigureInMemoryRole(

@@ -108,8 +108,8 @@ Estimate: 8
 
     It 'retains September task states and estimates without adding parent rollups twice' {
         $specs = @(Get-BacklogIssueSpecs -Path (Join-Path $repoRoot 'docs/engine-backlog.md'))
-        $wave = @($specs | Where-Object { $_.EngCode -match '^ENG-7(1[89]|[23][0-9]|4[0-4])$' })
-        $wave.Count | Should -Be 27
+        $wave = @($specs | Where-Object { $_.EngCode -match '^ENG-7(1[89]|[23][0-9]|4[0-6])$' })
+        $wave.Count | Should -Be 29
         @($wave | Group-Object EngCode | Where-Object Count -ne 1).Count | Should -Be 0
         $delivered = @('ENG-718', 'ENG-719', 'ENG-720', 'ENG-739', 'ENG-740', 'ENG-741')
         @($wave | Where-Object { $_.EngCode -in $delivered -and $_.State -ne 'closed' }).Count | Should -Be 0
@@ -121,7 +121,9 @@ Estimate: 8
         ($compatibilityChildren | Measure-Object Estimate -Sum).Sum | Should -Be ($wave | Where-Object EngCode -eq 'ENG-731').Estimate
         $matrixChildren = @($wave | Where-Object { $_.EngCode -in @('ENG-743', 'ENG-744') })
         ($matrixChildren | Measure-Object Estimate -Sum).Sum | Should -Be ($wave | Where-Object EngCode -eq 'ENG-742').Estimate
-        $implementationLeaves = @($wave | Where-Object { $_.EngCode -notin @('ENG-718', 'ENG-731', 'ENG-742') })
+        $sreChildren = @($wave | Where-Object { $_.EngCode -in @('ENG-745', 'ENG-746') })
+        ($sreChildren | Measure-Object Estimate -Sum).Sum | Should -Be ($wave | Where-Object EngCode -eq 'ENG-729').Estimate
+        $implementationLeaves = @($wave | Where-Object { $_.EngCode -notin @('ENG-718', 'ENG-729', 'ENG-731', 'ENG-742') })
         ($implementationLeaves | Measure-Object Estimate -Sum).Sum | Should -Be 548
         $completedHours = ($implementationLeaves | Where-Object State -eq 'closed' | Measure-Object Estimate -Sum).Sum
         $remainingHours = ($implementationLeaves | Where-Object State -eq 'open' | Measure-Object Estimate -Sum).Sum

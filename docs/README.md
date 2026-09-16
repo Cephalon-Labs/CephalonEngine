@@ -4,6 +4,8 @@
 
 [Host compatibility evidence](host-compatibility-2026-09.md) covers generated configuration, runtime snapshots, bounded validation processes and the Windows/Linux deployment gate.
 
+[September SRE validation](sre-validation-2026-09.md) tracks timeout-test determinism, Showcase telemetry isolation and measured release wall time through [monthly follow-ups](architecture-review-2026-09-followups.md).
+
 September 2026: [SDK and API compatibility repair](compatibility-repair-2026-09.md) records exact SDK selection, analyzer enforcement and remaining release gates.
 
 - [September 2026 branch consolidation and validation](branch-consolidation-2026-09-15.md) — retained history, adapter readback, compatibility, and ENG-717 delivery evidence.

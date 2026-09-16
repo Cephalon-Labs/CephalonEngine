@@ -2,7 +2,7 @@
 
 Planning date: **September 16, 2026**. Owner: **Cephalon-Neza**. Planning delivery: **ENG-718**. [GitHub Project](https://github.com/orgs/Cephalon-Labs/projects/2). [Research and sources](framework-research-2026-09.md).
 
-Current acceptance: compatibility ENG-731/742/744 is complete for its tested scope. The revised September estimate is **548 h**; **17 unfinished leaves / 464 h**, plus ENG-532 **1 h**, remain. See the [latest acceptance checkpoint](#compatibility-acceptance-complete--september-16-2026) and [compatibility evidence](host-compatibility-2026-09.md). Earlier dated checkpoints preserve the estimate history.
+Current work (September 17): ENG-745 addresses the later Windows timeout-test failure and Showcase exporter waits; ENG-729 is active with native children ENG-745 (8 h) and ENG-746 (24 h). The parent remains 32 h, non-additive. September scope remains **548 h**; **18 unfinished leaves / 464 h**, plus ENG-532 **1 h**, remain before this slice closes. The earlier compatibility acceptance is preserved for its tested checkpoints. [Current SRE evidence](sre-validation-2026-09.md). Earlier dated checkpoints preserve estimate history.
 
 ## Objective and verified baseline
 
@@ -148,3 +148,7 @@ The full release run on `5f99ee15` exposed a fixed-delay Kubernetes cleanup asse
 ENG-744 (16 h), ENG-742 (24 h rollup) and ENG-731 (44 h rollup) are complete for the explicitly tested scope. [Evidence](host-compatibility-2026-09.md) links full Windows/Linux release validation, the Windows benchmark gate, SDK 11 assessment, contract consumers, historical snapshot readers and generated-host/deployment receipts. Runtime/package/toolchain sources are identical between the release and reader checkpoints.
 
 Revised September implementation scope remains **548 h**. Current unfinished leaves: **17 tasks / 464 h**, plus ENG-532 **1 h** = **465 h (58.125 person-days)**. Phase 15 retains **176 h** remaining of its revised 220 h, plus ENG-532. Completed estimates measure delivered scope, not time spent. No GA, M0–M4, provider support or global deployment promotion is implied. Earlier checkpoint totals above are historical.
+
+## SRE validation decomposition — September 17, 2026
+
+ENG-729 now has native children ENG-745 (8 h, Sprint 16) and ENG-746 (24 h, Later / not scheduled yet). No hours are added: the 32 h parent is excluded when summing leaves. ENG-745 covers controlled resilience timing, collector-independent Showcase tests and full release proof. ENG-746 retains workload/resilience/telemetry acceptance and stable SLO renewal. The new leaf raises the unfinished count from 17 to 18 while hours remain 464 plus ENG-532 1 h. [Follow-up](sre-validation-2026-09.md).

@@ -566,19 +566,19 @@ GitHub issue: #1422
 
 Issue link: [#1422](https://github.com/Cephalon-Labs/CephalonEngine/issues/1422)
 
-Status: backlog
+Status: in-progress
 
 Estimate: 32
 
 Phase: 15
 
-Iteration: Later / not scheduled yet
+Iteration: Sprint 16
 
 Owner: Cephalon-Neza
 
 Priority: P1
 
-Test: Needed
+Test: Running
 
 Benchmark: Needed
 
@@ -597,6 +597,81 @@ Estimate basis: engineering hours including review, tests and docs; initial rang
 Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
 
 Measured follow-up: [Windows release CI on `c4f8d288`](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35095044308) passed 41 benchmark guardrails but recorded full validation wall time 1,881,965.5918 ms against the existing 1,800,000 ms target (`investigate`). Reproduce and explain the runner/workload timing before renewing that SLO; do not infer SLO compliance from a passing compatibility gate. This baseline investigation belongs to the existing 32 h scope; no estimate or maturity promotion. [Evidence](host-compatibility-2026-09.md).
+
+Breakdown: ENG-745 (8 h, active in Sprint 16) repairs deterministic validation and collector isolation; ENG-746 (24 h, unscheduled) retains broader load/SLO/telemetry acceptance. Parent 32 h is unchanged and non-additive. The post-closeout release run on `12f436ae` failed one Windows timeout assertion; prior passed compatibility checkpoints remain historical evidence, not current green-release claims.
+
+### ENG-745 Stabilize resilience timeout and isolate integration telemetry
+
+GitHub issue: #1438
+
+Issue link: [#1438](https://github.com/Cephalon-Labs/CephalonEngine/issues/1438)
+
+Status: in-progress
+
+Estimate: 8
+
+Phase: 15
+
+Iteration: Sprint 16
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Running
+
+Benchmark: Needed
+
+Parent: ENG-729 / #1422. Included in its unchanged 32 h non-additive rollup.
+
+Scope: Replace timeout-versus-delay races with explicitly controlled timeout evidence; isolate showcase HTTP integration tests from an absent OTLP collector while retaining separate exporter integration proof. Measure focused and full suites and preserve all release gates.
+
+Acceptance: Configured timeout, behavior/transport disabled overrides, circuit transitions and caller cancellation have deterministic controls; showcase tests preserve engine diagnostics while avoiding external exporter waits; Windows/Linux release validation passes, with exact timing and source evidence.
+
+Quality dimensions: Reliability + Performance + Testability + Auditability.
+
+Maturity and ownership: test-harness and evidence work; production ownership and package M0-M4 declarations are unchanged.
+
+Estimate basis: engineering hours including review, validation, docs and tracking, excluding external waiting. This decomposes existing scope rather than adding effort.
+
+Evidence: [September SRE follow-up](sre-validation-2026-09.md).
+
+### ENG-746 Complete workload SLO resilience and telemetry-cost proofs
+
+GitHub issue: #1439
+
+Issue link: [#1439](https://github.com/Cephalon-Labs/CephalonEngine/issues/1439)
+
+Status: backlog
+
+Estimate: 24
+
+Phase: 15
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: Needed
+
+Parent: ENG-729 / #1422. Included in its unchanged 32 h non-additive rollup.
+
+Scope: Complete the remaining ENG-729 declared workload/hardware p95/p99, throughput/allocation/startup/recovery objectives, load/fault/backpressure/exhaustion/cancellation evidence, dashboards, telemetry cardinality/redaction/cost and CI flake-rate assessment. Renew full-release wall-time evidence after ENG-745 without widening historical baselines from one run.
+
+Acceptance: Repeatable cold/warm and steady/burst runs, failure recovery, actionable SLI windows, intentional regression detection and telemetry budgets; distinguish microbenchmark means, single-run wall times and statistically supported SLOs.
+
+Quality dimensions: Reliability + Performance + Testability + Auditability.
+
+Maturity and ownership: test-harness and evidence work; production ownership and package M0-M4 declarations are unchanged.
+
+Estimate basis: engineering hours including review, validation, docs and tracking, excluding external waiting. This decomposes existing scope rather than adding effort.
+
+Evidence: [September SRE follow-up](sre-validation-2026-09.md).
+
 
 ### ENG-730 Data evolution disaster recovery and privacy proofs
 

@@ -6,8 +6,10 @@ using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
 using Polly.CircuitBreaker;
 using Polly.RateLimiting;
+using Polly.Registry;
 using Polly.Timeout;
 
 namespace Cephalon.Tests.Behaviors;
@@ -123,6 +125,7 @@ public sealed class BehaviorResilienceTests
     public async Task BehaviorDispatcherAppliesConfiguredTimeout()
     {
         var services = new ServiceCollection();
+        var clock = UseControlledTimeoutClock(services);
         services.AddCephalon(engine =>
         {
             engine.UseSettings(new EngineSettings(
@@ -141,19 +144,31 @@ public sealed class BehaviorResilienceTests
         using var provider = services.BuildServiceProvider();
         var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
 
-        var exception = await Assert.ThrowsAsync<TimeoutRejectedException>(() =>
-            dispatcher.DispatchAsync(
-                "tests.resilience.slow",
-                new SlowInput(5000),
-                new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
+        var exception = await AssertControlledTimeoutAsync(dispatcher, clock);
 
         Assert.Contains("timeout", exception.Message, StringComparison.OrdinalIgnoreCase);
+
+        // Caller cancellation must remain distinct from a policy timeout, including after
+        // reuse of the pipeline and its timeout-token pool.
+        using var caller = new CancellationTokenSource();
+        var input = new SlowInput();
+        var dispatch = dispatcher.DispatchAsync("tests.resilience.slow", input,
+            new TestBehaviorContext("tests.resilience.slow", isDirect: true), caller.Token);
+        try
+        {
+            await input.Started.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            caller.Cancel();
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(
+                () => dispatch.WaitAsync(TimeSpan.FromSeconds(10)));
+        }
+        finally { caller.Cancel(); }
     }
 
     [Fact]
     public async Task BehaviorDispatcherOpensCircuitBreakerAfterHandledFailuresAndPublishesRuntimeState()
     {
         var services = new ServiceCollection();
+        var clock = UseControlledTimeoutClock(services);
         services.AddCephalon(engine =>
         {
             engine.UseSettings(new EngineSettings(
@@ -179,23 +194,17 @@ public sealed class BehaviorResilienceTests
         var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
         var catalog = provider.GetRequiredService<IBehaviorResilienceRuntimeCatalog>();
 
-        await Assert.ThrowsAsync<TimeoutRejectedException>(() =>
-            dispatcher.DispatchAsync(
-                "tests.resilience.slow",
-                new SlowInput(5000),
-                new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
+        await AssertControlledTimeoutAsync(dispatcher, clock);
+        await AssertControlledTimeoutAsync(dispatcher, clock);
 
-        await Assert.ThrowsAsync<TimeoutRejectedException>(() =>
-            dispatcher.DispatchAsync(
-                "tests.resilience.slow",
-                new SlowInput(5000),
-                new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
-
+        var rejectedInput = new SlowInput();
         var openCircuitException = await Assert.ThrowsAsync<BrokenCircuitException>(() =>
             dispatcher.DispatchAsync(
                 "tests.resilience.slow",
-                new SlowInput(5000),
-                new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
+                rejectedInput,
+                new TestBehaviorContext("tests.resilience.slow", isDirect: true))
+                .WaitAsync(TimeSpan.FromSeconds(10)));
+        Assert.False(rejectedInput.Started.Task.IsCompleted);
 
         var policy = catalog.Resolve("tests.resilience.slow");
 
@@ -667,6 +676,7 @@ public sealed class BehaviorResilienceTests
     public async Task BehaviorDispatcherSkipsTimeoutWhenBehaviorSpecificOverrideDisablesDefaultTimeout()
     {
         var services = new ServiceCollection();
+        var clock = UseControlledTimeoutClock(services);
         services.AddCephalon(engine =>
         {
             engine.UseSettings(new EngineSettings(
@@ -693,9 +703,7 @@ public sealed class BehaviorResilienceTests
         using var provider = services.BuildServiceProvider();
         var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
 
-        var result = await dispatcher.DispatchAsync(
-            "tests.resilience.slow",
-            new SlowInput(1500),
+        var result = await DispatchWithoutTimeoutAsync(dispatcher, clock,
             new TestBehaviorContext("tests.resilience.slow", isDirect: true));
 
         Assert.Equal("completed", result);
@@ -705,6 +713,7 @@ public sealed class BehaviorResilienceTests
     public async Task BehaviorDispatcherSkipsTimeoutWhenTransportSpecificOverrideDisablesDefaultTimeout()
     {
         var services = new ServiceCollection();
+        var clock = UseControlledTimeoutClock(services);
         services.AddCephalon(engine =>
         {
             engine.UseSettings(new EngineSettings(
@@ -731,15 +740,9 @@ public sealed class BehaviorResilienceTests
         using var provider = services.BuildServiceProvider();
         var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
 
-        await Assert.ThrowsAsync<TimeoutRejectedException>(() =>
-            dispatcher.DispatchAsync(
-                "tests.resilience.slow",
-                new SlowInput(5000),
-                new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
+        await AssertControlledTimeoutAsync(dispatcher, clock);
 
-        var result = await dispatcher.DispatchAsync(
-            "tests.resilience.slow",
-            new SlowInput(1500),
+        var result = await DispatchWithoutTimeoutAsync(dispatcher, clock,
             new TestBehaviorContext(
                 "tests.resilience.slow",
                 isDirect: true,
@@ -813,7 +816,56 @@ public sealed class BehaviorResilienceTests
             => Task.FromResult($"Hello, {input}!");
     }
 
-    private sealed record SlowInput(int DelayMilliseconds);
+    private static ControlledResilienceTimeProvider UseControlledTimeoutClock(ServiceCollection services)
+    {
+        var clock = new ControlledResilienceTimeProvider();
+        // Apply after Polly's DI defaults so they cannot replace the fixture clock.
+        services.PostConfigure<ResiliencePipelineRegistryOptions<string>>(options =>
+            options.BuilderFactory = () => new ResiliencePipelineBuilder { TimeProvider = clock });
+        return clock;
+    }
+
+    private static async Task<TimeoutRejectedException> AssertControlledTimeoutAsync(
+        BehaviorDispatcher dispatcher, ControlledResilienceTimeProvider clock)
+    {
+        using var cleanup = new CancellationTokenSource();
+        var input = new SlowInput();
+        var dispatch = dispatcher.DispatchAsync("tests.resilience.slow", input,
+            new TestBehaviorContext("tests.resilience.slow", isDirect: true), cleanup.Token);
+        try
+        {
+            await input.Started.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.True(clock.ActiveTimerCount > 0, "The configured policy must arm a timeout.");
+            clock.Advance(TimeSpan.FromSeconds(2));
+            return await Assert.ThrowsAsync<TimeoutRejectedException>(
+                () => dispatch.WaitAsync(TimeSpan.FromSeconds(10)));
+        }
+        finally { cleanup.Cancel(); }
+    }
+
+    private static async Task<object?> DispatchWithoutTimeoutAsync(
+        BehaviorDispatcher dispatcher, ControlledResilienceTimeProvider clock, IBehaviorContext context)
+    {
+        using var cleanup = new CancellationTokenSource();
+        var input = new SlowInput();
+        var dispatch = dispatcher.DispatchAsync("tests.resilience.slow", input, context, cleanup.Token);
+        try
+        {
+            await input.Started.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.Equal(0, clock.ActiveTimerCount);
+            clock.Advance(TimeSpan.FromSeconds(2));
+            Assert.False(dispatch.IsCompleted);
+            input.Release.SetResult(true);
+            return await dispatch.WaitAsync(TimeSpan.FromSeconds(10));
+        }
+        finally { cleanup.Cancel(); }
+    }
+
+    private sealed class SlowInput
+    {
+        public TaskCompletionSource<bool> Started { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource<bool> Release { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    }
 
     [AppBehavior("tests.resilience.slow")]
     private sealed class SlowBehavior : IAppBehavior<SlowInput, string>
@@ -823,7 +875,8 @@ public sealed class BehaviorResilienceTests
             IBehaviorContext context,
             CancellationToken cancellationToken = default)
         {
-            await Task.Delay(input.DelayMilliseconds, cancellationToken);
+            input.Started.TrySetResult(true);
+            await input.Release.Task.WaitAsync(cancellationToken);
             return "completed";
         }
     }

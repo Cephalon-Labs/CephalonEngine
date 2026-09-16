@@ -2,6 +2,8 @@
 
 Review date: **September 16, 2026**. Delivery: **ENG-718**. Extends the [June review](architecture-review-2026-06.md) and [June follow-ups](architecture-review-2026-06-followups.md). [Research](framework-research-2026-09.md), [execution plan](framework-completion-plan.md), [engineering standards](engineering-standards.md), [long-range direction](long-range-direction.md).
 
+[September follow-through tracker](architecture-review-2026-09-followups.md) records subsequent SRE findings and delivery status.
+
 ## Conclusion
 
 Cephalon has broad, internally consistent package coverage. The next investment should complete shared coordination, prove owned operator loops and external adoption, and close cross-cutting release gaps. More descriptors, provider names or maturity labels do not resolve those gaps. Scope-specific acceptance replaces an unbounded claim to be complete or best forever.

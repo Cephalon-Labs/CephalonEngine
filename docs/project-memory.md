@@ -17,6 +17,8 @@ September 16 release observation follow-up: full release CI exposed two pre-exis
 
 September 16 compatibility acceptance: ENG-744/742/731 are done at 16/24/44 h, with parents non-additive. Full release CI passed Windows/Linux on `c4f8d288`, including Windows benchmarks; typed historical snapshot and contract-consumer CI passed both systems on `4d7bfae9`. Runtime/package/toolchain source is unchanged between them. Current unfinished leaf estimate is 464 h plus ENG-532 1 h = 465 h; Phase 15 remaining is 176 h plus ENG-532. [Evidence](host-compatibility-2026-09.md). Earlier same-day checkpoints above are historical; no maturity/support promotion.
 
+September 17 SRE continuation: release CI on `12f436ae` failed one Windows resilience timeout assertion while Linux shipping, SDK 11, host and contract lanes passed. ENG-729 is active in Sprint 16 with native children ENG-745 (8 h, deterministic tests and Showcase OTLP isolation) and ENG-746 (24 h, remaining workload/SLO/telemetry proofs). Parent 32 h is non-additive; total implementation stays 548 h and unfinished leaf scope is 18 tasks / 464 h plus ENG-532 1 h. Earlier compatibility receipts remain checkpoint-specific. [Evidence](sre-validation-2026-09.md), [monthly follow-ups](architecture-review-2026-09-followups.md).
+
 ## Identity
 
 Cephalon is not being positioned as a single application shell.
