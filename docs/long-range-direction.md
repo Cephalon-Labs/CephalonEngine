@@ -142,6 +142,8 @@ When a contributor (human or AI) is unsure whether a piece of long-range work be
 
 ## Maintenance posture
 
+September 16, 2026 checkpoint: [Phases 14–16](framework-completion-plan.md) tie near-term release completeness to shared mid-term coordination, far-term stable interchange and very-far-term stewardship. New technology experiments are bounded and reversible; no multi-decade product/version forecast becomes a core dependency.
+
 This document is meant to evolve. It should be reviewed when:
 
 - a new `.NET` major version ships or a new readiness lane opens

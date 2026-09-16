@@ -4,6 +4,8 @@ This document describes the repo-native flow for producing the NuGet and templat
 
 ## Scope
 
+September 2026 follow-through: ENG-728 owns artifact/provenance/SBOM verification and release recovery, ENG-734 owns external package adoption, and ENG-738 owns the scoped release decision. ENG-532 remains open; no package publication or GA claim is authorized by the [completion plan](framework-completion-plan.md) alone.
+
 The release package-artifact baseline currently includes:
 
 - shipped `src/Cephalon.*` packages

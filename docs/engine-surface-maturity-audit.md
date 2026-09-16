@@ -1,6 +1,6 @@
 # Engine Surface Maturity Audit
 
-Surface maturity in this document reflects the repository state as of `September 15, 2026` (after the Sprint 125 Eventing operational-superiority evidence stream, scorecard schema `1.25.0`, the generated-app adoption report readback, the adoption golden-use-case readback, the component maturity-badge completion guard, the Entity Framework, MongoDB, Redis, and NATS EventSourcing durable-snapshot proofs, the Gate 0 machine-readable maturity reconciliation, and the July framework-readiness truth refresh).
+Surface maturity in this document reflects the repository state as of `September 16, 2026` (after the Sprint 125 Eventing operational-superiority evidence stream, scorecard schema `1.25.0`, the generated-app adoption report readback, the adoption golden-use-case readback, the component maturity-badge completion guard, the Entity Framework, MongoDB, Redis, and NATS EventSourcing durable-snapshot proofs, the Gate 0 machine-readable maturity reconciliation, and the September planning refresh; existing package maturity declarations are unchanged).
 
 ## Why this document exists
 
@@ -20,6 +20,8 @@ This audit is the repo-owned answer for that distinction.
 `scripts/publish-surface-maturity-report.ps1` now checks this human-owned truth against every `src/Cephalon.*` project, component maturity badge, exact conformance row, and dependency-health provider-manifest row. Release validation emits the JSON report and fails on drift; the script does not promote packages or replace the judgment in this audit.
 
 ## Surface maturity model
+
+The [completion plan](framework-completion-plan.md#m0m4-acceptance-and-maintenance) adds role-appropriate promotion, evidence renewal and expiry rules as of September 16, 2026. It preserves the current 107-package distribution and does not promote a package by planning alone.
 
 Every meaningful package or public/runtime surface should declare a current maturity target.
 

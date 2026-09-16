@@ -376,6 +376,8 @@ When a change advances one of the engine quality dimensions listed at the top of
 
 ## Maintenance posture
 
+The [September completion plan](framework-completion-plan.md) maps every quality dimension to estimated work and defines evidence renewal. Recheck primary sources through the [research register](framework-research-2026-09.md) before a support claim; a planning decision is not validation evidence.
+
 This document is meant to be the durable index of Cephalon engineering standards. Update it when:
 
 - the shipping framework or readiness lane changes (refresh the relevant cross-link, especially [`dotnet11-readiness.md`](dotnet11-readiness.md))

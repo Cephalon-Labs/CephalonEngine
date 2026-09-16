@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `September 15, 2026`.
+Backlog status in this document reflects the repository state as of `September 16, 2026`.
 
 ## M3/M4 elevation program (June 2026)
 
@@ -36,11 +36,29 @@ Quality dimensions: Reliability + Flexibility + Availability + Maintainability +
 
 ### ENG-714 Shared coordination kernel for operator automation
 
+GitHub issue: #1405
+
+Issue link: [#1405](https://github.com/Cephalon-Labs/CephalonEngine/issues/1405)
+
 Status: ready
 
-Estimate: 32
+Estimate: 96
 
-Iteration: Later / not scheduled yet.
+Iteration: Later / not scheduled yet
+
+Phase: 14
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Needed
+
+Benchmark: Needed
+
+Rollup only: ENG-719 (16 h), ENG-720 (24 h), ENG-721 (32 h), ENG-722 (24 h). Re-estimated from 32 h after separating durable cross-process proof and authorization; do not double-count children.
+
+Plan: [Framework completion](framework-completion-plan.md).
 
 Purpose: consolidate lease/fencing, idempotency, retry, journal, approval, reconciliation, and audit concepts before more families implement incompatible operator loops.
 
@@ -50,11 +68,29 @@ Quality dimensions: Reliability + Scalability + Data integrity + Security + Audi
 
 ### ENG-715 Three-family M3 pilots and selective M4 adoption proof
 
+GitHub issue: #1406
+
+Issue link: [#1406](https://github.com/Cephalon-Labs/CephalonEngine/issues/1406)
+
 Status: backlog
 
-Estimate: 64
+Estimate: 120
 
-Iteration: Later / not scheduled yet.
+Iteration: Later / not scheduled yet
+
+Phase: 14
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Needed
+
+Benchmark: Needed
+
+Rollup only: ENG-723 (24 h), ENG-724 (40 h), ENG-725 (40 h), ENG-726 (16 h). Re-estimated from 64 h for live-provider recovery, approval-aware drift and promotion dossiers; M4 execution is separately gated in ENG-734.
+
+Plan: [Framework completion](framework-completion-plan.md).
 
 Purpose: prove the shared kernel in dependency health, eventing/CDC, and edge/governance before any family-wide maturity promotion.
 
@@ -82,9 +118,15 @@ Status: shipped (September 16, 2026)
 
 Estimate: 16
 
-GitHub issue: [#1410](https://github.com/Cephalon-Labs/CephalonEngine/issues/1410)
+GitHub issue: #1410
 
-Iteration: Operational Sprint 0 (September 2–15, 2026). Phase: 14.
+Issue link: [#1410](https://github.com/Cephalon-Labs/CephalonEngine/issues/1410)
+
+Iteration: Operational Sprint 0
+
+Phase: 14
+
+Iteration window: September 2–15, 2026; delivered September 16.
 
 Purpose: consolidate 139 local branches into one authoritative master while preserving every original tip, uncommitted worktree state, current upstream contracts, and independent unpublished work.
 
@@ -97,6 +139,778 @@ Validation: affected composition/hosting suites, script and maturity gates, publ
 Discovered release hygiene: align SDK 10.0.303 and ILLink locks; pin the patched SSH.NET test-harness dependency; repair provider-workflow lock-file cache discovery; retain the CatalogService unwrapped response contract; correct provider-generator parsing and scorecard public API count expectations.
 
 Quality dimensions: Reliability + Security + Compatibility + Maintainability + Auditability.
+
+## Framework completion program (September 2026)
+
+Source plan: [Framework completion plan](framework-completion-plan.md). Estimates below are hours; parent ENG-714/715 values are rollups. Future iterations are explicitly unscheduled. This delivery defines work and changes no package maturity.
+
+### ENG-718 Research-backed M0-M4 completion planning and GitHub alignment
+
+GitHub issue: #1411
+
+Issue link: [#1411](https://github.com/Cephalon-Labs/CephalonEngine/issues/1411)
+
+Status: done
+
+Estimate: 8
+
+Phase: 14
+
+Iteration: Sprint 16
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Passed
+
+Benchmark: N/A
+
+Purpose: translate current repository evidence and primary-source research into a comprehensive, maintainable M0-M4 and release plan.
+
+Scope: publish research and September review; define role-appropriate maturity gates and all twelve quality dimensions; decompose ENG-714/715 and create ENG-719–738 with hours, ranges, dependencies and acceptance; align SDK/support docs; preserve explicit phase, iteration and shipped status in planning parsing; update GitHub Project, issue relationships, milestones and commit references.
+
+Validation: planning parser regression tests, documentation coverage/link/anchor checks, maturity report drift=0, scorecard publication, live issue uniqueness and Project field guards, leaf-estimate arithmetic, native child relationships and commit/remote parity. See [September review](architecture-review-2026-09.md) for actual execution results.
+
+Maturity and ownership: planning evidence for all levels; Cephalon-managed planning record; no runtime maturity promotion.
+
+Quality dimensions: Maintainability + Auditability + Compatibility + Flexibility + Usability.
+
+### ENG-719 Coordination ADR and existing-family contract inventory
+
+GitHub issue: #1412
+
+Issue link: [#1412](https://github.com/Cephalon-Labs/CephalonEngine/issues/1412)
+
+Status: backlog
+
+Estimate: 16
+
+Phase: 14
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Needed
+
+Benchmark: N/A
+
+Dependencies: ENG-713.
+
+Parent epic: #1405
+
+Scope: Map existing Eventing remediation journals, CDC retry leases, governance retry coordination and Edge reconciliation before adding APIs. Define operation identity, desired revision, observed revision, actor, tenant, authorization context, plan/apply separation and terminal/in-doubt outcomes. Select minimal host-agnostic contracts and a migration bridge; keep family-specific policy in companions. Document which stores support atomic compare-and-swap and which only report external ownership.
+
+Acceptance: Reviewed ADR plus a contract-to-source map for all four families; executable transition examples for duplicate intent, stale revision, cancellation and recovery; no ASP.NET Core/provider dependency in Abstractions. Include a second non-health ExtensionSections consumer design.
+
+Maturity and ownership: M1 contract truth; no package promotion; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Maintainability + Flexibility + Compatibility + Auditability.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 12–24 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-720 Deterministic reconciliation planning and bounded execution
+
+GitHub issue: #1413
+
+Issue link: [#1413](https://github.com/Cephalon-Labs/CephalonEngine/issues/1413)
+
+Status: backlog
+
+Estimate: 24
+
+Phase: 14
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Needed
+
+Benchmark: Needed
+
+Dependencies: ENG-719.
+
+Parent epic: #1405
+
+Scope: Implement additive request/plan/result/attempt primitives with immutable intent revision, preconditions, bounded retries with jitter, total deadline, cancellation and explicit terminal/in-doubt outcomes. Separate pure planning from authorized effects and use an injectable clock. Preserve existing typed snapshots and add a non-health section consumer.
+
+Acceptance: Unit/property-based transition tests, stable ordering/serialization, duplicate-ID rejection, retry exhaustion, cancellation before/after side effects, expired plans and backwards-compatible snapshot readback; measure planner allocations against the established baseline.
+
+Maturity and ownership: M1 contracts and bounded M2 execution; M3 requires a family loop; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Reliability + Performance + Compatibility + Auditability.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 18–36 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-721 Durable journal idempotency and lease-fencing provider proof
+
+GitHub issue: #1414
+
+Issue link: [#1414](https://github.com/Cephalon-Labs/CephalonEngine/issues/1414)
+
+Status: backlog
+
+Estimate: 32
+
+Phase: 14
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Needed
+
+Benchmark: Needed
+
+Dependencies: ENG-719, ENG-720.
+
+Parent epic: #1405
+
+Scope: Define durable reserve/complete/recover semantics, monotonic fencing and lease ownership, retention and recovery of uncertain outcomes. Deliver one transactional reference provider and a reusable conformance fixture. Check fencing at the protected write boundary; expiring a lease alone is insufficient. Keep in-memory behavior explicitly process-local and document the atomicity boundary between journal and external side effects.
+
+Acceptance: Two-process competing owners, stale writer rejection, crash before/after external effect, duplicate command with same/different payload, store outage, restart, retention expiry and clock-skew tests against a real provider; report throughput/latency and prove no exactly-once claim across an uncoordinated remote boundary.
+
+Maturity and ownership: M2 durable primitive; no cross-family M3 promotion; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Data integrity + Reliability + Scalability + Security.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 24–48 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-722 Operator authorization approvals and redacted audit boundary
+
+GitHub issue: #1415
+
+Issue link: [#1415](https://github.com/Cephalon-Labs/CephalonEngine/issues/1415)
+
+Status: backlog
+
+Estimate: 24
+
+Phase: 14
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Needed
+
+Benchmark: N/A
+
+Dependencies: ENG-720, ENG-721.
+
+Parent epic: #1405
+
+Scope: Bind approval to actor, tenant, immutable plan hash, revision, expiry and action scope; reauthorize at apply time. Add least-privilege host seams, denial/revocation behavior and redacted append-only audit. Separate operator permissions from public transport permissions and constrain external destinations. Reuse current capability/identity contracts.
+
+Acceptance: Cross-tenant denial, revoked/expired approval, altered plan, replay, unauthorized operator call, secret/PII redaction and tamper detection tests on ASP.NET Core and Worker; security review of the reference effect boundary.
+
+Maturity and ownership: M2 authorized effects; automation promotion stays gated; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Security + Compliance + Auditability + Reliability.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 18–36 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-723 Dependency-health freshness and bounded reprobe M3 pilot
+
+GitHub issue: #1416
+
+Issue link: [#1416](https://github.com/Cephalon-Labs/CephalonEngine/issues/1416)
+
+Status: backlog
+
+Estimate: 24
+
+Phase: 14
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: Needed
+
+Dependencies: ENG-714.
+
+Parent epic: #1406
+
+Scope: Use the shared kernel to reconcile stale health observations and execute an explicitly allowed bounded re-probe. Select one provider first; define freshness thresholds, cooldown, concurrency limits, action audit and operator readback. Do not infer permission to restart databases or repair provider infrastructure.
+
+Acceptance: Success, transient/terminal failure, duplicate request, stale observation, restart, lost ownership and unauthorized action matrix against one live provider; latency/overhead budget. Promote only the exact package whose owned loop passes; retain all other provider packages at M2.
+
+Maturity and ownership: Selected dependency-health surface M2 to M3 candidate; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Availability + Reliability + Performance + Auditability.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 18–36 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-724 Eventing or CDC durable recovery M3 integration pilot
+
+GitHub issue: #1417
+
+Issue link: [#1417](https://github.com/Cephalon-Labs/CephalonEngine/issues/1417)
+
+Status: backlog
+
+Estimate: 40
+
+Phase: 14
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: Needed
+
+Dependencies: ENG-714.
+
+Parent epic: #1406
+
+Scope: Choose one existing Eventing or CDC recovery loop and adapt its journal/lease boundary to the shared kernel. Cover poison-message quarantine, retry/replay, checkpoint progression, backpressure and cancellation; preserve existing provider-specific acknowledgement and delivery guarantees. This strengthens existing M3 evidence where already declared.
+
+Acceptance: Broker/database outage, partition, crash windows, duplicates, stale fence, poison payload, schema mismatch, restart and replay ordering with a live provider; throughput and recovery-time artifacts plus parity tests for old contracts.
+
+Maturity and ownership: Existing M3 evidence renewal or selected M2 to M3 only; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Data integrity + Scalability + Reliability + Compatibility.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 30–60 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-725 Governance or Edge approval-aware drift M3 pilot
+
+GitHub issue: #1418
+
+Issue link: [#1418](https://github.com/Cephalon-Labs/CephalonEngine/issues/1418)
+
+Status: backlog
+
+Estimate: 40
+
+Phase: 14
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: Needed
+
+Dependencies: ENG-714.
+
+Parent epic: #1406
+
+Scope: Select one governance or Edge remediation path with provider-observed desired/actual drift. Reuse the shared kernel, authenticated provider observation, plan approval, bounded apply and reconciliation. Record stale provider data, ownership transfer, reversibility and manual escalation; retain provider-managed responsibilities.
+
+Acceptance: Real provider or faithful fault-injection adapter proves success, transient/terminal error, duplicate effect, provider lag, concurrent operators, revoked approval, lost lease, restart and operator readback; never substitute descriptor tests for provider effect evidence.
+
+Maturity and ownership: Selected surface M3 evidence; provider ownership stays explicit; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Security + Reliability + Availability + Compliance + Auditability.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 30–60 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-726 Package-specific promotion dossiers and evidence expiry
+
+GitHub issue: #1419
+
+Issue link: [#1419](https://github.com/Cephalon-Labs/CephalonEngine/issues/1419)
+
+Status: backlog
+
+Estimate: 16
+
+Phase: 14
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: N/A
+
+Dependencies: ENG-723, ENG-724, ENG-725.
+
+Parent epic: #1406
+
+Scope: Create promotion dossiers for the three pilots and review the nine existing M4 declarations against role-appropriate evidence. Record commit, artifact hashes, package/provider/runtime versions, test command/run URL, owner, review date, expiry trigger, exclusions and rollback. Inventory all 107 rows without changing labels mechanically.
+
+Acceptance: Maturity report remains drift-free; each proposed promotion has passing negative-path evidence and reviewer decision; stale/missing proof is visibly needs-refresh and blocks new release claims. Update audit, component docs, conformance, runtime index and scorecard together only after acceptance.
+
+Maturity and ownership: All M0-M4 roles reviewed; no automatic promotion; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Auditability + Maintainability + Compatibility.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 12–24 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-727 Security and tenant-isolation verification baseline
+
+GitHub issue: #1420
+
+Issue link: [#1420](https://github.com/Cephalon-Labs/CephalonEngine/issues/1420)
+
+Status: backlog
+
+Estimate: 32
+
+Phase: 15
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Needed
+
+Benchmark: N/A
+
+Dependencies: ENG-722.
+
+Scope: Map applicable OWASP ASVS and NIST SSDF practices to runtime boundaries: untrusted package execution, package trust, operator routes, identity/token handling, tenancy, callback verification, SSRF, secrets and key rotation. Document that AssemblyLoadContext is not a security sandbox; untrusted executable extensions require an isolated process/container boundary. Include advisory intake, disclosure and response ownership.
+
+Acceptance: Traceable threat/requirement matrix, applicable-control tests including cross-tenant data/cache/event/telemetry denial and key rotation, fuzzed manifest/configuration/callback parsing, no unaccepted critical/high findings in the chosen release scope; document non-applicable controls instead of claiming certification.
+
+Maturity and ownership: Cross-cutting release gate for claimed M2-M4 execution; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Security + Compliance + Data integrity + Auditability.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 24–48 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-728 Verifiable package provenance and release recovery
+
+GitHub issue: #1421
+
+Issue link: [#1421](https://github.com/Cephalon-Labs/CephalonEngine/issues/1421)
+
+Status: backlog
+
+Estimate: 24
+
+Phase: 15
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Needed
+
+Benchmark: N/A
+
+Dependencies: ENG-532 for hosted proof; local policy work can start independently.
+
+Scope: Finish reproducible package inventory, checksums, SBOM, signing/attestation verification, dependency/license policy, protected release credentials and compromised-key/package response. Reuse existing supply-chain workflow and signed dry-run artifacts. Pin release inputs and document withdrawal, rollback and advisory communication. Separate SLSA mapping from a verified level claim.
+
+Acceptance: Successful hosted dry-run URL, independent consumer verification of signature/provenance/SBOM and intentionally tampered-artifact rejection; vulnerability/license decision record and rehearsed rollback without publishing an unapproved production release.
+
+Maturity and ownership: M4/GA supply-chain gate; cannot be closed by local metadata; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Security + Compliance + Reliability + Auditability.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 18–36 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-729 SLO load resilience and telemetry-cost evidence
+
+GitHub issue: #1422
+
+Issue link: [#1422](https://github.com/Cephalon-Labs/CephalonEngine/issues/1422)
+
+Status: backlog
+
+Estimate: 32
+
+Phase: 15
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: Needed
+
+Dependencies: ENG-720; ENG-723 through ENG-725 for pilot load scenarios.
+
+Scope: Define workload/runner-specific p95/p99 latency, throughput, allocations, startup, recovery time and availability objectives; collect stable baselines, error-budget policy and flake-rate evidence. Test bounded queues, backpressure, resource exhaustion and cancellation. Version telemetry semantics, redact sensitive fields and bound label cardinality and exporter cost.
+
+Acceptance: Repeatable cold/warm and steady/burst runs with declared data volumes/hardware, failure injection and recovery drill; dashboards/alerts explain SLI numerator/denominator and windows; guardrails detect an intentional regression. No universal availability or superiority claim from microbenchmarks.
+
+Maturity and ownership: Cross-cutting evidence for M2/M3 and selective M4; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Performance + Availability + Scalability + Reliability + Auditability.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 24–48 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-730 Data evolution disaster recovery and privacy proofs
+
+GitHub issue: #1423
+
+Issue link: [#1423](https://github.com/Cephalon-Labs/CephalonEngine/issues/1423)
+
+Status: backlog
+
+Estimate: 40
+
+Phase: 15
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: Needed
+
+Dependencies: ENG-721, ENG-727.
+
+Scope: Prove expand/contract migrations, serializer/event schema evolution, outbox/inbox atomicity, CDC checkpoint continuity, snapshot/replay determinism and cache invalidation for a declared provider set. Exercise backup restore and tenant export/delete/retention with legal-hold conflict policy, encryption/key rotation and disconnected/rejoin behavior where supported. Record RPO/RTO per workload.
+
+Acceptance: Restore into a fresh environment, replay after schema upgrade, rolling old/new readers, duplicate/gap detection, rollback or forward-repair procedure and cross-tenant isolation; provider-versioned contract tests and measured recovery objectives. Compliance capability evidence is not legal certification.
+
+Maturity and ownership: M2/M3 durable runtime evidence; M4 operational prerequisite; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Data integrity + Reliability + Compliance + Compatibility.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 30–60 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-731 Framework API and deployment compatibility matrix
+
+GitHub issue: #1424
+
+Issue link: [#1424](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424)
+
+Status: backlog
+
+Estimate: 32
+
+Phase: 15
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: Needed
+
+Dependencies: ENG-719; independent .NET assessment may start immediately.
+
+Scope: Assess September .NET 10 servicing and .NET 11 RC1 against global.json, lock files, analyzers, templates and supported OS/architecture/provider combinations. Retain net10.0 until an explicit baseline change. Validate source/binary/wire/config/manifest compatibility, package upgrade/downgrade and only selected trim/AOT/single-file targets. Preserve dynamic-loading exclusions.
+
+Acceptance: Windows/Linux build and consumer package tests on declared SDKs, public API diff, old snapshot readers, generated apps and SDK roll-forward tests; claim-truthful deployment reports for each promoted package/RID. Record RC assessment separately from shipping support and do not treat Microsoft go-live status as Cephalon certification.
+
+Maturity and ownership: Support matrix applies independently of M0-M4; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Compatibility + Maintainability + Flexibility + Performance.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 24–48 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-732 External developer journey documentation and accessibility
+
+GitHub issue: #1425
+
+Issue link: [#1425](https://github.com/Cephalon-Labs/CephalonEngine/issues/1425)
+
+Status: backlog
+
+Estimate: 24
+
+Phase: 15
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: N/A
+
+Dependencies: ENG-731.
+
+Scope: Exercise install, module authoring, configuration, test, diagnose, package, upgrade and remove paths from a clean checkout with published/staged packages. Keep CLI/scaffolding/dotnet-new/reference docs aligned, XML contracts complete and host composition thin. Review Thai/English localization, keyboard navigation and contrast for generated documentation UI against applicable WCAG 2.2 criteria.
+
+Acceptance: Independent developer completes three blueprint and Worker journeys using only docs; record time-to-first-success, steps/manual code, failure messages and fixes. Automated broken-link/anchor checks plus manual keyboard/accessibility review; do not claim whole-product WCAG conformance from one page.
+
+Maturity and ownership: M1 tooling truth and role-appropriate M4 adoption evidence; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Usability + Maintainability + Flexibility + Compatibility.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 18–36 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-733 Provider and host conformance support tiers
+
+GitHub issue: #1426
+
+Issue link: [#1426](https://github.com/Cephalon-Labs/CephalonEngine/issues/1426)
+
+Status: backlog
+
+Estimate: 24
+
+Phase: 15
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: N/A
+
+Dependencies: ENG-731.
+
+Scope: Publish a tested capability/version matrix for data, messaging, retrieval, identity, observability, governance delivery and Edge providers across ASP.NET Core/Worker and selected transports. Distinguish simulated, live, CI-gated and externally blocked proofs. Set supported/experimental/deprecated ownership and escalation policy; keep optional infrastructure in companions.
+
+Acceptance: Reusable conformance fixtures with bad configuration, cancellation, network/TLS/auth failures, throttling, unavailable provider and recovery; declared skip reasons/credentials gates cannot count as live proof. Verify graceful startup/shutdown and operator/public endpoint boundaries.
+
+Maturity and ownership: M0-M4 scope-specific support; no blanket provider promotion; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Reliability + Compatibility + Availability + Maintainability.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 18–36 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-734 Independent published-package M4 adoption and upgrade
+
+GitHub issue: #1427
+
+Issue link: [#1427](https://github.com/Cephalon-Labs/CephalonEngine/issues/1427)
+
+Status: backlog
+
+Estimate: 40
+
+Phase: 16
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: Needed
+
+Dependencies: ENG-726, ENG-728, ENG-730, ENG-731, ENG-732, ENG-733.
+
+Scope: Select at most two high-value packages with an external owner and a real workload. Build outside this repository from versioned package artifacts without project references. Capture install-to-operate journey, upgrades from a previous supported artifact, rollback/forward repair, runbooks, support limits and actual operator feedback. Renew tooling M4 through tooling-appropriate adoption evidence.
+
+Acceptance: External repository/run URL, consumer identity, exact package hashes/versions, workload results, failure recovery and upgrade/rollback records; selected package dossier approval and scorecard linkage. No consumer or prior supported artifact means gated, not fabricated M4 evidence.
+
+Maturity and ownership: Selective M3 to M4; tooling uses role-appropriate adoption gate; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Usability + Reliability + Compatibility + Auditability.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 30–60 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-735 Agentics and retrieval trust evaluation and budgets
+
+GitHub issue: #1428
+
+Issue link: [#1428](https://github.com/Cephalon-Labs/CephalonEngine/issues/1428)
+
+Status: backlog
+
+Estimate: 24
+
+Phase: 16
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: Needed
+
+Dependencies: ENG-722, ENG-727.
+
+Scope: Keep model/provider/MCP integrations in companions. Constrain tool privileges by tenant/user, explicit approvals, budgets, cancellation, destination policy and data retention; treat retrieved/tool content as untrusted input. Define retrieval relevance/freshness/provenance and tool success/safety evaluation sets with reproducible model/config versions.
+
+Acceptance: Prompt-injection and confused-deputy cases, secret exfiltration attempts, tool replay, cross-tenant retrieval, revoked consent, spend/time caps, provider outage and deterministic fallback tests; compare quality, latency and cost on a versioned evaluation set before promotion.
+
+Maturity and ownership: Existing Agentics/Retrieval M3 evidence renewal; no agent autonomy expansion; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Security + Compliance + Usability + Reliability + Performance.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 18–36 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-736 Time-boxed interoperability and future-runtime experiments
+
+GitHub issue: #1429
+
+Issue link: [#1429](https://github.com/Cephalon-Labs/CephalonEngine/issues/1429)
+
+Status: backlog
+
+Estimate: 16
+
+Phase: 16
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: Needed
+
+Dependencies: ENG-719, ENG-731.
+
+Scope: Evaluate integration seams with Aspire, Dapr, Wolverine, CloudEvents and future static/AOT or sandboxed execution using two 8-hour experiments selected from real adopter demand. Compare build-vs-integrate cost, portability, lock-in and reversal cost. Keep feature flags/ADRs and discard experiments without evidence; no speculative new core subsystem.
+
+Acceptance: Same-workload comparison, compatibility and resource/cost results, bounded prototype outside the shipping contract, explicit adopt/defer/reject decision and removal path. Revisit standards quarterly; do not make multi-decade vendor predictions.
+
+Maturity and ownership: M0/M1 experiments until a separately accepted execution gate; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Flexibility + Compatibility + Maintainability + Performance.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 12–24 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-737 Support lifecycle stewardship and planning sustainability
+
+GitHub issue: #1430
+
+Issue link: [#1430](https://github.com/Cephalon-Labs/CephalonEngine/issues/1430)
+
+Status: backlog
+
+Estimate: 16
+
+Phase: 16
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: N/A
+
+Dependencies: ENG-718; can proceed independently of runtime pilots.
+
+Scope: Define package owners/backup reviewers, supported release windows, deprecation/migration policy, security response, release cadence, contribution rules and cost of maintaining the provider matrix. Reconcile historical Project iteration dates from evidence and repair scoped/idempotent planning sync before enabling it for master. Separate hours, rollups, forecasts and actuals; retain immutable ENG IDs.
+
+Acceptance: Named ownership/support matrix, retirement and compatibility procedure, planning dry-run/idempotence tests, approved calendar before scheduling, capacity/WIP limits and monthly review record. Capture July/August review-history gaps without backdating or asserting that reviews ran.
+
+Maturity and ownership: Governance applies to all maturity levels; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Maintainability + Auditability + Compatibility + Compliance.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 12–24 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
+
+### ENG-738 Release-scope GA decision and maintenance handoff
+
+GitHub issue: #1431
+
+Issue link: [#1431](https://github.com/Cephalon-Labs/CephalonEngine/issues/1431)
+
+Status: backlog
+
+Estimate: 16
+
+Phase: 16
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: N/A
+
+Dependencies: ENG-727 through ENG-734, ENG-737; ENG-735/ENG-736 only if selected for release.
+
+Scope: Choose the release package set and supported environments explicitly; assemble immutable maturity, compatibility, security, SRE, provenance, adoption and operations evidence. Review residual risks, license obligations, exclusions, incident/rollback drills and maintainer handoff. Keep M4 and GA independent; exploratory work is optional to GA unless included in the release scope.
+
+Acceptance: Release decision signed off by accountable maintainer with links to reproducible artifacts; no unresolved blocking gate, explicit scoped exceptions with expiry for partial gates, support/runbook ownership and recovery rehearsal. A decision may be defer/no-go; issue completion does not itself authorize a tag or package publication.
+
+Maturity and ownership: Selected release readiness, not all-package M4; Cephalon-Neza owns delivery; runtime ownership remains with the package/provider named in the proof.
+
+Quality dimensions: Security + Reliability + Usability + Compliance + Auditability.
+
+Estimate basis: engineering hours including review, tests and docs; initial range 12–24 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+
+Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
 
 ## Current planning reset (April 2026)
 
@@ -1276,7 +2090,10 @@ Validation:
 
 Status: blocked
 Estimate: 1
-Iteration: Sprint 125
+Iteration: Later / not scheduled yet
+Phase: 15
+Test: Failed
+Benchmark: N/A
 Area: release-readiness / supply-chain / GitHub Actions
 Quality dimensions: Security, Compliance, Auditability, Maintainability, Reliability
 
@@ -1305,6 +2122,9 @@ Validation:
 - `gh api repos/Cephalon-Labs/CephalonEngine/actions/permissions`
 - `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\invoke-signed-release-dry-run.Tests.ps1 -Output Detailed`
 - `pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated`
+
+
+September 16 planning refresh: retain the historical failed hosted-dispatch proof; no new dispatch was attempted in ENG-718. Move active release follow-up into Phase 15 without changing its 1 h next-action estimate or claiming the external blocker is resolved.
 
 ### ENG-533 NuGet vulnerability audit release gate
 

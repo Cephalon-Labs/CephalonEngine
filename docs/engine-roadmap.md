@@ -2,7 +2,7 @@
 
 Editable roadmap diagram: `docs/cephalon-engine-roadmap.drawio`
 
-Planning baseline in this document reflects the repository state as of `June 30, 2026`.
+Planning baseline in this document reflects the repository state as of `September 16, 2026`.
 
 ## Target outcome
 
@@ -23,6 +23,24 @@ Status: active — Gate 0 and the Gate 1 foundation shipped; Gate 2 and Gate 3 r
 The [M3/M4 elevation plan](m3-m4-elevation-plan.md) is the execution contract for this phase. `ENG-712` ships machine-readable maturity reconciliation and release hygiene. `ENG-713` ships a versioned additive operator observation envelope with dependency health as its first real consumer. `ENG-714` will consolidate shared coordination primitives, and `ENG-715` will prove them through three family-owned operator loops before selective promotion.
 
 This phase preserves all long-range horizons: near-term release truth becomes machine-checkable; mid-term package families gain reusable coordination seams; far-term automation and AI consumers get stable desired/observed/condition/action data; very-far-term maintainers retain a reconstructable evidence chain. It does not force M0/M1/M2 packages to M4, change the `net10.0` shipping floor, or treat metadata as automation.
+
+The September [framework completion plan](framework-completion-plan.md) adds all-level maintenance and decomposes the existing parents: ENG-714 is 96 h across ENG-719–722; ENG-715 is 120 h across ENG-723–726. ENG-718 delivers the research/planning refresh. These are parent rollups, not additional effort. The September 29 due date is withdrawn; this is an evidence gate without a capacity-backed date. Existing M0–M4 declarations are retained.
+
+## Phase 15: Cross-cutting release completeness
+
+Status: planned
+
+ENG-727–733 cover security/tenant isolation, supply-chain verification, SLO/load/resilience evidence, data/privacy/recovery, framework/API/deployment compatibility, external developer journeys and provider/host support tiers. Base estimate: 208 engineering hours, initial range 156–312. ENG-532 remains an independent external signed-release blocker, estimated at 1 h for the next action. No milestone due date until capacity and external access are established.
+
+Exit: applicable security, compatibility, supply-chain, SRE, provider and adoption evidence is reproducible for the declared release set; unsupported deployment modes remain explicit. This primarily serves the near-term horizon and supplies stable migration seams for the mid-term horizon. See [completion plan](framework-completion-plan.md) for dependencies and all twelve quality dimensions.
+
+## Phase 16: Selective M4 adoption and sustainable evolution
+
+Status: planned
+
+ENG-734–738 cover independent published-package adoption/upgrade, Agentics/Retrieval trust and evaluations, bounded ecosystem experiments, support lifecycle/stewardship and a release-scope GA decision. Base estimate: 112 engineering hours, initial range 84–168. Gate milestone only; external adoption cannot be scheduled as if it already exists. ENG-735/736 are optional to GA when outside the chosen release scope.
+
+Exit: selected packages have approved external adoption dossiers, accountable support ownership and a complete release decision. No all-package M4 promise. The long-range frame stays intact through replaceable providers, stable interchange, reversible experiments and reconstructable decisions. The [September review](architecture-review-2026-09.md) replaces only explicitly revised June recommendations.
 
 ## Current status
 
@@ -89,6 +107,8 @@ The next planning wave is therefore not "add more descriptors everywhere." It is
 - use `Cephalon.Behaviors`, `Cephalon.Behaviors.Http`, `Cephalon.Data`, and the shipped edge provider packs as the current examples of truthful runtime ownership
 
 ## Sprint alignment
+
+September 2026 active ordering is in the [completion plan](framework-completion-plan.md#delivery-sequence-and-effort). ENG-718 uses the existing September 16–29 Project iteration named Sprint 16; ENG-714/715, ENG-719–738 and ENG-532 remain explicitly unscheduled. Historical sprint narratives below retain their original meaning.
 
 The project board now tracks both delivered work and upcoming work through explicit sprint buckets:
 

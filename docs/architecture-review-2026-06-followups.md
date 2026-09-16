@@ -12,4 +12,6 @@ This is the live tracker for [Cephalon Architecture Review — June 2026](archit
 
 ## Promotion discipline
 
+September 16 continuation: [ENG-718 completion plan](framework-completion-plan.md) decomposes ENG-714/715 into ENG-719–726 and assigns Gate 4 adoption to ENG-734. Cross-cutting gates are ENG-727–738. See [September review](architecture-review-2026-09.md) for current decisions and acknowledged monthly-history gaps.
+
 The tracker records proof, not aspiration. A row can close without changing a package maturity label. Any promotion must update the maturity audit, component page, conformance matrix, runtime contract index, scorecard sources, backlog/roadmap, GitHub issue/Project item, and release evidence in the same slice.

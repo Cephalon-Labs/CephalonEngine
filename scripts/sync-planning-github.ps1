@@ -248,10 +248,14 @@ function Get-BacklogIssueSpecs {
             $engCode = $Matches[1].ToUpperInvariant()
             $syncId = $engCode.ToLowerInvariant()
             $syncKey = "backlog:$syncId"
-            $state = if ($status -eq "done") { "closed" } else { "open" }
+            $state = if ($status -match '^(done|shipped)(?:\s|$)') { "closed" } else { "open" }
             $phaseNumber = $null
             if ($phaseMap.ContainsKey($engCode)) {
                 $phaseNumber = $phaseMap[$engCode]
+            }
+            $phaseMatch = [regex]::Match($body, '(?m)^Phase:\s*(?<number>\d+)\s*$')
+            if ($phaseMatch.Success) {
+                $phaseNumber = [int]$phaseMatch.Groups['number'].Value
             }
 
             $specs += [pscustomobject]@{
@@ -629,7 +633,9 @@ function Get-PlanningIterationTitles {
     }
 
     foreach ($issue in $DesiredIssues) {
-        $title = Get-ResolvedIterationTitle -IterationTitle $null -PlanningStatus $issue.PlanningStatus
+        $declaredIteration = [regex]::Match($issue.ContentBody, '(?m)^Iteration:\s*(?<title>[^\r\n]+)')
+        $explicitTitle = if ($declaredIteration.Success) { $declaredIteration.Groups['title'].Value.Trim().TrimEnd('.') } else { $null }
+        $title = Get-ResolvedIterationTitle -IterationTitle $explicitTitle -PlanningStatus $issue.PlanningStatus
         if (-not [string]::IsNullOrWhiteSpace($title) -and -not $titles.Contains($title)) {
             $titles.Add($title)
         }
@@ -656,8 +662,14 @@ function Parse-PlanningMetadataFromBody {
     if ($iterationMatch.Success) {
         $iterationTitle = $iterationMatch.Groups["title"].Value.Trim()
     }
+    else {
+        $iterationMatch = [regex]::Match($normalizedBody, '(?m)^Iteration:\s*(?<title>[^\r\n]+)')
+        if ($iterationMatch.Success) {
+            $iterationTitle = $iterationMatch.Groups['title'].Value.Trim().TrimEnd('.')
+        }
+    }
 
-    $estimateMatch = [regex]::Match($normalizedBody, "(?m)^Estimate:\s+\*\*(?<value>\d+(?:\.\d+)?)\*\*")
+    $estimateMatch = [regex]::Match($normalizedBody, '(?m)^Estimate:\s+(?:\*\*)?(?<value>\d+(?:\.\d+)?)(?:\*\*)?\s*$')
     if ($estimateMatch.Success) {
         $estimate = [decimal]::Parse($estimateMatch.Groups["value"].Value, [System.Globalization.CultureInfo]::InvariantCulture)
     }
@@ -738,6 +750,9 @@ function Get-PhaseLabelName {
         5 { return "phase:5-solution-platform" }
         6 { return "phase:6-cloud-platform" }
         7 { return "phase:7-adoption-ops" }
+        14 { return "phase:14-m3-m4-elevation" }
+        15 { return "phase:15-release-completeness" }
+        16 { return "phase:16-adoption-evolution" }
         default { return $null }
     }
 }
@@ -942,7 +957,8 @@ function Get-ManagedTopLevelLabels {
 function Get-ManagedChildLabels {
     param(
         [Parameter(Mandatory = $true)]$ParentSpec,
-        [AllowNull()][string]$IterationTitle
+        [AllowNull()][string]$IterationTitle,
+        [AllowNull()]$ChildSpec
     )
 
     $labels = @("planning", "kind:task")
@@ -952,7 +968,8 @@ function Get-ManagedChildLabels {
         $labels += $phaseLabel
     }
 
-    $trackLabel = Get-TrackLabelNameForSpec -Spec $ParentSpec
+    $trackSpec = if ($null -ne $ChildSpec) { $ChildSpec } else { $ParentSpec }
+    $trackLabel = Get-TrackLabelNameForSpec -Spec $trackSpec
     if (-not [string]::IsNullOrWhiteSpace($trackLabel)) {
         $labels += $trackLabel
     }
@@ -2026,7 +2043,9 @@ function Get-DesiredProjectIterationTitles {
     }
 
     foreach ($issue in $DesiredIssues) {
-        $resolvedTitle = Get-ResolvedIterationTitle -IterationTitle $null -PlanningStatus $issue.PlanningStatus
+        $declaredIteration = [regex]::Match($issue.ContentBody, '(?m)^Iteration:\s*(?<title>[^\r\n]+)')
+        $explicitTitle = if ($declaredIteration.Success) { $declaredIteration.Groups['title'].Value.Trim().TrimEnd('.') } else { $null }
+        $resolvedTitle = Get-ResolvedIterationTitle -IterationTitle $explicitTitle -PlanningStatus $issue.PlanningStatus
         if (-not [string]::IsNullOrWhiteSpace($resolvedTitle) -and -not $titles.Contains($resolvedTitle)) {
             $titles.Add($resolvedTitle)
         }
@@ -2418,6 +2437,11 @@ function Get-DesiredTestFieldValue {
         [AllowNull()][string]$State
     )
 
+    $explicit = [regex]::Match([string]$Body, '(?m)^Test:\s*(?<value>N/A|Needed|Running|Passed|Failed)\s*$')
+    if ($explicit.Success) {
+        return $explicit.Groups['value'].Value
+    }
+
     if (Test-IsDocumentationOnlyWorkItem -Title $Title) {
         return "N/A"
     }
@@ -2435,6 +2459,11 @@ function Get-DesiredBenchmarkFieldValue {
         [AllowNull()][string]$Body,
         [AllowNull()][string]$State
     )
+
+    $explicit = [regex]::Match([string]$Body, '(?m)^Benchmark:\s*(?<value>N/A|Needed|Running|Passed|Regressed)\s*$')
+    if ($explicit.Success) {
+        return $explicit.Groups['value'].Value
+    }
 
     if (-not (Test-RequiresBenchmarkValidation -Title $Title -Body $Body)) {
         return "N/A"
@@ -2826,7 +2855,11 @@ function Get-TopLevelPlanningContext {
     )
 
     $iterationTitle = $null
-    if ($Spec.Kind -eq "Backlog" -and -not [string]::IsNullOrWhiteSpace($Spec.EngCode) -and $IterationMap.ContainsKey($Spec.EngCode)) {
+    $explicitIteration = [regex]::Match($Spec.ContentBody, '(?m)^Iteration:\s*(?<title>[^\r\n]+)')
+    if ($explicitIteration.Success) {
+        $iterationTitle = $explicitIteration.Groups['title'].Value.Trim().TrimEnd('.')
+    }
+    elseif ($Spec.Kind -eq "Backlog" -and -not [string]::IsNullOrWhiteSpace($Spec.EngCode) -and $IterationMap.ContainsKey($Spec.EngCode)) {
         $iterationTitle = $IterationMap[$Spec.EngCode]
     }
     elseif ($Spec.Kind -eq "Roadmap" -and $IterationMap.ContainsKey($Spec.SyncKey)) {
@@ -3277,7 +3310,8 @@ foreach ($issue in $issuesByNumber.Values) {
     }
 
     $issuePatchBody = Set-ChildPlanningMetadataBody -Body $issue.body -IterationTitle $effectiveIterationTitle -Estimate $effectiveEstimate
-    $childDesiredLabels = Get-ManagedChildLabels -ParentSpec $parentDesired -IterationTitle $effectiveIterationTitle
+    $childDesired = if ($syncedIssues.ContainsKey([int]$issue.number)) { $syncedIssues[[int]$issue.number].Desired } else { $null }
+    $childDesiredLabels = Get-ManagedChildLabels -ParentSpec $parentDesired -IterationTitle $effectiveIterationTitle -ChildSpec $childDesired
 
     Set-IssueType -RepositoryContext $repositoryContext -Issue $issue -IssueTypeName (Get-ChildIssueTypeName)
     Ensure-SubIssueLink -RepositoryContext $repositoryContext -ParentIssue $parentIssue -ChildIssue $issue

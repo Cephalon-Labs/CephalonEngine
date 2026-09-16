@@ -5,26 +5,19 @@ This guide records the current Cephalon truth for future-framework assessment wi
 ## Current repo truth
 
 - stable Cephalon packages still ship on `net10.0`
-- `global.json` still pins `.NET SDK 10.0.201`
+- `global.json` pins `.NET SDK 10.0.303`
 - the template-pack package, analyzer meta-package, and source-generator surfaces remain the intentional `netstandard2.0` exceptions
 - `.NET 11` is currently a readiness lane, not a default-target migration
 - trim, Native AOT, and single-file support remain explicit global `not-claimed` support statements tracked through [Deployment-mode support](deployment-mode-support.md) and `scripts/deployment-mode-support.json`; package-scoped claims such as `Cephalon.Diagnostics` single-file support are narrower manifest entries and do not change the global support rows, and `publishProbePolicy` now makes the representative `singleFile` publish probe release-blocking without promoting global single-file support
 
-As of `July 7, 2026`, Microsoft has:
+As of **September 16, 2026**, the official [.NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core) and [.NET 11 download page](https://dotnet.microsoft.com/en-us/download/dotnet/11.0) show:
 
-- shipped `.NET 11 Preview 1` on `February 10, 2026`
-- shipped `.NET 11 Preview 2` on `March 10, 2026`
-- shipped `.NET 11 Preview 3` on `April 14, 2026`
-- shipped `.NET 11 Preview 4` on `May 12, 2026`
-- shipped `.NET 11 Preview 5` on `June 9, 2026`
-- published `11.0.100-preview.5.26302.115` as the current SDK on the `.NET 11` download page
-- published the official `dotnet/core` `release-notes/11.0/preview/preview5` folder
-- updated the Microsoft Learn `.NET 11` overview and SDK/tooling pages for Preview 5
-- documented C# 15 preview features for `.NET 11` previews, while the `.NET 11` download page still lists SDK language support as C# 14.0; Cephalon should keep C# 15 union types and collection-expression arguments in readiness-only planning until SDK/tooling/source alignment is unambiguous
-- kept `.NET 10` in active LTS support through `November 14, 2028`, with latest observed patch `10.0.9` / SDK `10.0.301` from `June 9, 2026`
-- kept the official `.NET 11` final-release target on `November 2026`
+- .NET 11 RC1 / SDK 11.0.100-rc.1, released September 8, 2026; Microsoft lists RC1 as go-live with support through October 13, 2026.
+- .NET 10.0.12 is the current listed patch, released September 8; .NET 10 LTS ends November 14, 2028.
+- Cephalon still ships net10.0 with repository SDK 10.0.303. Upstream go-live status does not establish Cephalon .NET 11 support.
+- ENG-731 will assess servicing, RC compatibility and supported package/OS/deployment combinations. This documentation refresh does not install a new SDK, change packages or claim that RC1 tests passed.
 
-When Preview 6, an RC, or GA lands, refresh this anchor again rather than letting the dated section drift into multi-month staleness; the readiness lane is most useful when the dated truth is recent. The July 7 refresh keeps the release-scorecard `.NET 11` gate as a current `partial` readiness lane, but it does not promote a `.NET 11` support baseline.
+This supersedes July 7 Preview 5 as current external truth. The older preview links below remain historical research references. Recheck upstream patch/RC/GA state at the next readiness run and before each release.
 
 Official sources:
 

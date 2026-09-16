@@ -12,6 +12,9 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 
 ## Start here
 
+- [Framework completion plan](framework-completion-plan.md)
+- [Architecture review (September 2026)](architecture-review-2026-09.md)
+
 - [Project memory](project-memory.md)
 - [Learning roadmap](learning-roadmap.md)
 - [Learning starters](learning/README.md)
@@ -65,6 +68,9 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Reference docs publishing](reference-docs.md)
 
 ## Research references
+
+- [Framework research baseline (September 2026)](framework-research-2026-09.md)
+- [Architecture review (September 2026)](architecture-review-2026-09.md)
 
 - [Architecture review (April 2026)](architecture-review-2026-04.md)
 - [Architecture review (May 2026)](architecture-review-2026-05.md)

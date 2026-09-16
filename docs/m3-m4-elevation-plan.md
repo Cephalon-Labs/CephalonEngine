@@ -2,6 +2,9 @@
 
 Plan date: `June 30, 2026`
 
+Execution refresh: **September 16, 2026**. The [framework completion plan](framework-completion-plan.md) extends this program across all M0–M4 roles and twelve quality dimensions. Gate 2 retains ENG-714 with ENG-719–722 (96 h rollup); Gate 3 retains ENG-715 with ENG-723–726 (120 h rollup). Gate 4 now has an explicit selective-adoption task, ENG-734, plus independent release gates in Phases 15–16. Gate milestones have no capacity-backed due dates. Existing maturity declarations remain unchanged.
+
+
 This is the repo-owned plan for advancing Cephalon from broad runtime coverage toward repeatable operator automation (`M3`) and adoption proof (`M4`) without inflating package claims.
 
 ## Outcome
@@ -88,7 +91,7 @@ Each pilot must prove success, transient failure, terminal failure, duplicate co
 
 ### Gate 4 — adoption proof and M4 promotion
 
-Status: `future`.
+Status: `gated` as `ENG-734`; release readiness is separately decided by `ENG-738`.
 
 - out-of-repo sample or generated app using published packages
 - upgrade and rollback proof

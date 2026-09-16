@@ -780,6 +780,8 @@ These are intentionally different from `playground/`. The playground stays a fre
 
 ## Planning
 
+The current [framework completion plan](docs/framework-completion-plan.md) maps M0–M4, all twelve quality dimensions, estimated work and Phases 14–16. The [September research baseline](docs/framework-research-2026-09.md) records primary sources and the [September architecture review](docs/architecture-review-2026-09.md) explains the decisions and evidence limits.
+
 - `docs/engine-roadmap.md`
 - `docs/engine-backlog.md`
 - `docs/app-models.md`

@@ -1,6 +1,6 @@
 # Cephalon Project Memory
 
-Project memory in this document reflects the repository state observed on `July 7, 2026`.
+Project memory in this document reflects the repository state observed on `September 16, 2026`.
 
 This page is a repo-oriented orientation snapshot. It is meant to help contributors recover context quickly before they change code, docs, planning, or package surfaces.
 
@@ -21,13 +21,21 @@ The repository is aiming at a modular .NET engine/framework foundation that is g
 
 ## Current technical baseline
 
-- the repo is pinned to `.NET SDK 10.0.201` through `global.json`
+- the repo is pinned to `.NET SDK 10.0.303` through `global.json`
 - the shipped project baseline is `net10.0`
 - notable packaging and compiler-tooling exceptions are the template pack, analyzer meta-package, and source generator surfaces (`Cephalon.Behaviors.SourceGen` and `Cephalon.Engine.SourceGen`) that stay on `netstandard2.0`
 - repo-native framework assessment now lives in `scripts/validate-dotnet-readiness.ps1`, which keeps `global.json`-selected shipping truth separate from higher-SDK readiness checks
 - central package management is enabled through `Directory.Packages.props`
 - repo-wide build defaults enable nullable reference types, implicit usings, XML doc generation, and warnings-as-errors
 - the default Cephalon package version baseline is currently `0.1.0-preview`
+
+## September completion planning
+
+- [Completion plan](framework-completion-plan.md), [research register](framework-research-2026-09.md) and [September review](architecture-review-2026-09.md) are the current all-level planning frame; earlier dated research below is historical where superseded.
+- Keep 107 package maturity declarations unchanged until evidence supports a reviewed change. M0/M1 are legitimate roles; M4 is not GA.
+- ENG-714/715 retain their IDs and become 96 h / 120 h parent rollups; ENG-719–738 contain 536 h of leaf implementation work, plus ENG-532's separate 1 h. ENG-718 is the planning delivery only.
+- No capacity-backed dates exist for Phases 14–16; future work remains Later / not scheduled yet. Do not infer dates from the legacy Project iteration calendar.
+- Official September 16 source refresh shows .NET 11 RC1 and .NET 10.0.12. The local SDK remains 10.0.303 and net10.0 remains the shipping floor; ENG-731 owns tested upgrades.
 
 ## M3/M4 elevation baseline
 

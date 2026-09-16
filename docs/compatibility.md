@@ -20,6 +20,8 @@ See also: [Engineering standards](engineering-standards.md) is the broader quali
 
 ## Alignment rules
 
+September 16, 2026 planning refresh: the repository SDK is 10.0.303 and the shipping floor is net10.0. Upstream .NET 11 RC1 remains an assessment lane; ENG-731 owns servicing, package/API/wire and deployment-matrix proof before any support change. See [.NET readiness](dotnet11-readiness.md).
+
 ### Version and framework baselines
 
 - when the shipped Cephalon package version changes, update CLI defaults, template-pack package metadata, starter manifests, and docs snippets that show a literal version

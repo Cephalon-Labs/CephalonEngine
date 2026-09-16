@@ -121,6 +121,7 @@ Anchor points so far:
 - [Architecture review (April 2026)](architecture-review-2026-04.md), dated `April 13, 2026`
 - [Architecture review (May 2026)](architecture-review-2026-05.md), dated `May 2, 2026`
 - [Architecture review (June 2026)](architecture-review-2026-06.md), dated `June 30, 2026`
+- [Architecture review (September 2026)](architecture-review-2026-09.md), dated `September 16, 2026`; July/August publication gaps are acknowledged and assigned to ENG-737 for evidence-based reconciliation.
 
 Cadence rules:
 
@@ -168,6 +169,10 @@ If a row's `Notes` field reaches more than one line of detail, move that detail 
 When the conformance matrix surfaces a new inconsistency between sources, record it in the matrix's "Inconsistencies observed" tail section as a candidate `ENG-*` card so the planning record stays aligned. Resolving an inconsistency removes the row from that tail section in the same slice as the source edit.
 
 ## Planning identifier rule
+
+The September [completion plan](framework-completion-plan.md#delivery-sequence-and-effort) defines engineering-hour estimates, non-additive parent rollups, evidence-based gate milestones and unscheduled future work. Explicit standalone `Phase:` and `Iteration:` backlog fields take precedence over legacy maps; `done` and dated `shipped` states remain closed. Monthly review gaps must be acknowledged and reconciled from evidence, never backdated. ENG-737 owns historical calendar cleanup.
+
+Standalone `Test:` and `Benchmark:` fields record explicit evidence and take precedence over title/status inference. A child with its own immutable ENG identifier keeps its own `track:eng-*` label; parent linkage must not make the child look like a duplicate of its parent. The September wave was synchronized through scoped GitHub API updates and verified with the existing live guards; the repository-wide synchronizer was not run over historical issues.
 
 Once an `ENG-*` id is assigned in repo docs or GitHub Project tracking, treat it as immutable.
 
