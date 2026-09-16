@@ -1415,6 +1415,6 @@ Those notes may be local-environment artifacts rather than repository-intended s
 
 ## September 15, 2026 branch consolidation
 
-- ENG-717 / [#1410](https://github.com/Cephalon-Labs/CephalonEngine/issues/1410) consolidates 139 local branch histories and independently retained adapter readback work. Publication and verification are tracked in [the consolidation report](branch-consolidation-2026-09-15.md).
+- ENG-717 / [#1410](https://github.com/Cephalon-Labs/CephalonEngine/issues/1410) shipped on September 16, consolidating 139 local branch histories and independently retained adapter readback work. Local and GitHub branches now contain only master. All 130 former branch-linked worktrees, including the two dirty worktrees and one pending merge, retain their existing files and state. Publication and verification are recorded in [the consolidation report](branch-consolidation-2026-09-15.md).
 - Existing upstream provider contracts, dependency-health M2 claims, deployment-mode gates, and benchmark calibrations remain authoritative where they supersede older local drafts. Catalog projection timestamps and transport outcome counters are observation evidence, not a package maturity promotion.
 - Worktree files and uncommitted state are preserved when obsolete branch names are detached and removed. All original branch tips remain reachable through master ancestry.

@@ -78,7 +78,7 @@ Quality dimensions: Compatibility + Auditability + Maintainability + Usability.
 
 ### ENG-717 Consolidate local branch histories and operator readback
 
-Status: in progress
+Status: shipped (September 16, 2026)
 
 Estimate: 16
 
@@ -94,7 +94,7 @@ Maturity and ownership: additive M1 observation metadata over existing Cephalon-
 
 Validation: affected composition/hosting suites, script and maturity gates, public API and generated reference-doc checks, preserved worktree state, branch ancestry and local/remote parity. See [consolidation evidence](branch-consolidation-2026-09-15.md).
 
-Discovered release hygiene: align SDK 10.0.303 and ILLink locks; pin the patched SSH.NET test-harness dependency; repair provider-workflow lock-file cache discovery; retain the CatalogService unwrapped response contract.
+Discovered release hygiene: align SDK 10.0.303 and ILLink locks; pin the patched SSH.NET test-harness dependency; repair provider-workflow lock-file cache discovery; retain the CatalogService unwrapped response contract; correct provider-generator parsing and scorecard public API count expectations.
 
 Quality dimensions: Reliability + Security + Compatibility + Maintainability + Auditability.
 

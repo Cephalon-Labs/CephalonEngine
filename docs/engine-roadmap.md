@@ -16,7 +16,7 @@ Cephalon should become a modular runtime platform that can:
 
 ## Phase 14: M3/M4 evidence and operator-kernel elevation
 
-September 2026 consolidation: `ENG-717` joins retained local histories, integrates independent adapter readback and regression coverage, and reconciles branch/document/Project truth in Operational Sprint 0. [Consolidation evidence](branch-consolidation-2026-09-15.md) tracks validation and publication; this does not advance the planned `ENG-714` coordination kernel or `ENG-715` automation pilots.
+September 2026 consolidation: `ENG-717` shipped on September 16 after starting in Operational Sprint 0. It joins retained local histories, integrates independent adapter readback and regression coverage, and reconciles branch/document/Project truth. [Consolidation evidence](branch-consolidation-2026-09-15.md) records validation and publication; this does not advance the planned `ENG-714` coordination kernel or `ENG-715` automation pilots.
 
 Status: active — Gate 0 and the Gate 1 foundation shipped; Gate 2 and Gate 3 remain planned.
 

@@ -2,13 +2,15 @@
 
 Tracking: [ENG-717 / GitHub #1410](https://github.com/Cephalon-Labs/CephalonEngine/issues/1410), Phase 14, Operational Sprint 0 (September 2–15), estimate 16.
 
-Status: integration and local validation complete; publication and branch cleanup pending.
+Status: shipped to master; local/GitHub branch consolidation complete on September 16, 2026.
 
 ## Scope and retained history
 
-The initial local repository contained 139 branches at 51 distinct tips. Local `master` was 29 commits ahead of and 521 commits behind GitHub `master` (`77229295`). All original branch tips are retained as ancestors of the integration result. The 138 non-master local branch names can be removed after the validated result reaches `master`.
+The initial local repository contained 139 branches at 51 distinct tips. Local `master` was 29 commits ahead of and 521 commits behind GitHub `master` (`77229295`). All original branch tips are retained as ancestors of the integration result. The 138 non-master local branch names were removed after the validated result reached local and GitHub `master`.
 
-The two remaining GitHub feature branches had already merged through PRs #1408 and #1409 and were deleted after ancestry verification. A verified local Git bundle and a branch-to-commit inventory preserve the pre-consolidation state. Existing worktree files, including staged and unstaged changes in two worktrees, remain intact when those worktrees are detached from their old branch names.
+The two remaining GitHub feature branches had already merged through PRs #1408 and #1409 and were deleted after ancestry verification. A verified local Git bundle and a branch-to-commit inventory preserve the pre-consolidation state. All 130 non-master branch-linked worktrees were detached at their original commits, with identical before/after status and staged/unstaged binary diffs. Existing files in two dirty worktrees remain intact. The pending merge in `frosty-shtern-500fcd` was preserved, including `MERGE_HEAD` and merge metadata, by detaching its HEAD reference without aborting or resetting it. No existing worktree directory or nested checkout was removed.
+
+The integrated code and validation baseline were published as [a16280cf](https://github.com/Cephalon-Labs/CephalonEngine/commit/a16280cf0ab1d8d7b36662ad07848957c52e03bb). Local and remote branch inventories contain only `master`; final closeout commits and CI results are linked from ENG-717.
 
 ## Resulting behavior
 
@@ -31,6 +33,8 @@ The full solution restore found the test harness transitively using `SSH.NET` 20
 The CatalogService sample retains its existing unwrapped JSON response contract after the imported result-envelope configuration caused two sample assertions to fail. The sample suite passes after this resolution.
 
 The provider pack generator now delimits provider names before a literal colon, fixing two PowerShell parser errors in its implementation checklist. Both imported pack generators target the current split test projects and pass syntax validation. Obsolete session handoff and local push-watcher files are retired; their contents remain in the retained commit history.
+
+The first post-push Release Validation run exposed stale scorecard test expectations for pending public APIs. The JSON and Markdown assertions now match the measured catalog: 3 packages with 205 additions, 101 header-only packages, and zero removals. The gate remains strict; only its repository snapshot expectations changed.
 
 ## Superseded drafts
 
@@ -58,7 +62,7 @@ Validation on Windows with SDK 10.0.303:
 | Composition suite | 859/859 passed. |
 | Hosting suite | 816/818 initially passed; the two CatalogService failures were fixed, and all 6 sample-suite tests passed on rerun. The whole hosting suite was not rerun after that configuration-only fix. |
 | Tooling, public surface, reference documentation, and documentation coverage | 287/287 passed after updating the public-type allow-list and generated bundle. |
-| PowerShell suites | 188 tests passed across the 6 planning/release/maturity suites and 2 provider/API-summary suites. |
+| PowerShell suites | 233/233 passed across all 14 files, including the scorecard API-count correction. |
 | Provider/observability pack generators | Both scripts pass PowerShell syntax validation. |
 | API delta report | 205 pending additions, 0 removals across 3 packages; published positional record signatures retained. |
 | Generated reference bundle | 88 files for 79 supported assemblies; no test assemblies in the catalog. |
