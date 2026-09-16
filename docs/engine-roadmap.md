@@ -30,17 +30,11 @@ The September [framework completion plan](framework-completion-plan.md) adds all
 
 Status: in-progress
 
-ENG-742 now tracks native children ENG-743 (8 h) and ENG-744 (16 h), included in the revised 24 h. The consumer probe passed on Windows/Linux and ENG-743 is done; ENG-744 retains 16 h for the complete release/host/deployment matrix. [Contract consumer guide](contract-compatibility.md).
+ENG-731 is complete in Sprint 16 with a **44 h** non-additive rollup: ENG-739/740/741/742 are 8/8/4/24 h, and ENG-742 contains ENG-743/744 at 8/16 h. The scope includes SDK/locks, API enforcement, lifecycle-test repairs, binary/blueprint consumers, historical snapshot readers, generated hosts and declared deployment targets. [Compatibility evidence](host-compatibility-2026-09.md) records the exact source/OS/RID boundaries and successful CI.
 
-ENG-731 now has native children ENG-739/740/741/742 with 8/8/4/24 h estimates included in its revised 44 h rollup. SDK reproducibility, analyzer enforcement and scheduling evidence are delivered in Sprint 16 (20 h estimated scope); ENG-742 has a revised 24 h rollup, with 8 h delivered by ENG-743 and 16 h remaining in ENG-744. Phase 15 remaining scope is 192 h plus the independent 1 h ENG-532 action; the wider matrix remains a separate gate. [Repair evidence](compatibility-repair-2026-09.md).
+ENG-727–733 cover security/tenant isolation, supply-chain verification, SLO/load/resilience evidence, data/privacy/recovery, compatibility, external developer journeys and provider/host support tiers. Original base estimate: 208 h; revised scope: **220 h**, indicative 165–330. With ENG-731 complete, **176 h** remains, plus the independent **1 h** ENG-532 signed-release action. No milestone due date until capacity and external access are established.
 
-ENG-727–733 cover security/tenant isolation, supply-chain verification, SLO/load/resilience evidence, data/privacy/recovery, framework/API/deployment compatibility, external developer journeys and provider/host support tiers. Original base estimate: 208 engineering hours. Revised scope: 220 h, indicative range 165–330 after the ENG-744 validation-infrastructure findings. ENG-532 remains an independent external signed-release blocker, estimated at 1 h for the next action. No milestone due date until capacity and external access are established.
-
-Exit: applicable security, compatibility, supply-chain, SRE, provider and adoption evidence is reproducible for the declared release set; unsupported deployment modes remain explicit. This primarily serves the near-term horizon and supplies stable migration seams for the mid-term horizon. See [completion plan](framework-completion-plan.md) for dependencies and all twelve quality dimensions.
-
-[Host compatibility evidence](host-compatibility-2026-09.md) records the +12 h total revision, bounded subprocess repair, reference-link cache and generated runtime contract checks. ENG-744 is active in Sprint 16.
-
-The full release matrix exposed two lifecycle-test observation races on `5f99ee15`. ENG-744 adds 4 h for those corrections and their evidence; its revised 16 h remains in Sprint 16. These are test-observation repairs and do not change runtime or provider-support claims.
+Exit: applicable security, compatibility, supply-chain, SRE, provider and adoption evidence is reproducible for the declared release set. ENG-729 retains the observed Windows release wall-time investigation (31 m 22 s against a 30-minute target), separate from passing compatibility and benchmark gates. Global trim/AOT/single-file and untested provider/RID combinations remain unclaimed. Package maturity and the net10.0 shipping floor are unchanged. [Completion plan](framework-completion-plan.md) retains all twelve quality dimensions.
 
 ## Phase 16: Selective M4 adoption and sustainable evolution
 
@@ -116,7 +110,7 @@ The next planning wave is therefore not "add more descriptors everywhere." It is
 
 ## Sprint alignment
 
-September 2026 active ordering is in the [completion plan](framework-completion-plan.md#delivery-sequence-and-effort). ENG-718 uses the existing September 16–29 Project iteration named Sprint 16; ENG-714/715, ENG-719–738 and ENG-532 remain explicitly unscheduled. Historical sprint narratives below retain their original meaning.
+September 2026 active ordering is in the [completion plan](framework-completion-plan.md#delivery-sequence-and-effort). ENG-718/719/720 and compatibility ENG-731/739–744 are complete in the existing September 16–29 Project iteration named Sprint 16. ENG-714/715, the remaining September leaves and ENG-532 remain explicitly unscheduled. Historical sprint narratives below retain their original meaning.
 
 The project board now tracks both delivered work and upcoming work through explicit sprint buckets:
 

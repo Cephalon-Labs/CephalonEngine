@@ -2,13 +2,15 @@
 
 Planning date: **September 16, 2026**. Owner: **Cephalon-Neza**. Planning delivery: **ENG-718**. [GitHub Project](https://github.com/orgs/Cephalon-Labs/projects/2). [Research and sources](framework-research-2026-09.md).
 
+Current acceptance: compatibility ENG-731/742/744 is complete for its tested scope. The revised September estimate is **548 h**; **17 unfinished leaves / 464 h**, plus ENG-532 **1 h**, remain. See the [latest acceptance checkpoint](#compatibility-acceptance-complete--september-16-2026) and [compatibility evidence](host-compatibility-2026-09.md). Earlier dated checkpoints preserve the estimate history.
+
 ## Objective and verified baseline
 
 Make Cephalon a dependable modular engine with clear runtime ownership, a small host-agnostic core, reusable primitives, usable adoption paths and defensible support claims. Completeness is evaluated for a declared release/workload scope across all twelve [engineering qualities](engineering-standards.md), not against an unbounded promise to support every technology or be universally best.
 
 The baseline was checked at commit `398b2b3a`: local master and origin/master had no divergence; the maturity report passed for **107** source projects and **107** component documents with **M0=1, M1=39, M2=51, M3=7, M4=9**, drift **0**. This proves declaration consistency, not a fresh behavioral audit of every package. The complete package inventory remains in the [conformance matrix](conformance-matrix.md) and generated `artifacts/surface-maturity-report/surface-maturity-report.json`.
 
-Existing open work is retained: ENG-714 / #1405 (kernel), ENG-715 / #1406 (pilots), ENG-532 / #1180 (signed-release dry-run blocker). No package maturity changes in this planning delivery. The observed SDK is **10.0.303**; the shipping floor remains **net10.0**. Official RC1/servicing findings are recorded in [.NET readiness](dotnet11-readiness.md).
+Existing open work is retained: ENG-714 / #1405 (kernel), ENG-715 / #1406 (pilots), ENG-532 / #1180 (signed-release dry-run blocker). No package maturity changes in this planning delivery. That planning checkpoint observed SDK **10.0.303**; the completed servicing assessment now pins **10.0.401**, while the shipping floor remains **net10.0**. Official RC1/servicing findings are recorded in [.NET readiness](dotnet11-readiness.md).
 
 ## M0–M4 acceptance and maintenance
 
@@ -88,7 +90,7 @@ The [backlog](engine-backlog.md) contains each task's scope, acceptance tests, d
 | [ENG-728](https://github.com/Cephalon-Labs/CephalonEngine/issues/1421) | Verifiable package provenance and release recovery | 15 | 24 | ENG-532 for hosted proof; local policy work can start independently |
 | [ENG-729](https://github.com/Cephalon-Labs/CephalonEngine/issues/1422) | SLO load resilience and telemetry-cost evidence | 15 | 32 | ENG-720; ENG-723 through ENG-725 for pilot load scenarios |
 | [ENG-730](https://github.com/Cephalon-Labs/CephalonEngine/issues/1423) | Data evolution disaster recovery and privacy proofs | 15 | 40 | ENG-721, ENG-727 |
-| [ENG-731](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424) | Framework API and deployment compatibility matrix | 15 | 32 | ENG-719; independent .NET assessment may start immediately |
+| [ENG-731](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424) | Framework API and deployment compatibility matrix | 15 | 44 | ENG-719; independent .NET assessment may start immediately |
 | [ENG-732](https://github.com/Cephalon-Labs/CephalonEngine/issues/1425) | External developer journey documentation and accessibility | 15 | 24 | [ENG-731](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424) |
 | [ENG-733](https://github.com/Cephalon-Labs/CephalonEngine/issues/1426) | Provider and host conformance support tiers | 15 | 24 | [ENG-731](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424) |
 | [ENG-734](https://github.com/Cephalon-Labs/CephalonEngine/issues/1427) | Independent published-package M4 adoption and upgrade | 16 | 40 | ENG-726, ENG-728, ENG-730, ENG-731, ENG-732, ENG-733 |
@@ -140,3 +142,9 @@ ENG-742 is active in Sprint 16 and decomposes its existing 12 h into ENG-743 (8 
 ## Release observation follow-up — September 16, 2026
 
 The full release run on `5f99ee15` exposed a fixed-delay Kubernetes cleanup assertion and a one-shot Oracle failure overwritten by the fixture retry. ENG-744 increases **12 -> 16 h** (+4 h), with ENG-742 **24 h** and ENG-731 **44 h** non-additive rollups. Revised September implementation scope is **548 h**. Current unfinished leaves: **18 tasks / 480 h**, plus ENG-532 **1 h** = **481 h (60.125 person-days)**. Phase 15 becomes **220 h** (indicative 165–330), with **192 h** remaining plus ENG-532. The generated host and deployment receipts do not substitute for the still-open full-release gate. [Evidence](host-compatibility-2026-09.md).
+
+## Compatibility acceptance complete — September 16, 2026
+
+ENG-744 (16 h), ENG-742 (24 h rollup) and ENG-731 (44 h rollup) are complete for the explicitly tested scope. [Evidence](host-compatibility-2026-09.md) links full Windows/Linux release validation, the Windows benchmark gate, SDK 11 assessment, contract consumers, historical snapshot readers and generated-host/deployment receipts. Runtime/package/toolchain sources are identical between the release and reader checkpoints.
+
+Revised September implementation scope remains **548 h**. Current unfinished leaves: **17 tasks / 464 h**, plus ENG-532 **1 h** = **465 h (58.125 person-days)**. Phase 15 retains **176 h** remaining of its revised 220 h, plus ENG-532. Completed estimates measure delivered scope, not time spent. No GA, M0–M4, provider support or global deployment promotion is implied. Earlier checkpoint totals above are historical.

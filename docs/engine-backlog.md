@@ -596,6 +596,8 @@ Estimate basis: engineering hours including review, tests and docs; initial rang
 
 Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
 
+Measured follow-up: [Windows release CI on `c4f8d288`](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35095044308) passed 41 benchmark guardrails but recorded full validation wall time 1,881,965.5918 ms against the existing 1,800,000 ms target (`investigate`). Reproduce and explain the runner/workload timing before renewing that SLO; do not infer SLO compliance from a passing compatibility gate. This baseline investigation belongs to the existing 32 h scope; no estimate or maturity promotion. [Evidence](host-compatibility-2026-09.md).
+
 ### ENG-730 Data evolution disaster recovery and privacy proofs
 
 GitHub issue: #1423
@@ -638,7 +640,7 @@ GitHub issue: #1424
 
 Issue link: [#1424](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424)
 
-Status: in-progress
+Status: done
 
 Estimate: 44
 
@@ -650,9 +652,9 @@ Owner: Cephalon-Neza
 
 Priority: P0
 
-Test: Needed
+Test: Passed
 
-Benchmark: Needed
+Benchmark: Passed
 
 Dependencies: ENG-719; independent .NET assessment may start immediately.
 
@@ -668,9 +670,10 @@ Estimate basis: engineering hours including review, tests and docs; initial rang
 
 Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
 
-September implementation findings: upstream run 35081865397 fails Windows/Linux locked restore (ILLink 10.0.12 vs 10.0.11 locks) and the .NET 11 in-process event scheduling test. Explicit analyzer injection reveals 121 pre-existing non-coordination Abstractions API diagnostics (118 undeclared, 3 stale declarations); normal project-reference wiring did not enforce them. Budget within the existing 32 h: SDK/locks 8 h; analyzer/baseline repair 8 h; scheduling proof 4 h; remaining consumer/deployment matrix 12 h. This parent is active in Sprint 16 and stays open until all children meet acceptance. ENG-739/740/741 carry the first 20 h; The initial 12 h matrix has since expanded: ENG-742 is active in Sprint 16 with a revised 24 h split into ENG-743 (8 h) and ENG-744 (16 h). ENG-731 is therefore revised from 32 to 44 h. Parent estimates are non-additive.
+Delivery: ENG-739/740/741/743/744 complete the revised **44 h** non-additive scope in Sprint 16. The original 32 h grew by 12 h for observed tooling and lifecycle-test repairs; child estimates remain historical engineering scope, not elapsed time.
 
-Delivery status: ENG-739/740/741/743 completed 28 h of estimated scope in Sprint 16. ENG-731 now has a revised 44 h rollup and ENG-742 a revised 24 h rollup; only ENG-744's revised 16 h remains within this branch. Both parents remain open for the broader compatibility acceptance. [Evidence](compatibility-repair-2026-09.md).
+Validation: [full Release Validation](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35095044308) passed Windows/Linux and SDK 11 readiness on `c4f8d288`; Windows includes the benchmark gate and Linux retains its declared benchmark exclusion. [Host, historical-reader and deployment CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35096866388) plus [contract consumers](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35096870309) passed Windows/Linux on `4d7bfae9`. No runtime/package/toolchain sources changed between those checkpoints. Scope remains source-checkpoint consumers, the selected generated REST host and declared package/RID publish targets; global deployment, published-release and live-provider support are not widened. [Evidence](host-compatibility-2026-09.md).
+
 
 ### ENG-739 Pin the shipping SDK and regenerate locked restore
 
@@ -782,7 +785,7 @@ GitHub issue: #1435
 
 Issue link: [#1435](https://github.com/Cephalon-Labs/CephalonEngine/issues/1435)
 
-Status: in-progress
+Status: done
 
 Estimate: 24
 
@@ -794,9 +797,9 @@ Owner: Cephalon-Neza
 
 Priority: P0
 
-Test: Running
+Test: Passed
 
-Benchmark: Needed
+Benchmark: Passed
 
 Parent: ENG-731 / #1424. Child estimate is included in the revised 44 h parent rollup.
 
@@ -808,7 +811,10 @@ Quality dimensions: Compatibility + Reliability + Maintainability + Auditability
 
 Estimate basis: engineering hours including implementation, review, tests and docs; excludes external waiting. No maturity or GA promotion.
 
-Breakdown: ENG-743 (8 h) and ENG-744 (16 h) are native children included in this revised 24 h rollup. ENG-743 proves selected contract consumers; ENG-744 retains the remaining host/wire/generated/deployment evidence. These are engineering estimates, not elapsed hours. ENG-743 is done after both Windows/Linux CI jobs passed; ENG-744 now retains 16 h after the process-hang and lifecycle-test scope revisions. [implementation `5f67f61c`](https://github.com/Cephalon-Labs/CephalonEngine/commit/5f67f61c9519a553ad1faf0ce80d40cc763d338b) and [Windows/Linux CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35090093557).
+Breakdown: ENG-743 (8 h) and ENG-744 (16 h) are complete native children in this **24 h** non-additive rollup. Source/binary/blueprint consumers, historical runtime snapshot readers, generated configuration, SDK assessment and selected deployment claims are covered by the named receipts.
+
+Validation: [full Release Validation](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35095044308) passed Windows/Linux and SDK 11 readiness on `c4f8d288`; Windows includes the benchmark gate and Linux retains its declared benchmark exclusion. [Host, historical-reader and deployment CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35096866388) plus [contract consumers](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35096870309) passed Windows/Linux on `4d7bfae9`. No runtime/package/toolchain sources changed between those checkpoints. Scope remains source-checkpoint consumers, the selected generated REST host and declared package/RID publish targets; global deployment, published-release and live-provider support are not widened. [Evidence](host-compatibility-2026-09.md).
+
 
 ### ENG-743 Prove cross-version contract consumers and bounded rollback
 
@@ -850,7 +856,7 @@ GitHub issue: #1437
 
 Issue link: [#1437](https://github.com/Cephalon-Labs/CephalonEngine/issues/1437)
 
-Status: in-progress
+Status: done
 
 Estimate: 16
 
@@ -862,9 +868,9 @@ Owner: Cephalon-Neza
 
 Priority: P0
 
-Test: Running
+Test: Passed
 
-Benchmark: Needed
+Benchmark: Passed
 
 Parent: ENG-742 / #1435; included in its revised 24 h rollup, which is included in ENG-731's revised 44 h.
 
@@ -875,16 +881,12 @@ Acceptance: Per-SDK/OS/package/RID receipts match source commits and declared su
 Quality dimensions: Compatibility + Reliability + Maintainability + Flexibility + Auditability.
 
 Estimate basis: engineering hours including review, tests, docs and tracking; excludes external waiting. No maturity promotion.
-Evidence still needed: the preceding full release run on `13b0e859` was superseded/cancelled during tooling tests after Linux composition (885) and hosting (819) passed. The separate SDK 11 RC1 readiness job passed 2,074 selected net10.0 tests. Cancellation is not a successful full release run; collect a completed release/tooling/generated/deployment matrix before closing this task.
 
+Delivered: generated-app report 1.1.0 with configuration/manifest/snapshot checks and payload hashes; historical typed readers from baseline `11488f13`; bounded process supervision; cached reference-link auditing; controlled Kubernetes cleanup and stable Oracle failure fixtures.
 
-Implementation checkpoint: `56187325` supplies bounded tooling, generated-host receipts and Windows/Linux CI. Local Tooling 383/383 and Pester 263/263 passed; the actual generated Windows host passed after correcting the assertion fixture to the canonical foundation ID. SDK 11 RC1 readiness on `56187325` passed 2,078 selected net10.0 tests, and its contract consumers passed on both operating systems. Full release/deployment acceptance remains pending. No task or parent closure is implied.
+Estimate history: 4 h original matrix + 8 h process/reference-audit repair + 4 h lifecycle-test repair = **16 h**, included in the parent rollups. No maturity promotion.
 
-Scope revision: reproduced packaging hang after all 109 packages were written and the root process exited. Stack evidence points to an unbounded redirected-output wait in the test runner. Estimate 4 -> 12 h adds 8 h for shared process supervision, inherited-pipe regression proof, cached reference-link validation, and Windows/Linux validation. [Evidence and revised scope](host-compatibility-2026-09.md). The existing host/snapshot/generated/deployment acceptance remains required.
-
-Scope follow-up: full Release Validation on `5f99ee15` exposed two pre-existing observation races: the Kubernetes cleanup test sampled after a fixed 1.4 s delay, and the Oracle CDC failure fixture retried into Idle before assertion. Estimate 12 -> 16 h adds 4 h for controlled cleanup completion/readback, stable one-shot failure observation, regression validation and tracking. Host Compatibility already proves the corrected generated-app/deployment contract; full release acceptance stays open until these failures are resolved.
-
-Historical reader acceptance: the original 4 h matrix allocation includes generated-host/deployment evidence and a typed reader built from baseline `11488f13`. The unchanged old consumer now reads the current runtime manifest/snapshot, tolerates additive JSON fields and rejects an invalid schema version with an exact boundary control. Local evidence passed all three cases against the clean `c4f8d288` Windows host receipt; Windows/Linux CI is required before closing. This fills the already-planned old-snapshot-reader row without expanding the 16 h estimate.
+Validation: [full Release Validation](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35095044308) passed Windows/Linux and SDK 11 readiness on `c4f8d288`; Windows includes the benchmark gate and Linux retains its declared benchmark exclusion. [Host, historical-reader and deployment CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35096866388) plus [contract consumers](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35096870309) passed Windows/Linux on `4d7bfae9`. No runtime/package/toolchain sources changed between those checkpoints. Scope remains source-checkpoint consumers, the selected generated REST host and declared package/RID publish targets; global deployment, published-release and live-provider support are not widened. [Evidence](host-compatibility-2026-09.md).
 
 
 ### ENG-732 External developer journey documentation and accessibility
