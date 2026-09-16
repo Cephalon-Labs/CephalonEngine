@@ -21,6 +21,8 @@ September 17 SRE continuation: release CI on `12f436ae` failed one Windows resil
 
 September 17 MongoDB follow-up: ENG-747 adds 4 h for bootstrap diagnostic loss exposed by Windows CI on `c28edb3c`; timeout/OTLP repair passed composition but full CI acceptance remains open. ENG-729 is 36 h (8/24/4), September scope 552 h, unfinished 468 h plus ENG-532 1 h = 469 h. Earlier same-day checkpoints preserve history. [SRE evidence](sre-validation-2026-09.md).
 
+September 17 CDC follow-up: ENG-747 grows 4 → 6 h for a later MySQL one-shot failure overwritten by its provider retry and the matching PostgreSQL fixture repair. ENG-729 is 38 h, September scope 554 h, unfinished 470 h plus ENG-532 1 h = 471 h. Production retry and assertion deadlines remain unchanged. [Evidence](sre-validation-2026-09.md).
+
 ## Identity
 
 Cephalon is not being positioned as a single application shell.
@@ -50,7 +52,7 @@ The repository is aiming at a modular .NET engine/framework foundation that is g
 
 - [Completion plan](framework-completion-plan.md), [research register](framework-research-2026-09.md) and [September review](architecture-review-2026-09.md) are the current all-level planning frame; earlier dated research below is historical where superseded.
 - Keep 107 package maturity declarations unchanged until evidence supports a reviewed change. M0/M1 are legitimate roles; M4 is not GA.
-- ENG-714/715 retain their IDs and become 96 h / 120 h parent rollups; the original ENG-719–738 scope was 536 h and the revised implementation rollup is 552 h, plus ENG-532's separate 1 h. ENG-718 is the planning delivery only.
+- ENG-714/715 retain their IDs and become 96 h / 120 h parent rollups; the original ENG-719–738 scope was 536 h and the revised implementation rollup is 554 h, plus ENG-532's separate 1 h. ENG-718 is the planning delivery only.
 - No capacity-backed dates exist for Phases 14–16; future work remains Later / not scheduled yet. Do not infer dates from the legacy Project iteration calendar.
 - Official September 16 source refresh shows .NET 11 RC1 and .NET 10.0.12. ENG-739 installs SDK 10.0.401 for validation and updates the repository pin and ILLink locks; net10.0 remains the shipping floor. ENG-731/742/744 completed the declared compatibility matrix; untested release/provider/RID claims remain excluded.
 

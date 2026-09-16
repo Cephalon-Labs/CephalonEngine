@@ -246,7 +246,9 @@ public sealed class PostgresDataCdcPackTests
                         MessageType = "orders.postgresql.changed",
                         InitialPosition = "slot-consistent-point",
                         RecreateSlotIfInvalidated = false,
-                        PollingIntervalSeconds = 1,
+                        // Keep this one-shot failure observable through the bounded assertion;
+                        // an empty retry batch otherwise overwrites it with Idle.
+                        PollingIntervalSeconds = 600,
                         MaxChangesPerRead = 64,
                         MaxAwaitTimeSeconds = 5
                     });

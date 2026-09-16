@@ -277,7 +277,9 @@ public sealed class MySqlDataCdcPackTests
                         MessageType = "orders.mysql.changed",
                         InitialPosition = "latest-available",
                         ExpectedSourceServerUuid = SourceServerUuid,
-                        PollingIntervalSeconds = 1,
+                        // Keep this one-shot failure observable through the bounded assertion;
+                        // an empty retry batch otherwise overwrites it with Idle.
+                        PollingIntervalSeconds = 600,
                         MaxChangesPerRead = 64,
                         MaxAwaitTimeSeconds = 5
                     });

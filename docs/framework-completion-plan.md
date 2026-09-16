@@ -2,7 +2,7 @@
 
 Planning date: **September 16, 2026**. Owner: **Cephalon-Neza**. Planning delivery: **ENG-718**. [GitHub Project](https://github.com/orgs/Cephalon-Labs/projects/2). [Research and sources](framework-research-2026-09.md).
 
-Current work (September 17): ENG-745 is awaiting full CI acceptance; the latest Windows run passes composition but exposes a MongoDB fixture bootstrap deadline with lost diagnostics. ENG-747 adds 4 h to repair that evidence gap. ENG-729 is now 36 h (ENG-745/746/747 = 8/24/4), non-additive. September scope is **552 h**; **19 unfinished leaves / 468 h**, plus ENG-532 **1 h** = **469 h**, remain. [Current SRE evidence](sre-validation-2026-09.md). Earlier dated checkpoints preserve estimate history.
+Current work (September 17): ENG-745/747 await full CI acceptance. The later Windows run exposes a MySQL one-shot failure overwritten by retry; ENG-747 includes the matching PostgreSQL fixture repair and grows 4 → 6 h. ENG-729 is now 38 h (ENG-745/746/747 = 8/24/6), non-additive. September scope is **554 h**; **19 unfinished leaves / 470 h**, plus ENG-532 **1 h** = **471 h**, remain. [Current SRE evidence](sre-validation-2026-09.md). Earlier dated checkpoints preserve estimate history.
 
 ## Objective and verified baseline
 
@@ -88,7 +88,7 @@ The [backlog](engine-backlog.md) contains each task's scope, acceptance tests, d
 | [ENG-726](https://github.com/Cephalon-Labs/CephalonEngine/issues/1419) | Package-specific promotion dossiers and evidence expiry | 14 | 16 | ENG-723, ENG-724, ENG-725 |
 | [ENG-727](https://github.com/Cephalon-Labs/CephalonEngine/issues/1420) | Security and tenant-isolation verification baseline | 15 | 32 | [ENG-722](https://github.com/Cephalon-Labs/CephalonEngine/issues/1415) |
 | [ENG-728](https://github.com/Cephalon-Labs/CephalonEngine/issues/1421) | Verifiable package provenance and release recovery | 15 | 24 | ENG-532 for hosted proof; local policy work can start independently |
-| [ENG-729](https://github.com/Cephalon-Labs/CephalonEngine/issues/1422) | SLO load resilience and telemetry-cost evidence | 15 | 36 | ENG-720; ENG-723 through ENG-725 for pilot load scenarios |
+| [ENG-729](https://github.com/Cephalon-Labs/CephalonEngine/issues/1422) | SLO load resilience and telemetry-cost evidence | 15 | 38 | ENG-720; ENG-723 through ENG-725 for pilot load scenarios |
 | [ENG-730](https://github.com/Cephalon-Labs/CephalonEngine/issues/1423) | Data evolution disaster recovery and privacy proofs | 15 | 40 | ENG-721, ENG-727 |
 | [ENG-731](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424) | Framework API and deployment compatibility matrix | 15 | 44 | ENG-719; independent .NET assessment may start immediately |
 | [ENG-732](https://github.com/Cephalon-Labs/CephalonEngine/issues/1425) | External developer journey documentation and accessibility | 15 | 24 | [ENG-731](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424) |
@@ -156,3 +156,7 @@ ENG-729 now has native children ENG-745 (8 h, Sprint 16) and ENG-746 (24 h, Late
 ## Observed MongoDB fixture follow-up — September 17, 2026
 
 ENG-747 adds 4 h after Windows release on `c28edb3c` passed 885 composition tests and failed MongoDB fixture startup before its test body. Lost bootstrap diagnostics prevented root-cause attribution. ENG-729 rises 32 → 36 h; Phase 15 rises 220 → 224 h, with 180 h remaining plus ENG-532. September implementation rises 548 → 552 h; 19 unfinished leaves total 468 h plus ENG-532 1 h = 469 h. This is additional observed scope, not a redistribution from the 24 h workload/SLO task. No threshold, maturity or production-support change.
+
+## Provider failure-observation follow-up — September 17, 2026
+
+Windows release on `34fc2da0` failed MySQL lifecycle metadata observation after 889 composition successes. Its one-shot failure was followed by an empty/Idle batch after one second; the shared-loop 600-second setting does not control the provider loop. ENG-747 grows 4 → 6 h (+2 h) to preserve the MySQL and matching PostgreSQL failure fixtures, consistent with the existing Oracle/hosting approach. ENG-729 is 38 h; September scope is 554 h; remaining is 19 leaves / 470 h plus ENG-532 1 h = 471 h. Phase 15 is 226 h total / 182 h remaining plus ENG-532. Production retry behavior and assertion deadlines remain unchanged.

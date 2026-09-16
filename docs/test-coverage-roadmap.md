@@ -147,6 +147,8 @@ Quality dimension: **Reliability + Availability + Maintainability + Compatibilit
 
 ENG-747 covers MongoDB bootstrap diagnostic loss observed after the timeout repair: expiry during a command or retry delay must preserve process/driver evidence, while caller cancellation and pre-canceled startup retain their meaning. The 20-second fixture deadlines and real provider assertions remain. A passing diagnostic regression does not identify the cause of a historical slow start.
 
+ENG-747 also aligns the one-shot MySQL/PostgreSQL lifecycle failure fixtures with the existing Oracle/hosting provider retry interval. Their 10-second assertions keep every failure/retention/identity check; production retry behavior and success-path tests are unchanged. The longer test-only retry interval prevents an empty/Idle batch from erasing the observation under runner load.
+
 ## Test-flake quarantine queue
 
 When `engine.tests.flake-rate.7d` exceeds the target, the affected test enters a quarantine queue per the *Test flake budget* rule in [`sre-posture.md`](sre-posture.md): `[Skip]`-attribute the failing test with a tracking comment within 24 hours, then either fix or delete within 7 days.
