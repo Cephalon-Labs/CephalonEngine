@@ -71,6 +71,7 @@ Each test file should:
 
 | Script | Test file | Cases |
 | --- | --- | --- |
+| `scripts/generated-app-runtime-contract.ps1` | `generated-app-runtime-contract.Tests.ps1` | 12 cases: schema/configuration/module/capability/startup drift, snapshot consistency, additive fields and equivalent JSON property ordering |
 | `scripts/validate-contract-compatibility.ps1` | `validate-contract-compatibility.Tests.ps1` | 9 cases: package identity/hashes, declared framework, traversal/ambiguous metadata/DTD rejection, subprocess exits and timeout; AST extraction loads only the two guard functions without running the harness |
 | `scripts/run-provider-live-testcontainers.ps1` | `run-provider-live-testcontainers.Tests.ps1` | provider Testcontainers matrix + filter tokens + locked restore + workflow dispatch/schedule/matrix wiring |
 | `scripts/measure-ci-flake-rate.ps1` | `measure-ci-flake-rate.Tests.ps1` | GitHub Actions fixture parsing + no-history pending report + rerun flake detection + clean-window promotion candidate + fail-closed promotion gate |

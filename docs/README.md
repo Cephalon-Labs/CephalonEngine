@@ -2,6 +2,8 @@
 
 [Cross-version contract consumers](contract-compatibility.md) documents isolated NuGet restore, unchanged-binary upgrades, blueprint JSON and bounded rollback evidence.
 
+[Host compatibility evidence](host-compatibility-2026-09.md) covers generated configuration, runtime snapshots, bounded validation processes and the Windows/Linux deployment gate.
+
 September 2026: [SDK and API compatibility repair](compatibility-repair-2026-09.md) records exact SDK selection, analyzer enforcement and remaining release gates.
 
 - [September 2026 branch consolidation and validation](branch-consolidation-2026-09-15.md) — retained history, adapter readback, compatibility, and ENG-717 delivery evidence.

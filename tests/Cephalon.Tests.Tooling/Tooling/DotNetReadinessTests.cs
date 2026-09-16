@@ -138,27 +138,7 @@ public sealed class DotNetReadinessTests
 #endif
     }
 
-    private static ProcessResult RunProcess(string fileName, string arguments, string workingDirectory)
-    {
-        var startInfo = new System.Diagnostics.ProcessStartInfo
-        {
-            FileName = fileName,
-            Arguments = arguments,
-            WorkingDirectory = workingDirectory,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false
-        };
+    private static ToolingProcessResult RunProcess(string fileName, string arguments, string workingDirectory)
+        => ToolingProcess.Run(fileName, arguments, workingDirectory);
 
-        using var process = System.Diagnostics.Process.Start(startInfo)
-            ?? throw new InvalidOperationException($"Could not start '{fileName}'.");
-
-        var output = process.StandardOutput.ReadToEnd();
-        var error = process.StandardError.ReadToEnd();
-        process.WaitForExit();
-
-        return new ProcessResult(process.ExitCode, output, error);
-    }
-
-    private sealed record ProcessResult(int ExitCode, string Output, string Error);
 }

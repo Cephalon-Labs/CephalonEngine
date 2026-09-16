@@ -182,6 +182,7 @@ That script:
 - runs `dotnet restore`, `dotnet build`, and `dotnet run`
 - validates `/health/ready`, `/engine`, `/engine/snapshot`, and `/scalar`
 - writes `artifacts/adoption-smoke/generated-app-adoption.json` by default; pass `-ReportPath <path>` when the report needs to land in a different release-artifact folder
+- verifies manifest v2, configuration selections, module discovery, capability sources and successful snapshot startup; report schema `1.1.0` includes SDK/OS/source identity and hashed JSON evidence (see [host compatibility](host-compatibility-2026-09.md))
 
 For the matching `dotnet new` replay, run:
 

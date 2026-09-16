@@ -2,6 +2,8 @@
 
 [Cross-version contract consumers](contract-compatibility.md) documents isolated NuGet restore, unchanged-binary upgrades, blueprint JSON and bounded rollback evidence.
 
+[Host compatibility evidence](host-compatibility-2026-09.md) covers generated configuration, runtime snapshots, bounded validation processes and the Windows/Linux deployment gate.
+
 This guide describes the compatibility contract that must stay aligned across Cephalon packages, package manifests, scaffolding, templates, and CLI workflows.
 
 See also: [Engineering standards](engineering-standards.md) is the broader quality baseline this compatibility contract is part of; [Long-range engine direction](long-range-direction.md) explains why compatibility discipline matters across multi-decade horizons and why additive opt-in changes plus deliberate obsoletion are preferred over silent contract churn even during the POC phase.

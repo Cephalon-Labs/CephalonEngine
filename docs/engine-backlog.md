@@ -640,7 +640,7 @@ Issue link: [#1424](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424)
 
 Status: in-progress
 
-Estimate: 32
+Estimate: 40
 
 Phase: 15
 
@@ -668,9 +668,9 @@ Estimate basis: engineering hours including review, tests and docs; initial rang
 
 Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
 
-September implementation findings: upstream run 35081865397 fails Windows/Linux locked restore (ILLink 10.0.12 vs 10.0.11 locks) and the .NET 11 in-process event scheduling test. Explicit analyzer injection reveals 121 pre-existing non-coordination Abstractions API diagnostics (118 undeclared, 3 stale declarations); normal project-reference wiring did not enforce them. Budget within the existing 32 h: SDK/locks 8 h; analyzer/baseline repair 8 h; scheduling proof 4 h; remaining consumer/deployment matrix 12 h. This parent is active in Sprint 16 and stays open until all children meet acceptance. ENG-739/740/741 carry the first 20 h; ENG-742 is active in Sprint 16 with 12 h split into ENG-743 (8 h) and ENG-744 (4 h). The 32 h parent is a non-additive rollup, not another 32 h.
+September implementation findings: upstream run 35081865397 fails Windows/Linux locked restore (ILLink 10.0.12 vs 10.0.11 locks) and the .NET 11 in-process event scheduling test. Explicit analyzer injection reveals 121 pre-existing non-coordination Abstractions API diagnostics (118 undeclared, 3 stale declarations); normal project-reference wiring did not enforce them. Budget within the existing 32 h: SDK/locks 8 h; analyzer/baseline repair 8 h; scheduling proof 4 h; remaining consumer/deployment matrix 12 h. This parent is active in Sprint 16 and stays open until all children meet acceptance. ENG-739/740/741 carry the first 20 h; The initial 12 h matrix has since expanded: ENG-742 is active in Sprint 16 with a revised 20 h split into ENG-743 (8 h) and ENG-744 (12 h). ENG-731 is therefore revised from 32 to 40 h. Parent estimates are non-additive.
 
-Delivery status: ENG-739/740/741/743 completed 28 h of estimated scope in Sprint 16. ENG-731 retains its 32 h rollup and ENG-742 its 12 h rollup; only ENG-744's 4 h remains within this branch. Both parents remain open for the broader compatibility acceptance. [Evidence](compatibility-repair-2026-09.md).
+Delivery status: ENG-739/740/741/743 completed 28 h of estimated scope in Sprint 16. ENG-731 now has a revised 40 h rollup and ENG-742 a revised 20 h rollup; only ENG-744's revised 12 h remains within this branch. Both parents remain open for the broader compatibility acceptance. [Evidence](compatibility-repair-2026-09.md).
 
 ### ENG-739 Pin the shipping SDK and regenerate locked restore
 
@@ -694,7 +694,7 @@ Test: Passed
 
 Benchmark: N/A
 
-Parent: ENG-731 / #1424. Child estimate is included in the 32 h parent rollup.
+Parent: ENG-731 / #1424. Child estimate is included in the revised 40 h parent rollup.
 
 Scope: Pin stable SDK 10.0.401 with rollForward=disable and allowPrerelease=false. Regenerate SDK-dependent ILLink locks; preserve net10.0 and the separate .NET 11 readiness lane.
 
@@ -728,7 +728,7 @@ Test: Passed
 
 Benchmark: N/A
 
-Parent: ENG-731 / #1424. Child estimate is included in the 32 h parent rollup.
+Parent: ENG-731 / #1424. Child estimate is included in the revised 40 h parent rollup.
 
 Scope: Use a direct compiler analyzer reference; reconcile 115 existing undeclared signatures in Unshipped and three static registry transcription errors using source history.
 
@@ -764,7 +764,7 @@ Test: Passed
 
 Benchmark: N/A
 
-Parent: ENG-731 / #1424. Child estimate is included in the 32 h parent rollup.
+Parent: ENG-731 / #1424. Child estimate is included in the revised 40 h parent rollup.
 
 Scope: Correct the event scheduling hosting test to await the terminal publication catalog report instead of only handler completion.
 
@@ -784,7 +784,7 @@ Issue link: [#1435](https://github.com/Cephalon-Labs/CephalonEngine/issues/1435)
 
 Status: in-progress
 
-Estimate: 12
+Estimate: 20
 
 Phase: 15
 
@@ -798,7 +798,7 @@ Test: Running
 
 Benchmark: Needed
 
-Parent: ENG-731 / #1424. Child estimate is included in the 32 h parent rollup.
+Parent: ENG-731 / #1424. Child estimate is included in the revised 40 h parent rollup.
 
 Scope: Complete the remaining ENG-731 Windows/Linux, consumer upgrade/downgrade, binary/wire/config/manifest, generated app, .NET 11 RC and selected deployment-mode matrix. Retain explicit unsupported targets.
 
@@ -808,7 +808,7 @@ Quality dimensions: Compatibility + Reliability + Maintainability + Auditability
 
 Estimate basis: engineering hours including implementation, review, tests and docs; excludes external waiting. No maturity or GA promotion.
 
-Breakdown: ENG-743 (8 h) and ENG-744 (4 h) are native children included in this 12 h rollup. ENG-743 proves selected contract consumers; ENG-744 retains the remaining host/wire/generated/deployment evidence. These are engineering estimates, not elapsed hours. ENG-743 is done after both Windows/Linux CI jobs passed; ENG-744 retains 4 h of remaining scope. [implementation `5f67f61c`](https://github.com/Cephalon-Labs/CephalonEngine/commit/5f67f61c9519a553ad1faf0ce80d40cc763d338b) and [Windows/Linux CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35090093557).
+Breakdown: ENG-743 (8 h) and ENG-744 (12 h) are native children included in this revised 20 h rollup. ENG-743 proves selected contract consumers; ENG-744 retains the remaining host/wire/generated/deployment evidence. These are engineering estimates, not elapsed hours. ENG-743 is done after both Windows/Linux CI jobs passed; ENG-744 now retains 12 h after the process-hang scope revision. [implementation `5f67f61c`](https://github.com/Cephalon-Labs/CephalonEngine/commit/5f67f61c9519a553ad1faf0ce80d40cc763d338b) and [Windows/Linux CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35090093557).
 
 ### ENG-743 Prove cross-version contract consumers and bounded rollback
 
@@ -832,7 +832,7 @@ Test: Passed
 
 Benchmark: N/A
 
-Parent: ENG-742 / #1435; included in the 12 h rollup, which is included in ENG-731.
+Parent: ENG-742 / #1435; included in its revised 20 h rollup, which is included in ENG-731's revised 40 h.
 
 Scope: Build isolated NuGet consumers against a pinned pre-coordination source checkpoint and the candidate. Run the old binary against the candidate, recompile common source, read blueprint JSON across versions, prove common-surface rollback and reject rollback for a newly introduced API. Record package/assembly/consumer hashes and run the probe on Windows and Linux.
 
@@ -850,23 +850,23 @@ GitHub issue: #1437
 
 Issue link: [#1437](https://github.com/Cephalon-Labs/CephalonEngine/issues/1437)
 
-Status: backlog
+Status: in-progress
 
-Estimate: 4
+Estimate: 12
 
 Phase: 15
 
-Iteration: Later / not scheduled yet
+Iteration: Sprint 16
 
 Owner: Cephalon-Neza
 
 Priority: P0
 
-Test: Needed
+Test: Running
 
 Benchmark: Needed
 
-Parent: ENG-742 / #1435; included in the 12 h rollup, which is included in ENG-731.
+Parent: ENG-742 / #1435; included in its revised 20 h rollup, which is included in ENG-731's revised 40 h.
 
 Scope: Collect remaining release CI, complete host snapshot/config/manifest and generated-app evidence, reconcile package-scoped deployment claims and SDK readiness. Re-estimate if full matrix work exceeds this initial allocation.
 
@@ -876,6 +876,9 @@ Quality dimensions: Compatibility + Reliability + Maintainability + Flexibility 
 
 Estimate basis: engineering hours including review, tests, docs and tracking; excludes external waiting. No maturity promotion.
 Evidence still needed: the preceding full release run on `13b0e859` was superseded/cancelled during tooling tests after Linux composition (885) and hosting (819) passed. The separate SDK 11 RC1 readiness job passed 2,074 selected net10.0 tests. Cancellation is not a successful full release run; collect a completed release/tooling/generated/deployment matrix before closing this task.
+
+
+Scope revision: reproduced packaging hang after all 109 packages were written and the root process exited. Stack evidence points to an unbounded redirected-output wait in the test runner. Estimate 4 -> 12 h adds 8 h for shared process supervision, inherited-pipe regression proof, cached reference-link validation, and Windows/Linux validation. [Evidence and revised scope](host-compatibility-2026-09.md). The existing host/snapshot/generated/deployment acceptance remains required.
 
 
 ### ENG-732 External developer journey documentation and accessibility

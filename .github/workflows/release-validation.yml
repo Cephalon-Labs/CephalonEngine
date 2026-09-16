@@ -16,6 +16,7 @@ jobs:
   validate:
     name: Release Validation (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
     permissions:
       contents: read
       actions: read
@@ -168,6 +169,7 @@ jobs:
   dotnet11-readiness:
     name: .NET 11 Readiness
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
     env:

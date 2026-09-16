@@ -1,0 +1,52 @@
+name: Host Compatibility
+
+on:
+  pull_request:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: host-compatibility-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Generated host and deployment (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    env:
+      MSBUILDDISABLENODEREUSE: '1'
+      DOTNET_CLI_USE_MSBUILD_SERVER: 'false'
+      UseSharedCompilation: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Restore declared dependencies
+        shell: pwsh
+        run: dotnet restore CephalonEngine.slnx --locked-mode
+      - name: Prove generated app configuration and runtime contracts
+        shell: pwsh
+        run: ./scripts/validate-generated-app-adoption.ps1 -ReportPath artifacts/host-compatibility/generated-app.json
+      - name: Validate the declared single-file publish gate
+        shell: pwsh
+        run: ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode singleFile -OutputPath artifacts/host-compatibility/deployment
+      - name: Upload host and deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: host-compatibility-${{ matrix.os }}
+          path: |
+            artifacts/host-compatibility/**/*.json
+            artifacts/host-compatibility/**/*.md
+            artifacts/host-compatibility/**/*.log
+          if-no-files-found: error

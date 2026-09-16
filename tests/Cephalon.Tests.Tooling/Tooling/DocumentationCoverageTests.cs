@@ -295,13 +295,15 @@ public sealed class DocumentationCoverageTests
         Assert.NotEmpty(markdownPaths);
 
         var totalLocalLinkCount = 0;
+        var anchorCache = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
         foreach (var markdownPath in markdownPaths)
             totalLocalLinkCount += AssertLocalMarkdownLinksResolve(
                 repositoryRoot,
                 markdownPath,
                 $"generated reference documentation '{Path.GetRelativePath(referenceDocsRoot, markdownPath)}'",
                 requireLocalLinks: false,
-                requiredContainingDirectory: referenceDocsRoot);
+                requiredContainingDirectory: referenceDocsRoot,
+                anchorCache: anchorCache);
 
         Assert.True(totalLocalLinkCount > 0, "Expected generated reference documentation to contain at least one local navigation link.");
     }
@@ -1694,8 +1696,10 @@ public sealed class DocumentationCoverageTests
         string documentDescription,
         bool allowDirectoryTargets = false,
         bool requireLocalLinks = true,
-        string? requiredContainingDirectory = null)
+        string? requiredContainingDirectory = null,
+        Dictionary<string, HashSet<string>>? anchorCache = null)
     {
+        anchorCache ??= new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
         var markdownRoot = Path.GetDirectoryName(markdownPath)!;
         var markdown = RemoveMarkdownCode(File.ReadAllText(markdownPath));
         var localLinks = MarkdownLinkPattern
@@ -1733,7 +1737,7 @@ public sealed class DocumentationCoverageTests
                     ? $"Expected {documentDescription} link target '{localLink.OriginalTarget}' to resolve to an existing file or directory at '{resolvedPath}'."
                     : $"Expected {documentDescription} link target '{localLink.OriginalTarget}' to resolve to an existing file at '{resolvedPath}'.");
 
-            AssertLocalMarkdownFragmentResolves(documentDescription, localLink, resolvedPath);
+            AssertLocalMarkdownFragmentResolves(documentDescription, localLink, resolvedPath, anchorCache);
         }
 
         return localLinks.Length;
@@ -1776,7 +1780,8 @@ public sealed class DocumentationCoverageTests
     private static void AssertLocalMarkdownFragmentResolves(
         string documentDescription,
         MarkdownLocalLink localLink,
-        string resolvedPath)
+        string resolvedPath,
+        Dictionary<string, HashSet<string>> anchorCache)
     {
         if (string.IsNullOrWhiteSpace(localLink.Fragment))
             return;
@@ -1794,7 +1799,7 @@ public sealed class DocumentationCoverageTests
             string.Equals(Path.GetExtension(resolvedPath), ".md", StringComparison.OrdinalIgnoreCase),
             $"Expected {documentDescription} link target '{localLink.OriginalTarget}' fragment '#{localLink.Fragment}' to point at a Markdown heading anchor or GitHub line fragment, but '{resolvedPath}' is not a Markdown file.");
 
-        var anchors = ReadMarkdownAnchors(resolvedPath);
+        var anchors = ReadCachedMarkdownAnchors(resolvedPath, anchorCache);
         var normalizedAnchorReference = NormalizeMarkdownAnchorReference(normalizedFragment);
 
         Assert.True(

@@ -6105,52 +6105,7 @@ public sealed class CliApplicationTests
             .Single(path => !path.EndsWith(".symbols.nupkg", StringComparison.OrdinalIgnoreCase));
     }
 
-    private static ProcessResult RunProcess(string fileName, string arguments, string workingDirectory)
-    {
-        var startInfo = new System.Diagnostics.ProcessStartInfo
-        {
-            FileName = fileName,
-            Arguments = arguments,
-            WorkingDirectory = workingDirectory,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false
-        };
+    private static ToolingProcessResult RunProcess(string fileName, string arguments, string workingDirectory)
+        => ToolingProcess.Run(fileName, arguments, workingDirectory);
 
-        using var process = System.Diagnostics.Process.Start(startInfo)
-            ?? throw new InvalidOperationException($"Could not start '{fileName}'.");
-
-        var outputTask = process.StandardOutput.ReadToEndAsync();
-        var errorTask = process.StandardError.ReadToEndAsync();
-        if (!process.WaitForExit((int)TimeSpan.FromMinutes(10).TotalMilliseconds))
-        {
-            try
-            {
-                process.Kill(entireProcessTree: true);
-            }
-            catch (InvalidOperationException)
-            {
-                // The process exited between the timeout check and the kill request.
-            }
-
-            System.Threading.Tasks.Task.WaitAll(
-                new System.Threading.Tasks.Task[] { outputTask, errorTask },
-                TimeSpan.FromSeconds(5));
-
-            var timeoutOutput = outputTask.IsCompletedSuccessfully ? outputTask.Result : string.Empty;
-            var timeoutError = errorTask.IsCompletedSuccessfully ? errorTask.Result : string.Empty;
-            timeoutError = string.IsNullOrWhiteSpace(timeoutError)
-                ? "Process timed out after 10 minutes."
-                : $"{timeoutError}{Environment.NewLine}Process timed out after 10 minutes.";
-
-            return new ProcessResult(-1, timeoutOutput, timeoutError);
-        }
-
-        var output = outputTask.GetAwaiter().GetResult();
-        var error = errorTask.GetAwaiter().GetResult();
-
-        return new ProcessResult(process.ExitCode, output, error);
-    }
-
-    private sealed record ProcessResult(int ExitCode, string Output, string Error);
 }

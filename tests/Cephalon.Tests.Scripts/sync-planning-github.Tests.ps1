@@ -116,16 +116,16 @@ Estimate: 8
         # Work may move from open to shipped without changing the estimate graph.
         # Do not encode "all later tasks are open" as a permanent planning invariant.
         $originalImplementation = @($wave | Where-Object { [int]$_.EngCode.Substring(4) -ge 719 -and [int]$_.EngCode.Substring(4) -le 738 })
-        ($originalImplementation | Measure-Object Estimate -Sum).Sum | Should -Be 536
+        ($originalImplementation | Measure-Object Estimate -Sum).Sum | Should -Be 544
         $compatibilityChildren = @($wave | Where-Object { $_.EngCode -in @('ENG-739', 'ENG-740', 'ENG-741', 'ENG-742') })
         ($compatibilityChildren | Measure-Object Estimate -Sum).Sum | Should -Be ($wave | Where-Object EngCode -eq 'ENG-731').Estimate
         $matrixChildren = @($wave | Where-Object { $_.EngCode -in @('ENG-743', 'ENG-744') })
         ($matrixChildren | Measure-Object Estimate -Sum).Sum | Should -Be ($wave | Where-Object EngCode -eq 'ENG-742').Estimate
         $implementationLeaves = @($wave | Where-Object { $_.EngCode -notin @('ENG-718', 'ENG-731', 'ENG-742') })
-        ($implementationLeaves | Measure-Object Estimate -Sum).Sum | Should -Be 536
+        ($implementationLeaves | Measure-Object Estimate -Sum).Sum | Should -Be 544
         $completedHours = ($implementationLeaves | Where-Object State -eq 'closed' | Measure-Object Estimate -Sum).Sum
         $remainingHours = ($implementationLeaves | Where-Object State -eq 'open' | Measure-Object Estimate -Sum).Sum
-        ($completedHours + $remainingHours) | Should -Be 536
+        ($completedHours + $remainingHours) | Should -Be 544
         @($wave | Where-Object { $_.PhaseNumber -notin @(14, 15, 16) }).Count | Should -Be 0
     }
 }

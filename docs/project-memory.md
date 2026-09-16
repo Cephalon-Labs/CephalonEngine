@@ -11,6 +11,8 @@ September 16 compatibility repair checkpoint: ENG-739/740/741 delivered exact SD
 
 September 16 contract compatibility: ENG-743 adds a pinned source-checkpoint consumer probe with isolated NuGet packages, unchanged-binary hashes, blueprint cross-reading and an explicit new-API rollback rejection. ENG-743 is done after Windows/Linux CI passed seven scenarios each on `5f67f61c`. ENG-742 remains a 12 h rollup with ENG-744's 4 h still open. Remaining leaf estimate: 468 h plus ENG-532 1 h = 469 h; no maturity or release-support promotion. [Guide](contract-compatibility.md).
 
+September 16 host compatibility follow-up: ENG-744 is active in Sprint 16 and revised from 4 to 12 h after reproduced process-output and reference-audit delays. Non-additive parent rollups are ENG-742 20 h and ENG-731 40 h; current remaining leaf scope is 477 h including ENG-532. Generated-app reports now validate manifest/configuration/snapshot content and carry schema 1.1.0, SDK/OS/source identity and hashes. [Evidence](host-compatibility-2026-09.md). No support or maturity promotion.
+
 ## Identity
 
 Cephalon is not being positioned as a single application shell.

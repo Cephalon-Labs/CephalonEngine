@@ -13,6 +13,13 @@ $ErrorActionPreference = "Stop"
 
 $validationStartedAtUtc = [DateTimeOffset]::UtcNow
 $repoRoot = Split-Path -Parent $PSScriptRoot
+. (Join-Path $PSScriptRoot 'generated-app-runtime-contract.ps1')
+$runtimeContractEvidence = $null
+$toolchainEvidence = [ordered]@{
+    SourceRevision = ''; WorkingTreeDirty = $true; RepositorySdk = ''; GeneratedHostSdk = ''
+    TargetFramework = 'net10.0'; Os = [Runtime.InteropServices.RuntimeInformation]::OSDescription
+    RuntimeIdentifier = [Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier
+}
 $publishPackagesScriptPath = Join-Path $repoRoot "scripts\publish-package-artifacts.ps1"
 $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("cephalon-generated-adoption-" + [Guid]::NewGuid().ToString("N"))
 $packageFeedPath = Join-Path $tempRoot "package-feed"
@@ -210,6 +217,10 @@ function New-GeneratedAppAdoptionAssertionRows {
         [pscustomobject]([ordered]@{ Name = "buildsGeneratedSolution"; Passed = $Passed })
         [pscustomobject]([ordered]@{ Name = "runsGeneratedHost"; Passed = $Passed })
         [pscustomobject]([ordered]@{ Name = "validatesOperatorSurfaces"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "validatesManifestV2AndSnapshot"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "matchesGeneratedConfiguration"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "validatesCapabilitySources"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "validatesStartedRuntime"; Passed = $Passed })
     )
 }
 
@@ -230,7 +241,7 @@ function Write-GeneratedAppAdoptionExecutionReport {
     }
 
     $report = [pscustomobject]([ordered]@{
-        '$schemaVersion' = "1.0.0"
+        '$schemaVersion' = "1.1.0"
         ScenarioId = "generated-app-runtime-foundation"
         Status = $Status
         AppName = $AppName
@@ -243,6 +254,8 @@ function Write-GeneratedAppAdoptionExecutionReport {
         DurationMilliseconds = [math]::Round(($completedAtUtc - $validationStartedAtUtc).TotalMilliseconds, 2)
         Assertions = New-GeneratedAppAdoptionAssertionRows -Passed:$passed
         RuntimeProbes = New-GeneratedAppAdoptionRuntimeProbeRows -Status $runtimeProbeStatus
+        RuntimeContract = $runtimeContractEvidence
+        Toolchain = $toolchainEvidence
         Paths = [pscustomobject]([ordered]@{
             TemporaryRoot = $tempRoot
             PackageFeed = $packageFeedPath
@@ -275,6 +288,12 @@ try {
     New-Item -ItemType Directory -Path $toolPath -Force | Out-Null
     New-Item -ItemType Directory -Path $nuGetPackagesPath -Force | Out-Null
     New-Item -ItemType Directory -Path $workspaceRoot -Force | Out-Null
+    # Pin only this disposable consumer workspace; the generated application's files stay intact.
+    Copy-Item -LiteralPath (Join-Path $repoRoot 'global.json') -Destination (Join-Path $workspaceRoot 'global.json')
+    $toolchainEvidence.SourceRevision = (& git -C $repoRoot rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0) { throw 'Could not read the candidate source revision.' }
+    $toolchainEvidence.WorkingTreeDirty = -not [string]::IsNullOrWhiteSpace((& git -C $repoRoot status --porcelain | Out-String))
+    $toolchainEvidence.RepositorySdk = (Invoke-DotNet -WorkingDirectory $repoRoot -Arguments @('--version') | Out-String).Trim()
 
     $previousNuGetPackages = $env:NUGET_PACKAGES
     $env:NUGET_PACKAGES = $nuGetPackagesPath
@@ -354,6 +373,9 @@ try {
     Write-Host ""
     Write-Host "Building the generated solution..." -ForegroundColor Cyan
     Invoke-DotNet -WorkingDirectory $generatedRoot -Arguments @("build", $solutionPath, "-c", $Configuration, "--no-restore")
+    $toolchainEvidence.GeneratedHostSdk = (Invoke-DotNet -WorkingDirectory $generatedRoot -Arguments @(
+        'msbuild', $hostProjectPath, '-getProperty:NETCoreSdkVersion', '-nologo') | Out-String).Trim()
+    if ($toolchainEvidence.RepositorySdk -cne $toolchainEvidence.GeneratedHostSdk) { throw 'The generated host selected a different SDK from the declared validation toolchain.' }
 
     Write-Host ""
     Write-Host "Running the generated host..." -ForegroundColor Cyan
@@ -363,14 +385,16 @@ try {
         $env:ASPNETCORE_URLS = $HostUrl
         $env:DOTNET_ENVIRONMENT = "Development"
 
-        $process = Start-Process `
-            -FilePath "dotnet" `
-            -ArgumentList @("run", "--project", $hostProjectPath, "-c", $Configuration, "--no-build") `
-            -WorkingDirectory $generatedRoot `
-            -RedirectStandardOutput $stdoutLogPath `
-            -RedirectStandardError $stderrLogPath `
-            -PassThru `
-            -NoNewWindow
+        $hostDirectory = Split-Path -Parent $hostProjectPath
+        $hostAssembly = Join-Path $hostDirectory "bin/$Configuration/net10.0/$([IO.Path]::GetFileNameWithoutExtension($hostProjectPath)).dll"
+        $startArguments = @{
+            FilePath = 'dotnet'; ArgumentList = @('"' + $hostAssembly + '"')
+            WorkingDirectory = $hostDirectory; RedirectStandardOutput = $stdoutLogPath
+            RedirectStandardError = $stderrLogPath; PassThru = $true
+        }
+        if ($IsWindows) { $startArguments.WindowStyle = 'Hidden' }
+        else { $startArguments.NoNewWindow = $true }
+        $process = Start-Process @startArguments
     }
     finally {
         $env:ASPNETCORE_URLS = $previousAspNetCoreUrls
@@ -381,6 +405,24 @@ try {
     Wait-ForHttpSuccess -Uri "$HostUrl/engine" -TimeoutSeconds $TimeoutSeconds -Process $process
     Wait-ForHttpSuccess -Uri "$HostUrl/engine/snapshot" -TimeoutSeconds $TimeoutSeconds -Process $process
     Wait-ForHttpSuccess -Uri "$HostUrl/scalar" -TimeoutSeconds $TimeoutSeconds -Process $process
+
+    $manifestResponse = Invoke-WebRequest -Uri "$HostUrl/engine" -TimeoutSec 20
+    $snapshotResponse = Invoke-WebRequest -Uri "$HostUrl/engine/snapshot" -TimeoutSec 20
+    $appModelPath = Join-Path (Split-Path -Parent $hostProjectPath) 'Configurations/AddEngine.AppModel.json'
+    $runtimeContractEvidence = Assert-GeneratedAppRuntimeContract `
+        -Manifest ($manifestResponse.Content | ConvertFrom-Json -Depth 100) `
+        -Snapshot ($snapshotResponse.Content | ConvertFrom-Json -Depth 100) `
+        -Configuration (Get-Content -LiteralPath $appModelPath -Raw | ConvertFrom-Json)
+    $evidenceDirectory = Join-Path (Split-Path -Parent (Resolve-ReportPath -Path $ReportPath)) 'generated-app-runtime-contract'
+    New-Item -ItemType Directory -Path $evidenceDirectory -Force | Out-Null
+    $manifestResponse.Content | Set-Content -LiteralPath (Join-Path $evidenceDirectory 'manifest.json') -Encoding utf8
+    $snapshotResponse.Content | Set-Content -LiteralPath (Join-Path $evidenceDirectory 'snapshot.json') -Encoding utf8
+    Copy-Item -LiteralPath $appModelPath -Destination (Join-Path $evidenceDirectory 'app-model.json') -Force
+    $runtimeContractEvidence | Add-Member -NotePropertyName Artifacts -NotePropertyValue @(
+        Get-ChildItem -LiteralPath $evidenceDirectory -File | Sort-Object Name | ForEach-Object {
+            [pscustomobject]@{ Name = $_.Name; Sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
+        }
+    )
 
     Write-Host ""
     Write-Host "Generated app adoption validation completed successfully." -ForegroundColor Green
@@ -405,8 +447,8 @@ catch {
 }
 finally {
     if ($null -ne $process -and -not $process.HasExited) {
-        Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
-        $process.WaitForExit()
+        $process.Kill($true)
+        if (-not $process.WaitForExit(5000)) { Write-Warning 'Generated host did not exit within the cleanup limit.' }
     }
 
     $env:NUGET_PACKAGES = $previousNuGetPackages
@@ -425,6 +467,11 @@ finally {
     }
 
     if (-not $KeepOutput -and (Test-Path -LiteralPath $tempRoot)) {
+        $resolvedTemporaryRoot = (Resolve-Path -LiteralPath $tempRoot).Path
+        $expectedParent = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd([IO.Path]::DirectorySeparatorChar)
+        if ([IO.Path]::GetDirectoryName($resolvedTemporaryRoot) -ne $expectedParent -or
+            [IO.Path]::GetFileName($resolvedTemporaryRoot) -notmatch '^cephalon-generated-adoption-[0-9a-f]{32}$' -or
+            (Get-Item -LiteralPath $resolvedTemporaryRoot).LinkType) { throw 'Refusing cleanup outside the owned temporary workspace.' }
         Remove-Item -LiteralPath $tempRoot -Recurse -Force -ErrorAction SilentlyContinue
     }
 }
