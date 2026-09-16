@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0.0",
+  "baselineRevision": "11488f13f28f68f4bb1bc062dbf931f0d4e91d0e",
+  "baselineKind": "repository-source-checkpoint-not-published-release",
+  "packageId": "Cephalon.Abstractions",
+  "project": "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+  "targetFramework": "net10.0",
+  "baselinePackageVersion": "0.1.0-compat.baseline",
+  "candidatePackageVersion": "0.1.0-compat.candidate",
+  "fixtureDirectory": "tests/compatibility/ContractConsumer",
+  "newApiBoundary": "Cephalon.Abstractions.Coordination.ReconciliationRequest",
+  "scope": ["module-discovery-static-contracts", "module-descriptor", "blueprint-json", "coordination-request-addition"],
+  "exclusions": ["all-package-api-diff", "published-release-upgrade", "runtime-snapshot-schema", "host-configuration", "generated-apps", "provider-migrations", "trim-nativeaot-singlefile", "new-api-downgrade-support"]
+}

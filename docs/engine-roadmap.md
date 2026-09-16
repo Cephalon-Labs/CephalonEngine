@@ -30,6 +30,8 @@ The September [framework completion plan](framework-completion-plan.md) adds all
 
 Status: in-progress
 
+ENG-742 now tracks native children ENG-743 (8 h) and ENG-744 (4 h), included in the existing 12 h. The consumer probe is in validation; the complete release/host/deployment matrix remains open. [Contract consumer guide](contract-compatibility.md).
+
 ENG-731 now has native children ENG-739/740/741/742 with 8/8/4/12 h estimates included in its existing 32 h rollup. SDK reproducibility, analyzer enforcement and scheduling evidence are delivered in Sprint 16 (20 h estimated scope); ENG-742 retains 12 h. Phase 15 remaining scope is 188 h plus the independent 1 h ENG-532 action; the wider matrix remains a separate gate. [Repair evidence](compatibility-repair-2026-09.md).
 
 ENG-727–733 cover security/tenant isolation, supply-chain verification, SLO/load/resilience evidence, data/privacy/recovery, framework/API/deployment compatibility, external developer journeys and provider/host support tiers. Base estimate: 208 engineering hours, initial range 156–312. ENG-532 remains an independent external signed-release blocker, estimated at 1 h for the next action. No milestone due date until capacity and external access are established.

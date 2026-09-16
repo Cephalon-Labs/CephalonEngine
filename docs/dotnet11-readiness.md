@@ -37,6 +37,9 @@ Official sources:
 - [.NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy)
 - [`actions/setup-dotnet` version-channel guidance](https://github.com/actions/setup-dotnet)
 
+
+September 16 verified follow-up: [run 35087813222](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35087813222), commit `13b0e859`, passed the Linux readiness job with SDK `11.0.100-rc.1.26425.128`: 885 composition, 819 hosting and 370 filtered tooling tests (2,074 total). These tests still target **net10.0**; the lane evaluates the future SDK, not a net11.0 target migration. Template/package process tests, package publication and reference-doc generation were excluded by the recorded readiness options. Windows/Linux full release jobs are separate evidence.
+
 ## Why Cephalon uses a readiness lane
 
 Cephalon is a framework, so a framework-baseline change is not the same thing as “the latest SDK happens to compile the repo once.”

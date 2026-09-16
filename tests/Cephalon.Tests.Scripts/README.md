@@ -71,6 +71,7 @@ Each test file should:
 
 | Script | Test file | Cases |
 | --- | --- | --- |
+| `scripts/validate-contract-compatibility.ps1` | `validate-contract-compatibility.Tests.ps1` | 9 cases: package identity/hashes, declared framework, traversal/ambiguous metadata/DTD rejection, subprocess exits and timeout; AST extraction loads only the two guard functions without running the harness |
 | `scripts/run-provider-live-testcontainers.ps1` | `run-provider-live-testcontainers.Tests.ps1` | provider Testcontainers matrix + filter tokens + locked restore + workflow dispatch/schedule/matrix wiring |
 | `scripts/measure-ci-flake-rate.ps1` | `measure-ci-flake-rate.Tests.ps1` | GitHub Actions fixture parsing + no-history pending report + rerun flake detection + clean-window promotion candidate + fail-closed promotion gate |
 | `scripts/publish-engine-completion-scorecard.ps1` | `publish-engine-completion-scorecard.Tests.ps1` | scorecard JSON/Markdown artifact shape + evidence-source reference validation + per-package GA readiness rows + provider integration evidence manifest validation + Eventing operational-superiority manifest/readback/runtime-concordance validation + SRE guardrail-reference validation + unsupported status guard + release-validation wiring |
@@ -91,3 +92,4 @@ Add new test files to this table when they ship.
 - [`docs/engineering-standards.md`](../../docs/engineering-standards.md) — testing standards
 - [`docs/deployment-mode-support.md`](../../docs/deployment-mode-support.md) — deployment-mode validation harness
 - [`docs/dotnet11-readiness.md`](../../docs/dotnet11-readiness.md) — framework readiness flow
+- [`docs/contract-compatibility.md`](../../docs/contract-compatibility.md) — seven executable cross-version consumer scenarios and Windows/Linux CI

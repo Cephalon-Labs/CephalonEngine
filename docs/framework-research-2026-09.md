@@ -39,3 +39,7 @@ See [completion plan](framework-completion-plan.md), [September review](architec
 ## SDK reproducibility follow-up
 
 On September 16 the official [.NET 10 download catalog](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) lists SDK 10.0.401 with runtime 10.0.12. Microsoft's [global.json guidance](https://learn.microsoft.com/en-us/dotnet/core/tools/global-json) distinguishes SDK selection from target frameworks and recommends exact matching for locked dependency graphs. ENG-739 therefore pins the servicing SDK and refreshes only affected ILLink locks; net10.0 and the separate .NET 11 assessment lane remain unchanged. [Repair evidence](compatibility-repair-2026-09.md) records validation rather than deriving support from upstream availability.
+
+## Executable contract compatibility
+
+Microsoft's [breaking-change guidance](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/breaking-changes) separates source, binary and behavioral compatibility; [package validation](https://learn.microsoft.com/en-us/dotnet/fundamentals/apicompat/package-validation/overview) supports released-package baselines. ENG-743 adds actual unchanged-binary consumers and a bounded rollback negative control for selected Abstractions contracts. Its baseline is an immutable repository checkpoint, not a claimed stable release. The [guide](contract-compatibility.md) lists exclusions and preserves full-surface API validation as separate release work.

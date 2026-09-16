@@ -268,8 +268,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.TestCoverageRoadmap | Should -Be "docs/test-coverage-roadmap.md"
         $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
-        $json.EvidenceSources.Count | Should -Be 15
-        $json.EvidenceSourceReferences.Count | Should -Be 41
+        $json.EvidenceSources.Count | Should -Be 16
+        $json.EvidenceSourceReferences.Count | Should -Be 43
         $json.PlatformGates.Count | Should -Be 12
         $json.QualityDimensions.Count | Should -Be 12
         $json.PackageFamilies.Count | Should -Be 9
@@ -353,8 +353,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.PublicApiPendingPackageCount | Should -Be 3
         $json.Summary.PublicApiAdditiveEntryCount | Should -Be 397
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
-        $json.Summary.EvidenceSourceCount | Should -Be 15
-        $json.Summary.EvidenceSourceReferenceCount | Should -Be 41
+        $json.Summary.EvidenceSourceCount | Should -Be 16
+        $json.Summary.EvidenceSourceReferenceCount | Should -Be 43
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
         $json.Summary.PlatformStatusCounts.partial | Should -Be 8
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
@@ -367,6 +367,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json.EvidenceSourceReferences.Reference | Should -Contain "docs/engine-surface-maturity-audit.md"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/deployment-mode-support.json"
+        $json.EvidenceSourceReferences.Reference | Should -Contain "docs/contract-compatibility.md"
+        $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/contract-compatibility-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/adoption-smoke-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/provider-integration-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/eventing-operational-superiority-support.json"

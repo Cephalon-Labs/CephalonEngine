@@ -108,20 +108,24 @@ Estimate: 8
 
     It 'retains September task states and estimates without adding parent rollups twice' {
         $specs = @(Get-BacklogIssueSpecs -Path (Join-Path $repoRoot 'docs/engine-backlog.md'))
-        $wave = @($specs | Where-Object { $_.EngCode -match '^ENG-7(1[89]|[23][0-9]|4[0-2])$' })
-        $wave.Count | Should -Be 25
+        $wave = @($specs | Where-Object { $_.EngCode -match '^ENG-7(1[89]|[23][0-9]|4[0-4])$' })
+        $wave.Count | Should -Be 27
         @($wave | Group-Object EngCode | Where-Object Count -ne 1).Count | Should -Be 0
         $delivered = @('ENG-718', 'ENG-719', 'ENG-720', 'ENG-739', 'ENG-740', 'ENG-741')
         @($wave | Where-Object { $_.EngCode -in $delivered -and $_.State -ne 'closed' }).Count | Should -Be 0
-        $remaining = @($wave | Where-Object { $_.EngCode -notin $delivered })
-        @($remaining | Where-Object State -ne 'open').Count | Should -Be 0
+        # Work may move from open to shipped without changing the estimate graph.
+        # Do not encode "all later tasks are open" as a permanent planning invariant.
         $originalImplementation = @($wave | Where-Object { [int]$_.EngCode.Substring(4) -ge 719 -and [int]$_.EngCode.Substring(4) -le 738 })
         ($originalImplementation | Measure-Object Estimate -Sum).Sum | Should -Be 536
-        $compatibilityChildren = @($wave | Where-Object { [int]$_.EngCode.Substring(4) -ge 739 })
+        $compatibilityChildren = @($wave | Where-Object { $_.EngCode -in @('ENG-739', 'ENG-740', 'ENG-741', 'ENG-742') })
         ($compatibilityChildren | Measure-Object Estimate -Sum).Sum | Should -Be ($wave | Where-Object EngCode -eq 'ENG-731').Estimate
-        $remainingLeaves = @($remaining | Where-Object EngCode -ne 'ENG-731')
-        $remainingLeaves.Count | Should -Be 18
-        ($remainingLeaves | Measure-Object Estimate -Sum).Sum | Should -Be 476
+        $matrixChildren = @($wave | Where-Object { $_.EngCode -in @('ENG-743', 'ENG-744') })
+        ($matrixChildren | Measure-Object Estimate -Sum).Sum | Should -Be ($wave | Where-Object EngCode -eq 'ENG-742').Estimate
+        $implementationLeaves = @($wave | Where-Object { $_.EngCode -notin @('ENG-718', 'ENG-731', 'ENG-742') })
+        ($implementationLeaves | Measure-Object Estimate -Sum).Sum | Should -Be 536
+        $completedHours = ($implementationLeaves | Where-Object State -eq 'closed' | Measure-Object Estimate -Sum).Sum
+        $remainingHours = ($implementationLeaves | Where-Object State -eq 'open' | Measure-Object Estimate -Sum).Sum
+        ($completedHours + $remainingHours) | Should -Be 536
         @($wave | Where-Object { $_.PhaseNumber -notin @(14, 15, 16) }).Count | Should -Be 0
     }
 }

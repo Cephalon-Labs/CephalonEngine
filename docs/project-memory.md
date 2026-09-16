@@ -9,6 +9,9 @@ Cross-references: `README.md`, `docs/README.md`, `docs/architecture.md`, `docs/a
 
 September 16 compatibility repair: ENG-739/740/741 deliver exact SDK/locked restore, real API analyzer enforcement and terminal scheduling evidence. ENG-731 remains open with ENG-742's 12 h matrix; total remaining leaf estimate is 477 h including ENG-532. [Validation and limits](compatibility-repair-2026-09.md). The 397-entry API readback includes 115 pre-existing source declarations recovered in Unshipped; no runtime API or M0–M4 promotion occurred. Post-push script validation corrected an obsolete open-state expectation for ENG-719/720; the complete 241-test Pester suite passed in an isolated checkout.
 
+
+September 16 contract compatibility: ENG-743 adds a pinned source-checkpoint consumer probe with isolated NuGet packages, unchanged-binary hashes, blueprint cross-reading and an explicit new-API rollback rejection. ENG-742 remains a 12 h rollup (8 h + 4 h); no maturity or release-support promotion. [Guide](contract-compatibility.md).
+
 ## Identity
 
 Cephalon is not being positioned as a single application shell.

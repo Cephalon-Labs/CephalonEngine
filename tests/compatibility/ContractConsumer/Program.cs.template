@@ -1,0 +1,82 @@
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text.Json;
+using Cephalon.Abstractions.AppModel;
+using Cephalon.Abstractions.Capabilities;
+using Cephalon.Abstractions.Modules;
+using Microsoft.Extensions.DependencyInjection;
+
+try
+{
+    // The harness verifies both the package input and the assembly actually loaded.
+    var assembly = typeof(IModule).Assembly;
+    var assemblyHash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(assembly.Location)));
+    Check(assemblyHash == args[1], "The requested contract assembly was not loaded.");
+    var consumerAssembly = typeof(ProbeModule).Assembly;
+    Check(!ModuleDiscoveryRegistry.TryGetDescriptors(consumerAssembly, out _), "Unexpected ambient registration.");
+    ModuleDiscoveryRegistry.Register(consumerAssembly, [new(typeof(ProbeModule), () => new ProbeModule())]);
+    Check(ModuleDiscoveryRegistry.TryGetDescriptors(consumerAssembly, out var discovered), "Registration disappeared.");
+    Check(discovered.Count == 1 && ModuleDiscoveryRegistry.GetDescriptors(consumerAssembly).Count == 1, "Registry contract changed.");
+    var module = discovered[0].CreateModule();
+    Check(module.Descriptor.Id == "compatibility" && module.Descriptor.Version == "1.0.0", "Module descriptor changed.");
+    Check(module.Descriptor.Tags.SequenceEqual(["probe"]), "Tag normalization changed.");
+    var services = new ServiceCollection();
+    module.ConfigureServices(services);
+    Check(services.Count == 1, "Module service contribution changed.");
+
+    var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+    var blueprint = new AppBlueprint("Microservice", "Microservice", "Compatibility fixture", [],
+        new Dictionary<string, string> { ["owner"] = "compatibility" });
+    var json = JsonSerializer.Serialize(blueprint, options);
+    var input = string.IsNullOrEmpty(args[2]) ? json : File.ReadAllText(args[2]);
+    var decoded = JsonSerializer.Deserialize<AppBlueprint>(input, options)!;
+    Check(decoded.Id == blueprint.Id && decoded.Patterns.Count == 0 && decoded.Scaffold is null, "Blueprint shape changed.");
+    Check(decoded.Metadata["owner"] == "compatibility", "Blueprint metadata changed.");
+    File.WriteAllText(args[3], json);
+
+#if NEW_CONTRACT
+    CheckNewContract();
+#endif
+
+    File.WriteAllText(args[0], JsonSerializer.Serialize(new
+    {
+        status = "passed", loadedAssemblySha256 = assemblyHash,
+        consumerSha256 = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(consumerAssembly.Location))),
+        runtime = Environment.Version.ToString(), assemblyIdentity = assembly.FullName,
+        moduleRegistry = "passed", blueprintJson = "passed"
+    }, options));
+    return 0;
+}
+catch (TypeLoadException exception) when (exception.TypeName == "Cephalon.Abstractions.Coordination.ReconciliationRequest")
+{
+    Console.Error.WriteLine($"COMPATIBILITY_BOUNDARY:TypeLoadException:{exception.TypeName}");
+    return 42;
+}
+catch (Exception exception)
+{
+    Console.Error.WriteLine(exception);
+    return 1;
+}
+
+static void Check(bool value, string message)
+{
+    if (!value) throw new InvalidOperationException(message);
+}
+
+#if NEW_CONTRACT
+[MethodImpl(MethodImplOptions.NoInlining)]
+static void CheckNewContract()
+{
+    var request = new Cephalon.Abstractions.Coordination.ReconciliationRequest(
+        "operation", "tenant", "actor", "action", "target", "v2", "v1");
+    Check(request.ExpectedRevision == "v1" && request.DesiredRevision == "v2", "New contract did not execute.");
+}
+#endif
+
+sealed class ProbeModule : IModule
+{
+    public ModuleDescriptor Descriptor { get; } = new(" compatibility ", "Probe", "Old module consumer",
+        tags: ["probe", "PROBE"], version: "1.0.0");
+    public void ConfigureServices(IServiceCollection services) => services.Add(ServiceDescriptor.Singleton(new object()));
+    public void RegisterCapabilities(ICapabilityRegistry capabilities) { }
+}

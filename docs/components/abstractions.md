@@ -1,5 +1,7 @@
 # Cephalon.Abstractions
 
+[Cross-version contract consumers](../contract-compatibility.md) documents isolated NuGet restore, unchanged-binary upgrades, blueprint JSON and bounded rollback evidence.
+
 Repository API authoring uses a direct `Microsoft.CodeAnalysis.PublicApiAnalyzers` reference on Abstractions. A project reference to the analyzer meta-package does not propagate its NuGet analyzer dependencies to the compiler. Packaged consumer adoption remains a separate test path; see [compatibility repair](../compatibility-repair-2026-09.md).
 
 > **Maturity:** `M4` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)

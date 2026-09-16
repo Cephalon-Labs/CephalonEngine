@@ -1,0 +1,53 @@
+name: Contract Compatibility
+
+on:
+  pull_request:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contract-compatibility-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  consumers:
+    name: Contract consumers (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: candidate
+      - name: Read immutable baseline
+        id: baseline
+        shell: pwsh
+        run: |
+          $support = Get-Content candidate/scripts/contract-compatibility-support.json -Raw | ConvertFrom-Json
+          if ($support.baselineRevision -notmatch '^[0-9a-f]{40}$') { throw 'Expected an immutable baseline commit.' }
+          "revision=$($support.baselineRevision)" >> $env:GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.baseline.outputs.revision }}
+          path: baseline
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: candidate/global.json
+      - name: Validate cross-version consumers
+        shell: pwsh
+        working-directory: candidate
+        run: ./scripts/validate-contract-compatibility.ps1 -BaselineSourceRoot ../baseline
+      - name: Upload compatibility receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: contract-compatibility-${{ matrix.os }}
+          path: candidate/artifacts/contract-compatibility
+          if-no-files-found: error

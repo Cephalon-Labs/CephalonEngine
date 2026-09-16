@@ -668,7 +668,7 @@ Estimate basis: engineering hours including review, tests and docs; initial rang
 
 Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
 
-September implementation findings: upstream run 35081865397 fails Windows/Linux locked restore (ILLink 10.0.12 vs 10.0.11 locks) and the .NET 11 in-process event scheduling test. Explicit analyzer injection reveals 121 pre-existing non-coordination Abstractions API diagnostics (118 undeclared, 3 stale declarations); normal project-reference wiring did not enforce them. Budget within the existing 32 h: SDK/locks 8 h; analyzer/baseline repair 8 h; scheduling proof 4 h; remaining consumer/deployment matrix 12 h. This parent is active in Sprint 16 and stays open until all children meet acceptance. ENG-739/740/741 carry the first 20 h; ENG-742 retains the remaining 12 h unscheduled. The 32 h parent is a non-additive rollup, not another 32 h.
+September implementation findings: upstream run 35081865397 fails Windows/Linux locked restore (ILLink 10.0.12 vs 10.0.11 locks) and the .NET 11 in-process event scheduling test. Explicit analyzer injection reveals 121 pre-existing non-coordination Abstractions API diagnostics (118 undeclared, 3 stale declarations); normal project-reference wiring did not enforce them. Budget within the existing 32 h: SDK/locks 8 h; analyzer/baseline repair 8 h; scheduling proof 4 h; remaining consumer/deployment matrix 12 h. This parent is active in Sprint 16 and stays open until all children meet acceptance. ENG-739/740/741 carry the first 20 h; ENG-742 is active in Sprint 16 with 12 h split into ENG-743 (8 h) and ENG-744 (4 h). The 32 h parent is a non-additive rollup, not another 32 h.
 
 Delivery status: ENG-739/740/741 completed 20 h of estimated scope in Sprint 16. ENG-742 retains 12 h and the full compatibility acceptance; parent remains open. [Evidence](compatibility-repair-2026-09.md).
 
@@ -782,9 +782,77 @@ GitHub issue: #1435
 
 Issue link: [#1435](https://github.com/Cephalon-Labs/CephalonEngine/issues/1435)
 
-Status: backlog
+Status: in-progress
 
 Estimate: 12
+
+Phase: 15
+
+Iteration: Sprint 16
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Running
+
+Benchmark: Needed
+
+Parent: ENG-731 / #1424. Child estimate is included in the 32 h parent rollup.
+
+Scope: Complete the remaining ENG-731 Windows/Linux, consumer upgrade/downgrade, binary/wire/config/manifest, generated app, .NET 11 RC and selected deployment-mode matrix. Retain explicit unsupported targets.
+
+Acceptance: Reproducible per-SDK/OS/package/RID evidence with commit and run links; all promoted claims match deployment manifests; failures remain open and assigned.
+
+Quality dimensions: Compatibility + Reliability + Maintainability + Auditability.
+
+Estimate basis: engineering hours including implementation, review, tests and docs; excludes external waiting. No maturity or GA promotion.
+
+Breakdown: ENG-743 (8 h) and ENG-744 (4 h) are native children included in this 12 h rollup. ENG-743 proves selected contract consumers; ENG-744 retains the remaining host/wire/generated/deployment evidence. These are engineering estimates, not elapsed hours.
+
+### ENG-743 Prove cross-version contract consumers and bounded rollback
+
+GitHub issue: #1436
+
+Issue link: [#1436](https://github.com/Cephalon-Labs/CephalonEngine/issues/1436)
+
+Status: validation
+
+Estimate: 8
+
+Phase: 15
+
+Iteration: Sprint 16
+
+Owner: Cephalon-Neza
+
+Priority: P0
+
+Test: Running
+
+Benchmark: N/A
+
+Parent: ENG-742 / #1435; included in the 12 h rollup, which is included in ENG-731.
+
+Scope: Build isolated NuGet consumers against a pinned pre-coordination source checkpoint and the candidate. Run the old binary against the candidate, recompile common source, read blueprint JSON across versions, prove common-surface rollback and reject rollback for a newly introduced API. Record package/assembly/consumer hashes and run the probe on Windows and Linux.
+
+Acceptance: All declared scenarios pass with the expected binary actually loaded; the new-API rollback fails for the expected incompatibility. Publish repeatable scripts, CI artifacts and an explicit scope/exclusion guide.
+
+Quality dimensions: Compatibility + Reliability + Maintainability + Flexibility + Auditability.
+
+Estimate basis: engineering hours including review, tests, docs and tracking; excludes external waiting. No maturity promotion.
+
+Local evidence: all seven selected consumer scenarios passed on SDK 10.0.401, including the exact new-type rollback boundary. Windows/Linux CI confirmation is required before completion. [Guide and commands](contract-compatibility.md).
+
+### ENG-744 Finish host snapshot generated-app and deployment matrix
+
+GitHub issue: #1437
+
+Issue link: [#1437](https://github.com/Cephalon-Labs/CephalonEngine/issues/1437)
+
+Status: backlog
+
+Estimate: 4
 
 Phase: 15
 
@@ -798,15 +866,15 @@ Test: Needed
 
 Benchmark: Needed
 
-Parent: ENG-731 / #1424. Child estimate is included in the 32 h parent rollup.
+Parent: ENG-742 / #1435; included in the 12 h rollup, which is included in ENG-731.
 
-Scope: Complete the remaining ENG-731 Windows/Linux, consumer upgrade/downgrade, binary/wire/config/manifest, generated app, .NET 11 RC and selected deployment-mode matrix. Retain explicit unsupported targets.
+Scope: Collect remaining release CI, complete host snapshot/config/manifest and generated-app evidence, reconcile package-scoped deployment claims and SDK readiness. Re-estimate if full matrix work exceeds this initial allocation.
 
-Acceptance: Reproducible per-SDK/OS/package/RID evidence with commit and run links; all promoted claims match deployment manifests; failures remain open and assigned.
+Acceptance: Per-SDK/OS/package/RID receipts match source commits and declared support. Pending external or unproven rows remain explicit; no blanket support or maturity promotion.
 
-Quality dimensions: Compatibility + Reliability + Maintainability + Auditability.
+Quality dimensions: Compatibility + Reliability + Maintainability + Flexibility + Auditability.
 
-Estimate basis: engineering hours including implementation, review, tests and docs; excludes external waiting. No maturity or GA promotion.
+Estimate basis: engineering hours including review, tests, docs and tracking; excludes external waiting. No maturity promotion.
 
 ### ENG-732 External developer journey documentation and accessibility
 
