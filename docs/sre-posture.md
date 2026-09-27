@@ -1,6 +1,6 @@
 # Cephalon engine SRE posture
 
-September 27 continuation: ENG-746 is active in Sprint 16 with ENG-749 (8 h, cursor query and release timing retention) and ENG-750 (16 h, remaining workload/SLO evidence). Parent estimates remain ENG-746 24 h and ENG-729 50 h, non-additive; ENG-745/747/748 remain complete. September scope is **566 h**; **18 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 remains 238 h total / 168 h remaining plus ENG-532. The latest `340c408e` release passed tests but failed the Windows journal benchmark. [Current evidence](sre-evidence-2026-09-27.md) separates this from previous acceptance; no maturity or SLO promotion.
+September 27 SRE acceptance: ENG-749 (8 h) is complete with the relational cursor projection and retained release-run timing receipts. ENG-746 remains 24 h, with 8 h delivered and ENG-750 retaining 16 h; ENG-729 remains 50 h, with 34 h delivered. Parent rollups are non-additive. September scope remains **566 h**; **17 unfinished leaves / 448 h**, plus ENG-532 **1 h** = **449 h**. Phase 15 remains 238 h total / 160 h remaining plus ENG-532. [Accepted source and limits](sre-evidence-2026-09-27.md) record passing CI on `e67697ae`; stable SLOs, hosted-runner variance and maturity promotion remain outside this closure.
 
 Earlier September 27 acceptance: ENG-745 (8 h), ENG-747 (10 h) and ENG-748 (8 h) are complete on `201e92a8`. ENG-729 remains 50 h with 26 h delivered and ENG-746 retaining 24 h, non-additive. September scope is **566 h**; **17 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 is 238 h total / 168 h remaining plus ENG-532. [SRE evidence](sre-validation-2026-09.md). No stable SLO, maturity or support promotion; earlier checkpoints preserve history.
 
@@ -24,10 +24,10 @@ These are the SLIs the engine commits to measure. SLO targets are listed below; 
 
 ### Hot-path latency SLIs
 
-- **`engine.behavior.dispatch.latency.p95`** — wall-clock time from `BehaviorDispatcher` invocation to behavior return, measured from `BenchmarkInProcessShortRunConfig` runs over representative behaviors
-- **`engine.behavior.dispatch.latency.p99`** — same instrumentation, p99
-- **`engine.aspnetcore.minimal-api.cold-start.p95`** — wall-clock time from `WebApplication.Build()` to first request handled, measured from a representative Cephalon-on-ASP.NET-Core minimal API sample with `Engine:AspNetCore:OperatorSurface:Mode=core`
-- **`engine.worker.cold-start.p95`** — wall-clock time from `WorkerHostApplicationBuilder.Build()` to first hosted-service `StartAsync` return, measured from a representative `Cephalon.Worker` sample
+- **`engine.behavior.dispatch.latency.p95`** — desired p95 from `BehaviorDispatcher` invocation to behavior return; the current `BenchmarkInProcessShortRunConfig` export supplies a mean baseline proxy, not a measured p95
+- **`engine.behavior.dispatch.latency.p99`** — desired p99 over the same boundary; the current mean proxy does not establish that percentile
+- **`engine.aspnetcore.minimal-api.cold-start.p95`** — desired build-to-first-request p95 for the minimal API host with `Engine:AspNetCore:OperatorSurface:Mode=core`; the existing in-process benchmark includes construction, start, request, stop and disposal and reports a lifecycle mean proxy
+- **`engine.worker.cold-start.p95`** — desired build-to-start-completion p95 for `Cephalon.Worker`; the existing in-process benchmark includes construction, start, stop and disposal and reports a lifecycle mean proxy
 
 ### Allocation discipline SLIs
 
@@ -36,7 +36,7 @@ These are the SLIs the engine commits to measure. SLO targets are listed below; 
 
 ### Build / release-validation wall-time SLIs
 
-- **`engine.dotnet.restore.wall-time.lock-mode`** — wall-clock time of `dotnet restore` with `RestoreLockedMode=true` from a clean `.dotnet/` cache
+- **`engine.dotnet.restore.wall-time.lock-mode`** — wall-clock time of `dotnet restore` with `RestoreLockedMode=true` using existing runner caches; the script does not clear caches, so cache-hit/miss evidence must be retained separately for cold-restore claims
 - **`engine.validate-release.wall-time`** — wall-clock time of `scripts/validate-release.ps1` end-to-end, including build, tests, benchmarks, reference-doc generation, deployment-mode claim audit, and `.NET 11` readiness check
 - **`engine.reference-docs.wall-time`** — wall-clock time of `Cephalon.ReferenceDocs` generation across the shipped public-package surface
 
@@ -129,3 +129,5 @@ Do not append a dated change log inside this document. Long-range standards rare
 ## September validation follow-up
 
 [ENG-745 / ENG-746 / ENG-747 / ENG-748](sre-validation-2026-09.md) split ENG-729's revised 50 h into 8 h validation reliability, 24 h remaining SLO/load/telemetry work, 10 h provider CDC/bootstrap evidence and 8 h host-clock publication scheduling. ENG-745/747/748 are complete; ENG-746 and the parent remain open. [September follow-ups](architecture-review-2026-09-followups.md) record the 31 m 22 s Windows full-release overrun against 30 minutes, the later timeout-test failure, MongoDB startup deadline and MySQL observation race. Stable baselines and target thresholds remain unchanged pending repeatable proof.
+
+[ENG-750 proof sequence](sre-evidence-2026-09-27.md#eng-750-proof-sequence-planned-not-executed) assigns the remaining 16 h across collector correctness, declared workloads, recovery, telemetry, repeatability and publication. These planned proofs are not existing percentile or production SLO claims.

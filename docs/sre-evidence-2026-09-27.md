@@ -1,6 +1,6 @@
 # September 27 SRE evidence continuation
 
-Tracking: [ENG-746 / #1439](https://github.com/Cephalon-Labs/CephalonEngine/issues/1439) is an active 24 h rollup within ENG-729 (50 h). [ENG-749 / #1442](https://github.com/Cephalon-Labs/CephalonEngine/issues/1442), 8 h, covers the cursor query and release evidence retention. [ENG-750 / #1443](https://github.com/Cephalon-Labs/CephalonEngine/issues/1443), 16 h, retains workload, recovery, telemetry and repeated-run SLO assessment. These are engineering estimates, not recorded hours or CI waiting time. No M0–M4, support, percentile or stable-baseline promotion is included.
+Tracking: [ENG-746 / #1439](https://github.com/Cephalon-Labs/CephalonEngine/issues/1439) is an active 24 h rollup within ENG-729 (50 h). [ENG-749 / #1442](https://github.com/Cephalon-Labs/CephalonEngine/issues/1442), 8 h, is complete for the cursor query and release evidence retention. [ENG-750 / #1443](https://github.com/Cephalon-Labs/CephalonEngine/issues/1443), 16 h, retains workload, recovery, telemetry and repeated-run SLO assessment. These are engineering estimates, not recorded hours or CI waiting time. No M0–M4, support, percentile or stable-baseline promotion is included.
 
 ## Observed failure and measurement boundary
 
@@ -33,3 +33,36 @@ Focused cursor/provider-rebuild tests passed **2/2**. Release-script and plannin
 Local full composition passed **899/899 in 1 m 6 s**, documentation links **3/3 in 14 s**, and the unchanged focused journal guardrail passed. These local durations are separate from release-step wall time and hosted-runner evidence.
 
 The first committed-source CI attempt on `a329a9ad` rejected a changed backlog-baseline sentence: the maturity-report parser requires its established wording and agreement with the frozen September 16 audit baseline. That sentence is restored, with a separate September 27 task-status note. Local full Pester reported 265/267: the same documentation failure plus an old ignored `.build/t49-verify` project discovered by the recursive analyzer-reference fixture. Clean Linux CI reported 266/267 with only the documentation failure. The final clean CI run remains the authority for full-suite acceptance; the ignored local copy is not a shipped source defect and has not been deleted or included in this delivery.
+
+## Committed-source acceptance
+
+[Release Validation](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36313203784), [Host Compatibility](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36313203805) and [Contract Compatibility](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36313203800) passed on **`e67697ae`**. Windows/Linux release each passed **899 composition + 820 hosting + 383 tooling = 2,102 core tests**, plus **267 Pester**. SDK 11 readiness passed **899 + 820 + 374 = 2,093 selected tests**. All **41** Windows benchmark guardrails passed without changing their thresholds.
+
+Downloaded `sre-release-validation-windows` and `sre-release-validation-linux` both identify the accepted commit, GitHub run **36313203784**, a clean source checkout and `outcome=passed`. Windows records `canonical=true` with restore, reference-doc and full-release timing files; Linux records `canonical=false`, skips benchmarks and lists only restore/reference-doc timings. Every listed file has the matching `runId`. Windows full-release elapsed time is **999.912 s** against **1,800 s**, timing status **`passed`**. This is one retained observation, not a renewed stable baseline. Runs that stop before invoking the release script (for example a Pester failure) have no release receipt.
+
+Local verification additionally includes the 22/22 maturity/report and release-script checks after restoring the parsed baseline wording. The local full-suite limitation involving an ignored historical `.build` copy remains explicit above; clean CI passed all 267 tests.
+
+ENG-749 is complete at 8 h. ENG-746 and ENG-729 remain open for ENG-750's 16 h workload/recovery/telemetry and collector assessment. The InMemory before/after run showed no speedup; the accepted production change is the relational column projection. Package API signatures, provider support declarations, shipping SDK/net10.0 and M0–M4 levels are unchanged.
+
+The accepted Windows journal benchmark measured **147.7 μs**, Error **436.9 μs**, StdDev **23.95 μs**, allocation **176.65 KB**. This passes the unchanged gate; runner differences and short-run variation prevent treating the change from historical hosted values as a proven production speedup.
+
+## ENG-750 proof sequence (planned, not executed)
+
+The retained 16 h estimate covers an initial declared workload set, including review, validation, documentation and tracking. Additional provider/host permutations require explicit scope and estimate changes before making broader claims. These work packages subdivide ENG-750; they are not additive tasks or completed evidence.
+
+| Work package | Estimate | Required output |
+| --- | ---: | --- |
+| Collector eligibility and coverage | 3 h | Paginated or explicitly incomplete run/attempt coverage; canceled and unresolved outcomes separated; missing inspection blocks promotion; failure attribution distinguishes tests from build/benchmark/publish |
+| Workload latency and throughput | 4 h | Source/configuration/hardware declaration, raw observations and sample counts; separate cold-process, warm, steady and burst measurements; p95/p99 are measured from the declared observation population |
+| Fault, cancellation and recovery | 3 h | Bounded resource pressure, slow/unavailable dependency and cancellation cases; observed backlog/recovery and retained command outcomes; provider and persistence boundary stated |
+| Telemetry budget | 2 h | Attribute allow-list, measured series counts, overflow monitoring, redaction fixtures, exporter outage behavior and retained-byte/export-rate observations |
+| Repeated hosted-runner and release timing | 2 h | Comparable runner/source groups, all attempted runs retained, unchanged benchmark gates, matching release run/timing IDs; explain failures and variance |
+| Analysis and publication | 2 h | Dashboard/query definitions and evidence index; distinguish descriptive observations from supported SLO windows; update docs, Project and issue state only for accepted scope |
+
+Existing benchmark means remain regression signals. `ColdStartBenchmarks` constructs, starts, probes (ASP.NET Core), stops and disposes hosts repeatedly **inside a warm benchmark process**; its elapsed mean includes shutdown/disposal. It does not isolate build-to-first-response or fresh-process p95. The behavior p95/p99 baseline rows also explicitly declare `benchmark-mean-baseline-proxy`. ENG-750 must preserve these distinctions when adding real percentile evidence.
+
+The Linux `sre-ci-flake-rate-linux` artifact from run **36313203784** illustrates the current collector limitation: six completed matching runs comprise one success, three failures and two cancellations; it reports zero observed rerun events and `PromotionAllowed=true`. Attempt inspection was available for all three inspected failure attempts. This is a descriptive rerun-event result, not proof of zero failing tests or a statistically supported flake SLO. The artifact was captured while the current release workflow was still running. No baseline promotion is accepted from this flag.
+
+Each workload receipt should name SDK/runtime, OS/CPU, source and configuration hashes, process/cache state, provider, concurrency, offered/completed load, warmup and observation windows, errors/cancellations/timeouts, raw samples or histogram boundaries and the aggregation method. Keep request latency, allocation, lifecycle completion, release wall time and provider I/O as separate measurements. Controlled clocks remain useful for deterministic functional tests; elapsed performance evidence uses real elapsed time.
+
+Telemetry review follows the OpenTelemetry [metrics cardinality contract](https://opentelemetry.io/docs/specs/otel/metrics/sdk/#cardinality-limits): filter unnecessary dimensions, set deliberate limits and observe overflow. A bounded aggregate can preserve totals while losing per-attribute distinctions, so dashboards and SLO queries must account for that limitation. This is a review plan, not a claim that every current Cephalon exporter already enforces the proposed budget.

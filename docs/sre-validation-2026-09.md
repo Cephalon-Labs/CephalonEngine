@@ -1,6 +1,8 @@
 # September SRE validation follow-up
 
-September 27 acceptance: ENG-745 (8 h), ENG-747 (10 h) and ENG-748 (8 h) are complete on `201e92a8`. ENG-729 remains 50 h with 26 h delivered and ENG-746 retaining 24 h, non-additive. September scope is **566 h**; **17 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 is 238 h total / 168 h remaining plus ENG-532. [SRE evidence](sre-validation-2026-09.md). No stable SLO, maturity or support promotion; earlier checkpoints preserve history.
+Current September 27 acceptance: ENG-749 is complete on `e67697ae`, with both OS release timing artifacts verified. ENG-746/729 remain open for ENG-750's 16 h; September remaining scope is 448 h plus ENG-532 1 h = 449 h. [Current evidence and proof plan](sre-evidence-2026-09-27.md) supersede earlier checkpoints below without promoting stable SLOs or package maturity.
+
+Earlier September 27 acceptance: ENG-745 (8 h), ENG-747 (10 h) and ENG-748 (8 h) are complete on `201e92a8`. ENG-729 remains 50 h with 26 h delivered and ENG-746 retaining 24 h, non-additive. September scope is **566 h**; **17 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 is 238 h total / 168 h remaining plus ENG-532. [SRE evidence](sre-validation-2026-09.md). No stable SLO, maturity or support promotion; earlier checkpoints preserve history.
 
 
 Historical September 17 checkpoint. [ENG-745 / #1438](https://github.com/Cephalon-Labs/CephalonEngine/issues/1438) is the active 8 h validation-reliability slice inside [ENG-729 / #1422](https://github.com/Cephalon-Labs/CephalonEngine/issues/1422). [ENG-746 / #1439](https://github.com/Cephalon-Labs/CephalonEngine/issues/1439) retains 24 h of workload/SLO/resilience/telemetry evidence. [ENG-747 / #1440](https://github.com/Cephalon-Labs/CephalonEngine/issues/1440) is now 6 h: 4 h for lost MongoDB bootstrap diagnostics and 2 h for MySQL/PostgreSQL failure-observation fixtures. The parent is now 38 h, non-additive; September implementation scope is 554 h. No runtime API, production policy, package maturity or provider-ownership claim changes.
@@ -98,3 +100,5 @@ Timing evidence boundary at `340c408e`: the workflow uploaded benchmark and CI f
 ## Later journal benchmark and evidence-retention follow-up
 
 The docs-only `340c408e` release passed tests but failed the Windows journal mean guardrail. ENG-746 is active with ENG-749 (8 h) and ENG-750 (16 h), preserving the 24 h rollup. [Current implementation and receipts](sre-evidence-2026-09-27.md) supersede the timing-retention gap above when accepted; historical passing results remain source-specific.
+
+ENG-749 is now complete on `e67697ae`; release timing artifacts are retained and verified on both OS. ENG-746 remains open with ENG-750 retaining 16 h. [Acceptance](sre-evidence-2026-09-27.md#committed-source-acceptance) records the exact run boundary and unchanged SLO/maturity claims.
