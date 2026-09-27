@@ -133,7 +133,7 @@ bool EnablePublicationScheduling { get; set; }
 
 Gets or sets a value indicating whether publication requests can be delayed by the native eventing pack.
 
-Remarks: Delayed publications are held in the current process until their due time and then handed to the active publisher. This is a lightweight Wolverine-free scheduling baseline, not a durable or distributed scheduler.
+Remarks: Delayed publications are held in the current process until their due time and then handed to the active publisher. This is a lightweight Wolverine-free scheduling baseline, not a durable or distributed scheduler. Deadlines and queue timers use the host's registered `TimeProvider`, defaulting to `System`. A custom provider must supply consistent UTC time and timer behavior.
 
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-enablepublishing"></a>
 

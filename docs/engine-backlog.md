@@ -748,6 +748,8 @@ Quality dimensions: Reliability + Testability + Modularity + Maintainability + A
 Estimate basis: 8 engineering hours for implementation, review, regression tests, docs and tracking; excludes external CI waiting. Trigger: SDK 11 release on 09e7eb6c observed a one-second schedule dispatch before the pending HTTP snapshot assertion.
 
 Evidence: [September SRE follow-up](sre-validation-2026-09.md).
+Validation checkpoint: `64f533b9` passed all 896 composition and 820 hosting tests in the SDK 11 lane, but reference-bundle parity failed because the new Eventing XML remarks were not yet regenerated. The full reference bundle is refreshed through `publish-reference-docs.ps1 -Configuration Release -SkipBuild`; all 28 reference generator tests pass locally. This documentation repair remains inside the existing 8 h. Acceptance is still pending the next complete CI run.
+
 
 ### ENG-730 Data evolution disaster recovery and privacy proofs
 

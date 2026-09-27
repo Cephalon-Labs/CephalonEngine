@@ -66,3 +66,9 @@ ENG-748 adds the host-agnostic `TimeProvider` seam inside Eventing: use the same
 Validation is pending at this checkpoint. Full release acceptance, benchmark guardrails and compatibility receipts must be recorded before the completed task statuses are closed; one passing run does not establish an SLO or resolve the historical MongoDB startup cause.
 
 Local checkpoint before publication: 22/22 composition clock/resilience regressions passed (1 s), 9/9 REST/OpenAPI and scheduled-publication hosting cases passed (5 s), and 8/8 planning regressions passed. Live guards matched 24 open issues and 24 Project items, all five required fields. These results do not substitute for full-suite and committed-source CI acceptance. Receipts: `artifacts/release-followup-2026-09-27/clock-composition.trx` and `clock-hosting.trx`.
+
+## Reference bundle parity follow-through
+
+The SDK 11 job in [release `64f533b9`](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36296893022) passed all 896 composition and 820 hosting cases, then passed 373/374 selected tooling cases. `GenerateDefaultCatalogMatchesCheckedInReferenceBundle` detected the new `EventingOptions.EnablePublicationScheduling` XML remarks missing from checked-in `cephalon-eventing.md`. This was an omitted generated-doc refresh, not a runtime test failure. Regenerating with `pwsh ./scripts/publish-reference-docs.ps1 -Configuration Release -SkipBuild` changes that reference page and the matching browser/manifest generation timestamps. All 28 reference generator tests then passed locally in 9 s. The docs repair stays within ENG-748's 8 h; the full CI gate remains required.
+
+Local full suites at the implementation checkpoint passed 896/896 composition in 1 m 12 s and 820/820 hosting in 1 m 13 s, with zero skips. Two documentation-link tests passed in 1 m 5 s. These are local Windows test-run durations, separate from CI release-step timing.
