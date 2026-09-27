@@ -599,13 +599,15 @@ Plan: [Framework completion](framework-completion-plan.md); [primary-source rese
 Measured follow-up: [Windows release CI on `c4f8d288`](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/35095044308) passed 41 benchmark guardrails but recorded full validation wall time 1,881,965.5918 ms against the existing 1,800,000 ms target (`investigate`). Reproduce and explain the runner/workload timing before renewing that SLO; do not infer SLO compliance from a passing compatibility gate. This baseline investigation belongs to the original 32 h scope; no estimate or maturity promotion. [Evidence](host-compatibility-2026-09.md).
 
 Breakdown: ENG-745 (8 h, active in Sprint 16) repairs deterministic validation and collector isolation; ENG-746 (24 h, unscheduled) retains broader load/SLO/telemetry acceptance. The initial 32 h decomposition is historical; ENG-747 adds 4 h of observed MongoDB bootstrap diagnostic work, initially raising the parent to 36 h; the later MySQL/PostgreSQL fixture repair adds 2 h, for 38 h (8 + 24 + 6), non-additive. The post-closeout release run on `12f436ae` failed one Windows timeout assertion; prior passed compatibility checkpoints remain historical evidence, not current green-release claims.
-Latest CI: `c28edb3c` passes all 885 Windows composition tests but fails MongoDB CDC fixture startup before the test body (819/820 hosting passed). ENG-747 repairs lost deadline diagnostics; the slow-start cause is not yet established. ENG-745 remains open pending complete CI acceptance.
+Intermediate CI: `c28edb3c` passes all 885 Windows composition tests but fails MongoDB CDC fixture startup before the test body (819/820 hosting passed). ENG-747 repairs lost deadline diagnostics; the slow-start cause is not yet established. ENG-745 remained open at that checkpoint.
 
-Later CI: `34fc2da0` passes SDK 11 but Windows composition fails the MySQL one-shot failure assertion after 889 successes. A one-second provider retry consumes an empty batch and reports Idle before a delayed observer sees Failed. ENG-747 grows 4 → 6 h and includes the matching PostgreSQL fixture repair. Full acceptance remains open.
+Later CI: `34fc2da0` passes SDK 11 but Windows composition fails the MySQL one-shot failure assertion after 889 successes. A one-second provider retry consumes an empty batch and reports Idle before a delayed observer sees Failed. ENG-747 grows 4 → 6 h and includes the matching PostgreSQL fixture repair. Full acceptance remained open at that checkpoint.
 
-September 27 checkpoint: release `09e7eb6c` passed Linux, but Windows REST timeout returned OK before the timer callback (ENG-745) and SDK 11 scheduling delivered before the pending snapshot assertion (new ENG-748). Host/contract compatibility passed both OS. ENG-748 adds 8 h; current parent 46 h = 8/24/6/8. ENG-745 retains its original 8 h because REST timeout fixtures are within the agreed resilience scope. Full release acceptance remains open.
+September 27 checkpoint: release `09e7eb6c` passed Linux, but Windows REST timeout returned OK before the timer callback (ENG-745) and SDK 11 scheduling delivered before the pending snapshot assertion (new ENG-748). Host/contract compatibility passed both OS. ENG-748 adds 8 h; current parent 46 h = 8/24/6/8. ENG-745 retains its original 8 h because REST timeout fixtures are within the agreed resilience scope. Full release acceptance remained open at that checkpoint.
 
-Latest September 27 scope: ENG-747 increases 6 to 10 h after the retained Windows evidence exposed fast server startup but delayed later connections. Owned bootstrap lifecycle, bounded initialization and driver diagnostics add 4 h; parent 50 h = 8/24/10/8. Full CI acceptance remains open.
+Latest September 27 scope: ENG-747 increases 6 to 10 h after the retained Windows evidence exposed fast server startup but delayed later connections. Owned bootstrap lifecycle, bounded initialization and driver diagnostics add 4 h; parent 50 h = 8/24/10/8. Full CI acceptance remained open at that checkpoint.
+
+Current acceptance: ENG-745/747/748 are Done with 26 h delivered; ENG-746 retains 24 h. This 50 h parent remains In Progress / Test Running / Benchmark Needed. [Release CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293286) passed Windows/Linux shipping (2,101 core tests plus 263 Pester each) and SDK 11 readiness (2,092 selected net10.0 tests) on `201e92a8`. All 41 Windows benchmark guardrails passed. [Host/deployment](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293252) and [contract compatibility](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293274) passed both OS. Windows release-step duration was **25 m 00 s**, from GitHub step timestamps. This single run does not renew a stable SLO or identify the historical MongoDB startup cause.
 
 
 ### ENG-745 Stabilize resilience timeout and isolate integration telemetry
@@ -614,7 +616,7 @@ GitHub issue: #1438
 
 Issue link: [#1438](https://github.com/Cephalon-Labs/CephalonEngine/issues/1438)
 
-Status: in-progress
+Status: done
 
 Estimate: 8
 
@@ -626,9 +628,9 @@ Owner: Cephalon-Neza
 
 Priority: P1
 
-Test: Running
+Test: Passed
 
-Benchmark: Needed
+Benchmark: Passed
 
 Parent: ENG-729 / #1422. Included in its revised 50 h non-additive rollup.
 
@@ -643,6 +645,8 @@ Maturity and ownership: test-harness and evidence work; production ownership and
 Estimate basis: engineering hours including review, validation, docs and tracking, excluding external waiting. This decomposes existing scope rather than adding effort.
 
 Evidence: [September SRE follow-up](sre-validation-2026-09.md).
+Delivery (September 27): [Release CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293286) passed Windows/Linux shipping (2,101 core tests plus 263 Pester each) and SDK 11 readiness (2,092 selected net10.0 tests) on `201e92a8`. All 41 Windows benchmark guardrails passed. [Host/deployment](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293252) and [contract compatibility](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293274) passed both OS. Windows release-step duration was **25 m 00 s**, from GitHub step timestamps. This single run does not renew a stable SLO or identify the historical MongoDB startup cause. [Accepted source](https://github.com/Cephalon-Labs/CephalonEngine/commit/201e92a882fc4d9ca613b4c6cbdd872c4194e988). [Detailed evidence](sre-validation-2026-09.md).
+
 
 ### ENG-746 Complete workload SLO resilience and telemetry-cost proofs
 
@@ -682,6 +686,8 @@ Estimate basis: engineering hours including review, validation, docs and trackin
 
 Evidence: [September SRE follow-up](sre-validation-2026-09.md).
 
+Evidence retention: retain canonical `artifacts/sre-release-validation` timing JSON in the workload/SLO proof. Current CI uploads benchmark and flake-rate reports but omits this directory; GitHub step timestamps are only a separate observation. This remains within the existing 24 h scope.
+
 
 ### ENG-747 Stabilize provider CDC failure evidence and bootstrap diagnostics
 
@@ -689,7 +695,7 @@ GitHub issue: #1440
 
 Issue link: [#1440](https://github.com/Cephalon-Labs/CephalonEngine/issues/1440)
 
-Status: in-progress
+Status: done
 
 Estimate: 10
 
@@ -701,7 +707,7 @@ Owner: Cephalon-Neza
 
 Priority: P1
 
-Test: Running
+Test: Passed
 
 Benchmark: N/A
 
@@ -720,6 +726,8 @@ September 27 expanded scope: The fixture now owns one uniquely keyed bootstrap c
 
 [Release on `319e0691`](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36297251879) passed Linux and SDK 11, but Windows passed 896 composition and 819/820 hosting cases. Retained MongoDB output shows startup completed at 05:35:21.558 UTC (804 ms in initAndListen), monitoring client metadata at 05:35:21.628, later connection metadata at 05:35:47.597/636 and deadline failure at 05:35:47.929. This does not establish slow server startup or thread-pool starvation. The driver/scheduler delay remains unexplained. Both host and contract compatibility matrices passed at that source.
 
+Delivery (September 27): [Release CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293286) passed Windows/Linux shipping (2,101 core tests plus 263 Pester each) and SDK 11 readiness (2,092 selected net10.0 tests) on `201e92a8`. All 41 Windows benchmark guardrails passed. [Host/deployment](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293252) and [contract compatibility](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293274) passed both OS. Windows release-step duration was **25 m 00 s**, from GitHub step timestamps. This single run does not renew a stable SLO or identify the historical MongoDB startup cause. [Accepted source](https://github.com/Cephalon-Labs/CephalonEngine/commit/201e92a882fc4d9ca613b4c6cbdd872c4194e988). [Detailed evidence](sre-validation-2026-09.md).
+
 
 ### ENG-748 Support host clocks for deterministic publication scheduling
 
@@ -727,7 +735,7 @@ GitHub issue: #1441
 
 Issue link: [#1441](https://github.com/Cephalon-Labs/CephalonEngine/issues/1441)
 
-Status: in-progress
+Status: done
 
 Estimate: 8
 
@@ -739,7 +747,7 @@ Owner: Cephalon-Neza
 
 Priority: P1
 
-Test: Running
+Test: Passed
 
 Benchmark: N/A
 
@@ -754,7 +762,9 @@ Quality dimensions: Reliability + Testability + Modularity + Maintainability + A
 Estimate basis: 8 engineering hours for implementation, review, regression tests, docs and tracking; excludes external CI waiting. Trigger: SDK 11 release on 09e7eb6c observed a one-second schedule dispatch before the pending HTTP snapshot assertion.
 
 Evidence: [September SRE follow-up](sre-validation-2026-09.md).
-Validation checkpoint: `64f533b9` passed all 896 composition and 820 hosting tests in the SDK 11 lane, but reference-bundle parity failed because the new Eventing XML remarks were not yet regenerated. The full reference bundle is refreshed through `publish-reference-docs.ps1 -Configuration Release -SkipBuild`; all 28 reference generator tests pass locally. This documentation repair remains inside the existing 8 h. Acceptance is still pending the next complete CI run.
+Intermediate validation checkpoint: `64f533b9` passed all 896 composition and 820 hosting tests in the SDK 11 lane, but reference-bundle parity failed because the new Eventing XML remarks were not yet regenerated. The full reference bundle was refreshed through `publish-reference-docs.ps1 -Configuration Release -SkipBuild`; all 28 reference generator tests passed locally. This documentation repair stayed inside the existing 8 h. Acceptance remained pending at that checkpoint.
+
+Delivery (September 27): [Release CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293286) passed Windows/Linux shipping (2,101 core tests plus 263 Pester each) and SDK 11 readiness (2,092 selected net10.0 tests) on `201e92a8`. All 41 Windows benchmark guardrails passed. [Host/deployment](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293252) and [contract compatibility](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293274) passed both OS. Windows release-step duration was **25 m 00 s**, from GitHub step timestamps. This single run does not renew a stable SLO or identify the historical MongoDB startup cause. [Accepted source](https://github.com/Cephalon-Labs/CephalonEngine/commit/201e92a882fc4d9ca613b4c6cbdd872c4194e988). [Detailed evidence](sre-validation-2026-09.md).
 
 
 ### ENG-730 Data evolution disaster recovery and privacy proofs

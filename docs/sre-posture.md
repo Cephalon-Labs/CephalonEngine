@@ -1,6 +1,6 @@
 # Cephalon engine SRE posture
 
-Current work (September 27): ENG-745/747/748 remain under validation. ENG-747 expands 6 to 10 h for owned MongoDB bootstrap connections, bounded initialization and driver evidence. ENG-729 is 50 h (8/24/10/8), non-additive. September scope is **566 h**; **20 unfinished leaves / 482 h**, plus ENG-532 **1 h** = **483 h**. Phase 15 is 238 h total / 194 h remaining plus ENG-532. [SRE evidence](sre-validation-2026-09.md). Earlier checkpoints retain estimate history; no maturity or SLO promotion.
+September 27 acceptance: ENG-745 (8 h), ENG-747 (10 h) and ENG-748 (8 h) are complete on `201e92a8`. ENG-729 remains 50 h with 26 h delivered and ENG-746 retaining 24 h, non-additive. September scope is **566 h**; **17 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 is 238 h total / 168 h remaining plus ENG-532. [SRE evidence](sre-validation-2026-09.md). No stable SLO, maturity or support promotion; earlier checkpoints preserve history.
 
 This document is the engine-level Site Reliability Engineering (SRE) posture for the Cephalon engine itself. It is *not* a prescription for consumer applications that adopt Cephalon — those teams own their own SLOs against their own user journeys. Instead, this page declares the reliability semantics the engine commits to as a framework: cold-start time, dispatch latency, allocation discipline, build/restore/release-validation wall time, and test-suite flake rate.
 
@@ -126,4 +126,4 @@ Do not append a dated change log inside this document. Long-range standards rare
 
 ## September validation follow-up
 
-[ENG-745 / ENG-746 / ENG-747](sre-validation-2026-09.md) split ENG-729's revised 38 h into 8 h validation reliability, 24 h remaining SLO/load/telemetry work and 6 h provider CDC failure-observation/bootstrap diagnostic repair. [September follow-ups](architecture-review-2026-09-followups.md) record the 31 m 22 s Windows full-release overrun against 30 minutes, the later timeout-test failure, MongoDB startup deadline and MySQL observation race. Stable baselines and target thresholds remain unchanged pending repeatable proof.
+[ENG-745 / ENG-746 / ENG-747 / ENG-748](sre-validation-2026-09.md) split ENG-729's revised 50 h into 8 h validation reliability, 24 h remaining SLO/load/telemetry work, 10 h provider CDC/bootstrap evidence and 8 h host-clock publication scheduling. ENG-745/747/748 are complete; ENG-746 and the parent remain open. [September follow-ups](architecture-review-2026-09-followups.md) record the 31 m 22 s Windows full-release overrun against 30 minutes, the later timeout-test failure, MongoDB startup deadline and MySQL observation race. Stable baselines and target thresholds remain unchanged pending repeatable proof.

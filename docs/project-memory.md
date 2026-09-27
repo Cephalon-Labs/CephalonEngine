@@ -1,6 +1,6 @@
 # Cephalon Project Memory
 
-Current work (September 27): ENG-745/747/748 remain under validation. ENG-747 expands 6 to 10 h for owned MongoDB bootstrap connections, bounded initialization and driver evidence. ENG-729 is 50 h (8/24/10/8), non-additive. September scope is **566 h**; **20 unfinished leaves / 482 h**, plus ENG-532 **1 h** = **483 h**. Phase 15 is 238 h total / 194 h remaining plus ENG-532. [SRE evidence](sre-validation-2026-09.md). Earlier checkpoints retain estimate history; no maturity or SLO promotion.
+September 27 acceptance: ENG-745 (8 h), ENG-747 (10 h) and ENG-748 (8 h) are complete on `201e92a8`. ENG-729 remains 50 h with 26 h delivered and ENG-746 retaining 24 h, non-additive. September scope is **566 h**; **17 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 is 238 h total / 168 h remaining plus ENG-532. [SRE evidence](sre-validation-2026-09.md). No stable SLO, maturity or support promotion; earlier checkpoints preserve history.
 
 Project memory in this document reflects the repository state observed on `September 16, 2026`.
 
@@ -54,7 +54,7 @@ The repository is aiming at a modular .NET engine/framework foundation that is g
 
 - [Completion plan](framework-completion-plan.md), [research register](framework-research-2026-09.md) and [September review](architecture-review-2026-09.md) are the current all-level planning frame; earlier dated research below is historical where superseded.
 - Keep 107 package maturity declarations unchanged until evidence supports a reviewed change. M0/M1 are legitimate roles; M4 is not GA.
-- ENG-714/715 retain their IDs and become 96 h / 120 h parent rollups; the original ENG-719–738 scope was 536 h and the revised implementation rollup is 554 h, plus ENG-532's separate 1 h. ENG-718 is the planning delivery only.
+- ENG-714/715 retain their IDs and become 96 h / 120 h parent rollups; the original ENG-719–738 scope was 536 h and the revised implementation rollup is 566 h, plus ENG-532's separate 1 h. ENG-718 is the planning delivery only.
 - No capacity-backed dates exist for Phases 14–16; future work remains Later / not scheduled yet. Do not infer dates from the legacy Project iteration calendar.
 - Official September 16 source refresh shows .NET 11 RC1 and .NET 10.0.12. ENG-739 installs SDK 10.0.401 for validation and updates the repository pin and ILLink locks; net10.0 remains the shipping floor. ENG-731/742/744 completed the declared compatibility matrix; untested release/provider/RID claims remain excluded.
 
