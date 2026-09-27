@@ -1,9 +1,47 @@
 using Cephalon.Tests.Support;
+using System.Collections.Concurrent;
+using System.Net;
+using System.Net.Sockets;
+using MongoDB.Bson;
 
 namespace Cephalon.Tests.Composition;
 
 public sealed class MongoDbBootstrapTests
 {
+    [Fact]
+    public void BootstrapClientsOwnSeparateClustersAndCloseThemExactlyOnce()
+    {
+        var observations = new ConcurrentQueue<string>();
+        using var first = new MongoDbBootstrapClient("mongodb://127.0.0.1:1/?directConnection=true", observations.Enqueue);
+        using var second = new MongoDbBootstrapClient("mongodb://127.0.0.1:1/?directConnection=true", _ => { });
+        Assert.NotSame(first.Client.Cluster, second.Client.Cluster);
+        var secondCluster = second.Client.Cluster;
+        first.Dispose();
+        first.Dispose();
+        Assert.Throws<ObjectDisposedException>(() => first.Client.GetDatabase("admin"));
+        Assert.Same(secondCluster, second.Client.Cluster);
+        Assert.Single(observations, entry => entry == "cluster closed");
+    }
+
+    [Fact]
+    public async Task BootstrapCommandHonorsCallerCancellationWhileHandshakeIsUnanswered()
+    {
+        using var listener = new TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        var port = ((IPEndPoint)listener.LocalEndpoint).Port;
+        using var bootstrap = new MongoDbBootstrapClient($"mongodb://127.0.0.1:{port}/?directConnection=true", _ => { });
+        using var caller = new CancellationTokenSource();
+        var command = bootstrap.Client.GetDatabase("admin").RunCommandAsync<BsonDocument>(
+            new BsonDocument("ping", 1), cancellationToken: caller.Token);
+        try
+        {
+            using var connection = await listener.AcceptTcpClientAsync().WaitAsync(TimeSpan.FromSeconds(10));
+            caller.Cancel();
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => command.WaitAsync(TimeSpan.FromSeconds(10)));
+        }
+        finally { caller.Cancel(); }
+    }
+
     [Fact]
     public async Task BootstrapDeadlinePreservesDiagnosticFailureAndCancellationCause()
     {

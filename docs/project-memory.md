@@ -1,6 +1,6 @@
 # Cephalon Project Memory
 
-September 27, 2026: ENG-745/747 remain under validation; ENG-748 adds 8 h for host-clock Eventing publication scheduling after SDK 11 exposed a due-time/pending-snapshot race. Windows also requires controlled REST timeout fixtures within ENG-745. ENG-729 is 46 h; September scope 562 h, unfinished 478 h plus ENG-532 1 h = 479 h. No maturity or SLO promotion. [Current evidence and acceptance](sre-validation-2026-09.md).
+Current work (September 27): ENG-745/747/748 remain under validation. ENG-747 expands 6 to 10 h for owned MongoDB bootstrap connections, bounded initialization and driver evidence. ENG-729 is 50 h (8/24/10/8), non-additive. September scope is **566 h**; **20 unfinished leaves / 482 h**, plus ENG-532 **1 h** = **483 h**. Phase 15 is 238 h total / 194 h remaining plus ENG-532. [SRE evidence](sre-validation-2026-09.md). Earlier checkpoints retain estimate history; no maturity or SLO promotion.
 
 Project memory in this document reflects the repository state observed on `September 16, 2026`.
 

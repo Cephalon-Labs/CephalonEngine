@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -16,15 +17,15 @@ public sealed class MongoDbReplicaSetRunner : IAsyncDisposable, IDisposable
     private const string ReplicaSetName = "cephalon-rs0";
     private readonly Process process;
     private readonly string dataDirectory;
-    private readonly string directConnectionString;
     private readonly List<string> processLogs = [];
+    private readonly List<string> driverLogs = [];
     private readonly object processLogsGate = new();
+    private readonly Stopwatch bootstrapElapsed = Stopwatch.StartNew();
 
-    private MongoDbReplicaSetRunner(Process process, string dataDirectory, string directConnectionString, string connectionString)
+    private MongoDbReplicaSetRunner(Process process, string dataDirectory, string connectionString)
     {
         this.process = process;
         this.dataDirectory = dataDirectory;
-        this.directConnectionString = directConnectionString;
         ConnectionString = connectionString;
     }
 
@@ -64,13 +65,14 @@ public sealed class MongoDbReplicaSetRunner : IAsyncDisposable, IDisposable
 
         var directConnectionString = $"mongodb://127.0.0.1:{port}/?directConnection=true";
         var replicaSetConnectionString = $"mongodb://127.0.0.1:{port}/?replicaSet={ReplicaSetName}&directConnection=true";
-        var runner = new MongoDbReplicaSetRunner(process, dataDirectory, directConnectionString, replicaSetConnectionString);
+        var runner = new MongoDbReplicaSetRunner(process, dataDirectory, replicaSetConnectionString);
 
         try
         {
             runner.StartProcess();
-            await runner.WaitForServerAsync(cancellationToken).ConfigureAwait(false);
-            await runner.InitializeReplicaSetAsync(port, cancellationToken).ConfigureAwait(false);
+            using var bootstrap = new MongoDbBootstrapClient(directConnectionString, runner.AppendDriverLog);
+            await runner.WaitForServerAsync(bootstrap.Client.GetDatabase("admin"), cancellationToken).ConfigureAwait(false);
+            await runner.InitializeReplicaSetAsync(bootstrap.Client, port, cancellationToken).ConfigureAwait(false);
             return runner;
         }
         catch
@@ -205,9 +207,8 @@ public sealed class MongoDbReplicaSetRunner : IAsyncDisposable, IDisposable
         process.BeginErrorReadLine();
     }
 
-    private async Task WaitForServerAsync(CancellationToken cancellationToken)
+    private async Task WaitForServerAsync(IMongoDatabase database, CancellationToken cancellationToken)
     {
-        var database = CreateDirectDatabase();
         Exception? lastFailure = null;
         await RunBootstrapPhaseAsync(async token =>
         {
@@ -234,9 +235,9 @@ public sealed class MongoDbReplicaSetRunner : IAsyncDisposable, IDisposable
                 lastFailure ?? exception), cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task InitializeReplicaSetAsync(int port, CancellationToken cancellationToken)
+    private async Task InitializeReplicaSetAsync(MongoClient client, int port, CancellationToken cancellationToken)
     {
-        var database = CreateDirectDatabase();
+        var database = client.GetDatabase("admin");
         var configuration = new BsonDocument
         {
             ["_id"] = ReplicaSetName,
@@ -252,9 +253,13 @@ public sealed class MongoDbReplicaSetRunner : IAsyncDisposable, IDisposable
 
         try
         {
-            await database.RunCommandAsync<BsonDocument>(
-                new BsonDocument("replSetInitiate", configuration),
-                cancellationToken: cancellationToken).ConfigureAwait(false);
+            await RunBootstrapPhaseAsync(
+                token => database.RunCommandAsync<BsonDocument>(
+                    new BsonDocument("replSetInitiate", configuration), cancellationToken: token),
+                TimeSpan.FromSeconds(20),
+                exception => CreateBootstrapException(
+                    "Timed out while initializing the MongoDB test replica set.", exception),
+                cancellationToken).ConfigureAwait(false);
         }
         catch (MongoCommandException exception) when (exception.CodeName is "AlreadyInitialized" or "InvalidReplicaSetConfig")
         {
@@ -314,15 +319,6 @@ public sealed class MongoDbReplicaSetRunner : IAsyncDisposable, IDisposable
         }
     }
 
-    private IMongoDatabase CreateDirectDatabase()
-    {
-        var settings = MongoClientSettings.FromConnectionString(directConnectionString);
-        settings.ServerSelectionTimeout = TimeSpan.FromSeconds(3);
-        settings.ConnectTimeout = TimeSpan.FromSeconds(3);
-        var client = new MongoClient(settings);
-        return client.GetDatabase("admin");
-    }
-
     private void ThrowIfProcessExited()
     {
         if (!process.HasExited)
@@ -336,6 +332,13 @@ public sealed class MongoDbReplicaSetRunner : IAsyncDisposable, IDisposable
     private InvalidOperationException CreateBootstrapException(string message, Exception? innerException = null)
     {
         var builder = new StringBuilder(message);
+        builder.AppendLine();
+        builder.AppendLine(CultureInfo.InvariantCulture, $"Bootstrap elapsed: {bootstrapElapsed.Elapsed}; managed threads: {ThreadPool.ThreadCount}; queued work: {ThreadPool.PendingWorkItemCount}.");
+        lock (processLogsGate)
+        {
+            builder.AppendLine("MongoDB bootstrap driver observations:");
+            foreach (var line in driverLogs) { builder.AppendLine(line); }
+        }
         var logs = GetProcessLogs();
         if (logs.Length > 0)
         {
@@ -364,6 +367,15 @@ public sealed class MongoDbReplicaSetRunner : IAsyncDisposable, IDisposable
             {
                 processLogs.RemoveAt(0);
             }
+        }
+    }
+
+    private void AppendDriverLog(string line)
+    {
+        lock (processLogsGate)
+        {
+            driverLogs.Add($"{bootstrapElapsed.Elapsed}: {line}");
+            if (driverLogs.Count > 100) { driverLogs.RemoveAt(0); }
         }
     }
 

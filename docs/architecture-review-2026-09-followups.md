@@ -5,8 +5,8 @@ Live follow-through for the [September architecture review](architecture-review-
 | Follow-up | Status | Planning anchor | Required evidence |
 | --- | --- | --- | --- |
 | Remove timeout timer races and isolate Showcase exporter waits | in-progress | ENG-745, 8 h within ENG-729 | Controlled timeout/override/cancellation assertions, retained collector integration coverage and Windows/Linux release receipts |
-| Preserve provider CDC failure and bootstrap evidence | in-progress | ENG-747, 6 h within revised ENG-729 46 h | MongoDB deadline/caller-cancellation diagnostics, MySQL/PostgreSQL one-shot failure observation, real MongoDB CDC and full CI proof; historical startup-delay cause remains unproven |
-| Add host-clock publication scheduling and deterministic due-time acceptance | in-progress | ENG-748, 8 h within ENG-729 46 h | System default/host override, due boundaries, rearming, disposal, failure timestamps and full CI |
+| Preserve provider CDC failure and bootstrap evidence | in-progress | ENG-747, 10 h within revised ENG-729 50 h | MongoDB owned bootstrap lifecycle and deadline/caller-cancellation diagnostics, MySQL/PostgreSQL one-shot failure observation, real MongoDB CDC and full CI proof; historical startup-delay cause remains unproven |
+| Add host-clock publication scheduling and deterministic due-time acceptance | in-progress | ENG-748, 8 h within ENG-729 50 h | System default/host override, due boundaries, rearming, disposal, failure timestamps and full CI |
 | Investigate `engine.validate-release.wall-time` overrun | investigate | ENG-729 / ENG-746 | Windows `c4f8d288` measured 31 m 22 s against 30 minutes; repeat workload/runner-aware timing after the fixture repair before renewing the SLO |
 | Complete load/recovery and telemetry-cost evidence | planned | ENG-746, 24 h within ENG-729 | Reproducible workload baselines, failure drills, cardinality budgets and CI flake-rate assessment |
 
