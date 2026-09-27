@@ -2,7 +2,7 @@
 
 Planning date: **September 16, 2026**. Owner: **Cephalon-Neza**. Planning delivery: **ENG-718**. [GitHub Project](https://github.com/orgs/Cephalon-Labs/projects/2). [Research and sources](framework-research-2026-09.md).
 
-Current work (September 17): ENG-745/747 await full CI acceptance. The later Windows run exposes a MySQL one-shot failure overwritten by retry; ENG-747 includes the matching PostgreSQL fixture repair and grows 4 → 6 h. ENG-729 is now 38 h (ENG-745/746/747 = 8/24/6), non-additive. September scope is **554 h**; **19 unfinished leaves / 470 h**, plus ENG-532 **1 h** = **471 h**, remain. [Current SRE evidence](sre-validation-2026-09.md). Earlier dated checkpoints preserve estimate history.
+Current work (September 27): ENG-745/747 remain under validation; ENG-748 / #1441 adds host-clock publication scheduling (8 h). ENG-729 is 46 h (8/24/6/8), non-additive. September scope is **562 h**; **20 unfinished leaves / 478 h**, plus ENG-532 **1 h** = **479 h**. [SRE evidence](sre-validation-2026-09.md). Earlier dated checkpoints retain estimate history.
 
 ## Objective and verified baseline
 
@@ -88,7 +88,7 @@ The [backlog](engine-backlog.md) contains each task's scope, acceptance tests, d
 | [ENG-726](https://github.com/Cephalon-Labs/CephalonEngine/issues/1419) | Package-specific promotion dossiers and evidence expiry | 14 | 16 | ENG-723, ENG-724, ENG-725 |
 | [ENG-727](https://github.com/Cephalon-Labs/CephalonEngine/issues/1420) | Security and tenant-isolation verification baseline | 15 | 32 | [ENG-722](https://github.com/Cephalon-Labs/CephalonEngine/issues/1415) |
 | [ENG-728](https://github.com/Cephalon-Labs/CephalonEngine/issues/1421) | Verifiable package provenance and release recovery | 15 | 24 | ENG-532 for hosted proof; local policy work can start independently |
-| [ENG-729](https://github.com/Cephalon-Labs/CephalonEngine/issues/1422) | SLO load resilience and telemetry-cost evidence | 15 | 38 | ENG-720; ENG-723 through ENG-725 for pilot load scenarios |
+| [ENG-729](https://github.com/Cephalon-Labs/CephalonEngine/issues/1422) | SLO load resilience and telemetry-cost evidence | 15 | 46 | ENG-720; ENG-723 through ENG-725 for pilot load scenarios |
 | [ENG-730](https://github.com/Cephalon-Labs/CephalonEngine/issues/1423) | Data evolution disaster recovery and privacy proofs | 15 | 40 | ENG-721, ENG-727 |
 | [ENG-731](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424) | Framework API and deployment compatibility matrix | 15 | 44 | ENG-719; independent .NET assessment may start immediately |
 | [ENG-732](https://github.com/Cephalon-Labs/CephalonEngine/issues/1425) | External developer journey documentation and accessibility | 15 | 24 | [ENG-731](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424) |

@@ -9,11 +9,12 @@ internal sealed class EventPublicationScheduleQueue(
     EventingOptions options,
     IEventChannelCatalog channels,
     IEventPublicationRuntimeReporter publicationRuntimeReporter,
-    IServiceScopeFactory scopeFactory) : IDisposable, IAsyncDisposable
+    IServiceScopeFactory scopeFactory,
+    TimeProvider timeProvider) : IDisposable, IAsyncDisposable
 {
     private readonly Lock gate = new();
     private readonly Dictionary<string, ScheduledPublication> pending = new(StringComparer.OrdinalIgnoreCase);
-    private Timer? timer;
+    private ITimer? timer;
     private int dispatching;
     private bool disposed;
 
@@ -107,7 +108,7 @@ internal sealed class EventPublicationScheduleQueue(
                 channelId: publication.ChannelId,
                 eventType: publication.EventType,
                 outcome: EventPublicationRuntimeOutcomes.Accepted,
-                observedAtUtc: DateTimeOffset.UtcNow,
+                observedAtUtc: timeProvider.GetUtcNow(),
                 metadata: metadata),
             cancellationToken).ConfigureAwait(false);
 
@@ -116,7 +117,7 @@ internal sealed class EventPublicationScheduleQueue(
 
     public async ValueTask DisposeAsync()
     {
-        Timer? timerToDispose;
+        ITimer? timerToDispose;
         lock (gate)
         {
             disposed = true;
@@ -133,7 +134,7 @@ internal sealed class EventPublicationScheduleQueue(
 
     public void Dispose()
     {
-        Timer? timerToDispose;
+        ITimer? timerToDispose;
         lock (gate)
         {
             disposed = true;
@@ -169,7 +170,7 @@ internal sealed class EventPublicationScheduleQueue(
                         return;
                     }
 
-                    var nowUtc = DateTimeOffset.UtcNow;
+                    var nowUtc = timeProvider.GetUtcNow();
                     due = pending.Values
                         .Where(publication => publication.Schedule.ScheduledForUtc <= nowUtc)
                         .OrderBy(static publication => publication.Schedule.ScheduledForUtc)
@@ -215,7 +216,7 @@ internal sealed class EventPublicationScheduleQueue(
             "due",
             PendingCount);
         metadata["scheduleDispatch"] = "started";
-        metadata["scheduleDispatchedAtUtc"] = DateTimeOffset.UtcNow.ToString("O", CultureInfo.InvariantCulture);
+        metadata["scheduleDispatchedAtUtc"] = timeProvider.GetUtcNow().ToString("O", CultureInfo.InvariantCulture);
         var duePublication = CopyPublication(publication, metadata);
 
         try
@@ -234,7 +235,7 @@ internal sealed class EventPublicationScheduleQueue(
                     channelId: publication.ChannelId,
                     eventType: publication.EventType,
                     outcome: EventPublicationRuntimeOutcomes.Failed,
-                    observedAtUtc: DateTimeOffset.UtcNow,
+                    observedAtUtc: timeProvider.GetUtcNow(),
                     error: exception.Message,
                     metadata: metadata)).ConfigureAwait(false);
         }
@@ -247,7 +248,7 @@ internal sealed class EventPublicationScheduleQueue(
             return;
         }
 
-        timer ??= new Timer(static state => ((EventPublicationScheduleQueue)state!).OnTimer(), this, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+        timer ??= timeProvider.CreateTimer(static state => ((EventPublicationScheduleQueue)state!).OnTimer(), this, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
         var next = pending.Values
             .OrderBy(static publication => publication.Schedule.ScheduledForUtc)
             .FirstOrDefault();
@@ -257,7 +258,7 @@ internal sealed class EventPublicationScheduleQueue(
             return;
         }
 
-        var delay = next.Schedule.ScheduledForUtc - DateTimeOffset.UtcNow;
+        var delay = next.Schedule.ScheduledForUtc - timeProvider.GetUtcNow();
         if (delay < TimeSpan.Zero)
         {
             delay = TimeSpan.Zero;

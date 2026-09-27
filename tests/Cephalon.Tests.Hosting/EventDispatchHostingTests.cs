@@ -2233,7 +2233,9 @@ public sealed class EventDispatchHostingTests
     [InlineData(true)]
     public async Task MapCephalonSchedulesCoreInProcessEventPublicationWithoutWolverine(bool delayTerminalReport)
     {
+        var clock = new ControlledTimeProvider();
         var builder = WebApplication.CreateSlimBuilder();
+        builder.Services.AddSingleton<TimeProvider>(clock);
         builder.WebHost.UseTestServer();
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
         {
@@ -2265,7 +2267,8 @@ public sealed class EventDispatchHostingTests
         await app.StartAsync();
 
         var terminalReportGate = app.Services.GetRequiredService<PublicationTerminalReportGate>();
-        var scheduledForUtc = DateTimeOffset.UtcNow.AddMilliseconds(1000);
+        var scheduledForUtc = clock.GetUtcNow().AddMilliseconds(1000);
+        Assert.Same(clock, app.Services.GetRequiredService<TimeProvider>());
         var client = app.GetTestClient();
         var response = await client.PostAsJsonAsync(
             "/engine/event-publications",
@@ -2328,6 +2331,10 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("durableScheduledDelivery=not-claimed", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("providerDelayQueue=not-present", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
+        clock.Advance(TimeSpan.FromMilliseconds(999));
+        Assert.Equal(0, probe.TotalAttempts);
+        clock.Advance(TimeSpan.FromMilliseconds(1));
 
         // Handler completion precedes the publisher's terminal runtime report. Wait for
         // the externally observed publication boundary, including its subscription report.
@@ -3495,10 +3502,11 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("wolverineRequired=false", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
-    private sealed class PublicationTerminalReportGate
+    private sealed class PublicationTerminalReportGate : IDisposable
     {
         public TaskCompletionSource Reached { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
         public TaskCompletionSource Release { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public void Dispose() => Release.TrySetResult();
     }
 
     private sealed class GatedSubscriptionCompletionMiddleware(

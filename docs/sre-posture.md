@@ -1,5 +1,7 @@
 # Cephalon engine SRE posture
 
+September 27, 2026: ENG-745/747 remain under validation; ENG-748 adds 8 h for host-clock Eventing publication scheduling after SDK 11 exposed a due-time/pending-snapshot race. Windows also requires controlled REST timeout fixtures within ENG-745. ENG-729 is 46 h; September scope 562 h, unfinished 478 h plus ENG-532 1 h = 479 h. No maturity or SLO promotion. [Current evidence and acceptance](sre-validation-2026-09.md).
+
 This document is the engine-level Site Reliability Engineering (SRE) posture for the Cephalon engine itself. It is *not* a prescription for consumer applications that adopt Cephalon — those teams own their own SLOs against their own user journeys. Instead, this page declares the reliability semantics the engine commits to as a framework: cold-start time, dispatch latency, allocation discipline, build/restore/release-validation wall time, and test-suite flake rate.
 
 Cross-references: [`engineering-standards.md`](engineering-standards.md), [`benchmarking.md`](benchmarking.md), [`runtime-failure-policy.md`](runtime-failure-policy.md), [`operational-hardening-gap-inventory.md`](operational-hardening-gap-inventory.md), [`test-coverage-roadmap.md`](test-coverage-roadmap.md), [`engine-completion-scorecard.md`](engine-completion-scorecard.md), [`../scripts/sre-posture-support.json`](../scripts/sre-posture-support.json), [`../scripts/sre-stable-baselines.json`](../scripts/sre-stable-baselines.json), [`project-memory.md`](project-memory.md), [`planning-governance.md`](planning-governance.md).

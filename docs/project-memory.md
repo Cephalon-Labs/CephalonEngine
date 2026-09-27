@@ -1,5 +1,7 @@
 # Cephalon Project Memory
 
+September 27, 2026: ENG-745/747 remain under validation; ENG-748 adds 8 h for host-clock Eventing publication scheduling after SDK 11 exposed a due-time/pending-snapshot race. Windows also requires controlled REST timeout fixtures within ENG-745. ENG-729 is 46 h; September scope 562 h, unfinished 478 h plus ENG-532 1 h = 479 h. No maturity or SLO promotion. [Current evidence and acceptance](sre-validation-2026-09.md).
+
 Project memory in this document reflects the repository state observed on `September 16, 2026`.
 
 This page is a repo-oriented orientation snapshot. It is meant to help contributors recover context quickly before they change code, docs, planning, or package surfaces.

@@ -1,3 +1,4 @@
+using Cephalon.Tests.Support;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Behaviors.Hosting;
@@ -816,9 +817,9 @@ public sealed class BehaviorResilienceTests
             => Task.FromResult($"Hello, {input}!");
     }
 
-    private static ControlledResilienceTimeProvider UseControlledTimeoutClock(ServiceCollection services)
+    private static ControlledTimeProvider UseControlledTimeoutClock(ServiceCollection services)
     {
-        var clock = new ControlledResilienceTimeProvider();
+        var clock = new ControlledTimeProvider();
         // Apply after Polly's DI defaults so they cannot replace the fixture clock.
         services.PostConfigure<ResiliencePipelineRegistryOptions<string>>(options =>
             options.BuilderFactory = () => new ResiliencePipelineBuilder { TimeProvider = clock });
@@ -826,7 +827,7 @@ public sealed class BehaviorResilienceTests
     }
 
     private static async Task<TimeoutRejectedException> AssertControlledTimeoutAsync(
-        BehaviorDispatcher dispatcher, ControlledResilienceTimeProvider clock)
+        BehaviorDispatcher dispatcher, ControlledTimeProvider clock)
     {
         using var cleanup = new CancellationTokenSource();
         var input = new SlowInput();
@@ -844,7 +845,7 @@ public sealed class BehaviorResilienceTests
     }
 
     private static async Task<object?> DispatchWithoutTimeoutAsync(
-        BehaviorDispatcher dispatcher, ControlledResilienceTimeProvider clock, IBehaviorContext context)
+        BehaviorDispatcher dispatcher, ControlledTimeProvider clock, IBehaviorContext context)
     {
         using var cleanup = new CancellationTokenSource();
         var input = new SlowInput();

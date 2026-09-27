@@ -6,7 +6,8 @@ namespace Cephalon.Eventing.Services;
 internal sealed class EventPublicationDispatcher(
     IEventPublisher publisher,
     EventingOptions options,
-    EventPublicationScheduleQueue scheduleQueue) : IEventPublicationDispatcher
+    EventPublicationScheduleQueue scheduleQueue,
+    TimeProvider timeProvider) : IEventPublicationDispatcher
 {
     public async ValueTask<EventPublicationResult> PublishAsync(
         EventPublicationRequest request,
@@ -31,7 +32,7 @@ internal sealed class EventPublicationDispatcher(
 
         var publication = CreatePublication(request, effectiveChannelId, metadata);
 
-        var nowUtc = DateTimeOffset.UtcNow;
+        var nowUtc = timeProvider.GetUtcNow();
         if (EventPublicationSchedulingPolicy.TryCreateSchedule(request, nowUtc, out var schedule))
         {
             if (!options.EnablePublicationScheduling)
@@ -55,7 +56,7 @@ internal sealed class EventPublicationDispatcher(
                     effectiveChannelId,
                     request.EventType,
                     EventPublicationOutcomes.Accepted,
-                    DateTimeOffset.UtcNow,
+                    timeProvider.GetUtcNow(),
                     Error: null,
                     metadata);
             }
@@ -77,7 +78,7 @@ internal sealed class EventPublicationDispatcher(
             effectiveChannelId,
             request.EventType,
             EventPublicationOutcomes.Accepted,
-            DateTimeOffset.UtcNow,
+            timeProvider.GetUtcNow(),
             Error: null,
             metadata);
     }

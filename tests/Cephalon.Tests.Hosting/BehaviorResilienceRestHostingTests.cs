@@ -1,3 +1,8 @@
+using Cephalon.Tests.Support;
+using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using Polly.Registry;
+using System.Threading.Channels;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -21,6 +26,7 @@ public sealed class BehaviorResilienceRestHostingTests
     {
         const string route = "/api/v1/tests/resilience/timeout/tasks/alpha";
         var builder = WebApplication.CreateBuilder();
+        var clock = UseControlledTimeoutClock(builder.Services);
         builder.WebHost.UseTestServer();
         builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
         builder.Configuration["Engine:Transports:0"] = "RestApi";
@@ -42,7 +48,7 @@ public sealed class BehaviorResilienceRestHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var response = await client.GetAsync(route);
+        var response = await ExecuteControlledRequestAsync(client, route, app.Services, clock);
         var payload = await response.Content.ReadFromJsonAsync<ResultModelError>();
         using var document = JsonDocument.Parse(await client.GetStringAsync("/openapi/v1.json"));
         var timeoutOperation = document.RootElement
@@ -70,6 +76,7 @@ public sealed class BehaviorResilienceRestHostingTests
     {
         const string route = "/api/v1/tests/resilience/circuit-breaker/tasks/alpha";
         var builder = WebApplication.CreateBuilder();
+        var clock = UseControlledTimeoutClock(builder.Services);
         builder.WebHost.UseTestServer();
         builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
         builder.Configuration["Engine:Transports:0"] = "RestApi";
@@ -96,9 +103,10 @@ public sealed class BehaviorResilienceRestHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var firstResponse = await client.GetAsync(route);
-        var secondResponse = await client.GetAsync(route);
-        var openCircuitResponse = await client.GetAsync(route);
+        var firstResponse = await ExecuteControlledRequestAsync(client, route, app.Services, clock);
+        var secondResponse = await ExecuteControlledRequestAsync(client, route, app.Services, clock);
+        var openCircuitResponse = await client.GetAsync(route).WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.False(app.Services.GetRequiredService<TimeoutProbe>().Started.Reader.TryRead(out _));
         var firstPayload = await firstResponse.Content.ReadFromJsonAsync<ResultModelError>();
         var openCircuitPayload = await openCircuitResponse.Content.ReadFromJsonAsync<ResultModelError>();
 
@@ -287,6 +295,7 @@ public sealed class BehaviorResilienceRestHostingTests
     public async Task BehaviorRestOpenApiDocuments503WhenExecutionCircuitBreakerIsEnabledWithoutTimeout()
     {
         var builder = WebApplication.CreateBuilder();
+        builder.Services.AddSingleton<TimeoutProbe>();
         builder.WebHost.UseTestServer();
         builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
         builder.Configuration["Engine:Transports:0"] = "RestApi";
@@ -328,6 +337,7 @@ public sealed class BehaviorResilienceRestHostingTests
         const string overrideRoute = "/api/v1/tests/resilience/openapi/override/tasks/beta";
 
         var builder = WebApplication.CreateBuilder();
+        var clock = UseControlledTimeoutClock(builder.Services);
         builder.WebHost.UseTestServer();
         builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
         builder.Configuration["Engine:Transports:0"] = "RestApi";
@@ -351,8 +361,8 @@ public sealed class BehaviorResilienceRestHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
-        var defaultResponse = await client.GetAsync(defaultRoute);
-        var overrideResponse = await client.GetAsync(overrideRoute);
+        var defaultResponse = await ExecuteControlledRequestAsync(client, defaultRoute, app.Services, clock);
+        var overrideResponse = await ExecuteControlledRequestAsync(client, overrideRoute, app.Services, clock, timeoutEnabled: false);
         using var document = JsonDocument.Parse(await client.GetStringAsync("/openapi/v1.json"));
         var defaultOperation = document.RootElement
             .GetProperty("paths")
@@ -375,19 +385,68 @@ public sealed class BehaviorResilienceRestHostingTests
         Assert.False(overrideOperation.GetProperty("responses").TryGetProperty("503", out _));
     }
 
+    private static ControlledTimeProvider UseControlledTimeoutClock(IServiceCollection services)
+    {
+        var clock = new ControlledTimeProvider();
+        services.AddSingleton<TimeoutProbe>();
+        services.PostConfigure<ResiliencePipelineRegistryOptions<string>>(options =>
+            options.BuilderFactory = () => new ResiliencePipelineBuilder { TimeProvider = clock });
+        return clock;
+    }
+
+    private static async Task<HttpResponseMessage> ExecuteControlledRequestAsync(
+        HttpClient client, string route, IServiceProvider services, ControlledTimeProvider clock,
+        bool timeoutEnabled = true)
+    {
+        using var cleanup = new CancellationTokenSource();
+        var request = client.GetAsync(route, cleanup.Token);
+        TaskCompletionSource? release = null;
+        try
+        {
+            release = await services.GetRequiredService<TimeoutProbe>().Started.Reader
+                .ReadAsync(cleanup.Token).AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.Equal(timeoutEnabled, clock.ActiveTimerCount > 0);
+            clock.Advance(TimeSpan.FromSeconds(2));
+            if (!timeoutEnabled)
+            {
+                Assert.False(request.IsCompleted);
+                release.TrySetResult();
+            }
+
+            return await request.WaitAsync(TimeSpan.FromSeconds(10));
+        }
+        finally
+        {
+            cleanup.Cancel();
+            release?.TrySetResult();
+        }
+    }
+
+    private sealed class TimeoutProbe
+    {
+        public Channel<TaskCompletionSource> Started { get; } = Channel.CreateUnbounded<TaskCompletionSource>();
+
+        public async Task ExecuteAsync(CancellationToken cancellationToken)
+        {
+            var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            await Started.Writer.WriteAsync(release, cancellationToken);
+            await release.Task.WaitAsync(cancellationToken);
+        }
+    }
+
     private sealed record TimeoutInput(string TaskId);
 
     private sealed record TimeoutOutput(string TaskId, string Status);
 
     [AppBehavior("tests.resilience.timeout")]
-    private sealed class TimeoutBehavior : IAppBehavior<TimeoutInput, TimeoutOutput>
+    private sealed class TimeoutBehavior(TimeoutProbe probe) : IAppBehavior<TimeoutInput, TimeoutOutput>
     {
         public async Task<TimeoutOutput> HandleAsync(
             TimeoutInput input,
             IBehaviorContext context,
             CancellationToken cancellationToken = default)
         {
-            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            await probe.ExecuteAsync(cancellationToken);
             return new TimeoutOutput(input.TaskId, "done");
         }
     }
@@ -423,14 +482,14 @@ public sealed class BehaviorResilienceRestHostingTests
     }
 
     [AppBehavior("tests.resilience.circuit-breaker")]
-    private sealed class CircuitBreakerBehavior : IAppBehavior<CircuitBreakerInput, CircuitBreakerOutput>
+    private sealed class CircuitBreakerBehavior(TimeoutProbe probe) : IAppBehavior<CircuitBreakerInput, CircuitBreakerOutput>
     {
         public async Task<CircuitBreakerOutput> HandleAsync(
             CircuitBreakerInput input,
             IBehaviorContext context,
             CancellationToken cancellationToken = default)
         {
-            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            await probe.ExecuteAsync(cancellationToken);
             return new CircuitBreakerOutput(input.TaskId, "done");
         }
     }
@@ -446,27 +505,27 @@ public sealed class BehaviorResilienceRestHostingTests
     }
 
     [AppBehavior("tests.resilience.openapi.default")]
-    private sealed class OpenApiDefaultTimeoutBehavior : IAppBehavior<OpenApiTimeoutInput, OpenApiTimeoutOutput>
+    private sealed class OpenApiDefaultTimeoutBehavior(TimeoutProbe probe) : IAppBehavior<OpenApiTimeoutInput, OpenApiTimeoutOutput>
     {
         public async Task<OpenApiTimeoutOutput> HandleAsync(
             OpenApiTimeoutInput input,
             IBehaviorContext context,
             CancellationToken cancellationToken = default)
         {
-            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            await probe.ExecuteAsync(cancellationToken);
             return new OpenApiTimeoutOutput(input.TaskId, "done");
         }
     }
 
     [AppBehavior("tests.resilience.openapi.override")]
-    private sealed class OpenApiOverrideTimeoutBehavior : IAppBehavior<OpenApiTimeoutInput, OpenApiTimeoutOutput>
+    private sealed class OpenApiOverrideTimeoutBehavior(TimeoutProbe probe) : IAppBehavior<OpenApiTimeoutInput, OpenApiTimeoutOutput>
     {
         public async Task<OpenApiTimeoutOutput> HandleAsync(
             OpenApiTimeoutInput input,
             IBehaviorContext context,
             CancellationToken cancellationToken = default)
         {
-            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            await probe.ExecuteAsync(cancellationToken);
             return new OpenApiTimeoutOutput(input.TaskId, "done");
         }
     }

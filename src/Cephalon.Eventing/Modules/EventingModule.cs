@@ -275,6 +275,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
 
         if (hasPublishingPath)
         {
+            services.TryAddSingleton(TimeProvider.System);
             services.TryAddSingleton<EventPublicationScheduleQueue>();
             services.TryAddSingleton<EventPublicationRuntimeCatalog>();
             services.TryAddSingleton<IEventPublicationRuntimeCatalog>(static provider => provider.GetRequiredService<EventPublicationRuntimeCatalog>());

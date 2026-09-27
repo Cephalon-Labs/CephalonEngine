@@ -568,7 +568,7 @@ Issue link: [#1422](https://github.com/Cephalon-Labs/CephalonEngine/issues/1422)
 
 Status: in-progress
 
-Estimate: 38
+Estimate: 46
 
 Phase: 15
 
@@ -592,7 +592,7 @@ Maturity and ownership: Cross-cutting evidence for M2/M3 and selective M4; Cepha
 
 Quality dimensions: Performance + Availability + Scalability + Reliability + Auditability.
 
-Estimate basis: engineering hours including review, tests and docs; revised range 29–57 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
+Estimate basis: engineering hours including review, tests and docs; revised range 35–69 h, excluding external wait. Re-estimate at ADR/first-provider evidence.
 
 Plan: [Framework completion](framework-completion-plan.md); [primary-source research](framework-research-2026-09.md).
 
@@ -602,6 +602,8 @@ Breakdown: ENG-745 (8 h, active in Sprint 16) repairs deterministic validation a
 Latest CI: `c28edb3c` passes all 885 Windows composition tests but fails MongoDB CDC fixture startup before the test body (819/820 hosting passed). ENG-747 repairs lost deadline diagnostics; the slow-start cause is not yet established. ENG-745 remains open pending complete CI acceptance.
 
 Later CI: `34fc2da0` passes SDK 11 but Windows composition fails the MySQL one-shot failure assertion after 889 successes. A one-second provider retry consumes an empty batch and reports Idle before a delayed observer sees Failed. ENG-747 grows 4 → 6 h and includes the matching PostgreSQL fixture repair. Full acceptance remains open.
+
+September 27 checkpoint: release `09e7eb6c` passed Linux, but Windows REST timeout returned OK before the timer callback (ENG-745) and SDK 11 scheduling delivered before the pending snapshot assertion (new ENG-748). Host/contract compatibility passed both OS. ENG-748 adds 8 h; current parent 46 h = 8/24/6/8. ENG-745 retains its original 8 h because REST timeout fixtures are within the agreed resilience scope. Full release acceptance remains open.
 
 
 ### ENG-745 Stabilize resilience timeout and isolate integration telemetry
@@ -626,7 +628,7 @@ Test: Running
 
 Benchmark: Needed
 
-Parent: ENG-729 / #1422. Included in its revised 38 h non-additive rollup.
+Parent: ENG-729 / #1422. Included in its revised 46 h non-additive rollup.
 
 Scope: Replace timeout-versus-delay races with explicitly controlled timeout evidence; isolate showcase HTTP integration tests from an absent OTLP collector while retaining separate exporter integration proof. Measure focused and full suites and preserve all release gates.
 
@@ -662,7 +664,7 @@ Test: Needed
 
 Benchmark: Needed
 
-Parent: ENG-729 / #1422. Included in its revised 38 h non-additive rollup.
+Parent: ENG-729 / #1422. Included in its revised 46 h non-additive rollup.
 
 Scope: Complete the remaining ENG-729 declared workload/hardware p95/p99, throughput/allocation/startup/recovery objectives, load/fault/backpressure/exhaustion/cancellation evidence, dashboards, telemetry cardinality/redaction/cost and CI flake-rate assessment. Renew full-release wall-time evidence after ENG-745 without widening historical baselines from one run.
 
@@ -701,7 +703,7 @@ Test: Running
 
 Benchmark: N/A
 
-Parent: ENG-729 / #1422. Observed fixture work increases its non-additive rollup from 32 h to 38 h; ENG-745/746 remain 8/24 h. ENG-747 is 6 h: 4 h MongoDB diagnostics plus 2 h MySQL/PostgreSQL failure-observation repair.
+Parent: ENG-729 / #1422. Current parent is 46 h after ENG-748; the following records ENG-747 estimate history. Observed fixture work increases its non-additive rollup from 32 h to 38 h; ENG-745/746 remain 8/24 h. ENG-747 is 6 h: 4 h MongoDB diagnostics plus 2 h MySQL/PostgreSQL failure-observation repair.
 
 Scope: Preserve process output and the last driver failure when a MongoDB fixture readiness deadline expires during a command or retry delay. Keep caller cancellation distinct, reject pre-canceled startup before launching a process, and retain the existing 20-second deadlines and real MongoDB CDC assertions. Preserve one-shot MySQL/PostgreSQL lifecycle failures for their existing bounded assertions by aligning only the failure fixtures' provider retry interval with Oracle and hosting fixtures (600 s); production retries and success-path tests remain unchanged.
 
@@ -710,6 +712,40 @@ Acceptance: Deterministic deadline/caller-cancellation/early-cancellation/succes
 Quality dimensions: Reliability + Testability + Auditability.
 
 Estimate basis: 6 engineering hours: the original 4 h diagnostic repair plus 2 h for the later MySQL observation race and matching PostgreSQL audit/fix; excludes external waiting. No production runtime or maturity change.
+
+Evidence: [September SRE follow-up](sre-validation-2026-09.md).
+
+### ENG-748 Support host clocks for deterministic publication scheduling
+
+GitHub issue: #1441
+
+Issue link: [#1441](https://github.com/Cephalon-Labs/CephalonEngine/issues/1441)
+
+Status: in-progress
+
+Estimate: 8
+
+Phase: 15
+
+Iteration: Sprint 16
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Running
+
+Benchmark: N/A
+
+Parent: ENG-729 / #1422. Adds 8 h of observed scheduler integration work; revised parent is 46 h (ENG-745/746/747/748 = 8/24/6/8), non-additive.
+
+Scope: Use a host-provided TimeProvider for Eventing publication deadlines, queue timers and dispatcher/queue observation times, with TimeProvider.System as the default. Preserve existing public contracts and bounded process-local ownership. Share a one-shot controlled test clock and prove pending/due/terminal-report boundaries without elapsed-wall-time races.
+
+Acceptance: System default and host override, relative/absolute and past-due scheduling, earlier deadline rearming, exactly one dispatch per pending entry, sync/async disposal and failed-dispatch timestamps pass. Existing delayed-terminal-report hosting cases remain meaningful. Full Windows/Linux release, .NET 11 readiness, host compatibility and contract compatibility evidence is recorded. No runtime API or maturity promotion.
+
+Quality dimensions: Reliability + Testability + Modularity + Maintainability + Auditability.
+
+Estimate basis: 8 engineering hours for implementation, review, regression tests, docs and tracking; excludes external CI waiting. Trigger: SDK 11 release on 09e7eb6c observed a one-second schedule dispatch before the pending HTTP snapshot assertion.
 
 Evidence: [September SRE follow-up](sre-validation-2026-09.md).
 

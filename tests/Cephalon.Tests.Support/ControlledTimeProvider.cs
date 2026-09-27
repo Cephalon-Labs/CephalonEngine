@@ -1,8 +1,8 @@
-namespace Cephalon.Tests.Behaviors;
+namespace Cephalon.Tests.Support;
 
-// Only one-shot timers are needed by the Polly timeout fixtures. Advancing time never
+// Only one-shot timers are needed by the timeout and publication fixtures. Advancing time never
 // waits for a thread-pool timer, so runner load cannot race a simulated successful effect.
-internal sealed class ControlledResilienceTimeProvider : TimeProvider
+internal sealed class ControlledTimeProvider : TimeProvider
 {
     private readonly object _gate = new();
     private readonly List<ControlledTimer> _timers = [];
@@ -53,7 +53,7 @@ internal sealed class ControlledResilienceTimeProvider : TimeProvider
     }
 
     private sealed class ControlledTimer(
-        ControlledResilienceTimeProvider clock, TimerCallback callback, object? state) : ITimer
+        ControlledTimeProvider clock, TimerCallback callback, object? state) : ITimer
     {
         private bool _disposed;
         public TimerCallback Callback { get; } = callback;
@@ -64,7 +64,7 @@ internal sealed class ControlledResilienceTimeProvider : TimeProvider
         {
             if (period != Timeout.InfiniteTimeSpan)
             {
-                throw new NotSupportedException("The resilience fixture supports one-shot timers only.");
+                throw new NotSupportedException("The controlled clock supports one-shot timers only.");
             }
 
             lock (clock._gate)

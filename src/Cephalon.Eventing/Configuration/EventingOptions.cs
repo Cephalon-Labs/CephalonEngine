@@ -314,6 +314,8 @@ public sealed class EventingOptions
     /// <remarks>
     /// Delayed publications are held in the current process until their due time and then handed to the active
     /// publisher. This is a lightweight Wolverine-free scheduling baseline, not a durable or distributed scheduler.
+    /// Deadlines and queue timers use the host's registered <see cref="TimeProvider"/>, defaulting to
+    /// <see cref="TimeProvider.System"/>. A custom provider must supply consistent UTC time and timer behavior.
     /// </remarks>
     public bool EnablePublicationScheduling { get; set; }
 
