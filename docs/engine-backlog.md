@@ -2,7 +2,9 @@
 
 September 27 continuation: ENG-746 is active in Sprint 16 with ENG-749 (8 h, cursor query and release timing retention) and ENG-750 (16 h, remaining workload/SLO evidence). Parent estimates remain ENG-746 24 h and ENG-729 50 h, non-additive; ENG-745/747/748 remain complete. September scope is **566 h**; **18 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 remains 238 h total / 168 h remaining plus ENG-532. The latest `340c408e` release passed tests but failed the Windows journal benchmark. [Current evidence](sre-evidence-2026-09-27.md) separates this from previous acceptance; no maturity or SLO promotion.
 
-Latest backlog status was reconciled on `September 27, 2026`; dated checkpoints below retain their historical scope.
+Backlog status in this document reflects the repository state as of `September 16, 2026`.
+
+That date is the frozen maturity-audit baseline consumed by `publish-surface-maturity-report.ps1`; current task status was reconciled on **September 27, 2026** as recorded above. Dated checkpoints below retain their historical scope.
 
 ## M3/M4 elevation program (June 2026)
 
