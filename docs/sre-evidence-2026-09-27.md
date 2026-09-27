@@ -48,6 +48,8 @@ The accepted Windows journal benchmark measured **147.7 μs**, Error **436.9 μs
 
 ## ENG-750 proof sequence (planned, not executed)
 
+Continuation: this plan is now split into ENG-751 (3 h, collector correction under validation) and ENG-752 (13 h, remaining evidence). [Current collector contract](ci-flake-collector.md). The table below retains its original estimate basis.
+
 The retained 16 h estimate covers an initial declared workload set, including review, validation, documentation and tracking. Additional provider/host permutations require explicit scope and estimate changes before making broader claims. These work packages subdivide ENG-750; they are not additive tasks or completed evidence.
 
 | Work package | Estimate | Required output |

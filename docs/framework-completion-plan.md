@@ -1,6 +1,6 @@
 # Cephalon framework completion plan
 
-September 27 SRE acceptance: ENG-749 (8 h) is complete with the relational cursor projection and retained release-run timing receipts. ENG-746 remains 24 h, with 8 h delivered and ENG-750 retaining 16 h; ENG-729 remains 50 h, with 34 h delivered. Parent rollups are non-additive. September scope remains **566 h**; **17 unfinished leaves / 448 h**, plus ENG-532 **1 h** = **449 h**. Phase 15 remains 238 h total / 160 h remaining plus ENG-532. [Accepted source and limits](sre-evidence-2026-09-27.md) record passing CI on `e67697ae`; stable SLOs, hosted-runner variance and maturity promotion remain outside this closure.
+September 27 collector continuation: ENG-750 is active with ENG-751 (3 h, collector correctness) and ENG-752 (13 h, remaining workload/statistical evidence). Parent estimates remain non-additive: ENG-750 16 h, ENG-746 24 h, ENG-729 50 h. September scope remains **566 h**; **18 unfinished leaves / 448 h**, plus ENG-532 **1 h** = **449 h**. Phase 15 remains 238 h total / 160 h remaining plus ENG-532. [Collector contract and evidence](ci-flake-collector.md) describe the implementation under validation; no stable SLO or maturity promotion.
 
 Planning date: **September 16, 2026**. Owner: **Cephalon-Neza**. Planning delivery: **ENG-718**. [GitHub Project](https://github.com/orgs/Cephalon-Labs/projects/2). [Research and sources](framework-research-2026-09.md).
 

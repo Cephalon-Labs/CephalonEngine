@@ -38,7 +38,7 @@
       "status": "pending-stable-baseline",
       "blockerClass": "ci-metadata-unavailable",
       "blockerSummary": "A live 7-day CI run/rerun history is required before flake-rate can be baselined; the collector currently reports Actions enabled and target workflows active, but no completed matching Actions runs.",
-      "nextEvidenceNeeded": "Let the active release-validation, provider live, or publish-release workflows publish artifacts/sre-ci-flake-rate/ci-flake-rate.json until it reports promotionAllowed=true from completed GitHub Actions metadata.",
+      "nextEvidenceNeeded": "Historical captured evidence below remains unchanged. Use collector schema 2.0.0 coverage/attribution reports, then establish equivalent test outcomes and a reviewed statistical sampling method under ENG-752; PromotionAllowed is always false in the collector. See docs/ci-flake-collector.md.",
       "evidence": [
         {
           "kind": "ci-flake-rate-report",

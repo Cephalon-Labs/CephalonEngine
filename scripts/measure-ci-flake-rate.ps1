@@ -3,13 +3,14 @@ param(
     [int]$WindowDays = 7,
     [decimal]$TargetFlakeRatePercent = 0.5,
     [int]$MinimumCompletedRunCount = 5,
+    [datetimeoffset]$WindowEndUtc = [datetimeoffset]::UtcNow,
     [string[]]$WorkflowName = @("Release Validation", "Provider Live Testcontainers", "Publish Release"),
     [string]$WorkflowRunsJsonPath = "",
     [string]$ActionsPermissionsJsonPath = "",
     [string]$WorkflowsJsonPath = "",
     [string]$AttemptJobsDirectory = "",
     [string]$OutputPath = "artifacts/sre-ci-flake-rate",
-    [string]$TestFailurePattern = "(?i)(Pester|dotnet test|testcontainers|test results|Run tests|Run release validation)",
+    [string]$TestFailurePattern = "(?i)(Pester|dotnet test|Run tests)",
     [switch]$AllowUnavailable,
     [switch]$RequirePromotion
 )
@@ -105,12 +106,82 @@ function Invoke-GitHubApiJson {
     }
 }
 
+function Test-CompleteCollection {
+    param([AllowNull()][object]$Value, [string]$CollectionName)
+
+    if ($null -eq $Value -or $Value.PSObject.Properties.Name -notcontains 'total_count' -or
+        $Value.PSObject.Properties.Name -notcontains $CollectionName) { return $false }
+    $items = @($Value.$CollectionName)
+    if ($null -eq $Value.total_count -or [int]$Value.total_count -ne $items.Count) { return $false }
+    $ids = @($items | ForEach-Object {
+        if ($null -ne $_ -and $_.PSObject.Properties.Name -contains 'id') { [string]$_.id }
+    })
+    return $ids.Count -eq $items.Count -and @($ids | Where-Object { [string]::IsNullOrWhiteSpace($_) }).Count -eq 0 -and
+        @($ids | Sort-Object -Unique).Count -eq $ids.Count
+}
+
+function Get-PagedGitHubCollection {
+    param([string]$Endpoint, [string]$CollectionName, [int]$MaximumItems = 10000)
+
+    $items = [System.Collections.Generic.List[object]]::new()
+    $expectedCount = $null
+    $status = 'incomplete-github-pagination'
+    $detail = 'Collection coverage could not be established.'
+    for ($page = 1; $page -le [math]::Ceiling($MaximumItems / 100); $page++) {
+        $separator = if ($Endpoint.Contains('?')) { '&' } else { '?' }
+        $payload = Invoke-GitHubApiJson -Endpoint "${Endpoint}${separator}per_page=100&page=$page"
+        if ($payload.Status -ne 'available') {
+            $detail = "Page ${page}: $($payload.Detail)"
+            if ($page -eq 1) { return $payload }
+            break
+        }
+        $value = $payload.Value
+        if ($null -eq $value -or $value.PSObject.Properties.Name -notcontains 'total_count' -or
+            $value.PSObject.Properties.Name -notcontains $CollectionName -or $null -eq $value.total_count) {
+            $detail = "Page $page did not contain a collection and total_count."
+            break
+        }
+        $count = [int]$value.total_count
+        if ($null -eq $expectedCount) { $expectedCount = $count }
+        if ($count -ne $expectedCount -or $count -lt 0) {
+            $detail = 'Collection total_count changed during pagination.'
+            break
+        }
+        $pageItems = @($value.$CollectionName)
+        foreach ($item in $pageItems) { $items.Add($item) }
+        # Filtered workflow searches are capped by GitHub at 1,000 results.
+        # Even an exact cap cannot establish absence of omitted matches.
+        if ($expectedCount -ge $MaximumItems) {
+            $detail = "Collection reached the $MaximumItems item safety/search limit. Narrow the collection window."
+            break
+        }
+        if ($items.Count -ge $expectedCount) {
+            $candidate = [pscustomobject]@{ total_count = $expectedCount; $CollectionName = $items.ToArray() }
+            if (Test-CompleteCollection -Value $candidate -CollectionName $CollectionName) {
+                $status = 'available'
+                $detail = "Collected $($items.Count) unique items across $page page(s)."
+            }
+            else { $detail = 'Collection contains duplicate or missing item IDs, or an inconsistent count.' }
+            break
+        }
+        if ($pageItems.Count -lt 100) {
+            $detail = 'A short page ended before total_count was reached.'
+            break
+        }
+    }
+    return [pscustomobject]@{
+        Status = $status; Detail = $detail
+        Value = [pscustomobject]@{ total_count = $expectedCount; $CollectionName = $items.ToArray() }
+    }
+}
+
 function Get-WorkflowRunsPayload {
     param(
         [Parameter(Mandatory = $true)]
         [string]$Repository,
         [Parameter(Mandatory = $true)]
         [datetime]$WindowStartUtc,
+        [datetime]$WindowEndUtc,
         [string]$WorkflowRunsJsonPath,
         [Parameter(Mandatory = $true)]
         [string]$RepoRoot
@@ -129,8 +200,11 @@ function Get-WorkflowRunsPayload {
         }
     }
 
-    $createdFilter = [uri]::EscapeDataString(">=$($WindowStartUtc.ToString("yyyy-MM-ddTHH:mm:ssZ"))")
-    return Invoke-GitHubApiJson -Endpoint "repos/$Repository/actions/runs?per_page=100&created=$createdFilter"
+    $invariant = [System.Globalization.CultureInfo]::InvariantCulture
+    $start = $WindowStartUtc.ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ', $invariant)
+    $end = $WindowEndUtc.ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ', $invariant)
+    $createdFilter = [uri]::EscapeDataString("$start..$end")
+    return Get-PagedGitHubCollection -Endpoint "repos/$Repository/actions/runs?created=$createdFilter" -CollectionName workflow_runs -MaximumItems 1000
 }
 
 function Get-ActionsPermissionsPayload {
@@ -198,7 +272,7 @@ function Get-WorkflowDefinitionsPayload {
         }
     }
 
-    return Invoke-GitHubApiJson -Endpoint "repos/$Repository/actions/workflows?per_page=100"
+    return Get-PagedGitHubCollection -Endpoint "repos/$Repository/actions/workflows" -CollectionName workflows
 }
 
 function Get-WorkflowRunAttemptJobsPayload {
@@ -232,7 +306,7 @@ function Get-WorkflowRunAttemptJobsPayload {
         }
     }
 
-    return Invoke-GitHubApiJson -Endpoint "repos/$Repository/actions/runs/$RunId/attempts/$AttemptNumber/jobs?per_page=100"
+    return Get-PagedGitHubCollection -Endpoint "repos/$Repository/actions/runs/$RunId/attempts/$AttemptNumber/jobs" -CollectionName jobs
 }
 
 function Convert-ToNormalizedWorkflowDefinition {
@@ -296,8 +370,17 @@ function Convert-ToNormalizedWorkflowRun {
     )
 
     $createdAt = [datetime]::MinValue
-    if (-not [string]::IsNullOrWhiteSpace([string]$Run.created_at)) {
-        $createdAt = ([datetimeoffset]::Parse([string]$Run.created_at, [System.Globalization.CultureInfo]::InvariantCulture)).UtcDateTime
+    if ($Run.created_at -is [datetime]) {
+        # ConvertFrom-Json can materialize ISO timestamps as DateTime. Casting
+        # that value to string discards its timezone and shifts it on reparse.
+        $createdAt = $Run.created_at.ToUniversalTime()
+    }
+    elseif ($Run.created_at -is [datetimeoffset]) {
+        $createdAt = $Run.created_at.UtcDateTime
+    }
+    elseif (-not [string]::IsNullOrWhiteSpace([string]$Run.created_at)) {
+        $createdAt = ([datetimeoffset]::Parse([string]$Run.created_at, [System.Globalization.CultureInfo]::InvariantCulture,
+            [System.Globalization.DateTimeStyles]::AssumeUniversal)).UtcDateTime
     }
 
     [pscustomobject]([ordered]@{
@@ -346,12 +429,8 @@ function Test-HasTestFailureSignal {
 
     $jobs = @($JobsPayload.jobs)
     foreach ($job in $jobs) {
-        $jobName = [string]$job.name
-        $jobConclusion = [string]$job.conclusion
-        if ($jobConclusion -eq "failure" -and $jobName -match $Pattern) {
-            return $true
-        }
-
+        # A job name (or a whole release-validation step) cannot identify which
+        # test failed. Only explicit failed test-step names are heuristic signals.
         foreach ($step in @($job.steps)) {
             $stepName = [string]$step.name
             $stepConclusion = [string]$step.conclusion
@@ -364,19 +443,34 @@ function Test-HasTestFailureSignal {
     return $false
 }
 
+function Test-CompleteAttemptJobs {
+    param([AllowNull()][object]$Value)
+    if (-not (Test-CompleteCollection -Value $Value -CollectionName jobs) -or @($Value.jobs).Count -eq 0) { return $false }
+    foreach ($job in $Value.jobs) {
+        if ($job.PSObject.Properties.Name -notcontains 'steps' -or $null -eq $job.steps) { return $false }
+        foreach ($step in $job.steps) {
+            if ($null -eq $step -or $step.PSObject.Properties.Name -notcontains 'name' -or
+                $step.PSObject.Properties.Name -notcontains 'conclusion') { return $false }
+        }
+    }
+    return $true
+}
+
 function Invoke-CiFlakeRateMeasurement {
+    [CmdletBinding()]
     param(
         [string]$Repository = "Cephalon-Labs/CephalonEngine",
         [int]$WindowDays = 7,
         [decimal]$TargetFlakeRatePercent = 0.5,
         [int]$MinimumCompletedRunCount = 5,
+        [datetimeoffset]$WindowEndUtc = [datetimeoffset]::UtcNow,
         [string[]]$WorkflowName = @("Release Validation", "Provider Live Testcontainers", "Publish Release"),
         [string]$WorkflowRunsJsonPath = "",
         [string]$ActionsPermissionsJsonPath = "",
         [string]$WorkflowsJsonPath = "",
         [string]$AttemptJobsDirectory = "",
         [string]$OutputPath = "artifacts/sre-ci-flake-rate",
-        [string]$TestFailurePattern = "(?i)(Pester|dotnet test|testcontainers|test results|Run tests|Run release validation)",
+        [string]$TestFailurePattern = "(?i)(Pester|dotnet test|Run tests)",
         [switch]$AllowUnavailable,
         [switch]$RequirePromotion
     )
@@ -388,12 +482,16 @@ function Invoke-CiFlakeRateMeasurement {
     if ($MinimumCompletedRunCount -le 0) {
         throw "MinimumCompletedRunCount must be greater than zero."
     }
+    if ($TargetFlakeRatePercent -lt 0 -or $TargetFlakeRatePercent -gt 100) {
+        throw 'TargetFlakeRatePercent must be between zero and 100.'
+    }
 
     $repoRoot = Resolve-RepoRoot
-    $windowStartUtc = [DateTime]::UtcNow.AddDays(-$WindowDays)
+    $windowStartUtc = $WindowEndUtc.UtcDateTime.AddDays(-$WindowDays)
     $workflowRunsPayload = Get-WorkflowRunsPayload `
         -Repository $Repository `
         -WindowStartUtc $windowStartUtc `
+        -WindowEndUtc $WindowEndUtc.UtcDateTime `
         -WorkflowRunsJsonPath $WorkflowRunsJsonPath `
         -RepoRoot $repoRoot
 
@@ -412,10 +510,12 @@ function Invoke-CiFlakeRateMeasurement {
     $availabilityStatus = $workflowRunsPayload.Status
     $availabilityDetail = $workflowRunsPayload.Detail
     $rawRuns = @()
-    if ($workflowRunsPayload.Status -eq "available") {
+    $runCollectionComplete = $workflowRunsPayload.Status -eq 'available' -and
+        (Test-CompleteCollection -Value $workflowRunsPayload.Value -CollectionName workflow_runs)
+    if ($null -ne $workflowRunsPayload.Value -and $workflowRunsPayload.Value.PSObject.Properties.Name -contains 'workflow_runs') {
         $rawRuns = @($workflowRunsPayload.Value.workflow_runs)
     }
-    elseif (-not $AllowUnavailable) {
+    elseif ($workflowRunsPayload.Status -ne 'available' -and -not $AllowUnavailable) {
         throw "CI flake-rate metadata is unavailable: $availabilityStatus. $availabilityDetail"
     }
 
@@ -445,7 +545,9 @@ function Invoke-CiFlakeRateMeasurement {
     $workflowReadinessDetail = $workflowDefinitionsPayload.Detail
     $workflowDispatchReadinessStatus = $workflowDefinitionsPayload.Status
     $workflowDispatchReadinessDetail = $workflowDefinitionsPayload.Detail
-    if ($workflowDefinitionsPayload.Status -eq "available") {
+    $workflowCollectionComplete = $workflowDefinitionsPayload.Status -eq 'available' -and
+        (Test-CompleteCollection -Value $workflowDefinitionsPayload.Value -CollectionName workflows)
+    if ($workflowCollectionComplete) {
         $workflowDefinitions = @(
             @($workflowDefinitionsPayload.Value.workflows) |
                 ForEach-Object {
@@ -503,19 +605,32 @@ function Invoke-CiFlakeRateMeasurement {
         }
     }
 
-    $allRuns = @(
+    elseif ($workflowDefinitionsPayload.Status -eq 'available') {
+        $workflowReadinessStatus = 'incomplete-workflow-metadata'
+        $workflowReadinessDetail = 'Workflow definitions have missing/duplicate IDs or do not match total_count.'
+    }
+
+    $normalizedRuns = @(
         $rawRuns |
             ForEach-Object { Convert-ToNormalizedWorkflowRun -Run $_ } |
             Where-Object { Test-WorkflowNameIncluded -Name $_.Name -IncludedNames $WorkflowName } |
             Sort-Object CreatedAtUtc
     )
+    $allRuns = @($normalizedRuns | Where-Object {
+        $createdAt = ([datetimeoffset]::Parse($_.CreatedAtUtc, [System.Globalization.CultureInfo]::InvariantCulture)).UtcDateTime
+        $createdAt -ge $windowStartUtc -and $createdAt -le $WindowEndUtc.UtcDateTime
+    } | Sort-Object Id -Unique | Sort-Object CreatedAtUtc)
     $completedRuns = @($allRuns | Where-Object { $_.Status -eq "completed" -and -not [string]::IsNullOrWhiteSpace($_.Conclusion) })
     $successfulRuns = @($completedRuns | Where-Object { $_.Conclusion -eq "success" })
     $failedRuns = @($completedRuns | Where-Object { $_.Conclusion -eq "failure" })
+    $eligibleRuns = @($completedRuns | Where-Object { $_.Conclusion -in @('success', 'failure') })
+    $excludedCompletedRuns = @($completedRuns | Where-Object { $_.Conclusion -notin @('success', 'failure') })
 
     $testFailureSignals = @{}
     $inspectedAttemptCount = 0
     $attemptInspectionUnavailableCount = 0
+    $attemptInspectionUnattributedCount = 0
+    $attemptInspections = @()
     foreach ($run in @($completedRuns | Where-Object { $_.Conclusion -eq "failure" -or ($_.Conclusion -eq "success" -and $_.RunAttempt -gt 1) })) {
         $attemptNumbers = if ($run.Conclusion -eq "success" -and $run.RunAttempt -gt 1) {
             1..($run.RunAttempt - 1)
@@ -532,14 +647,25 @@ function Invoke-CiFlakeRateMeasurement {
                 -AttemptJobsDirectory $AttemptJobsDirectory `
                 -RepoRoot $repoRoot
 
-            if ($attemptJobsPayload.Status -eq "available") {
+            $inspectionStatus = $attemptJobsPayload.Status
+            if ($inspectionStatus -eq 'available' -and
+                (Test-CompleteAttemptJobs -Value $attemptJobsPayload.Value)) {
                 $inspectedAttemptCount++
                 if (Test-HasTestFailureSignal -JobsPayload $attemptJobsPayload.Value -Pattern $TestFailurePattern) {
                     $testFailureSignals["$($run.Id):$attemptNumber"] = $true
+                    $inspectionStatus = 'test-step-failure-signal'
+                }
+                else {
+                    $attemptInspectionUnattributedCount++
+                    $inspectionStatus = 'unattributed-attempt'
                 }
             }
             else {
                 $attemptInspectionUnavailableCount++
+                if ($inspectionStatus -eq 'available') { $inspectionStatus = 'incomplete-attempt-jobs' }
+            }
+            $attemptInspections += [pscustomobject]@{
+                RunId = $run.Id; Attempt = $attemptNumber; Status = $inspectionStatus; Detail = $attemptJobsPayload.Detail
             }
         }
     }
@@ -567,53 +693,58 @@ function Invoke-CiFlakeRateMeasurement {
             continue
         }
 
-        $failedSameCommitRuns = @(
-            $failedRuns |
-                Where-Object {
-                    $_.Name -eq $run.Name -and
-                    $_.HeadSha -eq $run.HeadSha -and
-                    $_.CreatedAtUtc -le $run.CreatedAtUtc -and
-                    $testFailureSignals.ContainsKey("$($_.Id):$($_.RunAttempt)")
-                }
-        )
-        if ($failedSameCommitRuns.Count -gt 0) {
-            $flakeEvents += [pscustomobject]([ordered]@{
-                WorkflowName = $run.Name
-                HeadSha      = $run.HeadSha
-                RunId        = $run.Id
-                SuccessAttempt = $run.RunAttempt
-                FailedRunIds = @($failedSameCommitRuns | ForEach-Object { $_.Id })
-                EvidenceKind = "successful-run-after-test-failure-on-same-commit"
-                Url          = $run.HtmlUrl
-            })
-        }
+        # Separate runs can use different inputs, events and environments even
+        # at the same SHA. They neither resolve a failure nor prove a test flake.
     }
 
     $flakeEventCount = @($flakeEvents).Count
-    $flakeRatePercent = if ($completedRuns.Count -eq 0) {
-        [decimal]0
+    $flakeRatePercent = if ($eligibleRuns.Count -eq 0) {
+        $null
     }
     else {
-        [decimal]::Round((([decimal]$flakeEventCount / [decimal]$completedRuns.Count) * 100), 4)
+        [decimal]::Round((([decimal]$flakeEventCount / [decimal]$eligibleRuns.Count) * 100), 4)
     }
 
     if ($workflowRunsPayload.Status -ne "available") {
         $availabilityStatus = $workflowRunsPayload.Status
     }
-    elseif ($completedRuns.Count -eq 0) {
-        $availabilityStatus = "unavailable-no-actions-history"
-        $availabilityDetail = "No completed matching GitHub Actions workflow runs were available in the requested window."
+    elseif (-not $runCollectionComplete) {
+        $availabilityStatus = 'incomplete-actions-history'
+        $availabilityDetail = 'Run IDs/counts do not establish complete collection coverage.'
     }
-    elseif ($completedRuns.Count -lt $MinimumCompletedRunCount) {
+    elseif ($eligibleRuns.Count -eq 0) {
+        $availabilityStatus = "unavailable-no-actions-history"
+        $availabilityDetail = "No matching success/failure workflow runs were available in the requested creation window."
+    }
+    elseif ($eligibleRuns.Count -lt $MinimumCompletedRunCount) {
         $availabilityStatus = "insufficient-actions-history"
-        $availabilityDetail = "Only $($completedRuns.Count) completed matching workflow run(s) were available; $MinimumCompletedRunCount are required for promotion."
+        $availabilityDetail = "Only $($eligibleRuns.Count) eligible workflow run(s) were available; $MinimumCompletedRunCount are required for descriptive assessment."
     }
     else {
         $availabilityStatus = "measured"
         $availabilityDetail = "Completed matching GitHub Actions workflow runs were available for the requested window."
     }
 
-    $promotionAllowed = $availabilityStatus -eq "measured" -and $flakeRatePercent -le $TargetFlakeRatePercent
+    $workflowCoverage = @($WorkflowName | ForEach-Object {
+        $name = $_
+        [pscustomobject]@{ WorkflowName = $name; EligibleRunCount = @($eligibleRuns | Where-Object Name -eq $name).Count }
+    })
+    $assessmentBlockers = @(
+        if (-not $runCollectionComplete) { 'incomplete-run-collection' }
+        if ($attemptInspectionUnavailableCount -gt 0) { 'incomplete-attempt-inspection' }
+        if ($attemptInspectionUnattributedCount -gt 0) { 'unattributed-attempts' }
+        if ($failedRuns.Count -gt 0) { 'unresolved-failed-runs' }
+        if ($excludedCompletedRuns.Count -gt 0) { 'excluded-terminal-outcomes' }
+        if ($allRuns.Count -gt $completedRuns.Count) { 'unfinished-runs' }
+        if ($actionsReadinessStatus -ne 'actions-enabled') { 'actions-readiness-unverified' }
+        if ($workflowReadinessStatus -ne 'active-workflows') { 'workflow-readiness-unverified' }
+        if ($eligibleRuns.Count -lt $MinimumCompletedRunCount -or
+            @($workflowCoverage | Where-Object EligibleRunCount -lt $MinimumCompletedRunCount).Count -gt 0) { 'insufficient-workflow-history' }
+        if ($null -ne $flakeRatePercent -and $flakeRatePercent -gt $TargetFlakeRatePercent) { 'observed-rate-over-target' }
+    )
+    # Run/step metadata cannot establish per-test identity, statistical confidence,
+    # or independent representative samples. A clean observed rate is not an SLO.
+    $promotionAllowed = $false
     $readinessBlockerClass = if ($actionsReadinessStatus -eq "actions-disabled") {
         "actions-disabled"
     }
@@ -636,12 +767,13 @@ function Invoke-CiFlakeRateMeasurement {
         $availabilityStatus
     }
 
-    $status = if ($promotionAllowed) {
-        "stable-baseline-candidate"
-    }
-    elseif ($availabilityStatus -eq "measured") {
+    $status = if ($availabilityStatus -eq 'measured' -and $flakeRatePercent -gt $TargetFlakeRatePercent) {
         "measured-over-target"
     }
+    elseif ($availabilityStatus -eq 'measured' -and $assessmentBlockers.Count -gt 0) {
+        'measured-with-blockers'
+    }
+    elseif ($availabilityStatus -eq 'measured') { 'measured-within-target' }
     elseif ($availabilityStatus -eq "insufficient-actions-history") {
         "pending-insufficient-history"
     }
@@ -650,13 +782,15 @@ function Invoke-CiFlakeRateMeasurement {
     }
 
     $report = [pscustomobject]([ordered]@{
-        '$schemaVersion' = "1.1.0"
+        '$schemaVersion' = "2.0.0"
         Status = $status
         SliId = "engine.tests.flake-rate.7d"
         GeneratedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
         Repository = $Repository
         WindowDays = $WindowDays
         WindowStartUtc = $windowStartUtc.ToString("O")
+        WindowEndUtc = $WindowEndUtc.ToUniversalTime().ToString('O')
+        WindowBasis = 'run-created-at; outcomes observed at collection time'
         WorkflowNames = $WorkflowName
         TargetFlakeRatePercent = $TargetFlakeRatePercent
         MinimumCompletedRunCount = $MinimumCompletedRunCount
@@ -679,16 +813,35 @@ function Invoke-CiFlakeRateMeasurement {
         ReadinessBlockerClass = $readinessBlockerClass
         TotalRunCount = $allRuns.Count
         CompletedRunCount = $completedRuns.Count
+        EligibleRunCount = $eligibleRuns.Count
+        ExcludedCompletedRunCount = $excludedCompletedRuns.Count
+        IncompleteRunCount = $allRuns.Count - $completedRuns.Count
+        OutOfWindowRunCount = $normalizedRuns.Count - @($normalizedRuns | Where-Object {
+            $createdAt = ([datetimeoffset]::Parse($_.CreatedAtUtc, [System.Globalization.CultureInfo]::InvariantCulture)).UtcDateTime
+            $createdAt -ge $windowStartUtc -and $createdAt -le $WindowEndUtc.UtcDateTime
+        }).Count
+        RunCollectionComplete = $runCollectionComplete
+        RunCollectionDetail = $workflowRunsPayload.Detail
+        CollectedRunCount = $rawRuns.Count
+        ObservationComplete = $runCollectionComplete -and $attemptInspectionUnavailableCount -eq 0 -and $attemptInspectionUnattributedCount -eq 0
         SuccessfulRunCount = $successfulRuns.Count
         FailedRunCount = $failedRuns.Count
         InspectedAttemptCount = $inspectedAttemptCount
         AttemptInspectionUnavailableCount = $attemptInspectionUnavailableCount
+        AttemptInspectionUnattributedCount = $attemptInspectionUnattributedCount
+        AttemptInspections = $attemptInspections
         FlakeEventCount = $flakeEventCount
         FlakeRatePercent = $flakeRatePercent
         PromotionAllowed = $promotionAllowed
+        PromotionBlockers = @($assessmentBlockers) + @('statistical-and-test-level-review-required')
+        AssessmentBlockers = $assessmentBlockers
+        ReadyForStatisticalReview = $assessmentBlockers.Count -eq 0
+        MetricKind = 'observed-run-level-test-step-recovery-rate'
+        TestFailurePattern = $TestFailurePattern
+        WorkflowCoverage = $workflowCoverage
         FlakeEvents = $flakeEvents
         WorkflowDefinitions = $matchingWorkflowDefinitions
-        ObservedRuns = $completedRuns
+        ObservedRuns = $allRuns
     })
 
     $outputTarget = Resolve-CiFlakeRateOutputTarget -Path $OutputPath -RepoRoot $repoRoot
@@ -705,7 +858,7 @@ function Invoke-CiFlakeRateMeasurement {
             $jsonPath)
 
     if ($RequirePromotion -and -not $promotionAllowed) {
-        throw "CI flake-rate evidence is not promotable: status=$status, availability=$availabilityStatus, flakeRate=$flakeRatePercent%, target=$TargetFlakeRatePercent%."
+        throw "CI flake-rate evidence is not promotable: $($report.PromotionBlockers -join ', '). Run-level metadata requires independent statistical and test-level review."
     }
 
     return [pscustomobject]@{
@@ -720,6 +873,7 @@ if (-not $env:CEPHALON_CI_FLAKE_RATE_NO_RUN) {
         -WindowDays $WindowDays `
         -TargetFlakeRatePercent $TargetFlakeRatePercent `
         -MinimumCompletedRunCount $MinimumCompletedRunCount `
+        -WindowEndUtc $WindowEndUtc `
         -WorkflowName $WorkflowName `
         -WorkflowRunsJsonPath $WorkflowRunsJsonPath `
         -ActionsPermissionsJsonPath $ActionsPermissionsJsonPath `

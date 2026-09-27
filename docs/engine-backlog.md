@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-September 27 SRE acceptance: ENG-749 (8 h) is complete with the relational cursor projection and retained release-run timing receipts. ENG-746 remains 24 h, with 8 h delivered and ENG-750 retaining 16 h; ENG-729 remains 50 h, with 34 h delivered. Parent rollups are non-additive. September scope remains **566 h**; **17 unfinished leaves / 448 h**, plus ENG-532 **1 h** = **449 h**. Phase 15 remains 238 h total / 160 h remaining plus ENG-532. [Accepted source and limits](sre-evidence-2026-09-27.md) record passing CI on `e67697ae`; stable SLOs, hosted-runner variance and maturity promotion remain outside this closure.
+September 27 collector continuation: ENG-750 is active with ENG-751 (3 h, collector correctness) and ENG-752 (13 h, remaining workload/statistical evidence). Parent estimates remain non-additive: ENG-750 16 h, ENG-746 24 h, ENG-729 50 h. September scope remains **566 h**; **18 unfinished leaves / 448 h**, plus ENG-532 **1 h** = **449 h**. Phase 15 remains 238 h total / 160 h remaining plus ENG-532. [Collector contract and evidence](ci-flake-collector.md) describe the implementation under validation; no stable SLO or maturity promotion.
 
 Backlog status in this document reflects the repository state as of `September 16, 2026`.
 
@@ -740,19 +740,19 @@ GitHub issue: #1443
 
 Issue link: [#1443](https://github.com/Cephalon-Labs/CephalonEngine/issues/1443)
 
-Status: backlog
+Status: in-progress
 
 Estimate: 16
 
 Phase: 15
 
-Iteration: Later / not scheduled yet
+Iteration: Sprint 16
 
 Owner: Cephalon-Neza
 
 Priority: P1
 
-Test: Needed
+Test: Running
 
 Benchmark: Needed
 
@@ -767,6 +767,68 @@ Quality dimensions: Reliability + Performance + Testability + Auditability.
 Estimate basis: engineering hours including implementation, review, validation, docs and tracking; excludes external waiting. Existing scope split 8/16 h, no added program estimate. M0-M4 and support claims remain unchanged.
 
 Collector assessment: the current script reads one page of repository runs and attempt jobs, includes canceled conclusions in its denominator and does not gate PromotionAllowed on missing attempt inspection or unresolved failures. Its broad release-step failure matcher may include benchmark/build failures. Define eligibility, coverage, attribution and uncertainty before promoting a stable baseline; retain the descriptive rerun-event metric separately. This remains within the existing 16 h assessment scope.
+
+Delivery split: ENG-751 (3 h, active Sprint 16) and ENG-752 (13 h, Later) are native children. This 16 h parent is non-additive and remains open until both children meet acceptance.
+
+### ENG-751 Make CI flake collection complete and promotion conservative
+
+GitHub issue: #1444
+
+Issue link: [#1444](https://github.com/Cephalon-Labs/CephalonEngine/issues/1444)
+
+Status: in-progress
+
+Estimate: 3
+
+Phase: 15
+
+Iteration: Sprint 16
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Running
+
+Benchmark: N/A
+
+Parent: ENG-750 / #1443. Included in its 16 h non-additive rollup, ENG-746 (24 h), and ENG-729 (50 h).
+
+Scope: Paginate run and attempt-job metadata; reject incomplete or inconsistent coverage. Separate eligible outcomes from cancellations, report missing attribution and unresolved failures, prevent duplicate recovery inference, and stop automatic SLO promotion from an observed run-level rate.
+
+Acceptance: Deterministic fixtures cover pagination, missing pages/jobs, excluded outcomes, unresolved failures, attribution and promotion rejection. Document schema and metric limits; retain live readback and committed-source validation.
+
+Estimate basis: engineering hours including implementation, review, validation, docs and tracking; excludes external waiting. Existing 3/13 h scope split; September program remains 566 h. No maturity or support promotion.
+
+### ENG-752 Complete declared workload recovery telemetry and statistical SLO evidence
+
+GitHub issue: #1445
+
+Issue link: [#1445](https://github.com/Cephalon-Labs/CephalonEngine/issues/1445)
+
+Status: backlog
+
+Estimate: 13
+
+Phase: 15
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: Needed
+
+Parent: ENG-750 / #1443. Included in its 16 h non-additive rollup, ENG-746 (24 h), and ENG-729 (50 h).
+
+Scope: Finish ENG-750 workload percentiles and throughput (4 h), fault/recovery (3 h), telemetry budgets (2 h), repeated hosted-runner measurements (2 h), and statistical review/publication (2 h).
+
+Acceptance: Declared workload/hardware, reproducible percentile and recovery evidence, telemetry budgets and an independently reviewed statistical sampling method before any stable SLO promotion.
+
+Estimate basis: engineering hours including implementation, review, validation, docs and tracking; excludes external waiting. Existing 3/13 h scope split; September program remains 566 h. No maturity or support promotion.
 
 
 ### ENG-747 Stabilize provider CDC failure evidence and bootstrap diagnostics

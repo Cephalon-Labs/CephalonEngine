@@ -1,5 +1,7 @@
 # September 2026 architecture review follow-ups
 
+September 27 collector continuation: ENG-750 is active with ENG-751 (3 h, collector correctness) and ENG-752 (13 h, remaining workload/statistical evidence). Parent estimates remain non-additive: ENG-750 16 h, ENG-746 24 h, ENG-729 50 h. September scope remains **566 h**; **18 unfinished leaves / 448 h**, plus ENG-532 **1 h** = **449 h**. Phase 15 remains 238 h total / 160 h remaining plus ENG-532. [Collector contract and evidence](ci-flake-collector.md) describe the implementation under validation; no stable SLO or maturity promotion.
+
 Live follow-through for the [September architecture review](architecture-review-2026-09.md), aligned with [engineering qualities](engineering-standards.md), [long-range direction](long-range-direction.md) and [SRE posture](sre-posture.md).
 
 | Follow-up | Status | Planning anchor | Required evidence |
@@ -9,7 +11,8 @@ Live follow-through for the [September architecture review](architecture-review-
 | Add host-clock publication scheduling and deterministic due-time acceptance | shipped | ENG-748, 8 h within ENG-729 50 h | System default/host override, due boundaries, rearming, disposal, failure timestamps and full CI |
 | Investigate `engine.validate-release.wall-time` overrun | investigate | ENG-729 / ENG-746 | Windows `c4f8d288` measured 31 m 22 s against 30 minutes; repeat workload/runner-aware timing after the fixture repair before renewing the SLO |
 | Project journal cursor reads and retain release timing | shipped | ENG-749, 8 h within ENG-746 | Relational selector checks, unchanged benchmark gate, success/failure/reduced run receipts and CI artifacts |
-| Complete load/recovery and telemetry-cost evidence | planned | ENG-750, 16 h within ENG-746 | Reproducible workload baselines, failure drills, cardinality budgets and CI flake-rate assessment |
+| Correct CI flake collection and promotion semantics | validation | ENG-751, 3 h within ENG-750 | Paginated and locale-safe queries, eligible outcomes, attribution/coverage blockers and no automatic SLO promotion |
+| Complete load/recovery and telemetry-cost evidence | planned | ENG-752, 13 h within ENG-750 | Reproducible workload baselines, failure drills, cardinality budgets and test-level/statistical assessment |
 
 ENG-746 is now active with 8/16 h children, preserving its 24 h rollup. The later docs-only `340c408e` release passed tests but failed the Windows journal mean guardrail. [Current investigation and evidence](sre-evidence-2026-09-27.md) retain that failure separately from the earlier accepted run below.
 

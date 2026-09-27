@@ -1,5 +1,7 @@
 # Cephalon Docs
 
+September collector continuation: [coverage, outcome eligibility, locale-safe queries and conservative promotion](ci-flake-collector.md).
+
 September SRE continuation: [journal cursor, benchmark boundaries and release timing receipts](sre-evidence-2026-09-27.md).
 
 [Cross-version contract consumers](contract-compatibility.md) documents isolated NuGet restore, unchanged-binary upgrades, blueprint JSON and bounded rollback evidence.
