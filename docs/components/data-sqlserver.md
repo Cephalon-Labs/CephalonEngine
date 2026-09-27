@@ -157,8 +157,14 @@ When `CdcCaptures` are configured:
 - the same runtime publishes through `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `snapshot` under `sqlserver-cdc-capture-flow` plus `sqlserver-cdc-capture-pump`
 - the hosted runner polls one SQL Server CDC change table per configured capture, stages one outbox message per captured row, and only persists the latest SQL checkpoint after the linked outbox accepted the batch
 - each staged outbox message uses deterministic id `{cdcCaptureId}:{startLsn}-{sequenceValue}-{operation}`, content type `application/vnd.cephalon.sqlserver.cdc+json`, headers for `provider`, `cdcCaptureId`, `databaseName`, `schemaName`, `tableName`, `captureInstance`, and `operation`, plus metadata for `sourceId`, `eventFormat`, and `checkpointToken`
-- the runtime-state surface keeps typed freshness, lag, pending-publication posture, checkpoint, change id, last operation type, checkpoint store, and failure-kind metadata on the same `/engine/cdc-captures/runtime*` catalog instead of inventing a SQL Server-specific monitor
+- the runtime-state surface exposes typed freshness, lag, pending-publication posture, checkpoint and change id on `/engine/cdc-captures/runtime*`; metadata describes the latest observation, so `lastOperationType` is present on capture reports and `failureKind` on failure reports, and later started/idle reports replace those keys
 - if a provider pack contributes a descriptor on behalf of another module, the authored `SourceModuleId` remains authoritative and `metadata.contributorModuleId` keeps the contributing pack explicit
+
+### Failure and replay boundaries
+
+An outbox-stage or checkpoint error produces one specific failed observation with its original error and any staged progress (`pendingChangeId` / `pendingCheckpoint`). The hosted loop logs the error and retries after the configured polling interval. A read error reports `failureKind = capture`; host-requested cancellation propagates without a fabricated terminal observation. Later reports replace metadata and clear the latest error, so retain accepted observations externally when historical audit is required.
+
+Staging and checkpoint writes are separate operations. Partial staging, failed checkpoint persistence or cancellation after staging can cause the same source changes to be offered again. Use appropriate outbox/consumer deduplication and transaction boundaries for the application; the runner does not roll back accepted outbox messages or guarantee exactly-once delivery. [Declared lifecycle/failure proof and limits](../sqlserver-cdc-reliability-2026-09.md) cover the controlled transport tests and distinguish them from live SQL Server durability evidence.
 
 ### Checkpoint table schema (`cephalon_cdc_checkpoints`)
 

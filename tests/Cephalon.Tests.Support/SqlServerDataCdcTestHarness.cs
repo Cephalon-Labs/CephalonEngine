@@ -59,6 +59,10 @@ public sealed class SqlServerCdcTestHarness
         }
     }
 
+    public Func<CancellationToken, Task>? BeforeReadAsync { get; set; }
+
+    public Func<CancellationToken, Task>? BeforeCommitAsync { get; set; }
+
     public void EnqueueBatch(SqlServerCdcTestBatch batch)
     {
         ArgumentNullException.ThrowIfNull(batch);
@@ -113,18 +117,23 @@ public sealed class SqlServerCdcTestHarness
     {
         private const string ContentType = "application/vnd.cephalon.sqlserver.cdc+json";
 
-        public Task<SqlServerCdcReadBatch> ReadBatchAsync(
+        public async Task<SqlServerCdcReadBatch> ReadBatchAsync(
             SqlServerCdcCaptureOptions captureOptions,
             CdcCaptureDescriptor descriptor,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            if (owner.BeforeReadAsync is not null)
+            {
+                await owner.BeforeReadAsync(cancellationToken).ConfigureAwait(false);
+            }
+
             var batch = owner.DequeueBatch();
             if (batch.Changes.Count == 0)
             {
-                return Task.FromResult(SqlServerCdcReadBatch.Idle(
-                    new Dictionary<string, string>(batch.Metadata, StringComparer.OrdinalIgnoreCase)));
+                return SqlServerCdcReadBatch.Idle(
+                    new Dictionary<string, string>(batch.Metadata, StringComparer.OrdinalIgnoreCase));
             }
 
             var changes = batch.Changes
@@ -181,21 +190,25 @@ public sealed class SqlServerCdcTestHarness
                 })
                 .ToArray();
 
-            return Task.FromResult(new SqlServerCdcReadBatch(
+            return new SqlServerCdcReadBatch(
                 changes,
                 batch.HasMoreChanges,
-                new Dictionary<string, string>(batch.Metadata, StringComparer.OrdinalIgnoreCase)));
+                new Dictionary<string, string>(batch.Metadata, StringComparer.OrdinalIgnoreCase));
         }
 
-        public Task CommitCheckpointAsync(
+        public async Task CommitCheckpointAsync(
             SqlServerCdcCaptureOptions captureOptions,
             CdcCaptureDescriptor descriptor,
             SqlServerCdcCheckpointToken checkpointToken,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            if (owner.BeforeCommitAsync is not null)
+            {
+                await owner.BeforeCommitAsync(cancellationToken).ConfigureAwait(false);
+            }
+
             owner.RecordCommittedCheckpoint(checkpointToken.Serialize());
-            return Task.CompletedTask;
         }
     }
 }

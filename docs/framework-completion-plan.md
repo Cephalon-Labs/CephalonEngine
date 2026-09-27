@@ -1,6 +1,8 @@
 # Cephalon framework completion plan
 
-September 27 collector acceptance: ENG-751 (3 h) is complete on `69a20430`. ENG-752 is active in Sprint 16 with 13 h for workload/recovery/telemetry, journal benchmark investigation and test-level/statistical evidence. Non-additive parents remain open: ENG-750 16 h (3 h delivered), ENG-746 24 h (11 h delivered), ENG-729 50 h (37 h delivered). September scope remains **566 h**; **17 unfinished leaves / 445 h**, plus ENG-532 **1 h** = **446 h**. Phase 15 remains 238 h total / 157 h remaining plus ENG-532. [Collector contract and accepted evidence](ci-flake-collector.md) record collector acceptance; Windows release remains failed at the journal benchmark (519.8 us > 500 us), tracked by active ENG-752. No SLO or maturity promotion.
+September 27 CDC continuation: ENG-753 (6 h, Sprint 16) repairs SQL Server CDC failure evidence and deterministic lifecycle tests. ENG-729 is now **56 h** (37 h delivered / 19 h remaining); ENG-752 retains 13 h through ENG-750/746. September scope is **572 h**; **18 unfinished leaves / 451 h**, plus ENG-532 **1 h** = **452 h**. Phase 15 is **244 h total / 163 h remaining**, plus ENG-532. [CDC scope and evidence](sqlserver-cdc-reliability-2026-09.md) distinguish the latest Windows CDC failure from the earlier unresolved journal benchmark failure. No SLO or maturity promotion.
+
+Earlier September 27 collector acceptance: ENG-751 (3 h) is complete on `69a20430`. ENG-752 is active in Sprint 16 with 13 h for workload/recovery/telemetry, journal benchmark investigation and test-level/statistical evidence. Non-additive parents remain open: ENG-750 16 h (3 h delivered), ENG-746 24 h (11 h delivered), ENG-729 50 h (37 h delivered). September scope remains **566 h**; **17 unfinished leaves / 445 h**, plus ENG-532 **1 h** = **446 h**. Phase 15 remains 238 h total / 157 h remaining plus ENG-532. [Collector contract and accepted evidence](ci-flake-collector.md) record collector acceptance; Windows release remains failed at the journal benchmark (519.8 us > 500 us), tracked by active ENG-752. No SLO or maturity promotion.
 
 Planning date: **September 16, 2026**. Owner: **Cephalon-Neza**. Planning delivery: **ENG-718**. [GitHub Project](https://github.com/orgs/Cephalon-Labs/projects/2). [Research and sources](framework-research-2026-09.md).
 
@@ -90,7 +92,7 @@ The [backlog](engine-backlog.md) contains each task's scope, acceptance tests, d
 | [ENG-726](https://github.com/Cephalon-Labs/CephalonEngine/issues/1419) | Package-specific promotion dossiers and evidence expiry | 14 | 16 | ENG-723, ENG-724, ENG-725 |
 | [ENG-727](https://github.com/Cephalon-Labs/CephalonEngine/issues/1420) | Security and tenant-isolation verification baseline | 15 | 32 | [ENG-722](https://github.com/Cephalon-Labs/CephalonEngine/issues/1415) |
 | [ENG-728](https://github.com/Cephalon-Labs/CephalonEngine/issues/1421) | Verifiable package provenance and release recovery | 15 | 24 | ENG-532 for hosted proof; local policy work can start independently |
-| [ENG-729](https://github.com/Cephalon-Labs/CephalonEngine/issues/1422) | SLO load resilience and telemetry-cost evidence | 15 | 50 | ENG-720; ENG-723 through ENG-725 for pilot load scenarios |
+| [ENG-729](https://github.com/Cephalon-Labs/CephalonEngine/issues/1422) | SLO load resilience and telemetry-cost evidence | 15 | 56 | ENG-720; ENG-723 through ENG-725 for pilot load scenarios |
 | [ENG-730](https://github.com/Cephalon-Labs/CephalonEngine/issues/1423) | Data evolution disaster recovery and privacy proofs | 15 | 40 | ENG-721, ENG-727 |
 | [ENG-731](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424) | Framework API and deployment compatibility matrix | 15 | 44 | ENG-719; independent .NET assessment may start immediately |
 | [ENG-732](https://github.com/Cephalon-Labs/CephalonEngine/issues/1425) | External developer journey documentation and accessibility | 15 | 24 | [ENG-731](https://github.com/Cephalon-Labs/CephalonEngine/issues/1424) |
@@ -166,3 +168,9 @@ Windows release on `34fc2da0` failed MySQL lifecycle metadata observation after 
 ## SRE and publication clock acceptance - September 27, 2026
 
 Earlier September 27 acceptance: ENG-745 (8 h), ENG-747 (10 h) and ENG-748 (8 h) are complete on `201e92a8`. ENG-729 remains 50 h with 26 h delivered and ENG-746 retaining 24 h, non-additive. September scope is **566 h**; **17 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 is 238 h total / 168 h remaining plus ENG-532. [SRE evidence](sre-validation-2026-09.md). No stable SLO, maturity or support promotion; earlier checkpoints preserve history.
+
+## September 27 CDC scope expansion
+
+September 27 CDC continuation: ENG-753 (6 h, Sprint 16) repairs SQL Server CDC failure evidence and deterministic lifecycle tests. ENG-729 is now **56 h** (37 h delivered / 19 h remaining); ENG-752 retains 13 h through ENG-750/746. September scope is **572 h**; **18 unfinished leaves / 451 h**, plus ENG-532 **1 h** = **452 h**. Phase 15 is **244 h total / 163 h remaining**, plus ENG-532. [CDC scope and evidence](sqlserver-cdc-reliability-2026-09.md) distinguish the latest Windows CDC failure from the earlier unresolved journal benchmark failure. No SLO or maturity promotion.
+
+ENG-753 / [#1446](https://github.com/Cephalon-Labs/CephalonEngine/issues/1446) adds 6 h: implementation 2 h, adversarial lifecycle tests 2 h, validation/docs/tracking 2 h. This additional observed defect scope is a native child of ENG-729, separate from the 13 h ENG-752 SLO leaf; do not sum parent rollups again. Phase 15 indicative scope range is 183–366 h.

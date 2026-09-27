@@ -1,6 +1,8 @@
 # Cephalon Engine Backlog
 
-September 27 collector acceptance: ENG-751 (3 h) is complete on `69a20430`. ENG-752 is active in Sprint 16 with 13 h for workload/recovery/telemetry, journal benchmark investigation and test-level/statistical evidence. Non-additive parents remain open: ENG-750 16 h (3 h delivered), ENG-746 24 h (11 h delivered), ENG-729 50 h (37 h delivered). September scope remains **566 h**; **17 unfinished leaves / 445 h**, plus ENG-532 **1 h** = **446 h**. Phase 15 remains 238 h total / 157 h remaining plus ENG-532. [Collector contract and accepted evidence](ci-flake-collector.md) record collector acceptance; Windows release remains failed at the journal benchmark (519.8 us > 500 us), tracked by active ENG-752. No SLO or maturity promotion.
+September 27 CDC continuation: ENG-753 (6 h, Sprint 16) repairs SQL Server CDC failure evidence and deterministic lifecycle tests. ENG-729 is now **56 h** (37 h delivered / 19 h remaining); ENG-752 retains 13 h through ENG-750/746. September scope is **572 h**; **18 unfinished leaves / 451 h**, plus ENG-532 **1 h** = **452 h**. Phase 15 is **244 h total / 163 h remaining**, plus ENG-532. [CDC scope and evidence](sqlserver-cdc-reliability-2026-09.md) distinguish the latest Windows CDC failure from the earlier unresolved journal benchmark failure. No SLO or maturity promotion.
+
+Earlier September 27 collector acceptance: ENG-751 (3 h) is complete on `69a20430`. ENG-752 is active in Sprint 16 with 13 h for workload/recovery/telemetry, journal benchmark investigation and test-level/statistical evidence. Non-additive parents remain open: ENG-750 16 h (3 h delivered), ENG-746 24 h (11 h delivered), ENG-729 50 h (37 h delivered). September scope remains **566 h**; **17 unfinished leaves / 445 h**, plus ENG-532 **1 h** = **446 h**. Phase 15 remains 238 h total / 157 h remaining plus ENG-532. [Collector contract and accepted evidence](ci-flake-collector.md) record collector acceptance; Windows release remains failed at the journal benchmark (519.8 us > 500 us), tracked by active ENG-752. No SLO or maturity promotion.
 
 Backlog status in this document reflects the repository state as of `September 16, 2026`.
 
@@ -572,7 +574,7 @@ Issue link: [#1422](https://github.com/Cephalon-Labs/CephalonEngine/issues/1422)
 
 Status: in-progress
 
-Estimate: 50
+Estimate: 56
 
 Phase: 15
 
@@ -613,8 +615,10 @@ Latest September 27 scope: ENG-747 increases 6 to 10 h after the retained Window
 
 Earlier acceptance: ENG-745/747/748 were Done with 26 h delivered; ENG-746 retained 24 h. At that checkpoint this 50 h parent remained In Progress / Test Running / Benchmark Needed. [Release CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293286) passed Windows/Linux shipping (2,101 core tests plus 263 Pester each) and SDK 11 readiness (2,092 selected net10.0 tests) on `201e92a8`. All 41 Windows benchmark guardrails passed. [Host/deployment](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293252) and [contract compatibility](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293274) passed both OS. Windows release-step duration was **25 m 00 s**, from GitHub step timestamps. This single run does not renew a stable SLO or identify the historical MongoDB startup cause.
 
-Current acceptance: ENG-751 joins ENG-745/747/748/749 as complete. Delivered child estimate is 37 h; ENG-752 retains 13 h through active ENG-750 and ENG-746 parents. ENG-729 remains 50 h / In Progress / Test Running / Benchmark Regressed. [Current SRE evidence](ci-flake-collector.md#committed-source-acceptance).
+Earlier collector acceptance: ENG-751 joins ENG-745/747/748/749 as complete. Delivered child estimate is 37 h; ENG-752 retains 13 h through active ENG-750 and ENG-746 parents. ENG-729 remains 50 h / In Progress / Test Running / Benchmark Regressed. [Current SRE evidence](ci-flake-collector.md#committed-source-acceptance).
 
+
+Current scope expansion: ENG-753 adds 6 h for SQL Server CDC failure fidelity and deterministic lifecycle proof. ENG-729 is now 56 h (37 h delivered, 19 h remaining); September scope 572 h and Phase 15 244 h. Earlier rollups above are historical.
 
 ### ENG-745 Stabilize resilience timeout and isolate integration telemetry
 
@@ -638,7 +642,7 @@ Test: Passed
 
 Benchmark: Passed
 
-Parent: ENG-729 / #1422. Included in its revised 50 h non-additive rollup.
+Parent: ENG-729 / #1422. Included in its revised 56 h non-additive rollup.
 
 Scope: Replace timeout-versus-delay races with explicitly controlled timeout evidence; isolate showcase HTTP integration tests from an absent OTLP collector while retaining separate exporter integration proof. Measure focused and full suites and preserve all release gates.
 
@@ -676,7 +680,7 @@ Test: Running
 
 Benchmark: Regressed
 
-Parent: ENG-729 / #1422. Included in its revised 50 h non-additive rollup.
+Parent: ENG-729 / #1422. Included in its revised 56 h non-additive rollup.
 
 Scope: Complete the remaining ENG-729 declared workload/hardware p95/p99, throughput/allocation/startup/recovery objectives, load/fault/backpressure/exhaustion/cancellation evidence, dashboards, telemetry cardinality/redaction/cost and CI flake-rate assessment. Renew full-release wall-time evidence after ENG-745 without widening historical baselines from one run.
 
@@ -721,7 +725,7 @@ Test: Passed
 
 Benchmark: Passed
 
-Parent: ENG-746 / #1439. Included in its 24 h non-additive rollup and ENG-729 / #1422 (50 h).
+Parent: ENG-746 / #1439. Included in its 24 h non-additive rollup and ENG-729 / #1422 (56 h).
 
 Scope: Read only timestamp and command ID for the latest EF journal replay cursor while preserving ordering, freshness and no-tracking behavior. Retain successful step timings and a run receipt on successful, failed and reduced release invocations; upload the evidence on both CI operating systems. Investigate the 340c408e Windows journal benchmark breach without changing workload or guardrails.
 
@@ -756,7 +760,7 @@ Test: Running
 
 Benchmark: Regressed
 
-Parent: ENG-746 / #1439. Included in its 24 h non-additive rollup and ENG-729 / #1422 (50 h).
+Parent: ENG-746 / #1439. Included in its 24 h non-additive rollup and ENG-729 / #1422 (56 h).
 
 Scope: Complete the remaining ENG-746 cold/warm, steady/burst and fault/recovery workload evidence, p95/p99, throughput, startup, allocation, cancellation/backpressure/exhaustion, actionable dashboards, telemetry cardinality/redaction/cost and statistically qualified CI flake-rate assessment. Include repeated hosted-runner journal benchmarks and the latest unresolved failures when evaluating stability.
 
@@ -792,7 +796,7 @@ Test: Passed
 
 Benchmark: N/A
 
-Parent: ENG-750 / #1443. Included in its 16 h non-additive rollup, ENG-746 (24 h), and ENG-729 (50 h).
+Parent: ENG-750 / #1443. Included in its 16 h non-additive rollup, ENG-746 (24 h), and ENG-729 (56 h).
 
 Scope: Paginate run and attempt-job metadata; reject incomplete or inconsistent coverage. Separate eligible outcomes from cancellations, report missing attribution and unresolved failures, prevent duplicate recovery inference, and stop automatic SLO promotion from an observed run-level rate.
 
@@ -827,7 +831,7 @@ Test: Running
 
 Benchmark: Regressed
 
-Parent: ENG-750 / #1443. Included in its 16 h non-additive rollup, ENG-746 (24 h), and ENG-729 (50 h).
+Parent: ENG-750 / #1443. Included in its 16 h non-additive rollup, ENG-746 (24 h), and ENG-729 (56 h).
 
 Scope: Finish ENG-750 workload percentiles and throughput (4 h), fault/recovery (3 h), telemetry budgets (2 h), repeated hosted-runner measurements (2 h), and statistical review/publication (2 h).
 
@@ -837,6 +841,42 @@ Estimate basis: engineering hours including implementation, review, validation, 
 
 Current investigation: source `69a20430`, Windows release run `36317329975`, journal mean 519.8 us (error 743.4 us; SD 40.75 us; 176.87 KB) exceeds the unchanged 500 us guardrail. The 2 h repeated-hosted-measurement work package includes investigation of this recurrence; re-estimate before expanding remediation scope. Root cause is unproven. Source/benchmark files are unchanged from accepted `e67697ae`. Preserve all failures and distinguish the InMemory proxy from physical persistence and stable SLO evidence.
 
+
+Latest observation: Windows release `36318940272` on `05d25dfe` failed SQL Server CDC before benchmarks. ENG-753 / #1446 owns that separate 6 h remediation. No new benchmark result or journal root-cause attribution is inferred.
+
+### ENG-753 Preserve SQL Server CDC failure evidence and deterministic lifecycle proofs
+
+GitHub issue: #1446
+
+Issue link: [#1446](https://github.com/Cephalon-Labs/CephalonEngine/issues/1446)
+
+Status: in-progress
+
+Estimate: 6
+
+Phase: 15
+
+Iteration: Sprint 16
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Running
+
+Benchmark: N/A
+
+Parent: ENG-729 / #1422. Adds 6 h of newly observed CDC work; parent becomes 56 h, non-additive. ENG-752 retains its separate 13 h.
+
+Scope: Correct duplicate SQL Server CDC failure reporting after outbox/checkpoint errors and replace timing-sensitive success observation with accepted report snapshots. Exercise insert, delete, update-before/update-after, idle transition, partial staging failure, checkpoint failure, retry and cancellation through the real hosted service with a controlled transport.
+
+Acceptance: Stage/checkpoint failures retain one specific report, pending progress and original error until the next observation; no checkpoint commit after incomplete staging, no false capture success on failure/cancellation, and deterministic capture-to-idle assertions. Focused tests plus Windows/Linux CI evidence. Test harness proof does not claim a live SQL Server, atomic cross-store transaction or exactly-once delivery.
+
+Estimate basis: 2 h implementation, 2 h adversarial tests, 2 h validation/docs/tracking; excludes external waiting. September scope 566 -> 572 h, Phase 15 238 -> 244 h. No maturity or support promotion.
+
+Trigger: docs-only source 05d25dfe failed Windows run 36318940272 at SqlServerDataCdcPackTests line 108 (missing lastOperationType); Linux passed. Latest-report metadata is correctly replaced on idle; the test assumed historical metadata. Inspection also found nested stage/checkpoint failure reports overwritten by a second generic capture failure.
+
+Local verification: 63/63 related composition cases pass, including 11 SQL Server CDC cases. Before the runtime fix, three new fault cases reproduced duplicate reports. Planning 8/8, documentation links 2/2, maturity drift 0 across 107 packages, and live issue/Project guards 24/24 pass. Await Windows/Linux committed-source CI before closing. [Proof and adoption limits](sqlserver-cdc-reliability-2026-09.md).
 
 ### ENG-747 Stabilize provider CDC failure evidence and bootstrap diagnostics
 
@@ -860,7 +900,7 @@ Test: Passed
 
 Benchmark: N/A
 
-Parent: ENG-729 / #1422. Current parent is 50 h (8/24/10/8); the following records ENG-747 estimate history. Observed fixture work increases its non-additive rollup from 32 h to 38 h; ENG-745/746 remain 8/24 h. ENG-747 was 6 h: 4 h MongoDB diagnostics plus 2 h MySQL/PostgreSQL failure-observation repair.
+Parent: ENG-729 / #1422. Current parent is 56 h (8/24/10/8/6); the following records ENG-747 estimate history. Observed fixture work increases its non-additive rollup from 32 h to 38 h; ENG-745/746 remain 8/24 h. ENG-747 was 6 h: 4 h MongoDB diagnostics plus 2 h MySQL/PostgreSQL failure-observation repair.
 
 Scope: Preserve process output and the last driver failure when a MongoDB fixture readiness deadline expires during a command or retry delay. Keep caller cancellation distinct, reject pre-canceled startup before launching a process, and retain the existing 20-second deadlines and real MongoDB CDC assertions. Preserve one-shot MySQL/PostgreSQL lifecycle failures for their existing bounded assertions by aligning only the failure fixtures' provider retry interval with Oracle and hosting fixtures (600 s); production retries and success-path tests remain unchanged.
 
@@ -900,7 +940,7 @@ Test: Passed
 
 Benchmark: N/A
 
-Parent: ENG-729 / #1422. Adds 8 h of observed scheduler integration work; current parent is 50 h (ENG-745/746/747/748 = 8/24/10/8), non-additive.
+Parent: ENG-729 / #1422. Adds 8 h of observed scheduler integration work; current parent is 56 h (ENG-745/746/747/748/753 = 8/24/10/8/6), non-additive.
 
 Scope: Use a host-provided TimeProvider for Eventing publication deadlines, queue timers and dispatcher/queue observation times, with TimeProvider.System as the default. Preserve existing public contracts and bounded process-local ownership. Share a one-shot controlled test clock and prove pending/due/terminal-report boundaries without elapsed-wall-time races.
 

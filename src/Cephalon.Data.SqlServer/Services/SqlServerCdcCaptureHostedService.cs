@@ -215,7 +215,10 @@ internal sealed class SqlServerCdcCaptureHostedService(
                     cancellationToken,
                     additionalMetadata: batch.Metadata)
                 .ConfigureAwait(false);
-            throw;
+            // This iteration already reported the precise failure and staged progress.
+            // Return to the polling loop so its generic catch cannot overwrite them.
+            LogCaptureLoopFailure(logger, captureOptions.Id, exception);
+            return;
         }
 
         var committedCheckpoint = lastStagedChange?.CheckpointToken;
@@ -250,7 +253,8 @@ internal sealed class SqlServerCdcCaptureHostedService(
                     cancellationToken,
                     additionalMetadata: batch.Metadata)
                 .ConfigureAwait(false);
-            throw;
+            LogCaptureLoopFailure(logger, captureOptions.Id, exception);
+            return;
         }
 
         await reporter.ReportAsync(

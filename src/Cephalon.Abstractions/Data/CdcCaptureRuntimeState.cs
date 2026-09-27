@@ -32,7 +32,11 @@ namespace Cephalon.Abstractions.Data;
 /// <param name="OutboxDispatchState">
 /// The latest linked outbox dispatch state when the active runtime also reports publication posture for the capture's outbox.
 /// </param>
-/// <param name="Metadata">The operator-facing metadata captured by the latest report.</param>
+/// <param name="Metadata">
+/// The operator-facing metadata captured by the latest report. Each observation replaces this
+/// metadata; keys from an earlier capture or failure need not remain after a started or idle report.
+/// Cumulative counts and the last reported change identifier and checkpoint are tracked separately.
+/// </param>
 public sealed record CdcCaptureRuntimeState(
     string CdcCaptureId,
     string SourceModuleId,
