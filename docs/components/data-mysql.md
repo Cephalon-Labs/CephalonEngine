@@ -1,5 +1,7 @@
 # Cephalon.Data.MySql
 
+Known diagnostic limitation: nested outbox-stage/checkpoint failures can be followed by a second generic failure report, inflating the failure count and replacing specific pending-progress metadata. [ENG-754](https://github.com/Cephalon-Labs/CephalonEngine/issues/1447) tracks provider-specific reproduction, repair and cleanup/retry proof; the SQL Server correction does not imply this provider is fixed.
+
 > **Maturity:** `M2` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.Data.MySql` is the MySQL provider-native CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC execution and runtime catalog family also fits a binlog-backed relational source with durable file-plus-position checkpoints, provider-owned execution, source-server identity plus binlog lifecycle validation, and module-preserving capture ownership truth without a MySQL-specific registry in `Cephalon.Engine`. The core package owns the contract and runtime loop; concrete binlog wire adapters are optional companion packages.

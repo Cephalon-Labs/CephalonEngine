@@ -1,5 +1,7 @@
 # Cephalon.Data.Oracle
 
+Known diagnostic limitation: nested outbox-stage/checkpoint failures can be followed by a second generic failure report, inflating the failure count and replacing specific pending-progress metadata. [ENG-754](https://github.com/Cephalon-Labs/CephalonEngine/issues/1447) tracks provider-specific reproduction, repair and cleanup/retry proof; the SQL Server correction does not imply this provider is fixed.
+
 > **Maturity:** `M2` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.Data.Oracle` is the Oracle provider-native CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC execution and runtime catalog family also fits redo-log style relational capture through Oracle LogMiner with SCN-backed progress, provider-owned execution, durable `commitScn|changeScn|rsId|ssn` checkpoints, source-database identity truth, archive-log lifecycle validation, and module-preserving capture ownership without an Oracle-specific registry in `Cephalon.Engine`.

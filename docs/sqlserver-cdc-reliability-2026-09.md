@@ -2,6 +2,8 @@
 
 ENG-753 / [#1446](https://github.com/Cephalon-Labs/CephalonEngine/issues/1446), September 27, 2026. Owner: Cephalon-Neza. Estimate: **6 engineering hours** including implementation, tests, docs and tracking. This is additional observed scope under ENG-729, whose non-additive rollup increases **50 -> 56 h**. September scope becomes **572 h** and Phase 15 **244 h**. ENG-752 retains its separate **13 h** workload, benchmark and statistical evidence scope.
 
+Subsequent scope review adds ENG-754 / [#1447](https://github.com/Cephalon-Labs/CephalonEngine/issues/1447), **12 h**, for four remaining native providers. Current ENG-729 rollup is **68 h**, September scope **584 h**, and Phase 15 **256 h**. The first paragraph records the SQL Server-only estimate checkpoint; these parent totals are not additional leaf hours.
+
 ## Trigger and behavior
 
 [Windows release run 36318940272](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36318940272) on `05d25dfe` failed the SQL Server CDC test at `lastOperationType`. Linux passed. The test allowed either Captured or Idle and then required metadata emitted only by Captured. The public state contract defines metadata as the **latest report**, so the next idle poll can legitimately replace it while preserving cumulative counts and the last checkpoint. Waiting for outbox staging is also earlier than checkpoint commit and report acceptance.
@@ -30,6 +32,10 @@ Outbox staging and checkpoint persistence are separate calls. A partially staged
 
 Order ingestion, inventory synchronization, billing projections and audit integrations can reuse the same module/CDC/outbox seams, but each still needs domain-specific transaction, idempotency, tenant-isolation and recovery acceptance. [Framework completion plan](framework-completion-plan.md#coverage-and-package-family-routing) maps those remaining responsibilities across package families.
 
+## Remaining provider gap
+
+Static review on `b071e0f3` found the same nested report/rethrow/outer-report pattern in `MySqlBinlogCaptureHostedService`, `PostgresLogicalReplicationCaptureHostedService`, `OracleLogMinerCaptureHostedService` and `MongoDbChangeStreamCaptureHostedService`. ENG-754 retains **12 h** for provider-specific reproduction and fixes, including PostgreSQL abandonment/acknowledgement and MongoDB cursor cleanup/restart. The generic `Cephalon.Data` CDC pump already returns after handled failures. SQL Server's dynamic proof does not certify the four other implementations; their component guides now expose this diagnostic limitation. ENG-754 is open and unscheduled, with no maturity promotion.
+
 ## Validation and sources
 
 Local validation on the pinned SDK 10.0.401 passes **63/63** related composition cases, including all **11 SQL Server CDC cases**. Before the runtime fix, three new cases failed because they observed two failures for one staged/checkpoint error; the other eight SQL Server cases passed. After the fix all eleven pass. Planning tests pass **8/8**, Markdown link checks **2/2**, and both live GitHub guards pass for **24 open issues / 24 Project items / five required fields**. The maturity report covers **107 packages / 107 component documents**, drift **0**, with unchanged M0=1, M1=39, M2=51, M3=7, M4=9.
@@ -39,6 +45,8 @@ Local receipts are under `artifacts/journal-validation-2026-09-27/` (`cdc-red.tr
 ```powershell
 dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj -c Release --filter FullyQualifiedName~SqlServerDataCdcPackTests
 ```
+
+The first implementation push `b071e0f3` passed Contract Compatibility. Release run [36324025161](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36324025161) exposed generated-reference drift after the XML clarification, and a separate Linux WebSocket rate-limit test timed out while awaiting its first response. The reference bundle is regenerated (four changed files); bundle consistency plus Markdown links now pass **3/3** locally. The isolated WebSocket test passes **1/1** locally, which does not explain or resolve the Linux timeout. ENG-752 retains that investigation and the earlier journal benchmark failure. The corrected-source release proof is still required; no deadline or benchmark threshold was relaxed.
 
 Official references consulted: [SQL Server CDC overview](https://learn.microsoft.com/sql/relational-databases/track-changes/about-change-data-capture-sql-server?view=sql-server-ver17) explains the source change/LSN model. [Microsoft guidance on testing asynchronous code](https://learn.microsoft.com/en-us/archive/msdn-magazine/2014/november/async-programming-unit-testing-asynchronous-code-three-solutions-for-better-tests) describes synchronization through controlled dependencies; the test decorator applies that approach at Cephalon's accepted-report boundary. These sources do not certify Cephalon's implementation.
 

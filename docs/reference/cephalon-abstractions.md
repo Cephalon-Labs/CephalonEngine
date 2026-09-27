@@ -43686,7 +43686,7 @@ Parameters:
 - `Lag`: The latest provider-facing lag answer reported for the capture.
 - `Publication`: The latest publication posture answer reported for the capture.
 - `OutboxDispatchState`: The latest linked outbox dispatch state when the active runtime also reports publication posture for the capture's outbox.
-- `Metadata`: The operator-facing metadata captured by the latest report.
+- `Metadata`: The operator-facing metadata captured by the latest report. Each observation replaces this metadata; keys from an earlier capture or failure need not remain after a started or idle report. Cumulative counts and the last reported change identifier and checkpoint are tracked separately.
 
 #### Properties
 
@@ -43988,7 +43988,7 @@ The latest stable report identifier when the active runtime supplied one.
 IReadOnlyDictionary<string, string> Metadata { get; set; }
 ```
 
-The operator-facing metadata captured by the latest report.
+The operator-facing metadata captured by the latest report. Each observation replaces this metadata; keys from an earlier capture or failure need not remain after a started or idle report. Cumulative counts and the last reported change identifier and checkpoint are tracked separately.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-mode"></a>
 

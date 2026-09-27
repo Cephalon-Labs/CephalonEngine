@@ -1,5 +1,7 @@
 # Cephalon.Data.Postgres
 
+Known diagnostic limitation: nested outbox-stage/checkpoint failures can be followed by a second generic failure report, inflating the failure count and replacing specific pending-progress metadata. [ENG-754](https://github.com/Cephalon-Labs/CephalonEngine/issues/1447) tracks provider-specific reproduction, repair and cleanup/retry proof; the SQL Server correction does not imply this provider is fixed.
+
 > **Maturity:** `M2` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.Data.Postgres` is the PostgreSQL provider-native CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC execution/runtime catalog family also fits logical-replication streaming with slot-backed durable progress, publication/table ownership validation, and module-preserving capture ownership truth without a PostgreSQL-specific registry in `Cephalon.Engine`.

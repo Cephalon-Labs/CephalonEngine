@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-09-27T05:26:23.4851166+00:00",
+  "GeneratedAtUtc": "2026-09-27T14:01:12.2841949+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -88823,7 +88823,7 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
-      "Summary": "The operator-facing metadata captured by the latest report."
+      "Summary": "The operator-facing metadata captured by the latest report. Each observation replaces this metadata; keys from an earlier capture or failure need not remain after a started or idle report. Cumulative counts and the last reported change identifier and checkpoint are tracked separately."
     },
     {
       "DisplayName": "Metadata",
