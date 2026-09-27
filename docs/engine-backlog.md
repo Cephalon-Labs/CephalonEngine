@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-September 27 CDC continuation: ENG-753 (6 h, Sprint 16) has local 63/63 proof and awaits committed-source CI. ENG-754 (12 h, Later) tracks the same statically identified failure-report pattern in four other native providers. ENG-729 is **68 h** (37 h delivered / 31 h remaining); ENG-752 retains 13 h through ENG-750/746. September scope is **584 h**; **19 unfinished leaves / 463 h**, plus ENG-532 **1 h** = **464 h**. Phase 15 is **256 h total / 175 h remaining**, plus ENG-532. [CDC evidence and remaining gaps](sqlserver-cdc-reliability-2026-09.md). No SLO or maturity promotion.
+September 27 CDC acceptance: ENG-753 (6 h) is complete on runtime `b071e0f3` plus reference/plan correction `1d1b4640`: SQL Server composition proof passes on both OS; Linux release, SDK 11 readiness, Host and Contract CI pass. Windows release fails at MongoDB fixture bootstrap after 909 composition passes (819/820 hosting). ENG-752 retains 13 h for that failure, WebSocket timeout, journal benchmark and workload/SLO evidence; ENG-754 (12 h, Later) remains open for four native CDC providers. ENG-729 is **68 h** (43 h delivered / 25 h remaining). September scope is **584 h**; **18 unfinished leaves / 457 h**, plus ENG-532 **1 h** = **458 h**. Phase 15 is **256 h total / 169 h remaining**, plus ENG-532. [Evidence and limits](sqlserver-cdc-reliability-2026-09.md). Full release remains failed; no SLO, provider-support or maturity promotion.
 
 Earlier September 27 collector acceptance: ENG-751 (3 h) is complete on `69a20430`. ENG-752 is active in Sprint 16 with 13 h for workload/recovery/telemetry, journal benchmark investigation and test-level/statistical evidence. Non-additive parents remain open: ENG-750 16 h (3 h delivered), ENG-746 24 h (11 h delivered), ENG-729 50 h (37 h delivered). September scope remains **566 h**; **17 unfinished leaves / 445 h**, plus ENG-532 **1 h** = **446 h**. Phase 15 remains 238 h total / 157 h remaining plus ENG-532. [Collector contract and accepted evidence](ci-flake-collector.md) record collector acceptance; Windows release remains failed at the journal benchmark (519.8 us > 500 us), tracked by active ENG-752. No SLO or maturity promotion.
 
@@ -584,7 +584,7 @@ Owner: Cephalon-Neza
 
 Priority: P1
 
-Test: Running
+Test: Failed
 
 Benchmark: Regressed
 
@@ -618,9 +618,11 @@ Earlier acceptance: ENG-745/747/748 were Done with 26 h delivered; ENG-746 retai
 Earlier collector acceptance: ENG-751 joins ENG-745/747/748/749 as complete. Delivered child estimate is 37 h; ENG-752 retains 13 h through active ENG-750 and ENG-746 parents. ENG-729 remains 50 h / In Progress / Test Running / Benchmark Regressed. [Current SRE evidence](ci-flake-collector.md#committed-source-acceptance).
 
 
-Current scope expansion: ENG-753 adds 6 h for SQL Server CDC failure fidelity and deterministic lifecycle proof. ENG-729 is now 56 h (37 h delivered, 19 h remaining); September scope 572 h and Phase 15 244 h. Earlier rollups above are historical.
+Earlier scope expansion: ENG-753 added 6 h for SQL Server CDC failure fidelity and deterministic lifecycle proof. ENG-729 reached 56 h (37 h delivered, 19 h remaining); September scope reached 572 h and Phase 15 244 h. These rollups are historical.
 
-Provider follow-up: ENG-754 adds 12 h after static inspection identified the same nested re-report pattern in MySQL, PostgreSQL, Oracle and MongoDB. Parent is now 68 h (37 h delivered / 31 h remaining pending ENG-753 acceptance). September scope 584 h; Phase 15 256 h.
+Provider follow-up: ENG-754 adds 12 h after static inspection identified the same nested re-report pattern in MySQL, PostgreSQL, Oracle and MongoDB. Parent is now 68 h (43 h delivered / 25 h remaining after ENG-753 acceptance). September scope 584 h; Phase 15 256 h.
+
+Current acceptance: ENG-753 is Done / Test Passed / Benchmark N/A. ENG-729 remains 68 h / In Progress / Test Failed / Benchmark Regressed with 43 h delivered; ENG-752 13 h and ENG-754 12 h retain 25 h. Corrected-source Windows release fails at MongoDB fixture bootstrap; journal and WebSocket failure causes remain unproven.
 
 ### ENG-745 Stabilize resilience timeout and isolate integration telemetry
 
@@ -678,7 +680,7 @@ Owner: Cephalon-Neza
 
 Priority: P1
 
-Test: Running
+Test: Failed
 
 Benchmark: Regressed
 
@@ -702,7 +704,7 @@ Evidence retention: completed under ENG-749. CI retains run receipts and matchin
 
 Delivery split: ENG-749 (8 h, complete Sprint 16) and ENG-750 (16 h, active Sprint 16 with 3 h delivered / 13 h remaining) are native children. The 24 h parent is non-additive. Observed docs-only source `340c408e` passed core tests but failed the Windows journal benchmark at 507.5 us against 500 us; prior `201e92a8` acceptance remains historical evidence.
 
-Current acceptance: ENG-749 is Done / Test Passed / Benchmark Passed. This 24 h parent stays In Progress / Test Running / Benchmark Regressed, with 13 h remaining in ENG-752 through ENG-750; ENG-751 contributes another 3 h delivered. A single green CI run does not establish stable latency.
+Current acceptance: ENG-749 is Done / Test Passed / Benchmark Passed. This 24 h parent stays In Progress / Test Failed / Benchmark Regressed, with 13 h remaining in ENG-752 through ENG-750; ENG-751 contributes another 3 h delivered. The latest Windows MongoDB fixture failure remains open; a single green CI run does not establish stable latency.
 
 
 ### ENG-749 Project journal replay cursors and retain release-run timing evidence
@@ -758,7 +760,7 @@ Owner: Cephalon-Neza
 
 Priority: P1
 
-Test: Running
+Test: Failed
 
 Benchmark: Regressed
 
@@ -829,7 +831,7 @@ Owner: Cephalon-Neza
 
 Priority: P1
 
-Test: Running
+Test: Failed
 
 Benchmark: Regressed
 
@@ -844,9 +846,13 @@ Estimate basis: engineering hours including implementation, review, validation, 
 Current investigation: source `69a20430`, Windows release run `36317329975`, journal mean 519.8 us (error 743.4 us; SD 40.75 us; 176.87 KB) exceeds the unchanged 500 us guardrail. The 2 h repeated-hosted-measurement work package includes investigation of this recurrence; re-estimate before expanding remediation scope. Root cause is unproven. Source/benchmark files are unchanged from accepted `e67697ae`. Preserve all failures and distinguish the InMemory proxy from physical persistence and stable SLO evidence.
 
 
-Latest observation: Windows release `36318940272` on `05d25dfe` failed SQL Server CDC before benchmarks. ENG-753 / #1446 owns that separate 6 h remediation. No new benchmark result or journal root-cause attribution is inferred.
+Earlier observation: Windows release `36318940272` on `05d25dfe` failed SQL Server CDC before benchmarks. ENG-753 / #1446 completed that separate 6 h remediation. No new benchmark result or journal root-cause attribution is inferred.
 
 Additional observation: Linux release `36324025161` on `b071e0f3` passed 909 composition cases and failed `BehaviorHttpWebSocketReturnsProtocolRateLimitingEnvelopeWhenHostLimiterOverrideDisablesEndpointPolicy` at its first receive with a five-second cancellation deadline (819/820 hosting passed). The isolated local test passed 1/1; root cause remains unproven. Investigate under the existing test-level/hosted-runner evidence work before claiming stability. ENG-753 separately refreshes generated reference docs after its XML clarification; that tooling drift is not attributed to a flaky test.
+
+Runner evidence: retained BenchmarkDotNet reports show accepted `e67697ae` on AMD EPYC 9V45 / x86-64-v4 (147.7 us), while failed `69a20430` ran on AMD EPYC 7763 / x86-64-v3 (519.8 us). OS build, SDK/runtime and short-run settings match; source/benchmark files were unchanged. This is a hardware/JIT confounder, not established causality. Compare repeated matched-condition measurements before code-regression or SLO conclusions; keep the 500 us threshold and failures. [Comparison](sqlserver-cdc-reliability-2026-09.md#journal-runner-comparison-retained-for-eng-752).
+
+Latest release failure: corrected-source `1d1b4640`, Windows run `36324579835` / job `108634899161`, passes 909 composition cases and fails MongoDB CDC fixture bootstrap before its test body (819/820 hosting). MongoDB listens about 1.2 s after startup; driver observes a 3 s connection timeout and becomes Connected/ReplicaSetGhost at 20.18 s, near the 20.34 s failed bootstrap deadline. Root cause remains unproven. Tooling/benchmarks were not reached. Preserve diagnostics and investigate the connection/scheduling boundary without waiving deadlines; this is independent of ENG-753's SQL Server report correction. [Diagnostic record](sqlserver-cdc-reliability-2026-09.md#windows-fixture-failure-on-the-corrected-source).
 
 ### ENG-753 Preserve SQL Server CDC failure evidence and deterministic lifecycle proofs
 
@@ -854,7 +860,7 @@ GitHub issue: #1446
 
 Issue link: [#1446](https://github.com/Cephalon-Labs/CephalonEngine/issues/1446)
 
-Status: in-progress
+Status: done
 
 Estimate: 6
 
@@ -866,11 +872,11 @@ Owner: Cephalon-Neza
 
 Priority: P1
 
-Test: Running
+Test: Passed
 
 Benchmark: N/A
 
-Parent: ENG-729 / #1422. Adds 6 h of newly observed CDC work; parent becomes 56 h, non-additive. ENG-752 retains its separate 13 h.
+Parent: ENG-729 / #1422. Adds 6 h of CDC work; the parent reached 56 h at that checkpoint and is now 68 h after ENG-754, non-additive. ENG-752 retains its separate 13 h.
 
 Scope: Correct duplicate SQL Server CDC failure reporting after outbox/checkpoint errors and replace timing-sensitive success observation with accepted report snapshots. Exercise insert, delete, update-before/update-after, idle transition, partial staging failure, checkpoint failure, retry and cancellation through the real hosted service with a controlled transport.
 
@@ -880,7 +886,11 @@ Estimate basis: 2 h implementation, 2 h adversarial tests, 2 h validation/docs/t
 
 Trigger: docs-only source 05d25dfe failed Windows run 36318940272 at SqlServerDataCdcPackTests line 108 (missing lastOperationType); Linux passed. Latest-report metadata is correctly replaced on idle; the test assumed historical metadata. Inspection also found nested stage/checkpoint failure reports overwritten by a second generic capture failure.
 
-Local verification: 63/63 related composition cases pass, including 11 SQL Server CDC cases. Before the runtime fix, three new fault cases reproduced duplicate reports. Planning 8/8, documentation links 2/2, maturity drift 0 across 107 packages, and live issue/Project guards 24/24 pass. Await Windows/Linux committed-source CI before closing. [Proof and adoption limits](sqlserver-cdc-reliability-2026-09.md).
+Local verification: 63/63 related composition cases pass, including 11 SQL Server CDC cases. Before the runtime fix, three new fault cases reproduced duplicate reports. Planning 8/8, documentation links 2/2, maturity drift 0 across 107 packages, and live issue/Project guards 24/24 pass. Corrected-source CI is now accepted below. [Proof and adoption limits](sqlserver-cdc-reliability-2026-09.md).
+
+Completion: runtime fix `b071e0f3`, generated-reference correction `1d1b4640`. [Host CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36324579915) and [Contract CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36324579821) pass. [Release CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36324579835) passes Linux (909 composition + 820 hosting + 383 tooling) and SDK 11 readiness. Both shipping OS pass 909 composition cases and 290 Pester tests. Windows hosting is 819/820: MongoDB fixture bootstrap fails before its test body; Windows tooling/benchmarks were not reached. This closes only the SQL Server scope, with the failed full-release gate retained under ENG-752. Benchmark is N/A for this correctness fix. ENG-754 remains open for four providers.
+
+Qualities: correctness, reliability, maintainability and auditability. SQL Server stays M2 / provider-managed; host-managed pump ownership and package boundaries are unchanged.
 
 ### ENG-754 Preserve native CDC failure evidence across remaining providers
 

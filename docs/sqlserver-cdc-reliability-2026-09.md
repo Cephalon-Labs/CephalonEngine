@@ -40,14 +40,38 @@ Static review on `b071e0f3` found the same nested report/rethrow/outer-report pa
 
 Local validation on the pinned SDK 10.0.401 passes **63/63** related composition cases, including all **11 SQL Server CDC cases**. Before the runtime fix, three new cases failed because they observed two failures for one staged/checkpoint error; the other eight SQL Server cases passed. After the fix all eleven pass. Planning tests pass **8/8**, Markdown link checks **2/2**, and both live GitHub guards pass for **24 open issues / 24 Project items / five required fields**. The maturity report covers **107 packages / 107 component documents**, drift **0**, with unchanged M0=1, M1=39, M2=51, M3=7, M4=9.
 
-Local receipts are under `artifacts/journal-validation-2026-09-27/` (`cdc-red.trx`, `cdc-green.trx`, `doc-links.trx`, `planning.xml`, `maturity.json`). Committed-source CI acceptance is pending; ENG-753 remains open. Reproduction command:
+Local receipts are under `artifacts/journal-validation-2026-09-27/` (`cdc-red.trx`, `cdc-green.trx`, `doc-links.trx`, `planning.xml`, `maturity.json`). Corrected-source CI is accepted below; ENG-753 is complete. Reproduction command:
 
 ```powershell
 dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj -c Release --filter FullyQualifiedName~SqlServerDataCdcPackTests
 ```
 
-The first implementation push `b071e0f3` passed Contract Compatibility. Release run [36324025161](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36324025161) exposed generated-reference drift after the XML clarification, and a separate Linux WebSocket rate-limit test timed out while awaiting its first response. The reference bundle is regenerated (four changed files); bundle consistency plus Markdown links now pass **3/3** locally. The isolated WebSocket test passes **1/1** locally, which does not explain or resolve the Linux timeout. ENG-752 retains that investigation and the earlier journal benchmark failure. The corrected-source release proof is still required; no deadline or benchmark threshold was relaxed.
+The first implementation push `b071e0f3` passed Contract Compatibility. Release run [36324025161](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36324025161) exposed generated-reference drift after the XML clarification, and a separate Linux WebSocket rate-limit test timed out while awaiting its first response. The reference bundle is regenerated (four changed files); bundle consistency plus Markdown links now pass **3/3** locally. The isolated WebSocket test passes **1/1** locally, which does not explain or resolve the Linux timeout. ENG-752 retains that investigation and the earlier journal benchmark failure. Corrected-source release proof is recorded below; no deadline or benchmark threshold was relaxed.
 
 Official references consulted: [SQL Server CDC overview](https://learn.microsoft.com/sql/relational-databases/track-changes/about-change-data-capture-sql-server?view=sql-server-ver17) explains the source change/LSN model. [Microsoft guidance on testing asynchronous code](https://learn.microsoft.com/en-us/archive/msdn-magazine/2014/november/async-programming-unit-testing-asynchronous-code-three-solutions-for-better-tests) describes synchronization through controlled dependencies; the test decorator applies that approach at Cephalon's accepted-report boundary. These sources do not certify Cephalon's implementation.
 
 The earlier journal benchmark failure on `69a20430` (519.8 us > 500 us) remains unresolved under ENG-752. The newer `05d25dfe` Windows run stopped at CDC tests before reaching benchmarks; it supplies no new journal measurement. No benchmark threshold, stable SLO, maturity or provider-support claim changes here.
+
+## Journal runner comparison retained for ENG-752
+
+The existing BenchmarkDotNet Markdown artifacts identify different hosted CPUs despite the same Windows label, OS build, SDK, runtime and benchmark job settings:
+
+| Source / run | Reported CPU and JIT target | Journal mean / allocation |
+| --- | --- | --- |
+| `e67697ae` / [36313203784](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36313203784) | AMD EPYC 9V45 2.60 GHz, 4 logical / 2 physical cores; x86-64-v4 | 147.7 us / 176.65 KB |
+| `69a20430` / [36317329975](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36317329975) | AMD EPYC 7763 2.44 GHz, 4 logical / 2 physical cores; x86-64-v3 | 519.8 us / 176.87 KB |
+| Earlier local projection check | Intel Core i5-13500, 20 logical / 14 physical cores; x86-64-v3 | 152.4 us / 176.40 KB |
+
+Both hosted reports use BenchmarkDotNet 0.15.8, SDK 10.0.401, runtime 10.0.12, Windows build 26100.33438, and InProcessShortRun with one launch, three warmups and three measurements. Their source/benchmark files were unchanged between those two hosted commits. Hardware/JIT target differences are an observed confounder, **not a proven cause** of the latency difference. Local numbers are not hosted-runner proof. Retain the 500 us guardrail and all failed samples; ENG-752 must compare repeated measurements on declared matching hardware/runtime conditions before drawing a code-regression or stable-SLO conclusion.
+
+## Windows fixture failure on the corrected source
+
+On `1d1b4640`, Windows [job 108634899161](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36324579835/job/108634899161) passes 909/909 composition cases, then fails the MongoDB CDC hosting fixture during `InitializeAsync` before its test body (819/820 hosting cases pass). The retained diagnostics show MongoDB 7.0.18 listening at 14:12:38.172 UTC, about 1.2 seconds after process startup, while driver observations report a three-second connection timeout and then Connected/ReplicaSetGhost at elapsed 20.18 seconds. Bootstrap fails at 20.34 seconds against its existing deadline. This narrows the observed failure to fixture connection/bootstrap timing; it does not prove CPU starvation, slow database startup or a production CDC defect. The full log is retained as `artifacts/journal-validation-2026-09-27/accepted-windows.log`.
+
+ENG-752 retains investigation of this failure, the prior Linux WebSocket receive timeout and the historical journal benchmark exceedance. Windows did not reach tooling, benchmark or full-release acceptance in this run. Do not infer a new benchmark result, raise a deadline, or report the full release gate as green from the passing SQL Server scope.
+
+## Committed-source acceptance
+
+Runtime implementation is `b071e0f3`; generated-reference and remaining-provider planning correction is `1d1b4640`. On `1d1b4640`, [Host Compatibility](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36324579915) and [Contract Compatibility](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36324579821) pass. [Release Validation](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36324579835) passes Linux (**909 composition + 820 hosting + 383 tooling = 2,112 core tests**) and SDK 11 readiness. Both shipping OS pass **909 composition tests** including the SQL Server CDC cases, and **290 Pester tests** each. Linux tooling proves generated-reference consistency. Windows release remains **failed** at MongoDB fixture bootstrap (819/820 hosting); Windows tooling and benchmarks are not reached.
+
+The earlier `b071e0f3` run remains failed/superseded evidence: Windows composition 909/909 and hosting 820/820 passed before reference drift failed and the job was cancelled by the corrective push; Linux composition 909/909 passed, hosting was 819/820, and the separate readiness lane detected reference drift. ENG-752 retains the latest MongoDB fixture failure, earlier WebSocket timeout, historical journal exceedance and statistical evidence. ENG-754 retains provider repairs. ENG-753 closes only the SQL Server scope, not the full release gate. No live SQL Server, exactly-once, maturity or stable-SLO promotion.
