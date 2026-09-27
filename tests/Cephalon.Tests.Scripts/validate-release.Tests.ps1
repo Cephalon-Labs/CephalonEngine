@@ -243,6 +243,11 @@ Describe "validate-release.ps1 SRE timing output" {
         Test-IsCanonicalReleaseValidationRun | Should -BeTrue
     }
 
+    It "excludes a run that only skips phase-8 conventions from canonical timing" {
+        $SkipPhase8Conventions = $true
+        Test-IsCanonicalReleaseValidationRun | Should -BeFalse
+    }
+
     It "runs every guardrail report family in the default benchmark smoke suite" {
         $catalogPath = Join-Path $script:repoRoot "benchmarks\Cephalon.Benchmarks\guardrails\performance-guardrails.json"
         $catalog = Get-Content -LiteralPath $catalogPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 8
@@ -296,6 +301,90 @@ Describe "validate-release.ps1 SRE timing output" {
         $report.status | Should -Be "investigate"
         $report.targetExceeded | Should -BeTrue
         $report.excessMilliseconds | Should -BeGreaterThan 0
+    }
+}
+
+Describe "validate-release.ps1 run receipt lifecycle" {
+    BeforeEach {
+        $script:fixtureRoot = Join-Path $TestDrive ([Guid]::NewGuid().ToString('N'))
+        $fixtureScripts = Join-Path $script:fixtureRoot 'scripts'
+        New-Item -ItemType Directory -Path $fixtureScripts -Force | Out-Null
+        $script:fixtureScript = Join-Path $fixtureScripts 'validate-release.ps1'
+        Copy-Item -LiteralPath $script:scriptPath -Destination $script:fixtureScript
+        foreach ($project in @('Composition', 'Hosting', 'Tooling')) {
+            $projectRoot = Join-Path $script:fixtureRoot "tests/Cephalon.Tests.$project"
+            New-Item -ItemType Directory -Path $projectRoot -Force | Out-Null
+            Set-Content -LiteralPath (Join-Path $projectRoot "Cephalon.Tests.$project.csproj") -Value '<Project />'
+        }
+        $script:skipAll = @{}
+        foreach ($name in @('Restore', 'Build', 'Tests', 'DotNetReadiness', 'DeploymentModeClaims',
+            'SurfaceMaturityReport', 'EngineCompletionScorecard', 'NuGetVulnerabilityAudit',
+            'OperationalConventions', 'Phase8Conventions', 'Benchmarks', 'Packages', 'PublicApiDeltaSummary', 'ReferenceDocs')) {
+            $script:skipAll["Skip$name"] = $true
+        }
+        $script:receiptRoot = Join-Path $script:fixtureRoot 'artifacts/sre-release-validation'
+        New-Item -ItemType Directory -Path $script:receiptRoot -Force | Out-Null
+        $script:oldTiming = Join-Path $script:receiptRoot 'validate-release-wall-time.json'
+        Set-Content -LiteralPath $script:oldTiming -Value '{"runId":"old-run","elapsedMilliseconds":123}'
+        $script:originalLocation = Get-Location
+        $env:CEPHALON_VALIDATE_RELEASE_NO_RUN = '0'
+        function git {
+            if ($args -contains 'rev-parse') { 'fixture-commit' }
+            $global:LASTEXITCODE = 0
+        }
+    }
+
+    AfterEach {
+        $env:CEPHALON_VALIDATE_RELEASE_NO_RUN = '1'
+        (Get-Location).Path | Should -Be $script:originalLocation.Path
+    }
+
+    It 'retains partial timing and the original failure without treating stale full timing as current' {
+        function dotnet {
+            if ($args[0] -eq 'restore') { $global:LASTEXITCODE = 0; return }
+            throw 'deliberate build failure'
+        }
+        $script:skipAll.Remove('SkipRestore')
+        $script:skipAll.Remove('SkipBuild')
+
+        { & $script:fixtureScript @script:skipAll } | Should -Throw '*deliberate build failure*'
+
+        $receipt = Get-Content (Join-Path $script:receiptRoot 'run.json') -Raw | ConvertFrom-Json
+        $receipt.outcome | Should -Be 'failed'
+        $receipt.canonical | Should -BeFalse
+        $receipt.lastStep | Should -Be 'Build solution (Release)'
+        $receipt.capturedFromCommit | Should -Be 'fixture-commit'
+        $receipt.elapsedMilliseconds | Should -BeGreaterThan 0
+        $receipt.completedAtUtc | Should -Not -BeNullOrEmpty
+        $receipt.completedTimingReports | Should -HaveCount 1
+        $receipt.completedTimingReports | Should -Contain 'restore-wall-time.json'
+        $timing = Get-Content (Join-Path $script:receiptRoot 'restore-wall-time.json') -Raw | ConvertFrom-Json
+        $timing.runId | Should -Be $receipt.runId
+        (Get-Content $script:oldTiming -Raw | ConvertFrom-Json).runId | Should -Be 'old-run'
+    }
+
+    It 'records a successful reduced invocation without publishing a canonical full-run timing' {
+        function dotnet { throw 'all dotnet steps must be skipped' }
+        & $script:fixtureScript @script:skipAll
+
+        $receipt = Get-Content (Join-Path $script:receiptRoot 'run.json') -Raw | ConvertFrom-Json
+        $receipt.outcome | Should -Be 'passed'
+        $receipt.canonical | Should -BeFalse
+        $receipt.skippedSteps | Should -HaveCount 14
+        $receipt.completedTimingReports | Should -HaveCount 0
+        (Get-Content $script:oldTiming -Raw | ConvertFrom-Json).runId | Should -Be 'old-run'
+    }
+
+    It 'records failure of a canonical invocation before the first timing completes' {
+        function dotnet { throw 'deliberate restore failure' }
+        { & $script:fixtureScript } | Should -Throw '*deliberate restore failure*'
+
+        $receipt = Get-Content (Join-Path $script:receiptRoot 'run.json') -Raw | ConvertFrom-Json
+        $receipt.outcome | Should -Be 'failed'
+        $receipt.canonical | Should -BeTrue
+        $receipt.lastStep | Should -Be 'Restore solution (locked mode)'
+        $receipt.completedTimingReports | Should -HaveCount 0
+        $receipt.skippedSteps | Should -HaveCount 0
     }
 }
 

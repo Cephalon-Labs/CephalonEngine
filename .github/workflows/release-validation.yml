@@ -86,6 +86,14 @@ jobs:
           path: BenchmarkDotNet.Artifacts/results
           if-no-files-found: warn
 
+      - name: Upload SRE release timing evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sre-release-validation-${{ matrix.benchmark_artifact_suffix }}
+          path: artifacts/sre-release-validation
+          if-no-files-found: warn
+
       - name: Upload reference docs
         if: always()
         uses: actions/upload-artifact@v4

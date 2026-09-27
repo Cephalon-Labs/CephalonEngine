@@ -63,6 +63,7 @@ $surfaceMaturityReportOutputPath = [System.IO.Path]::Combine($repoRoot, "artifac
 $engineCompletionScorecardOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "engine-completion-scorecard-release")
 $nugetVulnerabilityAuditOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "nuget-vulnerability-audit-release")
 $sreReleaseValidationOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "sre-release-validation")
+$script:sreReleaseValidationRun = $null
 $referenceDocsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "reference-docs-release")
 $packageArtifactsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "packages-release")
 $publicApiDeltaScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "summarise-public-api-deltas.ps1")
@@ -101,6 +102,9 @@ function Invoke-Step {
 
     Write-Host ""
     Write-Host "==> $Name" -ForegroundColor Cyan
+    if ($null -ne $script:sreReleaseValidationRun) {
+        $script:sreReleaseValidationRun.lastStep = $Name
+    }
     & $Action
 }
 
@@ -251,11 +255,39 @@ function Write-SreReleaseValidationStepTiming {
         excessMilliseconds = if ($targetExceeded) { [math]::Round($ElapsedMilliseconds - $TargetMilliseconds, 4) } else { 0 }
         capturedAtUtc = [DateTimeOffset]::UtcNow.ToString("o")
         capturedFromCommit = Get-RepositoryCommit
+        runId = if ($null -ne $script:sreReleaseValidationRun) { $script:sreReleaseValidationRun.runId } else { $null }
     } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $OutputPath $FileName) -Encoding UTF8
+
+    if ($null -ne $script:sreReleaseValidationRun) {
+        $script:sreReleaseValidationRun.completedTimingReports.Add($FileName)
+    }
 
     if ($targetExceeded) {
         Write-Warning "SRE timing for '$SliId' exceeded target: ${roundedElapsedMilliseconds}ms > ${TargetMilliseconds}ms. Timing evidence was written with status 'investigate'."
     }
+}
+
+function Write-SreReleaseValidationRunReceipt {
+    param(
+        [Parameter(Mandatory = $true)]
+        [System.Collections.IDictionary]$Run,
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("running", "passed", "failed")]
+        [string]$Outcome,
+        [double]$ElapsedMilliseconds = 0,
+        [string]$OutputPath = $sreReleaseValidationOutputPath
+    )
+
+    New-Item -ItemType Directory -Path $OutputPath -Force | Out-Null
+    $receipt = [ordered]@{}
+    foreach ($key in $Run.Keys) { $receipt[$key] = $Run[$key] }
+    $receipt.outcome = $Outcome
+    $receipt.elapsedMilliseconds = [math]::Round($ElapsedMilliseconds, 4)
+    $receipt.completedAtUtc = if ($Outcome -eq "running") { $null } else { [DateTimeOffset]::UtcNow.ToString("o") }
+    # Old successful timing files may remain on a reused checkout. Only matching
+    # runId files listed here belong to this invocation, including reduced runs.
+    $receipt | ConvertTo-Json -Depth 6 |
+        Set-Content -LiteralPath (Join-Path $OutputPath "run.json") -Encoding UTF8
 }
 
 function Test-IsCanonicalReleaseValidationRun {
@@ -980,7 +1012,29 @@ if ($env:CEPHALON_VALIDATE_RELEASE_NO_RUN -eq "1") {
 
 Push-Location $repoRoot
 $releaseValidationStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+$releaseValidationCompleted = $false
 try {
+    $script:sreReleaseValidationRun = [ordered]@{
+        '$schemaVersion' = "1.0.0"
+        runId = [Guid]::NewGuid().ToString("N")
+        canonical = Test-IsCanonicalReleaseValidationRun
+        startedAtUtc = [DateTimeOffset]::UtcNow.ToString("o")
+        capturedFromCommit = Get-RepositoryCommit
+        workingTreeDirty = -not [string]::IsNullOrWhiteSpace([string](& git -C $repoRoot status --porcelain --untracked-files=normal 2>$null))
+        operatingSystem = [System.Runtime.InteropServices.RuntimeInformation]::OSDescription
+        architecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
+        githubRunId = $env:GITHUB_RUN_ID
+        githubRunAttempt = $env:GITHUB_RUN_ATTEMPT
+        githubJob = $env:GITHUB_JOB
+        runnerImage = $env:ImageOS
+        runnerImageVersion = $env:ImageVersion
+        skippedSteps = @($PSBoundParameters.Keys | Where-Object { $_ -like "Skip*" -and $PSBoundParameters[$_] } | Sort-Object)
+        benchmarkFilters = $BenchmarkFilters
+        completedTimingReports = [System.Collections.Generic.List[string]]::new()
+        lastStep = "Initialize release validation"
+    }
+    Write-SreReleaseValidationRunReceipt -Run $script:sreReleaseValidationRun -Outcome "running"
+
     foreach ($testProjectPath in $testProjectPaths) {
         if (-not (Test-Path -LiteralPath $testProjectPath)) {
             throw "Expected test project '$testProjectPath' was not found."
@@ -1208,11 +1262,25 @@ try {
 
     Write-Host ""
     Write-Host "Release validation completed successfully." -ForegroundColor Green
+    $releaseValidationCompleted = $true
 }
 finally {
     if ($releaseValidationStopwatch.IsRunning) {
         $releaseValidationStopwatch.Stop()
     }
 
-    Pop-Location
+    try {
+        if ($null -ne $script:sreReleaseValidationRun) {
+            $outcome = if ($releaseValidationCompleted) { "passed" } else { "failed" }
+            Write-SreReleaseValidationRunReceipt -Run $script:sreReleaseValidationRun -Outcome $outcome `
+                -ElapsedMilliseconds $releaseValidationStopwatch.Elapsed.TotalMilliseconds
+        }
+    }
+    catch {
+        if ($releaseValidationCompleted) { throw }
+        Write-Warning "Could not retain the failed release run receipt: $($_.Exception.Message)"
+    }
+    finally {
+        Pop-Location
+    }
 }

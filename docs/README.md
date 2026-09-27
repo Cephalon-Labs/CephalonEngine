@@ -1,5 +1,7 @@
 # Cephalon Docs
 
+September SRE continuation: [journal cursor, benchmark boundaries and release timing receipts](sre-evidence-2026-09-27.md).
+
 [Cross-version contract consumers](contract-compatibility.md) documents isolated NuGet restore, unchanged-binary upgrades, blueprint JSON and bounded rollback evidence.
 
 [Host compatibility evidence](host-compatibility-2026-09.md) covers generated configuration, runtime snapshots, bounded validation processes and the Windows/Linux deployment gate.

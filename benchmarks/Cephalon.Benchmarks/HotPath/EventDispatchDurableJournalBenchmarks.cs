@@ -14,7 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Cephalon.Benchmarks.HotPath;
 
 /// <summary>
-/// Measures the provider-backed durable remediation command journal and replay-cursor read path without Wolverine.
+/// Measures the EF journal API and replay-cursor read path using the InMemory provider.
+/// This workload does not measure physical persistence or cross-process durability.
 /// </summary>
 [MemoryDiagnoser]
 [Config(typeof(BenchmarkInProcessShortRunConfig))]
@@ -34,7 +35,7 @@ public class EventDispatchDurableJournalBenchmarks
     private EventDispatchRemediationCommandReplayCursor[] replayCursors = null!;
 
     /// <summary>
-    /// Builds Eventing with the Entity Framework-backed outbox and durable remediation command journal.
+    /// Builds Eventing with the Entity Framework outbox and journal using an in-memory database.
     /// </summary>
     [GlobalSetup]
     public async Task Setup()

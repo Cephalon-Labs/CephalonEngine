@@ -93,4 +93,8 @@ Local full suites at the owned-bootstrap checkpoint passed 898/898 composition t
 
 The implemented clock seam preserves system defaults and process-local queue ownership; public API signatures are unchanged. REST timeout/override/circuit evidence, collector isolation, MongoDB bootstrap diagnostics and provider failure fixtures all retain their assertions. ENG-746 owns repeatability, workload p95/p99, failure recovery and telemetry-cost evidence. Stable-baseline files and the 30-minute target remain unchanged.
 
-Timing evidence boundary: the workflow uploads benchmark and CI flake-rate artifacts but currently omits `artifacts/sre-release-validation`. The duration above is derived from GitHub step timestamps, not a retained canonical timing JSON. ENG-746 must retain canonical timing reports when renewing its repeatable SLO evidence; this is within its existing 24 h scope.
+Timing evidence boundary at `340c408e`: the workflow uploaded benchmark and CI flake-rate artifacts but omitted `artifacts/sre-release-validation`. The duration above is derived from GitHub step timestamps, not a retained canonical timing JSON. ENG-746 must retain canonical timing reports when renewing its repeatable SLO evidence; this is within its existing 24 h scope.
+
+## Later journal benchmark and evidence-retention follow-up
+
+The docs-only `340c408e` release passed tests but failed the Windows journal mean guardrail. ENG-746 is active with ENG-749 (8 h) and ENG-750 (16 h), preserving the 24 h rollup. [Current implementation and receipts](sre-evidence-2026-09-27.md) supersede the timing-retention gap above when accepted; historical passing results remain source-specific.

@@ -1,0 +1,33 @@
+# September 27 SRE evidence continuation
+
+Tracking: [ENG-746 / #1439](https://github.com/Cephalon-Labs/CephalonEngine/issues/1439) is an active 24 h rollup within ENG-729 (50 h). [ENG-749 / #1442](https://github.com/Cephalon-Labs/CephalonEngine/issues/1442), 8 h, covers the cursor query and release evidence retention. [ENG-750 / #1443](https://github.com/Cephalon-Labs/CephalonEngine/issues/1443), 16 h, retains workload, recovery, telemetry and repeated-run SLO assessment. These are engineering estimates, not recorded hours or CI waiting time. No M0–M4, support, percentile or stable-baseline promotion is included.
+
+## Observed failure and measurement boundary
+
+[Release validation on `340c408e`](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36299755712) passed Linux and SDK 11; Windows passed its tests but failed the journal benchmark mean guardrail: **507.5 us > 500 us**. The same runtime and benchmark source passed on `201e92a8` at **409.9 us**. The difference between those commits is documentation only. Allocation was 174.25 KB in both hosted runs. ShortRun reported Error/StdDev of 1347.0/73.83 us for the failing run and 1068.0/58.54 us for the earlier run. Neither comparison establishes a code regression, a root cause, stable percentiles, or zero flakiness. The previous [clock and fixture acceptance](sre-validation-2026-09.md#committed-source-acceptance---september-27) remains source-specific historical evidence.
+
+`EventDispatchDurableJournalBenchmarks.RecordAndReadDurableJournal` uses EF Core **InMemory**, 128 seeded command rows, one retained scope/DbContext, and 256 operations per invocation. Each operation updates an existing result, reads up to four replay entries and reads the latest cursor. It exercises the EF journal API but does not measure database I/O, physical persistence, cross-process durability, production data volume or contention. Setup includes a warm invocation. Workload, ShortRun configuration and the 500 us / 262,144-byte guardrails are unchanged.
+
+## Cursor query change
+
+The EF journal now projects only `ObservedAtUtc` and `CommandId` for `LatestReplayCursor`, preserving descending timestamp/ID ordering, empty results, fresh reads and no tracking. It does not materialize the full journal entity or fetch metadata for this selector. Replay pages and journal writes keep their existing behavior. This follows EF Core's [project only required properties guidance](https://learn.microsoft.com/en-us/ef/core/performance/efficient-querying#project-only-properties-you-need).
+
+The relational regression uses SQLite with an explicit **test-host UTC-ticks conversion** for the journal timestamp. It checks empty reads, timestamp precedence, tied IDs, commits from separate scopes, no tracked journal entities and a two-column result even with 64 KB metadata payloads. This proves the selector with that mapping; it does not add a default SQLite DateTimeOffset mapping or a new provider-support claim. Existing InMemory provider-rebuild journal coverage remains.
+
+## Release timing evidence contract
+
+`scripts/validate-release.ps1` writes `artifacts/sre-release-validation/run.json` at entry with `outcome=running`, then finalizes it as `passed` or `failed` when normal PowerShell cleanup executes. It records a unique run ID, source commit, dirty-worktree flag, canonical/reduced classification, skipped switches, benchmark filters, OS/architecture, available GitHub run/attempt/job and runner-image identity, last entered step, elapsed time and completed timing filenames.
+
+Step timing JSON carries the same `runId`. **Only files listed in `completedTimingReports` with that matching ID belong to the current invocation.** Old timing files may remain in a reused checkout; their presence alone is not current evidence. A failed or reduced run never publishes a canonical `validate-release-wall-time.json`. Successful reduced execution is not full-release acceptance. `outcome=passed` means invoked checks completed; an individual timing `status=investigate` still records a target overrun. Hard termination may leave `running` or no receipt; it must not be read as success.
+
+The workflow uploads this directory as `sre-release-validation-windows` and `sre-release-validation-linux` with `if: always()`. Windows is the canonical benchmark lane; Linux skips benchmarks and remains a reduced invocation. Upload follows GitHub's [workflow artifact guidance](https://docs.github.com/en/actions/concepts/workflows-and-actions/workflow-artifacts). The existing 30-minute full-release target and stable-baseline manifest remain unchanged. These receipts establish traceability, not an automatic SLO renewal.
+
+## Validation checkpoint
+
+Local baseline before the change: **140.8 us**, Error 168.7 us, StdDev 9.24 us, allocation **174.32 KB**, on this Windows development machine with SDK 10.0.401. BenchmarkDotNet warned that the minimum iteration was 99.945 ms. This runner is separate from hosted Windows; absolute cross-runner comparisons are not optimization evidence. Before/after reports are retained under `artifacts/sre-continuation-2026-09-27/`.
+
+The same-machine after run measured **152.4 us**, Error 51.18 us, StdDev 2.81 us, allocation **176.40 KB**. It remains below the unchanged gate but is not an InMemory latency or allocation improvement over the local baseline. The justified benefit is the relational two-column read, independently verified by the regression; resolving hosted-runner variance remains ENG-750. The benchmark is not used to claim a production speedup.
+
+Focused cursor/provider-rebuild tests passed **2/2**. Release-script and planning tests passed **27/27**, including failed partial execution, canonical early failure, successful reduced execution with stale timing present, and the existing exclusion of phase-8-skipped runs from canonical classification. Live planning guards matched **23** open issues and Project items with all five required fields. Full-suite and committed-source CI acceptance are pending at this checkpoint. ENG-749 remains open until its evidence is recorded; ENG-746/729 stay open for ENG-750 even after the bounded implementation is accepted.
+
+Local full composition passed **899/899 in 1 m 6 s**, documentation links **3/3 in 14 s**, and the unchanged focused journal guardrail passed. These local durations are separate from release-step wall time and hosted-runner evidence.

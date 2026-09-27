@@ -1,8 +1,10 @@
 # Cephalon framework completion plan
 
+September 27 continuation: ENG-746 is active in Sprint 16 with ENG-749 (8 h, cursor query and release timing retention) and ENG-750 (16 h, remaining workload/SLO evidence). Parent estimates remain ENG-746 24 h and ENG-729 50 h, non-additive; ENG-745/747/748 remain complete. September scope is **566 h**; **18 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 remains 238 h total / 168 h remaining plus ENG-532. The latest `340c408e` release passed tests but failed the Windows journal benchmark. [Current evidence](sre-evidence-2026-09-27.md) separates this from previous acceptance; no maturity or SLO promotion.
+
 Planning date: **September 16, 2026**. Owner: **Cephalon-Neza**. Planning delivery: **ENG-718**. [GitHub Project](https://github.com/orgs/Cephalon-Labs/projects/2). [Research and sources](framework-research-2026-09.md).
 
-September 27 acceptance: ENG-745 (8 h), ENG-747 (10 h) and ENG-748 (8 h) are complete on `201e92a8`. ENG-729 remains 50 h with 26 h delivered and ENG-746 retaining 24 h, non-additive. September scope is **566 h**; **17 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 is 238 h total / 168 h remaining plus ENG-532. [SRE evidence](sre-validation-2026-09.md). No stable SLO, maturity or support promotion; earlier checkpoints preserve history.
+Earlier September 27 acceptance: ENG-745 (8 h), ENG-747 (10 h) and ENG-748 (8 h) are complete on `201e92a8`. ENG-729 remains 50 h with 26 h delivered and ENG-746 retaining 24 h, non-additive. September scope is **566 h**; **17 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 is 238 h total / 168 h remaining plus ENG-532. [SRE evidence](sre-validation-2026-09.md). No stable SLO, maturity or support promotion; earlier checkpoints preserve history.
 
 ## Objective and verified baseline
 
@@ -163,4 +165,4 @@ Windows release on `34fc2da0` failed MySQL lifecycle metadata observation after 
 
 ## SRE and publication clock acceptance - September 27, 2026
 
-September 27 acceptance: ENG-745 (8 h), ENG-747 (10 h) and ENG-748 (8 h) are complete on `201e92a8`. ENG-729 remains 50 h with 26 h delivered and ENG-746 retaining 24 h, non-additive. September scope is **566 h**; **17 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 is 238 h total / 168 h remaining plus ENG-532. [SRE evidence](sre-validation-2026-09.md). No stable SLO, maturity or support promotion; earlier checkpoints preserve history.
+Earlier September 27 acceptance: ENG-745 (8 h), ENG-747 (10 h) and ENG-748 (8 h) are complete on `201e92a8`. ENG-729 remains 50 h with 26 h delivered and ENG-746 retaining 24 h, non-additive. September scope is **566 h**; **17 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 is 238 h total / 168 h remaining plus ENG-532. [SRE evidence](sre-validation-2026-09.md). No stable SLO, maturity or support promotion; earlier checkpoints preserve history.

@@ -34,6 +34,8 @@
 
 ## Main surfaces
 
+The remediation journal's `LatestReplayCursor` reads only the timestamp and command ID. It keeps a fresh, non-tracking query ordered by descending timestamp then ID, without fetching the full command metadata. Full result and replay-page reads retain their existing contracts. [Validation and provider boundaries](../sre-evidence-2026-09-27.md) distinguish the relational selector test from the EF InMemory microbenchmark.
+
 - `Configuration/EntityFrameworkDataOptions.cs`
 - `Modeling/EntityFrameworkInboxEntry.cs`
 - `Modeling/IEntityFrameworkInboxContext.cs`

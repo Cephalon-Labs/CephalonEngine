@@ -8,7 +8,10 @@ Live follow-through for the [September architecture review](architecture-review-
 | Preserve provider CDC failure and bootstrap evidence | shipped | ENG-747, 10 h within revised ENG-729 50 h | MongoDB owned bootstrap lifecycle and deadline/caller-cancellation diagnostics, MySQL/PostgreSQL one-shot failure observation, real MongoDB CDC and full CI proof; historical startup-delay cause remains unproven |
 | Add host-clock publication scheduling and deterministic due-time acceptance | shipped | ENG-748, 8 h within ENG-729 50 h | System default/host override, due boundaries, rearming, disposal, failure timestamps and full CI |
 | Investigate `engine.validate-release.wall-time` overrun | investigate | ENG-729 / ENG-746 | Windows `c4f8d288` measured 31 m 22 s against 30 minutes; repeat workload/runner-aware timing after the fixture repair before renewing the SLO |
-| Complete load/recovery and telemetry-cost evidence | planned | ENG-746, 24 h within ENG-729 | Reproducible workload baselines, failure drills, cardinality budgets and CI flake-rate assessment |
+| Project journal cursor reads and retain release timing | in progress | ENG-749, 8 h within ENG-746 | Relational selector checks, unchanged benchmark gate, success/failure/reduced run receipts and CI artifacts |
+| Complete load/recovery and telemetry-cost evidence | planned | ENG-750, 16 h within ENG-746 | Reproducible workload baselines, failure drills, cardinality budgets and CI flake-rate assessment |
+
+ENG-746 is now active with 8/16 h children, preserving its 24 h rollup. The later docs-only `340c408e` release passed tests but failed the Windows journal mean guardrail. [Current investigation and evidence](sre-evidence-2026-09-27.md) retain that failure separately from the earlier accepted run below.
 
 [Implementation and receipts](sre-validation-2026-09.md) distinguish passing compatibility checkpoints from the later Windows test failure. No test is skipped and no benchmark/SLO threshold is relaxed. These evidence repairs do not change package maturity or production runtime ownership.
 

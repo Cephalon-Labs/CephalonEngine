@@ -69,13 +69,12 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
     {
         get
         {
-            var entry = journalContext.EventDispatchRemediationCommandJournalEntries
+            return journalContext.EventDispatchRemediationCommandJournalEntries
                 .AsNoTracking()
                 .OrderByDescending(entry => entry.ObservedAtUtc)
                 .ThenByDescending(entry => entry.CommandId)
+                .Select(entry => new EventDispatchRemediationCommandReplayCursor(entry.ObservedAtUtc, entry.CommandId))
                 .FirstOrDefault();
-
-            return entry is null ? null : CreateReplayCursor(entry);
         }
     }
 
@@ -549,14 +548,6 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
             .ToArray();
 
         return entries.Select(CreateState).ToArray();
-    }
-
-    private static EventDispatchRemediationCommandReplayCursor CreateReplayCursor(
-        EntityFrameworkEventDispatchRemediationCommandEntry entry)
-    {
-        return new EventDispatchRemediationCommandReplayCursor(
-            ObservedAtUtc: entry.ObservedAtUtc,
-            CommandId: entry.CommandId);
     }
 
     private static bool IsAfterReplayCursor(

@@ -1,6 +1,8 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `September 16, 2026`.
+September 27 continuation: ENG-746 is active in Sprint 16 with ENG-749 (8 h, cursor query and release timing retention) and ENG-750 (16 h, remaining workload/SLO evidence). Parent estimates remain ENG-746 24 h and ENG-729 50 h, non-additive; ENG-745/747/748 remain complete. September scope is **566 h**; **18 unfinished leaves / 456 h**, plus ENG-532 **1 h** = **457 h**. Phase 15 remains 238 h total / 168 h remaining plus ENG-532. The latest `340c408e` release passed tests but failed the Windows journal benchmark. [Current evidence](sre-evidence-2026-09-27.md) separates this from previous acceptance; no maturity or SLO promotion.
+
+Latest backlog status was reconciled on `September 27, 2026`; dated checkpoints below retain their historical scope.
 
 ## M3/M4 elevation program (June 2026)
 
@@ -654,19 +656,19 @@ GitHub issue: #1439
 
 Issue link: [#1439](https://github.com/Cephalon-Labs/CephalonEngine/issues/1439)
 
-Status: backlog
+Status: in-progress
 
 Estimate: 24
 
 Phase: 15
 
-Iteration: Later / not scheduled yet
+Iteration: Sprint 16
 
 Owner: Cephalon-Neza
 
 Priority: P1
 
-Test: Needed
+Test: Running
 
 Benchmark: Needed
 
@@ -687,6 +689,72 @@ Estimate basis: engineering hours including review, validation, docs and trackin
 Evidence: [September SRE follow-up](sre-validation-2026-09.md).
 
 Evidence retention: retain canonical `artifacts/sre-release-validation` timing JSON in the workload/SLO proof. Current CI uploads benchmark and flake-rate reports but omits this directory; GitHub step timestamps are only a separate observation. This remains within the existing 24 h scope.
+
+Delivery split: ENG-749 (8 h, active Sprint 16) and ENG-750 (16 h, Later) are native children. The 24 h parent is non-additive. Latest docs-only source `340c408e` passed core tests but failed the Windows journal benchmark at 507.5 us against 500 us; prior `201e92a8` acceptance remains historical evidence, not current green status.
+
+### ENG-749 Project journal replay cursors and retain release-run timing evidence
+
+GitHub issue: #1442
+
+Issue link: [#1442](https://github.com/Cephalon-Labs/CephalonEngine/issues/1442)
+
+Status: in-progress
+
+Estimate: 8
+
+Phase: 15
+
+Iteration: Sprint 16
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Running
+
+Benchmark: Needed
+
+Parent: ENG-746 / #1439. Included in its 24 h non-additive rollup and ENG-729 / #1422 (50 h).
+
+Scope: Read only timestamp and command ID for the latest EF journal replay cursor while preserving ordering, freshness and no-tracking behavior. Retain successful step timings and a run receipt on successful, failed and reduced release invocations; upload the evidence on both CI operating systems. Investigate the 340c408e Windows journal benchmark breach without changing workload or guardrails.
+
+Acceptance: Relational cursor regression coverage, same-machine before/after benchmark evidence, release receipt success/failure/reduced-run tests, and uploaded CI timing artifacts. Record source and runner boundaries; no claim that one pass proves stable latency or resolves runner variance.
+
+Quality dimensions: Reliability + Performance + Testability + Auditability.
+
+Estimate basis: engineering hours including implementation, review, validation, docs and tracking; excludes external waiting. Existing scope split 8/16 h, no added program estimate. M0-M4 and support claims remain unchanged.
+
+### ENG-750 Complete workload percentiles recovery telemetry budgets and flake assessment
+
+GitHub issue: #1443
+
+Issue link: [#1443](https://github.com/Cephalon-Labs/CephalonEngine/issues/1443)
+
+Status: backlog
+
+Estimate: 16
+
+Phase: 15
+
+Iteration: Later / not scheduled yet
+
+Owner: Cephalon-Neza
+
+Priority: P1
+
+Test: Needed
+
+Benchmark: Needed
+
+Parent: ENG-746 / #1439. Included in its 24 h non-additive rollup and ENG-729 / #1422 (50 h).
+
+Scope: Complete the remaining ENG-746 cold/warm, steady/burst and fault/recovery workload evidence, p95/p99, throughput, startup, allocation, cancellation/backpressure/exhaustion, actionable dashboards, telemetry cardinality/redaction/cost and statistically qualified CI flake-rate assessment. Include repeated hosted-runner journal benchmarks and the latest unresolved failures when evaluating stability.
+
+Acceptance: Reproducible workload and hardware declarations, repeated measurement windows, failure recovery and intentional regression detection. Review flake denominator and cancellations; distinguish means, individual timings and supported SLOs. No promotion from a single passing run.
+
+Quality dimensions: Reliability + Performance + Testability + Auditability.
+
+Estimate basis: engineering hours including implementation, review, validation, docs and tracking; excludes external waiting. Existing scope split 8/16 h, no added program estimate. M0-M4 and support claims remain unchanged.
 
 
 ### ENG-747 Stabilize provider CDC failure evidence and bootstrap diagnostics
