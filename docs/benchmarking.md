@@ -1,5 +1,7 @@
 # Cephalon Benchmarking
 
+The September 27 `69a20430` Windows release failed the unchanged `RecordAndReadDurableJournal` mean guardrail at **519.8 us > 500 us**. ENG-752 owns the active investigation; source and benchmark files match the earlier accepted `e67697ae`, so the variation's cause remains unproven. [Retained source, runner evidence and collector acceptance boundary](ci-flake-collector.md#committed-source-acceptance). This InMemory workload is not physical persistence or a stable latency SLO.
+
 ## Bounded reconciliation planning
 
 `ReconciliationBenchmarks.PlanReady` measures immutable plan creation, including the canonical SHA-256 binding. ENG-720 adds an initial smoke ceiling of 10,000 ns and 4,096 allocated bytes to the guardrail catalog and canonical `validate-release.ps1` filters. The first measured baseline and machine details are in [coordination delivery evidence](coordination-kernel-delivery-2026-09.md). This is local planner evidence; provider latency, journal throughput and multi-process coordination belong to later pilots.

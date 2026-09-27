@@ -48,9 +48,9 @@ The accepted Windows journal benchmark measured **147.7 μs**, Error **436.9 μs
 
 ## ENG-750 proof sequence (planned, not executed)
 
-Continuation: this plan is now split into ENG-751 (3 h, collector correction under validation) and ENG-752 (13 h, remaining evidence). [Current collector contract](ci-flake-collector.md). The table below retains its original estimate basis.
+Continuation: this plan is now split into ENG-751 (3 h, collector correction complete on `69a20430`) and active ENG-752 (13 h, remaining evidence). [Current collector contract](ci-flake-collector.md) records passing collector tests and the separate failed Windows journal benchmark at 519.8 us > 500 us. The table below retains its original estimate basis.
 
-The retained 16 h estimate covers an initial declared workload set, including review, validation, documentation and tracking. Additional provider/host permutations require explicit scope and estimate changes before making broader claims. These work packages subdivide ENG-750; they are not additive tasks or completed evidence.
+The retained 16 h parent estimate covers an initial declared workload set, including review, validation, documentation and tracking. Additional provider/host permutations require explicit scope and estimate changes before making broader claims. These original work packages subdivide ENG-750 and are not additive estimates; accepted collector evidence is recorded in the continuation above.
 
 | Work package | Estimate | Required output |
 | --- | ---: | --- |
@@ -63,7 +63,7 @@ The retained 16 h estimate covers an initial declared workload set, including re
 
 Existing benchmark means remain regression signals. `ColdStartBenchmarks` constructs, starts, probes (ASP.NET Core), stops and disposes hosts repeatedly **inside a warm benchmark process**; its elapsed mean includes shutdown/disposal. It does not isolate build-to-first-response or fresh-process p95. The behavior p95/p99 baseline rows also explicitly declare `benchmark-mean-baseline-proxy`. ENG-750 must preserve these distinctions when adding real percentile evidence.
 
-The Linux `sre-ci-flake-rate-linux` artifact from run **36313203784** illustrates the current collector limitation: six completed matching runs comprise one success, three failures and two cancellations; it reports zero observed rerun events and `PromotionAllowed=true`. Attempt inspection was available for all three inspected failure attempts. This is a descriptive rerun-event result, not proof of zero failing tests or a statistically supported flake SLO. The artifact was captured while the current release workflow was still running. No baseline promotion is accepted from this flag.
+The historical schema 1.1.0 Linux `sre-ci-flake-rate-linux` artifact from run **36313203784** illustrates the original collector limitation: six completed matching runs comprise one success, three failures and two cancellations; it reports zero observed rerun events and `PromotionAllowed=true`. Attempt inspection was available for all three inspected failure attempts. This is a descriptive rerun-event result, not proof of zero failing tests or a statistically supported flake SLO. The artifact was captured while that release workflow was still running. No baseline promotion is accepted from this flag; schema 2.0.0 replaces this behavior as documented in the continuation above.
 
 Each workload receipt should name SDK/runtime, OS/CPU, source and configuration hashes, process/cache state, provider, concurrency, offered/completed load, warmup and observation windows, errors/cancellations/timeouts, raw samples or histogram boundaries and the aggregation method. Keep request latency, allocation, lifecycle completion, release wall time and provider I/O as separate measurements. Controlled clocks remain useful for deterministic functional tests; elapsed performance evidence uses real elapsed time.
 

@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-September 27 collector continuation: ENG-750 is active with ENG-751 (3 h, collector correctness) and ENG-752 (13 h, remaining workload/statistical evidence). Parent estimates remain non-additive: ENG-750 16 h, ENG-746 24 h, ENG-729 50 h. September scope remains **566 h**; **18 unfinished leaves / 448 h**, plus ENG-532 **1 h** = **449 h**. Phase 15 remains 238 h total / 160 h remaining plus ENG-532. [Collector contract and evidence](ci-flake-collector.md) describe the implementation under validation; no stable SLO or maturity promotion.
+September 27 collector acceptance: ENG-751 (3 h) is complete on `69a20430`. ENG-752 is active in Sprint 16 with 13 h for workload/recovery/telemetry, journal benchmark investigation and test-level/statistical evidence. Non-additive parents remain open: ENG-750 16 h (3 h delivered), ENG-746 24 h (11 h delivered), ENG-729 50 h (37 h delivered). September scope remains **566 h**; **17 unfinished leaves / 445 h**, plus ENG-532 **1 h** = **446 h**. Phase 15 remains 238 h total / 157 h remaining plus ENG-532. [Collector contract and accepted evidence](ci-flake-collector.md) record collector acceptance; Windows release remains failed at the journal benchmark (519.8 us > 500 us), tracked by active ENG-752. No SLO or maturity promotion.
 
 Backlog status in this document reflects the repository state as of `September 16, 2026`.
 
@@ -584,7 +584,7 @@ Priority: P1
 
 Test: Running
 
-Benchmark: Needed
+Benchmark: Regressed
 
 Dependencies: ENG-720; ENG-723 through ENG-725 for pilot load scenarios.
 
@@ -611,9 +611,9 @@ September 27 checkpoint: release `09e7eb6c` passed Linux, but Windows REST timeo
 
 Latest September 27 scope: ENG-747 increases 6 to 10 h after the retained Windows evidence exposed fast server startup but delayed later connections. Owned bootstrap lifecycle, bounded initialization and driver diagnostics add 4 h; parent 50 h = 8/24/10/8. Full CI acceptance remained open at that checkpoint.
 
-Earlier acceptance: ENG-745/747/748 are Done with 26 h delivered; ENG-746 retains 24 h. This 50 h parent remains In Progress / Test Running / Benchmark Needed. [Release CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293286) passed Windows/Linux shipping (2,101 core tests plus 263 Pester each) and SDK 11 readiness (2,092 selected net10.0 tests) on `201e92a8`. All 41 Windows benchmark guardrails passed. [Host/deployment](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293252) and [contract compatibility](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293274) passed both OS. Windows release-step duration was **25 m 00 s**, from GitHub step timestamps. This single run does not renew a stable SLO or identify the historical MongoDB startup cause.
+Earlier acceptance: ENG-745/747/748 were Done with 26 h delivered; ENG-746 retained 24 h. At that checkpoint this 50 h parent remained In Progress / Test Running / Benchmark Needed. [Release CI](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293286) passed Windows/Linux shipping (2,101 core tests plus 263 Pester each) and SDK 11 readiness (2,092 selected net10.0 tests) on `201e92a8`. All 41 Windows benchmark guardrails passed. [Host/deployment](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293252) and [contract compatibility](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36298293274) passed both OS. Windows release-step duration was **25 m 00 s**, from GitHub step timestamps. This single run does not renew a stable SLO or identify the historical MongoDB startup cause.
 
-Current acceptance: ENG-749 joins ENG-745/747/748 as complete. Delivered child estimate is 34 h; ENG-750 retains 16 h through the active ENG-746 parent. ENG-729 remains 50 h / In Progress / Test Running / Benchmark Needed. [Current SRE evidence](sre-evidence-2026-09-27.md).
+Current acceptance: ENG-751 joins ENG-745/747/748/749 as complete. Delivered child estimate is 37 h; ENG-752 retains 13 h through active ENG-750 and ENG-746 parents. ENG-729 remains 50 h / In Progress / Test Running / Benchmark Regressed. [Current SRE evidence](ci-flake-collector.md#committed-source-acceptance).
 
 
 ### ENG-745 Stabilize resilience timeout and isolate integration telemetry
@@ -674,7 +674,7 @@ Priority: P1
 
 Test: Running
 
-Benchmark: Needed
+Benchmark: Regressed
 
 Parent: ENG-729 / #1422. Included in its revised 50 h non-additive rollup.
 
@@ -694,9 +694,9 @@ Evidence: [September SRE follow-up](sre-validation-2026-09.md).
 
 Evidence retention: completed under ENG-749. CI retains run receipts and matching timing JSON; only successful canonical invocations publish full-release timings. Repeated workload/SLO proof remains ENG-750. [Contract and verified artifacts](sre-evidence-2026-09-27.md).
 
-Delivery split: ENG-749 (8 h, complete Sprint 16) and ENG-750 (16 h, Later) are native children. The 24 h parent is non-additive. Observed docs-only source `340c408e` passed core tests but failed the Windows journal benchmark at 507.5 us against 500 us; prior `201e92a8` acceptance remains historical evidence.
+Delivery split: ENG-749 (8 h, complete Sprint 16) and ENG-750 (16 h, active Sprint 16 with 3 h delivered / 13 h remaining) are native children. The 24 h parent is non-additive. Observed docs-only source `340c408e` passed core tests but failed the Windows journal benchmark at 507.5 us against 500 us; prior `201e92a8` acceptance remains historical evidence.
 
-Current acceptance: ENG-749 is Done / Test Passed / Benchmark Passed. This 24 h parent stays In Progress / Test Running / Benchmark Needed, with 16 h remaining in ENG-750. A single green CI run does not establish stable latency.
+Current acceptance: ENG-749 is Done / Test Passed / Benchmark Passed. This 24 h parent stays In Progress / Test Running / Benchmark Regressed, with 13 h remaining in ENG-752 through ENG-750; ENG-751 contributes another 3 h delivered. A single green CI run does not establish stable latency.
 
 
 ### ENG-749 Project journal replay cursors and retain release-run timing evidence
@@ -754,7 +754,7 @@ Priority: P1
 
 Test: Running
 
-Benchmark: Needed
+Benchmark: Regressed
 
 Parent: ENG-746 / #1439. Included in its 24 h non-additive rollup and ENG-729 / #1422 (50 h).
 
@@ -766,9 +766,9 @@ Quality dimensions: Reliability + Performance + Testability + Auditability.
 
 Estimate basis: engineering hours including implementation, review, validation, docs and tracking; excludes external waiting. Existing scope split 8/16 h, no added program estimate. M0-M4 and support claims remain unchanged.
 
-Collector assessment: the current script reads one page of repository runs and attempt jobs, includes canceled conclusions in its denominator and does not gate PromotionAllowed on missing attempt inspection or unresolved failures. Its broad release-step failure matcher may include benchmark/build failures. Define eligibility, coverage, attribution and uncertainty before promoting a stable baseline; retain the descriptive rerun-event metric separately. This remains within the existing 16 h assessment scope.
+Original collector assessment before ENG-751: schema 1.1.0 read one page, included cancelled conclusions in its denominator and allowed promotion without complete inspection or resolution of failed runs. ENG-751 implements paginated/locale-safe collection, outcome eligibility, attribution blockers and mandatory statistical review in schema 2.0.0. [Contract and evidence](ci-flake-collector.md). ENG-752 retains the independent test-level/statistical evidence within this 16 h parent.
 
-Delivery split: ENG-751 (3 h, active Sprint 16) and ENG-752 (13 h, Later) are native children. This 16 h parent is non-additive and remains open until both children meet acceptance.
+Delivery split: ENG-751 (3 h, complete Sprint 16) and ENG-752 (13 h, active Sprint 16) are native children. This 16 h parent has 3 h delivered and 13 h remaining, is non-additive, and remains open until both children meet acceptance.
 
 ### ENG-751 Make CI flake collection complete and promotion conservative
 
@@ -776,7 +776,7 @@ GitHub issue: #1444
 
 Issue link: [#1444](https://github.com/Cephalon-Labs/CephalonEngine/issues/1444)
 
-Status: in-progress
+Status: done
 
 Estimate: 3
 
@@ -788,7 +788,7 @@ Owner: Cephalon-Neza
 
 Priority: P1
 
-Test: Running
+Test: Passed
 
 Benchmark: N/A
 
@@ -796,9 +796,14 @@ Parent: ENG-750 / #1443. Included in its 16 h non-additive rollup, ENG-746 (24 h
 
 Scope: Paginate run and attempt-job metadata; reject incomplete or inconsistent coverage. Separate eligible outcomes from cancellations, report missing attribution and unresolved failures, prevent duplicate recovery inference, and stop automatic SLO promotion from an observed run-level rate.
 
+Implementation: `69a20430` adds schema 2.0.0, Gregorian UTC query dates and timezone-preserving timestamp normalization. Local collector/planning/scorecard/release-script tests pass 79/79; Markdown link checks pass 2/2. Host/Contract CI and both OS Pester/collector steps passed; Windows release failed at the existing journal benchmark (519.8 us > 500 us), tracked by ENG-752. Both collector artifacts use schema 2.0.0 with PromotionAllowed=false. [Evidence](ci-flake-collector.md).
+
 Acceptance: Deterministic fixtures cover pagination, missing pages/jobs, excluded outcomes, unresolved failures, attribution and promotion rejection. Document schema and metric limits; retain live readback and committed-source validation.
 
 Estimate basis: engineering hours including implementation, review, validation, docs and tracking; excludes external waiting. Existing 3/13 h scope split; September program remains 566 h. No maturity or support promotion.
+
+Completion: [Release Validation](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36317329975), [Host Compatibility](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36317329925), and [Contract Compatibility](https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/36317330128) passed except the Windows Release Validation benchmark gate. Pester and collector steps passed on both OS. Benchmark is N/A for this collector change; ENG-752 owns the unresolved journal gate failure. ENG-752 stays open for the remaining 13 h.
+
 
 ### ENG-752 Complete declared workload recovery telemetry and statistical SLO evidence
 
@@ -806,21 +811,21 @@ GitHub issue: #1445
 
 Issue link: [#1445](https://github.com/Cephalon-Labs/CephalonEngine/issues/1445)
 
-Status: backlog
+Status: in-progress
 
 Estimate: 13
 
 Phase: 15
 
-Iteration: Later / not scheduled yet
+Iteration: Sprint 16
 
 Owner: Cephalon-Neza
 
 Priority: P1
 
-Test: Needed
+Test: Running
 
-Benchmark: Needed
+Benchmark: Regressed
 
 Parent: ENG-750 / #1443. Included in its 16 h non-additive rollup, ENG-746 (24 h), and ENG-729 (50 h).
 
@@ -829,6 +834,8 @@ Scope: Finish ENG-750 workload percentiles and throughput (4 h), fault/recovery 
 Acceptance: Declared workload/hardware, reproducible percentile and recovery evidence, telemetry budgets and an independently reviewed statistical sampling method before any stable SLO promotion.
 
 Estimate basis: engineering hours including implementation, review, validation, docs and tracking; excludes external waiting. Existing 3/13 h scope split; September program remains 566 h. No maturity or support promotion.
+
+Current investigation: source `69a20430`, Windows release run `36317329975`, journal mean 519.8 us (error 743.4 us; SD 40.75 us; 176.87 KB) exceeds the unchanged 500 us guardrail. The 2 h repeated-hosted-measurement work package includes investigation of this recurrence; re-estimate before expanding remediation scope. Root cause is unproven. Source/benchmark files are unchanged from accepted `e67697ae`. Preserve all failures and distinguish the InMemory proxy from physical persistence and stable SLO evidence.
 
 
 ### ENG-747 Stabilize provider CDC failure evidence and bootstrap diagnostics
